@@ -1,19 +1,10 @@
-#include <raylib.h>
+#include "game.h"
 #include "settings.h"
 
 int main()
 {
-    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "RPG Monsters");
-    SetTargetFPS(60);
+    Game game(WINDOW_WIDTH, WINDOW_HEIGHT);
+    game.run();
 
-    while (!WindowShouldClose())
-    {
-        BeginDrawing();
-        const Color bg = COLORS[std::string("gold")];
-        ClearBackground(bg);
-
-        EndDrawing();
-    }
-    CloseWindow();
     return 0;
 }
