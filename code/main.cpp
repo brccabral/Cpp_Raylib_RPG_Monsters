@@ -1,15 +1,17 @@
 #include <raylib.h>
+#include "settings.h"
 
 int main()
 {
-    InitWindow(800, 450, "raylib - basic window");
+    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "RPG Monsters");
     SetTargetFPS(60);
 
     while (!WindowShouldClose())
     {
         BeginDrawing();
-        ClearBackground(RAYWHITE);
-        DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
+        const Color bg = COLORS[std::string("gold")];
+        ClearBackground(bg);
+
         EndDrawing();
     }
     CloseWindow();
