@@ -1,12 +1,12 @@
 #include "game.h"
+#include <iostream>
 #include <raylib.h>
 #include "settings.h"
+#include "sprite.h"
 
 #define RAYLIB_TMX_IMPLEMENTATION
-#include <iostream>
-
-
 #include "raylib-tmx.h"
+
 
 Game::Game(const int width, const int height)
 {
@@ -18,6 +18,10 @@ Game::Game(const int width, const int height)
 
 Game::~Game()
 {
+    for (auto sprite: all_sprites.sprites)
+    {
+        delete sprite;
+    }
     CloseWindow();
 }
 
@@ -29,6 +33,8 @@ void Game::run()
         const Color bg = COLORS[std::string("gold")];
         ClearBackground(bg);
 
+        all_sprites.Draw();
+
         EndDrawing();
     }
 }
@@ -39,19 +45,9 @@ void Game::ImporAssets()
     tmx_maps["world"] = world;
 }
 
-void Game::Setup(const tmx_map *map, const std::string &player_start_position)
+void Game::Setup(tmx_map *map, const std::string &player_start_position)
 {
-    // const auto tilecount = map->tilecount;
-    std::cout << "Map"
-              << "\n";
-    std::cout << "Width " << map->width << "\n";
-    std::cout << "Height " << map->height << "\n";
-    std::cout << "Count " << map->tilecount << "\n";
-    std::cout << "Order " << map->renderorder << "\n";
-
-    std::cout << "Layer"
-              << "\n";
-    const tmx_layer *layer = tmx_find_layer_by_name(map, "Terrain");
+    tmx_layer *layer = tmx_find_layer_by_name(map, "Terrain");
 
     for (int y = 0; y < map->height; y++)
     {
@@ -61,13 +57,28 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
             const unsigned int gid = (baseGid) &TMX_FLIP_BITS_REMOVAL;
             if (map->tiles[gid] && map->tiles[gid]->tileset && map->tiles[gid]->tileset->image)
             {
-                std::cout << "x " << x;
-                std::cout << " y " << y;
-                std::cout << " sx " << map->tiles[gid]->width;
-                std::cout << " sy " << map->tiles[gid]->height;
-                std::cout << " posx " << x * map->tiles[gid]->width;
-                std::cout << " posy " << y * map->tiles[gid]->height;
-                std::cout << map->tiles[gid]->tileset->image->source << "\n";
+                const tmx_tile *tile = map->tiles[gid];
+                const tmx_image *im = tile->image;
+                Texture2D *image;
+                if (im && im->resource_image)
+                {
+                    image = (Texture2D *) im->resource_image;
+                }
+                else if (tile->tileset->image->resource_image)
+                {
+                    image = (Texture2D *) tile->tileset->image->resource_image;
+                }
+                if (image)
+                {
+                    const tmx_tileset *ts = tile->tileset;
+                    const Vector2 position = {float(x * ts->tile_width), float(y * ts->tile_height)};
+                    Rectangle srcRect;
+                    srcRect.x = tile->ul_x;
+                    srcRect.y = tile->ul_y;
+                    srcRect.width = tile->tileset->tile_width;
+                    srcRect.height = tile->tileset->tile_height;
+                    new Sprite(position, image, &all_sprites, srcRect);
+                }
             }
         }
     }
