@@ -3,3 +3,8 @@
 Player::Player(Vector2 position, Texture2D *image, SpriteGroup *sprite_group, Rectangle imgRect)
     : Sprite(position, image, sprite_group, imgRect)
 {}
+
+void Player::Draw() const
+{
+    DrawRectangleV(position, {64, 64}, RED);
+}

@@ -7,6 +7,11 @@ Sprite::Sprite(const Vector2 position, Texture2D *image, SpriteGroup *sprite_gro
     sprite_group->sprites.push_back(this);
 }
 
+Sprite::~Sprite()
+{
+    UnloadTexture(*image);
+}
+
 void Sprite::Draw() const
 {
     DrawTextureRec(*image, imgRect, position, WHITE);

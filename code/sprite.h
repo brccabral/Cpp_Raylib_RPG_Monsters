@@ -9,10 +9,15 @@ class Sprite
 public:
 
     Sprite(Vector2 position, Texture2D *image, SpriteGroup *sprite_group, Rectangle imgRect);
-    void Draw() const;
+    virtual ~Sprite();
+    virtual void Draw() const;
+
+protected:
+
+    Vector2 position{};
 
 private:
-    Vector2 position{};
+
     Texture2D *image;
     Rectangle imgRect{};
     std::vector<SpriteGroup *> groups;
