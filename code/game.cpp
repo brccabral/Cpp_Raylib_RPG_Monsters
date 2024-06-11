@@ -5,6 +5,9 @@
 #include "sprite.h"
 
 #define RAYLIB_TMX_IMPLEMENTATION
+#include <cstring>
+
+
 #include "raylib-tmx.h"
 
 
@@ -47,13 +50,14 @@ void Game::ImporAssets()
 
 void Game::Setup(tmx_map *map, const std::string &player_start_position)
 {
-    tmx_layer *layer = tmx_find_layer_by_name(map, "Terrain");
+    tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
+    tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
 
     for (int y = 0; y < map->height; y++)
     {
         for (int x = 0; x < map->width; x++)
         {
-            const unsigned int baseGid = layer->content.gids[(y * map->width) + x];
+            const unsigned int baseGid = terrain_layer->content.gids[(y * map->width) + x];
             const unsigned int gid = (baseGid) &TMX_FLIP_BITS_REMOVAL;
             if (map->tiles[gid] && map->tiles[gid]->tileset && map->tiles[gid]->tileset->image)
             {
@@ -81,6 +85,18 @@ void Game::Setup(tmx_map *map, const std::string &player_start_position)
                 }
             }
         }
+    }
+
+    auto entity = entities_layer->content.objgr->head;
+    while (entity)
+    {
+        if(strcmp(entity->name ,"Player") == 0)
+        {
+            // Rectangle dest = {entity->x, entity.y, entity->width, entity->height};
+            std::cout << entity->name << " " << entity->id << "\n";
+        }
+
+        entity = entity->next;
     }
 }
 

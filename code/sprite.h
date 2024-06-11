@@ -1,5 +1,6 @@
 #pragma once
 #include <raylib.h>
+#include <sched.h>
 #include <vector>
 
 class SpriteGroup;
@@ -11,7 +12,6 @@ public:
     void Draw() const;
 
 private:
-
     Vector2 position{};
     Texture2D *image;
     Rectangle imgRect{};
