@@ -15,7 +15,7 @@
 Game::Game(const int width, const int height)
 {
     InitWindow(width, height, "RPG Monsters");
-    // SetTargetFPS(60);
+    SetTargetFPS(60);
 
     ImporAssets();
 

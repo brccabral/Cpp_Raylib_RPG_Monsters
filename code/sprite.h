@@ -29,6 +29,13 @@ class AnimatedSprite : public Sprite
 public:
 
     AnimatedSprite(Vector2 position, std::vector<Texture2D> &frames, SpriteGroup *sprite_group, Rectangle imgRect);
+    void Animate(double deltaTime);
+    void Update(double deltaTime) override;
+
+private:
+
+    double frame_index;
+    std::vector<Texture2D> frames;
 };
 
 class SpriteGroup

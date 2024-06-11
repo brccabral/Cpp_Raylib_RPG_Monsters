@@ -1,6 +1,4 @@
 #include "entities.h"
-
-#include <iostream>
 #include <raymath.h>
 
 Player::Player(const Vector2 position, Texture2D *image, SpriteGroup *sprite_group, const Rectangle imgRect)
