@@ -16,8 +16,8 @@ Game::Game(const int width, const int height)
     InitWindow(width, height, "RPG Monsters");
     // SetTargetFPS(60);
     ImporAssets();
-    // Setup(tmx_maps["world"], "house");
-    Setup(tmx_maps["hospital"], "world");
+    Setup(tmx_maps["world"], "house");
+    // Setup(tmx_maps["hospital"], "world");
 }
 
 Game::~Game()
@@ -76,18 +76,13 @@ void Game::CreateSprite(const tmx_tile *tile, const int posX, const int posY)
         new Sprite(position, image, &all_sprites, srcRect);
     }
 }
-void Game::Setup(tmx_map *map, const std::string &player_start_position)
+void Game::CreateTileLayer(tmx_map *map, const tmx_layer *layer)
 {
-    const tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
-    const tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
-    const tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
-    const tmx_layer *terrain_top_layer = tmx_find_layer_by_name(map, "Terrain Top");
-
     for (int y = 0; y < map->height; y++)
     {
         for (int x = 0; x < map->width; x++)
         {
-            const unsigned int baseGid = terrain_layer->content.gids[(y * map->width) + x];
+            const unsigned int baseGid = layer->content.gids[(y * map->width) + x];
             const unsigned int gid = (baseGid) &TMX_FLIP_BITS_REMOVAL;
             if (map->tiles[gid])
             {
@@ -96,19 +91,26 @@ void Game::Setup(tmx_map *map, const std::string &player_start_position)
             }
         }
     }
+}
+void Game::Setup(tmx_map *map, const std::string &player_start_position)
+{
+    const tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
+    const tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
+    const tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
+    const tmx_layer *terrain_top_layer = tmx_find_layer_by_name(map, "Terrain Top");
 
-    for (int y = 0; y < map->height; y++)
+    CreateTileLayer(map, terrain_layer);
+    CreateTileLayer(map, terrain_top_layer);
+
+    auto object = objects_layer->content.objgr->head;
+    while (object)
     {
-        for (int x = 0; x < map->width; x++)
+        const int gid = object->content.gid;
+        if (map->tiles[gid])
         {
-            const unsigned int baseGid = terrain_top_layer->content.gids[(y * map->width) + x];
-            const unsigned int gid = (baseGid) &TMX_FLIP_BITS_REMOVAL;
-            if (map->tiles[gid])
-            {
-                const tmx_tileset *ts = map->tiles[gid]->tileset;
-                CreateSprite(map->tiles[gid], x * ts->tile_width, y * ts->tile_height);
-            }
+            CreateSprite(map->tiles[gid], object->x, object->y - object->height);
         }
+        object = object->next;
     }
 
     auto entity = entities_layer->content.objgr->head;
@@ -123,17 +125,6 @@ void Game::Setup(tmx_map *map, const std::string &player_start_position)
         }
 
         entity = entity->next;
-    }
-
-    auto object = objects_layer->content.objgr->head;
-    while (object)
-    {
-        const int gid = object->content.gid;
-        if (map->tiles[gid])
-        {
-            CreateSprite(map->tiles[gid], object->x, object->y - object->height);
-        }
-        object = object->next;
     }
 }
 
