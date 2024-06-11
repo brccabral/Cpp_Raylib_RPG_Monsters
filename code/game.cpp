@@ -33,10 +33,11 @@ void Game::run()
 {
     while (!WindowShouldClose())
     {
+        all_sprites.Update(GetFrameTime());
+
         BeginDrawing();
         ClearBackground(BLACK);
 
-        all_sprites.Update(GetFrameTime());
         all_sprites.Draw(player->GetCenter());
 
         EndDrawing();
@@ -49,10 +50,34 @@ void Game::ImporAssets()
     tmx_maps["world"] = world;
 }
 
+void Game::CreateSprite(const tmx_tile *tile, const int posX, const int posY)
+{
+    const tmx_image *im = tile->image;
+    Texture2D *image;
+    if (im && im->resource_image)
+    {
+        image = (Texture2D *) im->resource_image;
+    }
+    else if (tile->tileset->image->resource_image)
+    {
+        image = (Texture2D *) tile->tileset->image->resource_image;
+    }
+    if (image)
+    {
+        const Vector2 position = {float(posX), float(posY)};
+        Rectangle srcRect;
+        srcRect.x = tile->ul_x;
+        srcRect.y = tile->ul_y;
+        srcRect.width = tile->width;
+        srcRect.height = tile->height;
+        new Sprite(position, image, &all_sprites, srcRect);
+    }
+}
 void Game::Setup(tmx_map *map, const std::string &player_start_position)
 {
     const tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
     const tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
+    const tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
 
     for (int y = 0; y < map->height; y++)
     {
@@ -60,30 +85,10 @@ void Game::Setup(tmx_map *map, const std::string &player_start_position)
         {
             const unsigned int baseGid = terrain_layer->content.gids[(y * map->width) + x];
             const unsigned int gid = (baseGid) &TMX_FLIP_BITS_REMOVAL;
-            if (map->tiles[gid] && map->tiles[gid]->tileset && map->tiles[gid]->tileset->image)
+            if (map->tiles[gid])
             {
-                const tmx_tile *tile = map->tiles[gid];
-                const tmx_image *im = tile->image;
-                Texture2D *image;
-                if (im && im->resource_image)
-                {
-                    image = (Texture2D *) im->resource_image;
-                }
-                else if (tile->tileset->image->resource_image)
-                {
-                    image = (Texture2D *) tile->tileset->image->resource_image;
-                }
-                if (image)
-                {
-                    const tmx_tileset *ts = tile->tileset;
-                    const Vector2 position = {float(x * ts->tile_width), float(y * ts->tile_height)};
-                    Rectangle srcRect;
-                    srcRect.x = tile->ul_x;
-                    srcRect.y = tile->ul_y;
-                    srcRect.width = tile->tileset->tile_width;
-                    srcRect.height = tile->tileset->tile_height;
-                    new Sprite(position, image, &all_sprites, srcRect);
-                }
+                const tmx_tileset *ts = map->tiles[gid]->tileset;
+                CreateSprite(map->tiles[gid], x * ts->tile_width, y * ts->tile_height);
             }
         }
     }
@@ -100,6 +105,17 @@ void Game::Setup(tmx_map *map, const std::string &player_start_position)
         }
 
         entity = entity->next;
+    }
+
+    auto object = objects_layer->content.objgr->head;
+    while (object)
+    {
+        const int gid = object->content.gid;
+        if (map->tiles[gid])
+        {
+            CreateSprite(map->tiles[gid], object->x, object->y - object->height);
+        }
+        object = object->next;
     }
 }
 

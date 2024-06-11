@@ -16,6 +16,7 @@ public:
     ~Game();
     void run();
     void ImporAssets();
+    void CreateSprite(const tmx_tile *tile, int x, int y);
     void Setup(tmx_map *map, const std::string &player_start_position);
 
 private:
