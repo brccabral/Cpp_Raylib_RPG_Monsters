@@ -38,6 +38,7 @@ void Game::run()
         const Color bg = COLORS[std::string("gold")];
         ClearBackground(bg);
 
+        all_sprites.Update();
         all_sprites.Draw();
 
         EndDrawing();

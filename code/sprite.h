@@ -11,6 +11,7 @@ public:
     Sprite(Vector2 position, Texture2D *image, SpriteGroup *sprite_group, Rectangle imgRect);
     virtual ~Sprite();
     virtual void Draw() const;
+    virtual void Update();
 
 protected:
 

@@ -17,10 +17,21 @@ void Sprite::Draw() const
     DrawTextureRec(*image, imgRect, position, WHITE);
 }
 
+void Sprite::Update()
+{}
+
 void SpriteGroup::Draw() const
 {
     for (const auto &sprite: sprites)
     {
         sprite->Draw();
+    }
+}
+
+void SpriteGroup::Update()
+{
+    for (const auto &sprite: sprites)
+    {
+        sprite->Update();
     }
 }
