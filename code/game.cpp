@@ -9,13 +9,16 @@
 
 #include "entities.h"
 #include "raylib-tmx.h"
+#include "support.h"
 
 
 Game::Game(const int width, const int height)
 {
     InitWindow(width, height, "RPG Monsters");
     // SetTargetFPS(60);
+
     ImporAssets();
+
     Setup(tmx_maps["world"], "house");
     // Setup(tmx_maps["hospital"], "world");
 }
@@ -51,12 +54,14 @@ void Game::ImporAssets()
     tmx_maps["world"] = world;
     tmx_map *hospital = LoadTMX("resources/data/maps/hospital.tmx");
     tmx_maps["hospital"] = hospital;
+
+    overworld_frames["water"] = ImportFolder("resources/graphics/tilesets/water");
 }
 
 void Game::CreateSprite(const tmx_tile *tile, const int posX, const int posY)
 {
     const tmx_image *im = tile->image;
-    Texture2D *image;
+    Texture2D *image{};
     if (im && im->resource_image)
     {
         image = (Texture2D *) im->resource_image;
@@ -76,7 +81,7 @@ void Game::CreateSprite(const tmx_tile *tile, const int posX, const int posY)
         new Sprite(position, image, &all_sprites, srcRect);
     }
 }
-void Game::CreateTileLayer(tmx_map *map, const tmx_layer *layer)
+void Game::CreateTileLayer(const tmx_map *map, const tmx_layer *layer)
 {
     for (int y = 0; y < map->height; y++)
     {
@@ -92,12 +97,13 @@ void Game::CreateTileLayer(tmx_map *map, const tmx_layer *layer)
         }
     }
 }
-void Game::Setup(tmx_map *map, const std::string &player_start_position)
+void Game::Setup(const tmx_map *map, const std::string &player_start_position)
 {
     const tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
     const tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
     const tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
     const tmx_layer *terrain_top_layer = tmx_find_layer_by_name(map, "Terrain Top");
+    const tmx_layer *water_layer = tmx_find_layer_by_name(map, "Water");
 
     CreateTileLayer(map, terrain_layer);
     CreateTileLayer(map, terrain_top_layer);
@@ -125,6 +131,21 @@ void Game::Setup(tmx_map *map, const std::string &player_start_position)
         }
 
         entity = entity->next;
+    }
+
+    auto water = water_layer->content.objgr->head;
+    while (water)
+    {
+        for (int y = 0; y < water->height; y += TILE_SIZE)
+        {
+            for (int x = 0; x < water->width; x += TILE_SIZE)
+            {
+                new AnimatedSprite(
+                        {float(x + water->x), float(y + water->y)}, overworld_frames["water"], &all_sprites,
+                        {0, 0, TILE_SIZE, TILE_SIZE});
+            }
+        }
+        water = water->next;
     }
 }
 

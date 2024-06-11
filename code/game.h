@@ -16,14 +16,15 @@ public:
     ~Game();
     void run();
     void ImporAssets();
-    void CreateSprite(const tmx_tile *tile, int x, int y);
-    void CreateTileLayer(tmx_map *map, const tmx_layer *layer);
-    void Setup(tmx_map *map, const std::string &player_start_position);
+    void CreateSprite(const tmx_tile *tile, int posX, int posY);
+    void CreateTileLayer(const tmx_map *map, const tmx_layer *layer);
+    void Setup(const tmx_map *map, const std::string &player_start_position);
 
 private:
 
     void UnloadResources();
     std::map<std::string, tmx_map *> tmx_maps;
+    std::map<std::string, std::vector<Texture2D>> overworld_frames;
     AllSprites all_sprites{};
-    Player *player;
+    Player *player{};
 };

@@ -1,9 +1,10 @@
 #include "sprite.h"
 
+#include <iostream>
 #include <raymath.h>
 
 Sprite::Sprite(const Vector2 position, Texture2D *image, SpriteGroup *sprite_group, const Rectangle imgRect)
-    : position(position), image(image), imgRect(imgRect)
+    : position(position), imgRect(imgRect), image(image)
 {
     groups.push_back(sprite_group);
     sprite_group->sprites.push_back(this);
@@ -21,6 +22,14 @@ void Sprite::Draw(const Vector2 offset) const
 
 void Sprite::Update(const double deltaTime)
 {}
+
+AnimatedSprite::AnimatedSprite(
+        const Vector2 position, std::vector<Texture2D> &frames, SpriteGroup *sprite_group, const Rectangle imgRect)
+    : Sprite(position, &frames[0], sprite_group, imgRect)
+{
+    std::cout << "animated\n";
+    SpriteType = 1;
+}
 
 void SpriteGroup::Draw() const
 {

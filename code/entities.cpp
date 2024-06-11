@@ -3,9 +3,11 @@
 #include <iostream>
 #include <raymath.h>
 
-Player::Player(Vector2 position, Texture2D *image, SpriteGroup *sprite_group, Rectangle imgRect)
+Player::Player(const Vector2 position, Texture2D *image, SpriteGroup *sprite_group, const Rectangle imgRect)
     : Sprite(position, image, sprite_group, imgRect)
-{}
+{
+    SpriteType = 2;
+}
 
 void Player::Draw(const Vector2 offset) const
 {
@@ -45,7 +47,7 @@ void Player::Update(const double deltaTime)
     Move(deltaTime);
 }
 
-Vector2 Player::GetCenter()
+Vector2 Player::GetCenter() const
 {
     return {position.x + 64.0f / 2, position.y + 64.0f / 2};
     // return {position.x + imgRect.width / 2, position.y + imgRect.height / 2};
