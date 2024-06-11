@@ -7,9 +7,9 @@ Player::Player(Vector2 position, Texture2D *image, SpriteGroup *sprite_group, Re
     : Sprite(position, image, sprite_group, imgRect)
 {}
 
-void Player::Draw() const
+void Player::Draw(const Vector2 offset) const
 {
-    DrawRectangleV(position, {64, 64}, RED);
+    DrawRectangleV(Vector2Add(position, offset), {64, 64}, RED);
 }
 
 void Player::Input()

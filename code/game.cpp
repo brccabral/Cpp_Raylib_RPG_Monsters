@@ -7,7 +7,6 @@
 #define RAYLIB_TMX_IMPLEMENTATION
 #include <cstring>
 
-
 #include "entities.h"
 #include "raylib-tmx.h"
 
@@ -35,8 +34,7 @@ void Game::run()
     while (!WindowShouldClose())
     {
         BeginDrawing();
-        const Color bg = COLORS[std::string("gold")];
-        ClearBackground(bg);
+        ClearBackground(BLACK);
 
         all_sprites.Update(GetFrameTime());
         all_sprites.Draw();
@@ -99,11 +97,6 @@ void Game::Setup(tmx_map *map, const std::string &player_start_position)
             const Rectangle dest = {float(entity->x), float(entity->y), float(entity->width), float(entity->height)};
             Texture2D playertx_texture = LoadTexture("resources/graphics/characters/young_guy.png");
             new Player({float(entity->x), float(entity->y)}, &playertx_texture, &all_sprites, dest);
-
-            std::cout << entity->name << " ";
-            std::cout << entity->id << " ";
-            std::cout << entity->x << " ";
-            std::cout << entity->y << "\n";
         }
 
         entity = entity->next;

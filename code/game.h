@@ -1,11 +1,8 @@
 #pragma once
-#include "sprite.h"
-
-
 #include <map>
 #include <string>
 #include <tmx.h>
-#include <vector>
+#include "groups.h"
 
 
 class Game
@@ -22,5 +19,5 @@ private:
 
     void UnloadResources();
     std::map<std::string, tmx_map *> tmx_maps;
-    SpriteGroup all_sprites{};
+    AllSprites all_sprites{};
 };

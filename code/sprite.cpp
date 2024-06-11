@@ -1,5 +1,7 @@
 #include "sprite.h"
 
+#include <raymath.h>
+
 Sprite::Sprite(const Vector2 position, Texture2D *image, SpriteGroup *sprite_group, const Rectangle imgRect)
     : position(position), image(image), imgRect(imgRect)
 {
@@ -12,9 +14,9 @@ Sprite::~Sprite()
     UnloadTexture(*image);
 }
 
-void Sprite::Draw() const
+void Sprite::Draw(const Vector2 offset) const
 {
-    DrawTextureRec(*image, imgRect, position, WHITE);
+    DrawTextureRec(*image, imgRect, Vector2Add(position, offset), WHITE);
 }
 
 void Sprite::Update(const double deltaTime)
@@ -24,7 +26,7 @@ void SpriteGroup::Draw() const
 {
     for (const auto &sprite: sprites)
     {
-        sprite->Draw();
+        sprite->Draw({0, 0});
     }
 }
 
