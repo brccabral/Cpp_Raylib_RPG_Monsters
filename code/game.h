@@ -1,11 +1,10 @@
 #pragma once
-#include "entities.h"
-
-
 #include <map>
 #include <string>
 #include <tmx.h>
+#include "entities.h"
 #include "groups.h"
+#include "support.h"
 
 
 class Game
@@ -25,6 +24,7 @@ private:
     void UnloadResources();
     std::map<std::string, tmx_map *> tmx_maps;
     std::map<std::string, std::vector<Texture2D>> overworld_frames;
+    std::map<std::string, std::map<std::string, tilemap_name>> overworld_named_frames;
     AllSprites all_sprites{};
     Player *player{};
 };

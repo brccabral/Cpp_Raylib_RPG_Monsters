@@ -56,6 +56,7 @@ void Game::ImporAssets()
     tmx_maps["hospital"] = hospital;
 
     overworld_frames["water"] = ImportFolder("resources/graphics/tilesets/water");
+    overworld_named_frames["coast"] = coast_importer(24, 12, "resources/graphics/tilesets/coast.png");
 }
 
 void Game::CreateSprite(const tmx_tile *tile, const int posX, const int posY)
@@ -104,6 +105,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
     const tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
     const tmx_layer *terrain_top_layer = tmx_find_layer_by_name(map, "Terrain Top");
     const tmx_layer *water_layer = tmx_find_layer_by_name(map, "Water");
+    const tmx_layer *coast_layer = tmx_find_layer_by_name(map, "Coast");
 
     CreateTileLayer(map, terrain_layer);
     CreateTileLayer(map, terrain_top_layer);
@@ -146,6 +148,17 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
             }
         }
         water = water->next;
+    }
+
+    auto coast = coast_layer->content.objgr->head;
+    while (coast)
+    {
+        std::string terrain = tmx_get_property(coast->properties, "terrain")->value.string;
+        std::string side = tmx_get_property(coast->properties, "side")->value.string;
+        new AnimatedSprite(
+                {float(coast->x), float(coast->y)}, overworld_named_frames["coast"][terrain][side], &all_sprites,
+                {0, 0, TILE_SIZE, TILE_SIZE});
+        coast = coast->next;
     }
 }
 
