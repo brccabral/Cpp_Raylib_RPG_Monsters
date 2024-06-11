@@ -90,10 +90,15 @@ void Game::Setup(tmx_map *map, const std::string &player_start_position)
     auto entity = entities_layer->content.objgr->head;
     while (entity)
     {
-        if(strcmp(entity->name ,"Player") == 0)
+        if (strcmp(entity->name, "Player") == 0 &&
+            strcmp(tmx_get_property(entity->properties, "pos")->value.string, player_start_position.c_str()) == 0)
         {
             // Rectangle dest = {entity->x, entity.y, entity->width, entity->height};
-            std::cout << entity->name << " " << entity->id << "\n";
+
+            std::cout << entity->name << " ";
+            std::cout << entity->id << " ";
+            std::cout << entity->x << " ";
+            std::cout << entity->y << "\n";
         }
 
         entity = entity->next;
