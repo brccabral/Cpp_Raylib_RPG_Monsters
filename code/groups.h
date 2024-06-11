@@ -6,6 +6,6 @@ class AllSprites : public SpriteGroup
 {
 public:
 
-    void Draw() const;
-    Vector2 offset{100, 20};
+    void Draw(Vector2 player_center);
+    Vector2 offset{};
 };

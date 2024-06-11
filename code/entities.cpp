@@ -44,3 +44,9 @@ void Player::Update(const double deltaTime)
     Input();
     Move(deltaTime);
 }
+
+Vector2 Player::GetCenter()
+{
+    return {position.x + 64.0f / 2, position.y + 64.0f / 2};
+    // return {position.x + imgRect.width / 2, position.y + imgRect.height / 2};
+}

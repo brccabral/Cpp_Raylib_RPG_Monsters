@@ -37,7 +37,7 @@ void Game::run()
         ClearBackground(BLACK);
 
         all_sprites.Update(GetFrameTime());
-        all_sprites.Draw();
+        all_sprites.Draw(player->GetCenter());
 
         EndDrawing();
     }
@@ -96,7 +96,7 @@ void Game::Setup(tmx_map *map, const std::string &player_start_position)
         {
             const Rectangle dest = {float(entity->x), float(entity->y), float(entity->width), float(entity->height)};
             Texture2D playertx_texture = LoadTexture("resources/graphics/characters/young_guy.png");
-            new Player({float(entity->x), float(entity->y)}, &playertx_texture, &all_sprites, dest);
+            player = new Player({float(entity->x), float(entity->y)}, &playertx_texture, &all_sprites, dest);
         }
 
         entity = entity->next;

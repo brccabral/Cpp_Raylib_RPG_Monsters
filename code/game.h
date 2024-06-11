@@ -1,4 +1,7 @@
 #pragma once
+#include "entities.h"
+
+
 #include <map>
 #include <string>
 #include <tmx.h>
@@ -20,4 +23,5 @@ private:
     void UnloadResources();
     std::map<std::string, tmx_map *> tmx_maps;
     AllSprites all_sprites{};
+    Player *player;
 };

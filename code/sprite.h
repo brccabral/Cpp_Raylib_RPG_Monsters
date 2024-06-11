@@ -16,11 +16,11 @@ public:
 protected:
 
     Vector2 position{};
+    Rectangle imgRect{};
 
 private:
 
     Texture2D *image;
-    Rectangle imgRect{};
     std::vector<SpriteGroup *> groups;
 };
 

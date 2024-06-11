@@ -11,5 +11,6 @@ public:
     void Input();
     void Move(double deltaTime);
     void Update(double deltaTime) override;
+    [[nodiscard]] Vector2 GetCenter();
     Vector2 direction;
 };
