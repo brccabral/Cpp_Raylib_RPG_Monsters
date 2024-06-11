@@ -11,7 +11,7 @@ public:
     Sprite(Vector2 position, Texture2D *image, SpriteGroup *sprite_group, Rectangle imgRect);
     virtual ~Sprite();
     virtual void Draw() const;
-    virtual void Update();
+    virtual void Update(double deltaTime);
 
 protected:
 
@@ -29,6 +29,6 @@ class SpriteGroup
 public:
 
     void Draw() const;
-    void Update();
+    void Update(double deltaTime);
     std::vector<Sprite *> sprites;
 };

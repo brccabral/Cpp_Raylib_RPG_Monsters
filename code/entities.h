@@ -10,6 +10,6 @@ public:
     void Draw() const override;
     void Input();
     void Move(double deltaTime);
-    void Update() override;
+    void Update(double deltaTime) override;
     Vector2 direction;
 };

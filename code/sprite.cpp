@@ -17,7 +17,7 @@ void Sprite::Draw() const
     DrawTextureRec(*image, imgRect, position, WHITE);
 }
 
-void Sprite::Update()
+void Sprite::Update(const double deltaTime)
 {}
 
 void SpriteGroup::Draw() const
@@ -28,10 +28,10 @@ void SpriteGroup::Draw() const
     }
 }
 
-void SpriteGroup::Update()
+void SpriteGroup::Update(const double deltaTime)
 {
     for (const auto &sprite: sprites)
     {
-        sprite->Update();
+        sprite->Update(deltaTime);
     }
 }

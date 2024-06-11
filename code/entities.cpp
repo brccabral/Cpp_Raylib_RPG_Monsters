@@ -30,18 +30,17 @@ void Player::Input()
     if (IsKeyDown(KEY_RIGHT))
     {
         input_vector.x += 1;
-        std::cout << "right\n";
     }
     direction = input_vector;
-    Move(0);
 }
 
 void Player::Move(double deltaTime)
 {
-    position = Vector2Add(position, Vector2Scale(direction, 5));
+    position = Vector2Add(position, Vector2Scale(direction, 250 * deltaTime));
 }
 
-void Player::Update()
+void Player::Update(const double deltaTime)
 {
     Input();
+    Move(deltaTime);
 }

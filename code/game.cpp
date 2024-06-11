@@ -15,7 +15,7 @@
 Game::Game(const int width, const int height)
 {
     InitWindow(width, height, "RPG Monsters");
-    SetTargetFPS(60);
+    // SetTargetFPS(60);
     ImporAssets();
     Setup(tmx_maps["world"], "house");
 }
@@ -38,7 +38,7 @@ void Game::run()
         const Color bg = COLORS[std::string("gold")];
         ClearBackground(bg);
 
-        all_sprites.Update();
+        all_sprites.Update(GetFrameTime());
         all_sprites.Draw();
 
         EndDrawing();
@@ -53,8 +53,8 @@ void Game::ImporAssets()
 
 void Game::Setup(tmx_map *map, const std::string &player_start_position)
 {
-    tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
-    tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
+    const tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
+    const tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
 
     for (int y = 0; y < map->height; y++)
     {
@@ -96,7 +96,7 @@ void Game::Setup(tmx_map *map, const std::string &player_start_position)
         if (strcmp(entity->name, "Player") == 0 &&
             strcmp(tmx_get_property(entity->properties, "pos")->value.string, player_start_position.c_str()) == 0)
         {
-            Rectangle dest = {float(entity->x), float(entity->y), float(entity->width), float(entity->height)};
+            const Rectangle dest = {float(entity->x), float(entity->y), float(entity->width), float(entity->height)};
             Texture2D playertx_texture = LoadTexture("resources/graphics/characters/young_guy.png");
             new Player({float(entity->x), float(entity->y)}, &playertx_texture, &all_sprites, dest);
 
