@@ -7,6 +7,8 @@ class Entity : public SimpleSprite
 public:
 
     Entity(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg);
+    void Animate(double dt);
+    void Update(double dt) override;
 
 private:
 

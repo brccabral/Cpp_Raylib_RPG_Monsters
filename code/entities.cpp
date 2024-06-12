@@ -1,5 +1,7 @@
 #include "entities.h"
 #include <raymath.h>
+
+#include "settings.h"
 #include "support.h"
 
 
@@ -10,6 +12,17 @@ Entity::Entity(const Vector2 pos, const std::map<std::string, std::vector<TiledT
     frame_index = 0;
     tiled_texture = frames["down"][0];
     SpriteType = 3;
+}
+
+void Entity::Animate(const double dt)
+{
+    frame_index += ANIMATION_SPEED * dt;
+    tiled_texture = frames["down"][int(frame_index) % frames["down"].size()];
+}
+
+void Entity::Update(const double dt)
+{
+    Animate(dt);
 }
 
 Player::Player(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg)
@@ -49,6 +62,7 @@ void Player::Update(const double deltaTime)
 {
     Input();
     Move(deltaTime);
+    Animate(deltaTime);
 }
 
 Vector2 Player::GetCenter() const
