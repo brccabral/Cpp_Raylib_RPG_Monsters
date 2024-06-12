@@ -14,6 +14,7 @@ Entity::Entity(
     image = named_frames[GetState()][0];
     rect = image.rect;
     RectToCenter(rect, pos);
+    y_sort = GetRectCenter(rect).y;
     type = ENTITY;
 }
 
@@ -89,6 +90,7 @@ void Player::Update(const double deltaTime)
 {
     Input();
     Move(deltaTime);
+    y_sort = GetRectCenter(rect).y;
     Animate(deltaTime);
 }
 

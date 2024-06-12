@@ -34,10 +34,10 @@ void AllSprites::Draw(const Vector2 player_center)
             main_sprites.begin(), main_sprites.end(),
             [](const SimpleSprite *l, const SimpleSprite *r)
             {
-                const int zl = GetZ(l);
-                const int zr = GetZ(r);
+                const int yl = GetYsort(l);
+                const int yr = GetYsort(r);
 
-                return zl < zr;
+                return yl < yr;
             });
     for (const auto *bg: bg_sprites)
     {

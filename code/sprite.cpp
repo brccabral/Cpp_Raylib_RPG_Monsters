@@ -30,6 +30,7 @@ Sprite::Sprite(const Vector2 pos, const TiledTexture &img, SpriteGroup *sg, cons
     rect = image.rect;
     RectToTopleft(rect, pos);
     z = z_;
+    y_sort = GetRectCenter(rect).y;
     type = SPRITE;
 }
 
@@ -78,4 +79,19 @@ int GetZ(const SimpleSprite *sprite)
         z = ((Entity *) sprite)->z;
     }
     return z;
+}
+
+int GetYsort(const SimpleSprite *sprite)
+{
+    int y = 0;
+
+    if (sprite->type == SPRITE)
+    {
+        y = ((Sprite *) sprite)->y_sort;
+    }
+    else if (sprite->type == ENTITY)
+    {
+        y = ((Entity *) sprite)->y_sort;
+    }
+    return y;
 }
