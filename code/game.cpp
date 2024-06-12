@@ -57,6 +57,7 @@ void Game::ImporAssets()
 
     overworld_frames["water"] = ImportFolder("resources/graphics/tilesets/water");
     overworld_named_frames["coast"] = coast_importer(24, 12, "resources/graphics/tilesets/coast.png");
+    overworld_named_frames["characters"] = all_character_import("resources/graphics/characters");
 }
 
 void Game::CreateSprite(const tmx_tile *tile, const int posX, const int posY)

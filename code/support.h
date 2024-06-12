@@ -1,6 +1,7 @@
 #pragma once
 
 #include <filesystem>
+#include <iostream>
 #include <raylib.h>
 #include <vector>
 
@@ -61,13 +62,44 @@ inline std::map<std::string, tilemap_name> coast_importer(const int cols, const 
         new_dict[terrain] = {};
         for (const auto &[key, pos]: sides)
         {
-            std::vector<Texture2D> textures{};
             for (int row = 0; row < rows; row += 3)
             {
-                auto frame = frame_dict[{std::get<0>(pos) + index * 3, std::get<1>(pos) + row}];
-                textures.push_back(frame);
+                new_dict[terrain][key].push_back(frame_dict[{std::get<0>(pos) + index * 3, std::get<1>(pos) + row}]);
             }
-            new_dict[terrain][key] = textures;
+        }
+    }
+
+    return new_dict;
+}
+
+inline tilemap_name CharacterImporter(const int cols, const int rows, const char *path)
+{
+    auto frame_dic = ImportTilemap(cols, rows, path);
+    tilemap_name new_dic = {};
+    const std::vector<std::string> directions = {"down", "left", "right", "up"};
+    for (int row = 0; row < directions.size(); ++row)
+    {
+        for (int col = 0; col < cols; ++col)
+        {
+            new_dic[directions[row]].push_back(frame_dic[std::tuple<int, int>{col, row}]);
+            std::string idle_name = directions[row] + "_idle";
+            new_dic[idle_name] = {frame_dic[std::tuple<int, int>{0, row}]};
+        }
+    }
+    return new_dic;
+}
+
+inline std::map<std::string, tilemap_name> all_character_import(const char *path)
+{
+    std::map<std::string, tilemap_name> new_dict = {};
+
+    for (const auto &dirEntry: recursive_directory_iterator(path))
+    {
+        if (dirEntry.is_regular_file())
+        {
+            auto filename = dirEntry.path().stem().string();
+            new_dict[filename] = CharacterImporter(4, 4, dirEntry.path().c_str());
+            std::cout << dirEntry << "\n";
         }
     }
 
