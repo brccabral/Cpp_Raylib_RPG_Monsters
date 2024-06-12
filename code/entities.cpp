@@ -1,6 +1,7 @@
 #include <utility>
 #include "entities.h"
 #include <raymath.h>
+#include "raylib_utils.h"
 #include "settings.h"
 #include "support.h"
 
@@ -10,8 +11,9 @@ Entity::Entity(
         std::string facing_dir)
     : SimpleSprite(sg), facing_direction(std::move(facing_dir)), named_frames(named_frms)
 {
-    position = pos;
     image = named_frames[GetState()][0];
+    rect = image.rect;
+    RectToCenter(rect, pos);
     type = ENTITY;
 }
 
@@ -80,7 +82,7 @@ void Player::Input()
 
 void Player::Move(const double deltaTime)
 {
-    position = Vector2Add(position, Vector2Scale(direction, speed * deltaTime));
+    MoveRect(rect, Vector2Scale(direction, speed * deltaTime));
 }
 
 void Player::Update(const double deltaTime)
@@ -92,5 +94,5 @@ void Player::Update(const double deltaTime)
 
 Vector2 Player::GetCenter() const
 {
-    return {position.x + image.rect.width / 2, position.y + image.rect.height / 2};
+    return GetRectCenter(rect);
 }

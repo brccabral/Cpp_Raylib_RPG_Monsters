@@ -20,7 +20,7 @@ public:
 
 protected:
 
-    Vector2 position{};
+    Rectangle rect{};
     TiledTexture image{};
 
 private:

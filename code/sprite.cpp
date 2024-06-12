@@ -1,6 +1,7 @@
 #include "sprite.h"
 #include "entities.h"
 #include <raymath.h>
+#include "raylib_utils.h"
 #include "settings.h"
 
 SimpleSprite::SimpleSprite(SpriteGroup *sprite_group)
@@ -16,7 +17,7 @@ void SimpleSprite::Draw(const Vector2 offset) const
 {
     if (image.texture)
     {
-        DrawTextureRec(*image.texture, image.rect, Vector2Add(position, offset), WHITE);
+        DrawTextureRec(*image.texture, image.rect, Vector2Add({rect.x, rect.y}, offset), WHITE);
     }
 }
 
@@ -25,8 +26,9 @@ void SimpleSprite::Update(const double deltaTime)
 
 Sprite::Sprite(const Vector2 pos, const TiledTexture &img, SpriteGroup *sg, const int z_) : SimpleSprite(sg)
 {
-    position = pos;
     image = img;
+    rect = image.rect;
+    RectToTopleft(rect, pos);
     z = z_;
     type = SPRITE;
 }
