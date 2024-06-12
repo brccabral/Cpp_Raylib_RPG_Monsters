@@ -5,6 +5,7 @@
 
 #define RAYLIB_TMX_IMPLEMENTATION
 #include <cstring>
+#include <iostream>
 
 #include "entities.h"
 #include "raylib-tmx.h"
@@ -13,7 +14,7 @@
 
 Game::Game(const int width, const int height)
 {
-    // SetTraceLogLevel(LOG_ERROR);
+    SetTraceLogLevel(LOG_ERROR);
     InitWindow(width, height, "RPG Monsters");
     // SetTargetFPS(60);
 
@@ -128,18 +129,33 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
     auto entity = entities_layer->content.objgr->head;
     while (entity)
     {
-        if (strcmp(entity->name, "Player") == 0 &&
-            strcmp(tmx_get_property(entity->properties, "pos")->value.string, player_start_position.c_str()) == 0)
+        if (strcmp(entity->name, "Player") == 0)
         {
+            if (strcmp(tmx_get_property(entity->properties, "pos")->value.string, player_start_position.c_str()) == 0)
+            {
+                std::map<std::string, std::vector<TiledTexture>> named_tts;
+                for (const auto &[key, rectangles]: overworld_rect_frames["characters"]["player"])
+                {
+                    for (const auto rect: rectangles)
+                    {
+                        named_tts[key].push_back({&named_textures["characters"]["player"], rect});
+                    }
+                }
+                player = new Player({float(entity->x), float(entity->y)}, named_tts, &all_sprites);
+            }
+        }
+        else
+        {
+            std::string graphic = tmx_get_property(entity->properties, "graphic")->value.string;
             std::map<std::string, std::vector<TiledTexture>> named_tts;
-            for (const auto &[key, rectangles]: overworld_rect_frames["characters"]["player"])
+            for (const auto &[key, rectangles]: overworld_rect_frames["characters"][graphic])
             {
                 for (const auto rect: rectangles)
                 {
-                    named_tts[key].push_back({&named_textures["characters"]["player"], rect});
+                    named_tts[key].push_back({&named_textures["characters"][graphic], rect});
                 }
             }
-            player = new Player({float(entity->x), float(entity->y)}, named_tts, &all_sprites);
+            new Character({float(entity->x), float(entity->y)}, named_tts, &all_sprites);
         }
 
         entity = entity->next;

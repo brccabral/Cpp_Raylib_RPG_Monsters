@@ -42,6 +42,11 @@ std::string Entity::GetState()
     return facing_direction + (moving ? "" : "_idle");
 }
 
+Character::Character(
+        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg)
+    : Entity(pos, named_tts, sg)
+{}
+
 Player::Player(const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg)
     : Entity(pos, named_tts, sg)
 {

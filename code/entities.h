@@ -24,6 +24,13 @@ private:
     std::map<std::string, std::vector<TiledTexture>> frames;
 };
 
+class Character : public Entity
+{
+public:
+
+    Character(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg);
+};
+
 class Player : public Entity
 {
 public:
