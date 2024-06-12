@@ -6,19 +6,19 @@ class Entity : public SimpleSprite
 {
 public:
 
-    Entity(Vector2 pos, Texture2D *tx, SpriteGroup *sg);
+    Entity(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg);
 
 private:
 
     double frame_index;
-    tilerect_name frames;
+    std::map<std::string, std::vector<TiledTexture>> frames;
 };
 
 class Player : public Entity
 {
 public:
 
-    Player(Vector2 position, Texture2D *tx, SpriteGroup *sprite_group, tilerect_name rects);
+    Player(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg);
     void Input();
     void Move(double deltaTime);
     void Update(double deltaTime) override;

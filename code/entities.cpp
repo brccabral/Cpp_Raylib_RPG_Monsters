@@ -3,19 +3,18 @@
 #include "support.h"
 
 
-Entity::Entity(const Vector2 pos, Texture2D *tx, SpriteGroup *sg) : SimpleSprite(sg)
+Entity::Entity(const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg)
+    : SimpleSprite(sg), frame_index(0), frames(named_tts)
 {
     position = pos;
     frame_index = 0;
-    tiled_texture.texture = tx;
-    tiled_texture.rect = {0, 0, 128, 128};
+    tiled_texture = frames["down"][0];
     SpriteType = 3;
 }
 
-Player::Player(Vector2 position, Texture2D *tx, SpriteGroup *sprite_group, tilerect_name rects)
-    : Entity(position, tx, sprite_group)
+Player::Player(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg)
+    : Entity(pos, named_tts, sg)
 {
-    tiled_texture.rect = rects["down"][0];
     SpriteType = 2;
 }
 

@@ -131,9 +131,15 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         if (strcmp(entity->name, "Player") == 0 &&
             strcmp(tmx_get_property(entity->properties, "pos")->value.string, player_start_position.c_str()) == 0)
         {
-            player = new Player(
-                    {float(entity->x), float(entity->y)}, &named_textures["characters"]["player"], &all_sprites,
-                    overworld_rect_frames["characters"]["player"]);
+            std::map<std::string, std::vector<TiledTexture>> named_tts;
+            for (const auto &[key, rectangles]: overworld_rect_frames["characters"]["player"])
+            {
+                for (const auto rect: rectangles)
+                {
+                    named_tts[key].push_back({&named_textures["characters"]["player"], rect});
+                }
+            }
+            player = new Player({float(entity->x), float(entity->y)}, named_tts, &all_sprites);
         }
 
         entity = entity->next;
