@@ -7,6 +7,12 @@
 #include "support.h"
 
 
+struct TileInfo
+{
+    Vector2 position;
+    TiledTexture image;
+};
+
 class Game
 {
 public:
@@ -15,7 +21,7 @@ public:
     ~Game();
     void run();
     void ImporAssets();
-    void CreateSprite(const tmx_tile *tile, int posX, int posY, int z = WORLD_LAYERS["main"]);
+    static TileInfo GetTileInfo(const tmx_tile *tile, int posX, int posY);
     void CreateTileLayer(const tmx_map *map, const tmx_layer *layer, int z = WORLD_LAYERS["main"]);
     void Setup(const tmx_map *map, const std::string &player_start_position);
 

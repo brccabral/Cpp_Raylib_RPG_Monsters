@@ -42,6 +42,14 @@ private:
     std::vector<SpriteGroup *> groups;
 };
 
+// It is a Sprite with a small offset in the drawing sorting (delay in draw)
+class MonsterPatchSprite : public Sprite
+{
+public:
+
+    MonsterPatchSprite(Vector2 pos, const TiledTexture &img, SpriteGroup *sg);
+};
+
 class AnimatedSprite : public Sprite
 {
 public:

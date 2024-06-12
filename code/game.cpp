@@ -9,7 +9,6 @@
 #include "support.h"
 
 
-
 Game::Game(const int width, const int height)
 {
     SetTraceLogLevel(LOG_ERROR);
@@ -60,8 +59,9 @@ void Game::ImporAssets()
     overworld_rect_frames["characters"] = all_character_import("resources/graphics/characters");
 }
 
-void Game::CreateSprite(const tmx_tile *tile, const int posX, const int posY, const int z)
+TileInfo Game::GetTileInfo(const tmx_tile *tile, const int posX, const int posY)
 {
+    TileInfo tile_info{};
     const tmx_image *im = tile->image;
     Texture2D *map_texture{};
     if (im && im->resource_image)
@@ -81,8 +81,10 @@ void Game::CreateSprite(const tmx_tile *tile, const int posX, const int posY, co
         srcRect.width = tile->width;
         srcRect.height = tile->height;
 
-        new Sprite(position, {map_texture, srcRect}, &all_sprites, z);
+        tile_info.position = position;
+        tile_info.image = {map_texture, srcRect};
     }
+    return tile_info;
 }
 
 void Game::CreateTileLayer(const tmx_map *map, const tmx_layer *layer, const int z)
@@ -96,7 +98,8 @@ void Game::CreateTileLayer(const tmx_map *map, const tmx_layer *layer, const int
             if (map->tiles[gid])
             {
                 const tmx_tileset *ts = map->tiles[gid]->tileset;
-                CreateSprite(map->tiles[gid], x * ts->tile_width, y * ts->tile_height, z);
+                auto [position, image] = GetTileInfo(map->tiles[gid], x * ts->tile_width, y * ts->tile_height);
+                new Sprite(position, image, &all_sprites, z);
             }
         }
     }
@@ -127,11 +130,13 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
             }
             if (strcmp(name.c_str(), "top") == 0)
             {
-                CreateSprite(map->tiles[gid], object->x, object->y - object->height, WORLD_LAYERS["top"]);
+                auto [position, image] = GetTileInfo(map->tiles[gid], object->x, object->y - object->height);
+                new Sprite(position, image, &all_sprites, WORLD_LAYERS["top"]);
             }
             else
             {
-                CreateSprite(map->tiles[gid], object->x, object->y - object->height);
+                auto [position, image] = GetTileInfo(map->tiles[gid], object->x, object->y - object->height);
+                new Sprite(position, image, &all_sprites);
             }
         }
         object = object->next;
@@ -143,7 +148,8 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         const int gid = monster->content.gid;
         if (map->tiles[gid])
         {
-            CreateSprite(map->tiles[gid], monster->x, monster->y - monster->height);
+            auto [position, image] = GetTileInfo(map->tiles[gid], monster->x, monster->y - monster->height);
+            new MonsterPatchSprite(position, image, &all_sprites);
         }
         monster = monster->next;
     }

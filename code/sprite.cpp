@@ -34,6 +34,12 @@ Sprite::Sprite(const Vector2 pos, const TiledTexture &img, SpriteGroup *sg, cons
     type = SPRITE;
 }
 
+MonsterPatchSprite::MonsterPatchSprite(const Vector2 pos, const TiledTexture &img, SpriteGroup *sg)
+    : Sprite(pos, img, sg, WORLD_LAYERS["main"])
+{
+    y_sort -= 40;
+}
+
 AnimatedSprite::AnimatedSprite(
         const Vector2 position, const std::vector<TiledTexture> &frms, SpriteGroup *sprite_group, const int z)
     : Sprite(position, frms[0], sprite_group, z), frame_index(0), frames(frms)
