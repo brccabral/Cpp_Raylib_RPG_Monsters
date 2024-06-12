@@ -16,6 +16,8 @@ Game::Game(const int width, const int height)
     // SetTargetFPS(60);
 
     ImporAssets();
+    // create all_sprites after InitWindow for it uses LoadTexture
+    all_sprites = new AllSprites;
 
     Setup(tmx_maps["world"], "house");
     // Setup(tmx_maps["hospital"], "world");
@@ -24,10 +26,6 @@ Game::Game(const int width, const int height)
 Game::~Game()
 {
     UnloadResources();
-    for (const auto *sprite: all_sprites.sprites)
-    {
-        delete sprite;
-    }
     CloseWindow();
 }
 
@@ -35,12 +33,12 @@ void Game::run()
 {
     while (!WindowShouldClose())
     {
-        all_sprites.Update(GetFrameTime());
+        all_sprites->Update(GetFrameTime());
 
         BeginDrawing();
         ClearBackground(BLACK);
 
-        all_sprites.Draw(player->GetCenter());
+        all_sprites->Draw(player->GetCenter());
 
         EndDrawing();
     }
@@ -99,7 +97,7 @@ void Game::CreateTileLayer(const tmx_map *map, const tmx_layer *layer, const int
             {
                 const tmx_tileset *ts = map->tiles[gid]->tileset;
                 auto [position, image] = GetTileInfo(map->tiles[gid], x * ts->tile_width, y * ts->tile_height);
-                new Sprite(position, image, &all_sprites, z);
+                new Sprite(position, image, all_sprites, z);
             }
         }
     }
@@ -131,12 +129,12 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
             if (strcmp(name.c_str(), "top") == 0)
             {
                 auto [position, image] = GetTileInfo(map->tiles[gid], object->x, object->y - object->height);
-                new Sprite(position, image, &all_sprites, WORLD_LAYERS["top"]);
+                new Sprite(position, image, all_sprites, WORLD_LAYERS["top"]);
             }
             else
             {
                 auto [position, image] = GetTileInfo(map->tiles[gid], object->x, object->y - object->height);
-                new Sprite(position, image, &all_sprites);
+                new Sprite(position, image, all_sprites);
             }
         }
         object = object->next;
@@ -150,7 +148,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         {
             auto [position, image] = GetTileInfo(map->tiles[gid], monster->x, monster->y - monster->height);
             std::string biome = tmx_get_property(monster->properties, "biome")->value.string;
-            new MonsterPatchSprite(position, image, &all_sprites, biome);
+            new MonsterPatchSprite(position, image, all_sprites, biome);
         }
         monster = monster->next;
     }
@@ -171,7 +169,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                     }
                 }
                 std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
-                player = new Player({float(entity->x), float(entity->y)}, named_frames, &all_sprites, direction);
+                player = new Player({float(entity->x), float(entity->y)}, named_frames, all_sprites, direction);
             }
         }
         else
@@ -186,7 +184,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                 }
             }
             std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
-            new Character({float(entity->x), float(entity->y)}, named_frames, &all_sprites, direction);
+            new Character({float(entity->x), float(entity->y)}, named_frames, all_sprites, direction);
         }
 
         entity = entity->next;
@@ -205,7 +203,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                     frames.push_back({&overworld_frames["coast"][0], rect});
                 }
                 new AnimatedSprite(
-                        {float(x + water->x), float(y + water->y)}, frames, &all_sprites, WORLD_LAYERS["water"]);
+                        {float(x + water->x), float(y + water->y)}, frames, all_sprites, WORLD_LAYERS["water"]);
             }
         }
         water = water->next;
@@ -222,7 +220,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         {
             frames.push_back({&overworld_frames["coast"][0], rect});
         }
-        new AnimatedSprite({float(coast->x), float(coast->y)}, frames, &all_sprites, WORLD_LAYERS["bg"]);
+        new AnimatedSprite({float(coast->x), float(coast->y)}, frames, all_sprites, WORLD_LAYERS["bg"]);
         coast = coast->next;
     }
 }
@@ -245,4 +243,5 @@ void Game::UnloadResources()
             UnloadTexture(texture);
         }
     }
+    delete all_sprites;
 }

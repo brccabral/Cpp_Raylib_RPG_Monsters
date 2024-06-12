@@ -23,10 +23,10 @@ public:
     virtual void Draw(Vector2 offset) const;
     virtual void Update(double deltaTime);
     SpriteType type{SIMPLESPRITE};
+    Rectangle rect{};
 
 protected:
 
-    Rectangle rect{};
     TiledTexture image{};
 
 private:

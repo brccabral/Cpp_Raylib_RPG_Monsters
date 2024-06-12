@@ -5,6 +5,16 @@
 
 #include <algorithm>
 
+AllSprites::AllSprites()
+{
+    shadow = LoadTexture("resources/graphics/other/shadow.png");
+}
+
+AllSprites::~AllSprites()
+{
+    UnloadTexture(shadow);
+}
+
 void AllSprites::Draw(const Vector2 player_center)
 {
     offset = Vector2Subtract(player_center, Vector2Scale({WINDOW_WIDTH, WINDOW_HEIGHT}, 0.5));
@@ -45,6 +55,16 @@ void AllSprites::Draw(const Vector2 player_center)
     }
     for (const auto *main: main_sprites)
     {
+        if (main->type == ENTITY)
+        {
+            DrawTextureV(
+                    shadow,
+                    Vector2Add(
+                            {main->rect.x + main->rect.width / 2.0f - shadow.width / 2.0f,
+                             main->rect.y + main->rect.height - shadow.height},
+                            offset),
+                    WHITE);
+        }
         main->Draw(offset);
     }
     for (const auto *top: top_sprites)
