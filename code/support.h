@@ -1,7 +1,6 @@
 #pragma once
 
 #include <filesystem>
-#include <iostream>
 #include <map>
 #include <raylib.h>
 #include <vector>
@@ -18,40 +17,29 @@ inline std::vector<Texture2D> ImportFolder(const char *path)
     return frames;
 }
 
-typedef std::map<std::tuple<int, int>, Texture2D> tilemap_loc;
-
-inline tilemap_loc ImportTilemap(const int cols, const int rows, const char *path)
+inline std::map<std::string, Texture2D> ImportNamedFolder(const char *path)
 {
-    tilemap_loc frames;
-    const Image surf = LoadImage(path);
-    const int cell_width = surf.width / cols;
-    const int cell_height = surf.height / rows;
-    for (int row = 0; row < rows; ++row)
+    std::map<std::string, Texture2D> textures;
+    for (const auto &dirEntry: recursive_directory_iterator(path))
     {
-        for (int col = 0; col < cols; ++col)
-        {
-            const Rectangle cutout_rect = {
-                    float(col * cell_width), float(row * cell_height), float(cell_width), float(cell_height)};
-            const Image cutout_surf = ImageFromImage(surf, cutout_rect);
-            std::tuple<int, int> loc = {col, row};
-            frames[loc] = LoadTextureFromImage(cutout_surf);
-        }
+        auto filename = dirEntry.path().stem().string();
+        textures[filename] = LoadTexture(dirEntry.path().c_str());
     }
-    return frames;
+    return textures;
 }
 
-typedef std::map<std::string, std::vector<Texture2D>> tilemap_name;
+typedef std::map<std::string, std::vector<Rectangle>> tilerect_name;
 
-inline std::map<std::string, tilemap_name> coast_importer(const int cols, const int rows, const char *path)
+inline std::map<std::string, tilerect_name> coast_rects()
 {
-    auto frame_dict = ImportTilemap(cols, rows, path);
-    std::map<std::string, tilemap_name> new_dict;
+    std::map<std::string, tilerect_name> new_dict;
     const std::vector<std::string> terrains = {"grass", "grass_i", "sand_i", "sand", "rock", "rock_i", "ice", "ice_i"};
     const std::map<std::string, std::tuple<int, int>> sides = {
             {"topleft", {0, 0}}, //
             {"top", {1, 0}}, //
             {"topright", {2, 0}}, //
             {"left", {0, 1}}, //
+            {"middle", {1, 1}}, //
             {"right", {2, 1}}, //
             {"bottomleft", {0, 2}}, //
             {"bottom", {1, 2}}, //
@@ -63,9 +51,11 @@ inline std::map<std::string, tilemap_name> coast_importer(const int cols, const 
         new_dict[terrain] = {};
         for (const auto &[key, pos]: sides)
         {
-            for (int row = 0; row < rows; row += 3)
+            for (int row = 0; row < 4; ++row)
             {
-                new_dict[terrain][key].push_back(frame_dict[{std::get<0>(pos) + index * 3, std::get<1>(pos) + row}]);
+                // new_dict[terrain][key].push_back(frame_dict[{std::get<0>(pos) + index * 3, std::get<1>(pos) + row}]);
+                new_dict[terrain][key].push_back(
+                        {(std::get<0>(pos) + index * 3) * 64.0f, (std::get<1>(pos) + row * 3) * 64.0f, 64.0f, 64.0f});
             }
         }
     }
@@ -73,26 +63,25 @@ inline std::map<std::string, tilemap_name> coast_importer(const int cols, const 
     return new_dict;
 }
 
-inline tilemap_name CharacterImporter(const int cols, const int rows, const char *path)
+inline tilerect_name CharacterImporter(const int cols, const int rows, const char *path)
 {
-    auto frame_dic = ImportTilemap(cols, rows, path);
-    tilemap_name new_dic = {};
+    tilerect_name new_dic = {};
     const std::vector<std::string> directions = {"down", "left", "right", "up"};
     for (int row = 0; row < directions.size(); ++row)
     {
         for (int col = 0; col < cols; ++col)
         {
-            new_dic[directions[row]].push_back(frame_dic[std::tuple<int, int>{col, row}]);
+            new_dic[directions[row]].push_back({col * 128.0f, row * 128.0f, 128.0f, 128.0f});
             std::string idle_name = directions[row] + "_idle";
-            new_dic[idle_name] = {frame_dic[std::tuple<int, int>{0, row}]};
+            new_dic[idle_name] = {{0, row * 128.0f, 128.0f, 128.0f}};
         }
     }
     return new_dic;
 }
 
-inline std::map<std::string, tilemap_name> all_character_import(const char *path)
+inline std::map<std::string, tilerect_name> all_character_import(const char *path)
 {
-    std::map<std::string, tilemap_name> new_dict = {};
+    std::map<std::string, tilerect_name> new_dict = {};
 
     for (const auto &dirEntry: recursive_directory_iterator(path))
     {

@@ -1,7 +1,5 @@
 #pragma once
 #include "tiledtexture.h"
-
-
 #include <raylib.h>
 #include <vector>
 
@@ -13,7 +11,8 @@ public:
 
 
     explicit SimpleSprite(SpriteGroup *sprite_group);
-    virtual ~SimpleSprite();
+    virtual ~SimpleSprite() = default;
+    ;
     virtual void Draw(Vector2 offset) const;
     virtual void Update(double deltaTime);
     int SpriteType{0};
@@ -32,7 +31,7 @@ class Sprite : public SimpleSprite
 {
 public:
 
-    Sprite(Vector2 pos, Texture2D *tex, Rectangle rect, SpriteGroup *sg);
+    Sprite(Vector2 pos, Texture2D *tx, Rectangle rect, SpriteGroup *sg);
 
 private:
 
@@ -43,14 +42,14 @@ class AnimatedSprite : public Sprite
 {
 public:
 
-    AnimatedSprite(Vector2 position, std::vector<Texture2D> &frames, SpriteGroup *sprite_group);
+    AnimatedSprite(Vector2 position, Texture2D *tx, const std::vector<Rectangle> &rects, SpriteGroup *sprite_group);
     void Animate(double deltaTime);
     void Update(double deltaTime) override;
 
 private:
 
     double frame_index;
-    std::vector<Texture2D> frames;
+    std::vector<Rectangle> frames;
 };
 
 class SpriteGroup

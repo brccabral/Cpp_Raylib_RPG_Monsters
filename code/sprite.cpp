@@ -23,33 +23,25 @@ void SimpleSprite::Draw(const Vector2 offset) const
 void SimpleSprite::Update(const double deltaTime)
 {}
 
-SimpleSprite::~SimpleSprite()
-{
-    if (tiled_texture.texture)
-    {
-        UnloadTexture(*tiled_texture.texture);
-    }
-}
-
-Sprite::Sprite(const Vector2 pos, Texture2D *tex, Rectangle rect, SpriteGroup *sg) : SimpleSprite(sg)
+Sprite::Sprite(const Vector2 pos, Texture2D *tx, Rectangle rect, SpriteGroup *sg) : SimpleSprite(sg)
 {
     position = pos;
-    tiled_texture.texture = tex;
+    tiled_texture.texture = tx;
     tiled_texture.rect = rect;
     SpriteType = 4;
 }
 
-AnimatedSprite::AnimatedSprite(const Vector2 position, std::vector<Texture2D> &frames, SpriteGroup *sprite_group)
-    : Sprite(position, &frames[0], {}, sprite_group), frame_index(0), frames(frames)
+AnimatedSprite::AnimatedSprite(
+        const Vector2 position, Texture2D *tx, const std::vector<Rectangle> &rects, SpriteGroup *sprite_group)
+    : Sprite(position, tx, rects[0], sprite_group), frame_index(0), frames(rects)
 {
-    tiled_texture.rect = {0, 0, TILE_SIZE, TILE_SIZE};
     SpriteType = 1;
 }
 
 void AnimatedSprite::Animate(const double deltaTime)
 {
     frame_index += ANIMATION_SPEED * deltaTime;
-    tiled_texture.texture = &frames[int(frame_index) % frames.size()];
+    tiled_texture.rect = frames[int(frame_index) % frames.size()];
 }
 
 void AnimatedSprite::Update(const double deltaTime)

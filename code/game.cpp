@@ -15,7 +15,7 @@ Game::Game(const int width, const int height)
 {
     // SetTraceLogLevel(LOG_ERROR);
     InitWindow(width, height, "RPG Monsters");
-    SetTargetFPS(60);
+    // SetTargetFPS(60);
 
     ImporAssets();
 
@@ -25,11 +25,11 @@ Game::Game(const int width, const int height)
 
 Game::~Game()
 {
+    UnloadResources();
     for (const auto sprite: all_sprites.sprites)
     {
         delete sprite;
     }
-    UnloadResources();
     CloseWindow();
 }
 
@@ -55,9 +55,10 @@ void Game::ImporAssets()
     tmx_map *hospital = LoadTMX("resources/data/maps/hospital.tmx");
     tmx_maps["hospital"] = hospital;
 
-    overworld_frames["water"] = ImportFolder("resources/graphics/tilesets/water");
-    overworld_named_frames["coast"] = coast_importer(24, 12, "resources/graphics/tilesets/coast.png");
-    overworld_named_frames["characters"] = all_character_import("resources/graphics/characters");
+    overworld_frames["coast"] = {LoadTexture("resources/graphics/tilesets/coast.png")};
+    named_textures["characters"] = ImportNamedFolder("resources/graphics/characters");
+    overworld_rect_frames["coast"] = coast_rects();
+    overworld_rect_frames["characters"] = all_character_import("resources/graphics/characters");
 }
 
 void Game::CreateSprite(const tmx_tile *tile, const int posX, const int posY)
@@ -131,8 +132,8 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
             strcmp(tmx_get_property(entity->properties, "pos")->value.string, player_start_position.c_str()) == 0)
         {
             player = new Player(
-                    {float(entity->x), float(entity->y)}, overworld_named_frames["characters"]["player"], &all_sprites,
-                    {float(0), float(0), float(128), float(128)});
+                    {float(entity->x), float(entity->y)}, &named_textures["characters"]["player"], &all_sprites,
+                    overworld_rect_frames["characters"]["player"]);
         }
 
         entity = entity->next;
@@ -145,7 +146,9 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         {
             for (int x = 0; x < water->width; x += TILE_SIZE)
             {
-                new AnimatedSprite({float(x + water->x), float(y + water->y)}, overworld_frames["water"], &all_sprites);
+                new AnimatedSprite(
+                        {float(x + water->x), float(y + water->y)}, &overworld_frames["coast"][0],
+                        overworld_rect_frames["coast"]["grass"]["middle"], &all_sprites);
             }
         }
         water = water->next;
@@ -157,7 +160,8 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         std::string terrain = tmx_get_property(coast->properties, "terrain")->value.string;
         std::string side = tmx_get_property(coast->properties, "side")->value.string;
         new AnimatedSprite(
-                {float(coast->x), float(coast->y)}, overworld_named_frames["coast"][terrain][side], &all_sprites);
+                {float(coast->x), float(coast->y)}, &overworld_frames["coast"][0],
+                overworld_rect_frames["coast"][terrain][side], &all_sprites);
         coast = coast->next;
     }
 }
@@ -165,4 +169,19 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
 void Game::UnloadResources()
 {
     UnloadTMX(tmx_maps["world"]);
+    UnloadTMX(tmx_maps["hospital"]);
+    for (const auto &[key, textures]: overworld_frames)
+    {
+        for (const auto texture: textures)
+        {
+            UnloadTexture(texture);
+        }
+    }
+    for (const auto &[key, named_texture]: named_textures)
+    {
+        for (const auto &[name, texture]: named_texture)
+        {
+            UnloadTexture(texture);
+        }
+    }
 }
