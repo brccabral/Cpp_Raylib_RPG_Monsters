@@ -25,7 +25,7 @@ Game::Game(const int width, const int height)
 Game::~Game()
 {
     UnloadResources();
-    for (const auto sprite: all_sprites.sprites)
+    for (const auto *sprite: all_sprites.sprites)
     {
         delete sprite;
     }
@@ -121,7 +121,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         if (map->tiles[gid])
         {
             std::string name;
-            if(object->name)
+            if (object->name)
             {
                 name = object->name;
             }
@@ -198,8 +198,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                     frames.push_back({&overworld_frames["coast"][0], rect});
                 }
                 new AnimatedSprite(
-                        {float(x + water->x), float(y + water->y)}, frames, &all_sprites,
-                        WORLD_LAYERS["water"]);
+                        {float(x + water->x), float(y + water->y)}, frames, &all_sprites, WORLD_LAYERS["water"]);
             }
         }
         water = water->next;

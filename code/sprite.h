@@ -1,6 +1,6 @@
 #pragma once
-#include <raylib.h>
 #include <vector>
+#include <raylib.h>
 #include "settings.h"
 #include "tiledtexture.h"
 
@@ -16,8 +16,7 @@ public:
 
     virtual void Draw(Vector2 offset) const;
     virtual void Update(double deltaTime);
-    int SpriteType{0};
-    int z = WORLD_LAYERS["main"];
+    SpriteType type{SIMPLESPRITE};
 
 protected:
 
@@ -34,6 +33,9 @@ class Sprite : public SimpleSprite
 public:
 
     Sprite(Vector2 pos, const TiledTexture &img, SpriteGroup *sg, int z_ = WORLD_LAYERS["main"]);
+
+    int z = WORLD_LAYERS["main"];
+    int y_sort{};
 
 private:
 
@@ -55,6 +57,8 @@ private:
     double frame_index;
     std::vector<TiledTexture> frames;
 };
+
+int GetZ(const SimpleSprite *sprite);
 
 class SpriteGroup
 {

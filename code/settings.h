@@ -92,3 +92,10 @@ inline std::map<std::string, std::map<std::string, BattleChoice>> BATTLE_CHOICES
                 }, //
         }, //
 };
+
+enum SpriteType
+{
+    SIMPLESPRITE,
+    SPRITE,
+    ENTITY,
+};

@@ -12,7 +12,7 @@ Entity::Entity(
 {
     position = pos;
     image = named_frames[GetState()][0];
-    SpriteType = 3;
+    type = ENTITY;
 }
 
 void Entity::Animate(const double dt)
@@ -54,7 +54,6 @@ Player::Player(
         std::string facing_dir)
     : Entity(pos, named_frms, sg, std::move(facing_dir))
 {
-    SpriteType = 2;
 }
 
 void Player::Input()

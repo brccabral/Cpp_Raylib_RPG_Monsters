@@ -11,6 +11,9 @@ public:
     void Animate(double dt);
     void Update(double dt) override;
 
+    int z = WORLD_LAYERS["main"];
+    int y_sort{};
+
 protected:
 
     Vector2 direction{};
@@ -23,7 +26,6 @@ private:
 
     double frame_index{};
     std::map<std::string, std::vector<TiledTexture>> named_frames{};
-    int z = WORLD_LAYERS["main"];
 };
 
 class Character : public Entity

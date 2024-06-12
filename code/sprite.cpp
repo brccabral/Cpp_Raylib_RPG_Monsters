@@ -1,4 +1,5 @@
 #include "sprite.h"
+#include "entities.h"
 #include <raymath.h>
 #include "settings.h"
 
@@ -27,15 +28,13 @@ Sprite::Sprite(const Vector2 pos, const TiledTexture &img, SpriteGroup *sg, cons
     position = pos;
     image = img;
     z = z_;
-    SpriteType = 4;
+    type = SPRITE;
 }
 
 AnimatedSprite::AnimatedSprite(
         const Vector2 position, const std::vector<TiledTexture> &frms, SpriteGroup *sprite_group, const int z)
     : Sprite(position, frms[0], sprite_group, z), frame_index(0), frames(frms)
-{
-    SpriteType = 1;
-}
+{}
 
 void AnimatedSprite::Animate(const double deltaTime)
 {
@@ -50,7 +49,7 @@ void AnimatedSprite::Update(const double deltaTime)
 
 void SpriteGroup::Draw() const
 {
-    for (const auto &sprite: sprites)
+    for (const auto *sprite: sprites)
     {
         sprite->Draw({0, 0});
     }
@@ -58,8 +57,23 @@ void SpriteGroup::Draw() const
 
 void SpriteGroup::Update(const double deltaTime)
 {
-    for (const auto &sprite: sprites)
+    for (auto *sprite: sprites)
     {
         sprite->Update(deltaTime);
     }
+}
+
+int GetZ(const SimpleSprite *sprite)
+{
+    int z = 0;
+
+    if (sprite->type == SPRITE)
+    {
+        z = ((Sprite *) sprite)->z;
+    }
+    else if (sprite->type == ENTITY)
+    {
+        z = ((Entity *) sprite)->z;
+    }
+    return z;
 }
