@@ -6,7 +6,7 @@ class Entity : public SimpleSprite
 {
 public:
 
-    Entity(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg,
+    Entity(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms, SpriteGroup *sg,
            std::string facing_dir);
     void Animate(double dt);
     void Update(double dt) override;
@@ -21,8 +21,8 @@ private:
 
     std::string GetState();
 
-    double frame_index;
-    std::map<std::string, std::vector<TiledTexture>> frames;
+    double frame_index{};
+    std::map<std::string, std::vector<TiledTexture>> named_frames{};
     int z = WORLD_LAYERS["main"];
 };
 
@@ -31,7 +31,7 @@ class Character : public Entity
 public:
 
     Character(
-            Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg,
+            Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms, SpriteGroup *sg,
             std::string facing_dir);
 };
 
@@ -39,7 +39,7 @@ class Player : public Entity
 {
 public:
 
-    Player(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg,
+    Player(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms, SpriteGroup *sg,
            std::string facing_dir);
     void Input();
     void Move(double deltaTime);

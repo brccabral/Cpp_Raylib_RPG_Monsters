@@ -2,10 +2,8 @@
 #include <raylib.h>
 
 
-class TiledTexture
+typedef struct TiledTexture
 {
-public:
-
     Texture2D *texture;
     Rectangle rect;
-};
+} TiledTexture;

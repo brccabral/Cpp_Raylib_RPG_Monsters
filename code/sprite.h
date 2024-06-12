@@ -22,7 +22,7 @@ public:
 protected:
 
     Vector2 position{};
-    TiledTexture tiled_texture{};
+    TiledTexture image{};
 
 private:
 
@@ -33,7 +33,7 @@ class Sprite : public SimpleSprite
 {
 public:
 
-    Sprite(Vector2 pos, const TiledTexture &tt, SpriteGroup *sg, int z_ = WORLD_LAYERS["main"]);
+    Sprite(Vector2 pos, const TiledTexture &img, SpriteGroup *sg, int z_ = WORLD_LAYERS["main"]);
 
 private:
 
@@ -45,7 +45,7 @@ class AnimatedSprite : public Sprite
 public:
 
     AnimatedSprite(
-            Vector2 position, const std::vector<TiledTexture> &tts, SpriteGroup *sprite_group,
+            Vector2 position, const std::vector<TiledTexture> &frms, SpriteGroup *sprite_group,
             int z = WORLD_LAYERS["main"]);
     void Animate(double deltaTime);
     void Update(double deltaTime) override;

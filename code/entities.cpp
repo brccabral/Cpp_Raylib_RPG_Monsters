@@ -1,27 +1,24 @@
+#include <utility>
 #include "entities.h"
 #include <raymath.h>
-
-#include <utility>
-
 #include "settings.h"
 #include "support.h"
 
 
 Entity::Entity(
-        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg,
+        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms, SpriteGroup *sg,
         std::string facing_dir)
-    : SimpleSprite(sg), facing_direction(std::move(facing_dir)), frame_index(0), frames(named_tts)
+    : SimpleSprite(sg), facing_direction(std::move(facing_dir)), named_frames(named_frms)
 {
     position = pos;
-    frame_index = 0;
-    tiled_texture = frames[GetState()][0];
+    image = named_frames[GetState()][0];
     SpriteType = 3;
 }
 
 void Entity::Animate(const double dt)
 {
     frame_index += ANIMATION_SPEED * dt;
-    tiled_texture = frames[GetState()][int(frame_index) % frames[GetState()].size()];
+    image = named_frames[GetState()][int(frame_index) % named_frames[GetState()].size()];
 }
 
 void Entity::Update(const double dt)
@@ -47,15 +44,15 @@ std::string Entity::GetState()
 }
 
 Character::Character(
-        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg,
+        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms, SpriteGroup *sg,
         std::string facing_dir)
-    : Entity(pos, named_tts, sg, std::move(facing_dir))
+    : Entity(pos, named_frms, sg, std::move(facing_dir))
 {}
 
 Player::Player(
-        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg,
+        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms, SpriteGroup *sg,
         std::string facing_dir)
-    : Entity(pos, named_tts, sg, std::move(facing_dir))
+    : Entity(pos, named_frms, sg, std::move(facing_dir))
 {
     SpriteType = 2;
 }
@@ -96,5 +93,5 @@ void Player::Update(const double deltaTime)
 
 Vector2 Player::GetCenter() const
 {
-    return {position.x + tiled_texture.rect.width / 2, position.y + tiled_texture.rect.height / 2};
+    return {position.x + image.rect.width / 2, position.y + image.rect.height / 2};
 }

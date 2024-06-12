@@ -1,8 +1,8 @@
 #pragma once
 #include <map>
-#include <raylib.h>
 #include <string>
 #include <utility>
+#include <raylib.h>
 
 constexpr int WINDOW_WIDTH = 1280;
 constexpr int WINDOW_HEIGHT = 720;

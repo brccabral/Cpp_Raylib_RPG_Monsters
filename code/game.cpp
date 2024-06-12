@@ -1,14 +1,13 @@
-#include "game.h"
+#include <cstring>
 #include <raylib.h>
+#define RAYLIB_TMX_IMPLEMENTATION
+#include "raylib-tmx.h"
+#include "game.h"
 #include "settings.h"
 #include "sprite.h"
-
-#define RAYLIB_TMX_IMPLEMENTATION
-#include <cstring>
-
 #include "entities.h"
-#include "raylib-tmx.h"
 #include "support.h"
+
 
 
 Game::Game(const int width, const int height)
@@ -156,31 +155,31 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         {
             if (strcmp(tmx_get_property(entity->properties, "pos")->value.string, player_start_position.c_str()) == 0)
             {
-                std::map<std::string, std::vector<TiledTexture>> named_tts;
+                std::map<std::string, std::vector<TiledTexture>> named_frames;
                 for (const auto &[key, rectangles]: overworld_rect_frames["characters"]["player"])
                 {
                     for (const auto rect: rectangles)
                     {
-                        named_tts[key].push_back({&named_textures["characters"]["player"], rect});
+                        named_frames[key].push_back({&named_textures["characters"]["player"], rect});
                     }
                 }
                 std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
-                player = new Player({float(entity->x), float(entity->y)}, named_tts, &all_sprites, direction);
+                player = new Player({float(entity->x), float(entity->y)}, named_frames, &all_sprites, direction);
             }
         }
         else
         {
             std::string graphic = tmx_get_property(entity->properties, "graphic")->value.string;
-            std::map<std::string, std::vector<TiledTexture>> named_tts;
+            std::map<std::string, std::vector<TiledTexture>> named_frames;
             for (const auto &[key, rectangles]: overworld_rect_frames["characters"][graphic])
             {
                 for (const auto rect: rectangles)
                 {
-                    named_tts[key].push_back({&named_textures["characters"][graphic], rect});
+                    named_frames[key].push_back({&named_textures["characters"][graphic], rect});
                 }
             }
             std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
-            new Character({float(entity->x), float(entity->y)}, named_tts, &all_sprites, direction);
+            new Character({float(entity->x), float(entity->y)}, named_frames, &all_sprites, direction);
         }
 
         entity = entity->next;
@@ -193,13 +192,13 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         {
             for (int x = 0; x < water->width; x += TILE_SIZE)
             {
-                std::vector<TiledTexture> tiled_textures;
+                std::vector<TiledTexture> frames;
                 for (const auto rect: overworld_rect_frames["coast"]["grass"]["middle"])
                 {
-                    tiled_textures.push_back({&overworld_frames["coast"][0], rect});
+                    frames.push_back({&overworld_frames["coast"][0], rect});
                 }
                 new AnimatedSprite(
-                        {float(x + water->x), float(y + water->y)}, tiled_textures, &all_sprites,
+                        {float(x + water->x), float(y + water->y)}, frames, &all_sprites,
                         WORLD_LAYERS["water"]);
             }
         }
@@ -212,12 +211,12 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         std::string terrain = tmx_get_property(coast->properties, "terrain")->value.string;
         std::string side = tmx_get_property(coast->properties, "side")->value.string;
 
-        std::vector<TiledTexture> tiled_textures;
+        std::vector<TiledTexture> frames;
         for (const auto rect: overworld_rect_frames["coast"][terrain][side])
         {
-            tiled_textures.push_back({&overworld_frames["coast"][0], rect});
+            frames.push_back({&overworld_frames["coast"][0], rect});
         }
-        new AnimatedSprite({float(coast->x), float(coast->y)}, tiled_textures, &all_sprites, WORLD_LAYERS["bg"]);
+        new AnimatedSprite({float(coast->x), float(coast->y)}, frames, &all_sprites, WORLD_LAYERS["bg"]);
         coast = coast->next;
     }
 }
