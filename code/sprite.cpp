@@ -1,8 +1,12 @@
 #include "sprite.h"
 #include "entities.h"
 #include <raymath.h>
+
+#include <utility>
 #include "raylib_utils.h"
 #include "settings.h"
+
+#include <cstring>
 
 SimpleSprite::SimpleSprite(SpriteGroup *sprite_group)
 {
@@ -34,10 +38,15 @@ Sprite::Sprite(const Vector2 pos, const TiledTexture &img, SpriteGroup *sg, cons
     type = SPRITE;
 }
 
-MonsterPatchSprite::MonsterPatchSprite(const Vector2 pos, const TiledTexture &img, SpriteGroup *sg)
-    : Sprite(pos, img, sg, WORLD_LAYERS["main"])
+MonsterPatchSprite::MonsterPatchSprite(const Vector2 pos, const TiledTexture &img, SpriteGroup *sg, std::string bio)
+    : Sprite(pos, img, sg, WORLD_LAYERS["main"]), biome(std::move(bio))
 {
     y_sort -= 40;
+    // move sand patches to background drawing layer
+    if (strcmp(biome.c_str(), "sand") == 0)
+    {
+        z = WORLD_LAYERS["bg"];
+    }
 }
 
 AnimatedSprite::AnimatedSprite(

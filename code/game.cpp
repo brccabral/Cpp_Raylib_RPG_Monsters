@@ -149,7 +149,8 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         if (map->tiles[gid])
         {
             auto [position, image] = GetTileInfo(map->tiles[gid], monster->x, monster->y - monster->height);
-            new MonsterPatchSprite(position, image, &all_sprites);
+            std::string biome = tmx_get_property(monster->properties, "biome")->value.string;
+            new MonsterPatchSprite(position, image, &all_sprites, biome);
         }
         monster = monster->next;
     }

@@ -53,7 +53,11 @@ class MonsterPatchSprite : public Sprite
 {
 public:
 
-    MonsterPatchSprite(Vector2 pos, const TiledTexture &img, SpriteGroup *sg);
+    MonsterPatchSprite(Vector2 pos, const TiledTexture &img, SpriteGroup *sg, std::string bio);
+
+private:
+
+    std::string biome;
 };
 
 class AnimatedSprite : public Sprite
