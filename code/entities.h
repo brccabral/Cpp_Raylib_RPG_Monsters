@@ -10,7 +10,15 @@ public:
     void Animate(double dt);
     void Update(double dt) override;
 
+protected:
+
+    Vector2 direction{};
+    float speed = 250;
+    std::string facing_direction = "down";
+
 private:
+
+    std::string GetState();
 
     double frame_index;
     std::map<std::string, std::vector<TiledTexture>> frames;
@@ -25,5 +33,4 @@ public:
     void Move(double deltaTime);
     void Update(double deltaTime) override;
     [[nodiscard]] Vector2 GetCenter() const;
-    Vector2 direction{};
 };

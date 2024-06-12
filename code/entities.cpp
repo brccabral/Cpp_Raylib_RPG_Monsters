@@ -10,14 +10,14 @@ Entity::Entity(const Vector2 pos, const std::map<std::string, std::vector<TiledT
 {
     position = pos;
     frame_index = 0;
-    tiled_texture = frames["down"][0];
+    tiled_texture = frames[GetState()][0];
     SpriteType = 3;
 }
 
 void Entity::Animate(const double dt)
 {
     frame_index += ANIMATION_SPEED * dt;
-    tiled_texture = frames["down"][int(frame_index) % frames["down"].size()];
+    tiled_texture = frames[GetState()][int(frame_index) % frames[GetState()].size()];
 }
 
 void Entity::Update(const double dt)
@@ -25,7 +25,24 @@ void Entity::Update(const double dt)
     Animate(dt);
 }
 
-Player::Player(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg)
+std::string Entity::GetState()
+{
+    const bool moving = (direction.x || direction.y);
+    if (moving)
+    {
+        if (direction.x)
+        {
+            facing_direction = direction.x > 0 ? "right" : "left";
+        }
+        if (direction.y)
+        {
+            facing_direction = direction.y > 0 ? "down" : "up";
+        }
+    }
+    return facing_direction + (moving ? "" : "_idle");
+}
+
+Player::Player(const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg)
     : Entity(pos, named_tts, sg)
 {
     SpriteType = 2;
@@ -55,7 +72,7 @@ void Player::Input()
 
 void Player::Move(const double deltaTime)
 {
-    position = Vector2Add(position, Vector2Scale(direction, 250 * deltaTime));
+    position = Vector2Add(position, Vector2Scale(direction, speed * deltaTime));
 }
 
 void Player::Update(const double deltaTime)
@@ -67,6 +84,5 @@ void Player::Update(const double deltaTime)
 
 Vector2 Player::GetCenter() const
 {
-    return {position.x + 64.0f / 2, position.y + 64.0f / 2};
-    // return {position.x + imgRect.width / 2, position.y + imgRect.height / 2};
+    return {position.x + tiled_texture.rect.width / 2, position.y + tiled_texture.rect.height / 2};
 }
