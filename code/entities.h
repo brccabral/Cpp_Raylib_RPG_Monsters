@@ -6,7 +6,8 @@ class Entity : public SimpleSprite
 {
 public:
 
-    Entity(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg);
+    Entity(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg,
+           std::string facing_dir);
     void Animate(double dt);
     void Update(double dt) override;
 
@@ -28,14 +29,17 @@ class Character : public Entity
 {
 public:
 
-    Character(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg);
+    Character(
+            Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg,
+            std::string facing_dir);
 };
 
 class Player : public Entity
 {
 public:
 
-    Player(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg);
+    Player(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg,
+           std::string facing_dir);
     void Input();
     void Move(double deltaTime);
     void Update(double deltaTime) override;

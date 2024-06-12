@@ -1,12 +1,16 @@
 #include "entities.h"
 #include <raymath.h>
 
+#include <utility>
+
 #include "settings.h"
 #include "support.h"
 
 
-Entity::Entity(const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg)
-    : SimpleSprite(sg), frame_index(0), frames(named_tts)
+Entity::Entity(
+        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg,
+        std::string facing_dir)
+    : SimpleSprite(sg), facing_direction(std::move(facing_dir)), frame_index(0), frames(named_tts)
 {
     position = pos;
     frame_index = 0;
@@ -43,12 +47,15 @@ std::string Entity::GetState()
 }
 
 Character::Character(
-        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg)
-    : Entity(pos, named_tts, sg)
+        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg,
+        std::string facing_dir)
+    : Entity(pos, named_tts, sg, std::move(facing_dir))
 {}
 
-Player::Player(const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg)
-    : Entity(pos, named_tts, sg)
+Player::Player(
+        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_tts, SpriteGroup *sg,
+        std::string facing_dir)
+    : Entity(pos, named_tts, sg, std::move(facing_dir))
 {
     SpriteType = 2;
 }

@@ -141,7 +141,8 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                         named_tts[key].push_back({&named_textures["characters"]["player"], rect});
                     }
                 }
-                player = new Player({float(entity->x), float(entity->y)}, named_tts, &all_sprites);
+                std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
+                player = new Player({float(entity->x), float(entity->y)}, named_tts, &all_sprites, direction);
             }
         }
         else
@@ -155,7 +156,8 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                     named_tts[key].push_back({&named_textures["characters"][graphic], rect});
                 }
             }
-            new Character({float(entity->x), float(entity->y)}, named_tts, &all_sprites);
+            std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
+            new Character({float(entity->x), float(entity->y)}, named_tts, &all_sprites, direction);
         }
 
         entity = entity->next;
