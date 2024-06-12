@@ -2,7 +2,13 @@
 #include <vector>
 #include <raylib.h>
 #include "settings.h"
-#include "tiledtexture.h"
+
+
+typedef struct TiledTexture
+{
+    Texture2D *texture;
+    Rectangle rect;
+} TiledTexture;
 
 class SpriteGroup;
 
