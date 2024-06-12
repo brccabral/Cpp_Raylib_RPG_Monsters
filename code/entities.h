@@ -19,7 +19,6 @@ class Player : public Entity
 public:
 
     Player(Vector2 position, const tilemap_name &frames, SpriteGroup *sprite_group, Rectangle imgRect);
-    // void Draw(Vector2 offset) const;
     void Input();
     void Move(double deltaTime);
     void Update(double deltaTime) override;

@@ -13,6 +13,7 @@
 
 Game::Game(const int width, const int height)
 {
+    // SetTraceLogLevel(LOG_ERROR);
     InitWindow(width, height, "RPG Monsters");
     SetTargetFPS(60);
 
@@ -62,16 +63,16 @@ void Game::ImporAssets()
 void Game::CreateSprite(const tmx_tile *tile, const int posX, const int posY)
 {
     const tmx_image *im = tile->image;
-    Texture2D *image{};
+    Texture2D *map_texture{};
     if (im && im->resource_image)
     {
-        image = (Texture2D *) im->resource_image;
+        map_texture = (Texture2D *) im->resource_image;
     }
     else if (tile->tileset->image->resource_image)
     {
-        image = (Texture2D *) tile->tileset->image->resource_image;
+        map_texture = (Texture2D *) tile->tileset->image->resource_image;
     }
-    if (image)
+    if (map_texture)
     {
         const Vector2 position = {float(posX), float(posY)};
         Rectangle srcRect;
@@ -79,7 +80,8 @@ void Game::CreateSprite(const tmx_tile *tile, const int posX, const int posY)
         srcRect.y = tile->ul_y;
         srcRect.width = tile->width;
         srcRect.height = tile->height;
-        new Sprite(position, image, &all_sprites, srcRect);
+
+        new Sprite(position, map_texture, srcRect, &all_sprites);
     }
 }
 
@@ -143,9 +145,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         {
             for (int x = 0; x < water->width; x += TILE_SIZE)
             {
-                new AnimatedSprite(
-                        {float(x + water->x), float(y + water->y)}, overworld_frames["water"], &all_sprites,
-                        {0, 0, TILE_SIZE, TILE_SIZE});
+                new AnimatedSprite({float(x + water->x), float(y + water->y)}, overworld_frames["water"], &all_sprites);
             }
         }
         water = water->next;
@@ -157,8 +157,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         std::string terrain = tmx_get_property(coast->properties, "terrain")->value.string;
         std::string side = tmx_get_property(coast->properties, "side")->value.string;
         new AnimatedSprite(
-                {float(coast->x), float(coast->y)}, overworld_named_frames["coast"][terrain][side], &all_sprites,
-                {0, 0, TILE_SIZE, TILE_SIZE});
+                {float(coast->x), float(coast->y)}, overworld_named_frames["coast"][terrain][side], &all_sprites);
         coast = coast->next;
     }
 }

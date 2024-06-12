@@ -1,4 +1,7 @@
 #pragma once
+#include "tiledtexture.h"
+
+
 #include <raylib.h>
 #include <vector>
 
@@ -18,8 +21,7 @@ public:
 protected:
 
     Vector2 position{};
-    Rectangle imgRect{};
-    Texture2D *image = nullptr;
+    TiledTexture tiled_texture{};
 
 private:
 
@@ -30,7 +32,7 @@ class Sprite : public SimpleSprite
 {
 public:
 
-    Sprite(Vector2 pos, Texture2D *im, SpriteGroup *sg, Rectangle rect);
+    Sprite(Vector2 pos, Texture2D *tex, Rectangle rect, SpriteGroup *sg);
 
 private:
 
@@ -41,7 +43,7 @@ class AnimatedSprite : public Sprite
 {
 public:
 
-    AnimatedSprite(Vector2 position, std::vector<Texture2D> &frames, SpriteGroup *sprite_group, Rectangle imgRect);
+    AnimatedSprite(Vector2 position, std::vector<Texture2D> &frames, SpriteGroup *sprite_group);
     void Animate(double deltaTime);
     void Update(double deltaTime) override;
 

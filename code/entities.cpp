@@ -9,9 +9,9 @@ Entity::Entity(const Vector2 pos, tilemap_name fr, SpriteGroup *sg, const Rectan
     : SimpleSprite(sg), frames(std::move(fr))
 {
     position = pos;
-    imgRect = rect;
     frame_index = 0;
-    image = &frames["down"][frame_index];
+    tiled_texture.texture = &frames["down"][frame_index];
+    tiled_texture.rect = {0, 0, 128, 128};
     SpriteType = 3;
 }
 
@@ -20,14 +20,6 @@ Player::Player(const Vector2 position, const tilemap_name &frames, SpriteGroup *
 {
     SpriteType = 2;
 }
-
-// void Player::Draw(const Vector2 offset) const
-// {
-//     if(image)
-//     {
-//         DrawTextureV(*image, Vector2Add(position, offset), WHITE);
-//     }
-// }
 
 void Player::Input()
 {
