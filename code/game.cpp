@@ -111,6 +111,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
     const tmx_layer *terrain_top_layer = tmx_find_layer_by_name(map, "Terrain Top");
     const tmx_layer *water_layer = tmx_find_layer_by_name(map, "Water");
     const tmx_layer *coast_layer = tmx_find_layer_by_name(map, "Coast");
+    const tmx_layer *monster_layer = tmx_find_layer_by_name(map, "Monsters");
 
     CreateTileLayer(map, terrain_layer);
     CreateTileLayer(map, terrain_top_layer);
@@ -125,6 +126,18 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         }
         object = object->next;
     }
+
+    auto monster = monster_layer->content.objgr->head;
+    while (monster)
+    {
+        const int gid = monster->content.gid;
+        if (map->tiles[gid])
+        {
+            CreateSprite(map->tiles[gid], monster->x, monster->y - monster->height);
+        }
+        monster = monster->next;
+    }
+
 
     auto entity = entities_layer->content.objgr->head;
     while (entity)
