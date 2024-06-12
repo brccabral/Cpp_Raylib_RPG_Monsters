@@ -3,12 +3,14 @@
 #include <vector>
 
 class SpriteGroup;
-class Sprite
+
+class SimpleSprite
 {
 public:
 
-    Sprite(Vector2 position, Texture2D *image, SpriteGroup *sprite_group, Rectangle imgRect);
-    virtual ~Sprite();
+
+    explicit SimpleSprite(SpriteGroup *sprite_group);
+    virtual ~SimpleSprite();
     virtual void Draw(Vector2 offset) const;
     virtual void Update(double deltaTime);
     int SpriteType{0};
@@ -17,7 +19,18 @@ protected:
 
     Vector2 position{};
     Rectangle imgRect{};
-    Texture2D *image;
+    Texture2D *image = nullptr;
+
+private:
+
+    std::vector<SpriteGroup *> groups;
+};
+
+class Sprite : public SimpleSprite
+{
+public:
+
+    Sprite(Vector2 pos, Texture2D *im, SpriteGroup *sg, Rectangle rect);
 
 private:
 
@@ -45,5 +58,5 @@ public:
     virtual ~SpriteGroup() = default;
     void Draw() const;
     void Update(double deltaTime);
-    std::vector<Sprite *> sprites;
+    std::vector<SimpleSprite *> sprites;
 };

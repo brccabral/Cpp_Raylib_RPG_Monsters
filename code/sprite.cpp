@@ -2,25 +2,41 @@
 #include <raymath.h>
 #include "settings.h"
 
-Sprite::Sprite(const Vector2 position, Texture2D *image, SpriteGroup *sprite_group, const Rectangle imgRect)
-    : position(position), imgRect(imgRect), image(image)
+SimpleSprite::SimpleSprite(SpriteGroup *sprite_group)
 {
-    groups.push_back(sprite_group);
-    sprite_group->sprites.push_back(this);
+    if (sprite_group)
+    {
+        groups.push_back(sprite_group);
+        sprite_group->sprites.push_back(this);
+    }
 }
 
-Sprite::~Sprite()
+void SimpleSprite::Draw(const Vector2 offset) const
 {
-    UnloadTexture(*image);
+    if (image)
+    {
+        DrawTextureRec(*image, imgRect, Vector2Add(position, offset), WHITE);
+    }
 }
 
-void Sprite::Draw(const Vector2 offset) const
-{
-    DrawTextureRec(*image, imgRect, Vector2Add(position, offset), WHITE);
-}
-
-void Sprite::Update(const double deltaTime)
+void SimpleSprite::Update(const double deltaTime)
 {}
+
+SimpleSprite::~SimpleSprite()
+{
+    if (image)
+    {
+        UnloadTexture(*image);
+    }
+}
+
+Sprite::Sprite(const Vector2 pos, Texture2D *im, SpriteGroup *sg, const Rectangle rect) : SimpleSprite(sg)
+{
+    position = pos;
+    imgRect = rect;
+    image = im;
+    SpriteType = 4;
+}
 
 AnimatedSprite::AnimatedSprite(
         const Vector2 position, std::vector<Texture2D> &frames, SpriteGroup *sprite_group, const Rectangle imgRect)

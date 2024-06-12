@@ -1,16 +1,33 @@
 #include "entities.h"
 #include <raymath.h>
 
-Player::Player(const Vector2 position, Texture2D *image, SpriteGroup *sprite_group, const Rectangle imgRect)
-    : Sprite(position, image, sprite_group, imgRect)
+#include <utility>
+#include "support.h"
+
+
+Entity::Entity(const Vector2 pos, tilemap_name fr, SpriteGroup *sg, const Rectangle rect)
+    : SimpleSprite(sg), frames(std::move(fr))
+{
+    position = pos;
+    imgRect = rect;
+    frame_index = 0;
+    image = &frames["down"][frame_index];
+    SpriteType = 3;
+}
+
+Player::Player(const Vector2 position, const tilemap_name &frames, SpriteGroup *sprite_group, const Rectangle imgRect)
+    : Entity(position, frames, sprite_group, imgRect)
 {
     SpriteType = 2;
 }
 
-void Player::Draw(const Vector2 offset) const
-{
-    DrawRectangleV(Vector2Add(position, offset), {64, 64}, RED);
-}
+// void Player::Draw(const Vector2 offset) const
+// {
+//     if(image)
+//     {
+//         DrawTextureV(*image, Vector2Add(position, offset), WHITE);
+//     }
+// }
 
 void Player::Input()
 {
@@ -34,7 +51,7 @@ void Player::Input()
     direction = input_vector;
 }
 
-void Player::Move(double deltaTime)
+void Player::Move(const double deltaTime)
 {
     position = Vector2Add(position, Vector2Scale(direction, 250 * deltaTime));
 }

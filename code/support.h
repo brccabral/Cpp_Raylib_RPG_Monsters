@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <iostream>
+#include <map>
 #include <raylib.h>
 #include <vector>
 
@@ -99,7 +100,6 @@ inline std::map<std::string, tilemap_name> all_character_import(const char *path
         {
             auto filename = dirEntry.path().stem().string();
             new_dict[filename] = CharacterImporter(4, 4, dirEntry.path().c_str());
-            std::cout << dirEntry << "\n";
         }
     }
 

@@ -1,5 +1,4 @@
 #include "game.h"
-#include <iostream>
 #include <raylib.h>
 #include "settings.h"
 #include "sprite.h"
@@ -83,6 +82,7 @@ void Game::CreateSprite(const tmx_tile *tile, const int posX, const int posY)
         new Sprite(position, image, &all_sprites, srcRect);
     }
 }
+
 void Game::CreateTileLayer(const tmx_map *map, const tmx_layer *layer)
 {
     for (int y = 0; y < map->height; y++)
@@ -128,9 +128,9 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         if (strcmp(entity->name, "Player") == 0 &&
             strcmp(tmx_get_property(entity->properties, "pos")->value.string, player_start_position.c_str()) == 0)
         {
-            const Rectangle dest = {float(entity->x), float(entity->y), float(entity->width), float(entity->height)};
-            Texture2D playertx_texture = LoadTexture("resources/graphics/characters/young_guy.png");
-            player = new Player({float(entity->x), float(entity->y)}, &playertx_texture, &all_sprites, dest);
+            player = new Player(
+                    {float(entity->x), float(entity->y)}, overworld_named_frames["characters"]["player"], &all_sprites,
+                    {float(0), float(0), float(128), float(128)});
         }
 
         entity = entity->next;
