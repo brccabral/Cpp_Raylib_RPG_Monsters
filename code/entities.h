@@ -23,6 +23,7 @@ private:
 
     double frame_index;
     std::map<std::string, std::vector<TiledTexture>> frames;
+    int z = WORLD_LAYERS["main"];
 };
 
 class Character : public Entity

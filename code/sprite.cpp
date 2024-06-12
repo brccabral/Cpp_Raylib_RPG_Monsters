@@ -22,15 +22,17 @@ void SimpleSprite::Draw(const Vector2 offset) const
 void SimpleSprite::Update(const double deltaTime)
 {}
 
-Sprite::Sprite(const Vector2 pos, const TiledTexture &tt, SpriteGroup *sg) : SimpleSprite(sg)
+Sprite::Sprite(const Vector2 pos, const TiledTexture &tt, SpriteGroup *sg, const int z_) : SimpleSprite(sg)
 {
     position = pos;
     tiled_texture = tt;
+    z = z_;
     SpriteType = 4;
 }
 
-AnimatedSprite::AnimatedSprite(const Vector2 position, const std::vector<TiledTexture> &tts, SpriteGroup *sprite_group)
-    : Sprite(position, tts[0], sprite_group), frame_index(0), frames(tts)
+AnimatedSprite::AnimatedSprite(
+        const Vector2 position, const std::vector<TiledTexture> &tts, SpriteGroup *sprite_group, const int z)
+    : Sprite(position, tts[0], sprite_group, z), frame_index(0), frames(tts)
 {
     SpriteType = 1;
 }

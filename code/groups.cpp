@@ -9,6 +9,23 @@ void AllSprites::Draw(const Vector2 player_center)
 
     for (const auto &sprite: sprites)
     {
-        sprite->Draw(offset);
+        if (sprite->z < WORLD_LAYERS["main"])
+        {
+            sprite->Draw(offset);
+        }
+    }
+    for (const auto &sprite: sprites)
+    {
+        if (sprite->z == WORLD_LAYERS["main"])
+        {
+            sprite->Draw(offset);
+        }
+    }
+    for (const auto &sprite: sprites)
+    {
+        if (sprite->z > WORLD_LAYERS["main"])
+        {
+            sprite->Draw(offset);
+        }
     }
 }

@@ -5,7 +5,6 @@
 
 #define RAYLIB_TMX_IMPLEMENTATION
 #include <cstring>
-#include <iostream>
 
 #include "entities.h"
 #include "raylib-tmx.h"
@@ -62,7 +61,7 @@ void Game::ImporAssets()
     overworld_rect_frames["characters"] = all_character_import("resources/graphics/characters");
 }
 
-void Game::CreateSprite(const tmx_tile *tile, const int posX, const int posY)
+void Game::CreateSprite(const tmx_tile *tile, const int posX, const int posY, const int z)
 {
     const tmx_image *im = tile->image;
     Texture2D *map_texture{};
@@ -83,11 +82,11 @@ void Game::CreateSprite(const tmx_tile *tile, const int posX, const int posY)
         srcRect.width = tile->width;
         srcRect.height = tile->height;
 
-        new Sprite(position, {map_texture, srcRect}, &all_sprites);
+        new Sprite(position, {map_texture, srcRect}, &all_sprites, z);
     }
 }
 
-void Game::CreateTileLayer(const tmx_map *map, const tmx_layer *layer)
+void Game::CreateTileLayer(const tmx_map *map, const tmx_layer *layer, const int z)
 {
     for (int y = 0; y < map->height; y++)
     {
@@ -98,7 +97,7 @@ void Game::CreateTileLayer(const tmx_map *map, const tmx_layer *layer)
             if (map->tiles[gid])
             {
                 const tmx_tileset *ts = map->tiles[gid]->tileset;
-                CreateSprite(map->tiles[gid], x * ts->tile_width, y * ts->tile_height);
+                CreateSprite(map->tiles[gid], x * ts->tile_width, y * ts->tile_height, z);
             }
         }
     }
@@ -113,8 +112,8 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
     const tmx_layer *coast_layer = tmx_find_layer_by_name(map, "Coast");
     const tmx_layer *monster_layer = tmx_find_layer_by_name(map, "Monsters");
 
-    CreateTileLayer(map, terrain_layer);
-    CreateTileLayer(map, terrain_top_layer);
+    CreateTileLayer(map, terrain_layer, WORLD_LAYERS["bg"]);
+    CreateTileLayer(map, terrain_top_layer, WORLD_LAYERS["bg"]);
 
     auto object = objects_layer->content.objgr->head;
     while (object)
@@ -122,7 +121,19 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         const int gid = object->content.gid;
         if (map->tiles[gid])
         {
-            CreateSprite(map->tiles[gid], object->x, object->y - object->height);
+            std::string name;
+            if(object->name)
+            {
+                name = object->name;
+            }
+            if (strcmp(name.c_str(), "top") == 0)
+            {
+                CreateSprite(map->tiles[gid], object->x, object->y - object->height, WORLD_LAYERS["top"]);
+            }
+            else
+            {
+                CreateSprite(map->tiles[gid], object->x, object->y - object->height);
+            }
         }
         object = object->next;
     }
@@ -137,7 +148,6 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         }
         monster = monster->next;
     }
-
 
     auto entity = entities_layer->content.objgr->head;
     while (entity)
@@ -188,7 +198,9 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                 {
                     tiled_textures.push_back({&overworld_frames["coast"][0], rect});
                 }
-                new AnimatedSprite({float(x + water->x), float(y + water->y)}, tiled_textures, &all_sprites);
+                new AnimatedSprite(
+                        {float(x + water->x), float(y + water->y)}, tiled_textures, &all_sprites,
+                        WORLD_LAYERS["water"]);
             }
         }
         water = water->next;
@@ -205,7 +217,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         {
             tiled_textures.push_back({&overworld_frames["coast"][0], rect});
         }
-        new AnimatedSprite({float(coast->x), float(coast->y)}, tiled_textures, &all_sprites);
+        new AnimatedSprite({float(coast->x), float(coast->y)}, tiled_textures, &all_sprites, WORLD_LAYERS["bg"]);
         coast = coast->next;
     }
 }

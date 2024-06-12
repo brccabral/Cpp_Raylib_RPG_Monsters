@@ -15,8 +15,8 @@ public:
     ~Game();
     void run();
     void ImporAssets();
-    void CreateSprite(const tmx_tile *tile, int posX, int posY);
-    void CreateTileLayer(const tmx_map *map, const tmx_layer *layer);
+    void CreateSprite(const tmx_tile *tile, int posX, int posY, int z = WORLD_LAYERS["main"]);
+    void CreateTileLayer(const tmx_map *map, const tmx_layer *layer, int z = WORLD_LAYERS["main"]);
     void Setup(const tmx_map *map, const std::string &player_start_position);
 
 private:

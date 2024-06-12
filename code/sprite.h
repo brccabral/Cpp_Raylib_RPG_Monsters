@@ -1,7 +1,8 @@
 #pragma once
-#include "tiledtexture.h"
 #include <raylib.h>
 #include <vector>
+#include "settings.h"
+#include "tiledtexture.h"
 
 class SpriteGroup;
 
@@ -12,10 +13,11 @@ public:
 
     explicit SimpleSprite(SpriteGroup *sprite_group);
     virtual ~SimpleSprite() = default;
-    ;
+
     virtual void Draw(Vector2 offset) const;
     virtual void Update(double deltaTime);
     int SpriteType{0};
+    int z = WORLD_LAYERS["main"];
 
 protected:
 
@@ -31,7 +33,7 @@ class Sprite : public SimpleSprite
 {
 public:
 
-    Sprite(Vector2 pos, const TiledTexture &tt, SpriteGroup *sg);
+    Sprite(Vector2 pos, const TiledTexture &tt, SpriteGroup *sg, int z_ = WORLD_LAYERS["main"]);
 
 private:
 
@@ -42,7 +44,9 @@ class AnimatedSprite : public Sprite
 {
 public:
 
-    AnimatedSprite(Vector2 position, const std::vector<TiledTexture> &tts, SpriteGroup *sprite_group);
+    AnimatedSprite(
+            Vector2 position, const std::vector<TiledTexture> &tts, SpriteGroup *sprite_group,
+            int z = WORLD_LAYERS["main"]);
     void Animate(double deltaTime);
     void Update(double deltaTime) override;
 
@@ -57,7 +61,7 @@ class SpriteGroup
 public:
 
     virtual ~SpriteGroup() = default;
-    void Draw() const;
+    virtual void Draw() const;
     void Update(double deltaTime);
     std::vector<SimpleSprite *> sprites;
 };
