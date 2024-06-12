@@ -15,7 +15,6 @@ void SimpleSprite::Draw(const Vector2 offset) const
 {
     if (tiled_texture.texture)
     {
-        // DrawTextureV(*tiled_texture.texture, Vector2Add(position, offset), WHITE);
         DrawTextureRec(*tiled_texture.texture, tiled_texture.rect, Vector2Add(position, offset), WHITE);
     }
 }
@@ -23,17 +22,15 @@ void SimpleSprite::Draw(const Vector2 offset) const
 void SimpleSprite::Update(const double deltaTime)
 {}
 
-Sprite::Sprite(const Vector2 pos, Texture2D *tx, Rectangle rect, SpriteGroup *sg) : SimpleSprite(sg)
+Sprite::Sprite(const Vector2 pos, const TiledTexture &tt, SpriteGroup *sg) : SimpleSprite(sg)
 {
     position = pos;
-    tiled_texture.texture = tx;
-    tiled_texture.rect = rect;
+    tiled_texture = tt;
     SpriteType = 4;
 }
 
-AnimatedSprite::AnimatedSprite(
-        const Vector2 position, Texture2D *tx, const std::vector<Rectangle> &rects, SpriteGroup *sprite_group)
-    : Sprite(position, tx, rects[0], sprite_group), frame_index(0), frames(rects)
+AnimatedSprite::AnimatedSprite(const Vector2 position, const std::vector<TiledTexture> &tts, SpriteGroup *sprite_group)
+    : Sprite(position, tts[0], sprite_group), frame_index(0), frames(tts)
 {
     SpriteType = 1;
 }
@@ -41,7 +38,7 @@ AnimatedSprite::AnimatedSprite(
 void AnimatedSprite::Animate(const double deltaTime)
 {
     frame_index += ANIMATION_SPEED * deltaTime;
-    tiled_texture.rect = frames[int(frame_index) % frames.size()];
+    tiled_texture = frames[int(frame_index) % frames.size()];
 }
 
 void AnimatedSprite::Update(const double deltaTime)

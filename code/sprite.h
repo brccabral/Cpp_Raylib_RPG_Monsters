@@ -31,7 +31,7 @@ class Sprite : public SimpleSprite
 {
 public:
 
-    Sprite(Vector2 pos, Texture2D *tx, Rectangle rect, SpriteGroup *sg);
+    Sprite(Vector2 pos, const TiledTexture &tt, SpriteGroup *sg);
 
 private:
 
@@ -42,14 +42,14 @@ class AnimatedSprite : public Sprite
 {
 public:
 
-    AnimatedSprite(Vector2 position, Texture2D *tx, const std::vector<Rectangle> &rects, SpriteGroup *sprite_group);
+    AnimatedSprite(Vector2 position, const std::vector<TiledTexture> &tts, SpriteGroup *sprite_group);
     void Animate(double deltaTime);
     void Update(double deltaTime) override;
 
 private:
 
     double frame_index;
-    std::vector<Rectangle> frames;
+    std::vector<TiledTexture> frames;
 };
 
 class SpriteGroup
