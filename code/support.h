@@ -1,11 +1,10 @@
 #pragma once
-#include "raylib_utils.h"
-
-
+#include <cstring>
 #include <filesystem>
 #include <map>
-#include <raylib.h>
 #include <vector>
+#include <raylib.h>
+#include "raylib_utils.h"
 
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
@@ -100,9 +99,27 @@ inline std::map<std::string, tilerect_name> all_character_import(const char *pat
 inline bool CheckConnections(const float radius, const Entity *entity, const Entity *target, float tolerance = 30)
 {
     const Vector2 relation = Vector2Subtract(GetRectCenter(target->rect), GetRectCenter(entity->rect));
+    // player is close to target
     if (Vector2Length(relation) < radius)
     {
-        return true;
+        // if player is facing left, player is on the right side of target,
+        // and in same horizontal plane (not above or below target.y)
+        if (strcmp(entity->facing_direction.c_str(), "left") == 0 && relation.x < 0 && abs(relation.y) < tolerance)
+        {
+            return true;
+        }
+        if (strcmp(entity->facing_direction.c_str(), "right") == 0 && relation.x > 0 && abs(relation.y) < tolerance)
+        {
+            return true;
+        }
+        if (strcmp(entity->facing_direction.c_str(), "up") == 0 && relation.y < 0 && abs(relation.x) < tolerance)
+        {
+            return true;
+        }
+        if (strcmp(entity->facing_direction.c_str(), "down") == 0 && relation.y > 0 && abs(relation.x) < tolerance)
+        {
+            return true;
+        }
     }
     return false;
 }

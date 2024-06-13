@@ -95,13 +95,13 @@ inline std::map<std::string, std::map<std::string, BattleChoice>> BATTLE_CHOICES
 
 enum SpriteType
 {
-    SIMPLESPRITE,
+    SIMPLESPRITE = 0,
     SPRITE,
     ENTITY,
 };
 
 enum Axis
 {
-    HORIZONTAL,
+    HORIZONTAL = 0,
     VERTICAL
 };
