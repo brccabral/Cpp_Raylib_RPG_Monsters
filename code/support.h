@@ -76,9 +76,9 @@ inline tilerect_face CharacterImporter(const int cols, const int rows, const cha
         for (int col = 0; col < cols; ++col)
         {
             new_dic[directions[row]].push_back({col * 128.0f, row * 128.0f, 128.0f, 128.0f});
-            FacingDirection idle_name = idle_directions[row];
-            new_dic[idle_name] = {{0, row * 128.0f, 128.0f, 128.0f}};
         }
+        FacingDirection idle_name = idle_directions[row];
+        new_dic[idle_name] = {{0, row * 128.0f, 128.0f, 128.0f}};
     }
     return new_dic;
 }
