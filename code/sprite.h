@@ -66,8 +66,13 @@ class BorderSprite : public Sprite
 public:
 
     BorderSprite(Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs);
+};
 
-    Rectangle hitbox;
+class CollidableSprite : public Sprite
+{
+public:
+
+    CollidableSprite(Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs);
 };
 
 class AnimatedSprite : public Sprite

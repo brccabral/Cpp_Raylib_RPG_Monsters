@@ -139,7 +139,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
             else
             {
                 auto [position, image] = GetTileInfo(map->tiles[gid], object->x, object->y - object->height);
-                new Sprite(position, image, {all_sprites, collition_sprites});
+                new CollidableSprite(position, image, {all_sprites, collition_sprites});
             }
         }
         object = object->next;

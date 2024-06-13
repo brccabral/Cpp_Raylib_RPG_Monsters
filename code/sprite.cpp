@@ -56,9 +56,16 @@ MonsterPatchSprite::MonsterPatchSprite(
     }
 }
 
-BorderSprite::BorderSprite(Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs)
+BorderSprite::BorderSprite(const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs)
     : Sprite(pos, img, sgs)
 {}
+
+CollidableSprite::CollidableSprite(const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs)
+    : Sprite(pos, img, sgs)
+{
+    // smaller hitbox for better view perpective on Y axis
+    RectInflate(hitbox, 0, -rect.height * 0.6f);
+}
 
 AnimatedSprite::AnimatedSprite(
         const Vector2 position, const std::vector<TiledTexture> &frms, const std::vector<SpriteGroup *> &sgs,
