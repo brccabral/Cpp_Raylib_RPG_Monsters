@@ -83,11 +83,13 @@ void Player::Input()
 
 void Player::Move(const double deltaTime)
 {
-    // MoveRect(rect, Vector2Scale(direction, speed * deltaTime));
-    // RectToCenter(hitbox, GetRectCenter(rect));
     rect.x += direction.x * speed * deltaTime;
     RectToCenter(hitbox, GetRectCenter(rect));
     Collisions(HORIZONTAL);
+
+    rect.y += direction.y * speed * deltaTime;
+    RectToCenter(hitbox, GetRectCenter(rect));
+    Collisions(VERTICAL);
 }
 
 void Player::Update(const double deltaTime)
@@ -102,11 +104,30 @@ void Player::Collisions(Axis axis)
 {
     for (const auto *sprite: collision_sprites->sprites)
     {
-        if (CheckCollisionRecs(GetHitbox(sprite), hitbox))
+        Rectangle sprite_hitbox = GetHitbox(sprite);
+        if (CheckCollisionRecs(sprite_hitbox, hitbox))
         {
-            if (direction.x > 0)
+            if (axis == HORIZONTAL)
             {
-                hitbox.x = GetHitbox(sprite).x - hitbox.width;
+                if (direction.x > 0)
+                {
+                    hitbox.x = sprite_hitbox.x - hitbox.width;
+                }
+                else if (direction.x < 0)
+                {
+                    hitbox.x = sprite_hitbox.x + sprite_hitbox.width;
+                }
+            }
+            else
+            {
+                if (direction.y > 0)
+                {
+                    hitbox.y = sprite_hitbox.y - hitbox.height;
+                }
+                else if (direction.y < 0)
+                {
+                    hitbox.y = sprite_hitbox.y + sprite_hitbox.height;
+                }
             }
             RectToCenter(rect, GetRectCenter(hitbox));
         }
