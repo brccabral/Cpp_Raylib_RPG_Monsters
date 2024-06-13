@@ -56,8 +56,8 @@ void Game::ImporAssets()
 
     overworld_frames["coast"] = {LoadTexture("resources/graphics/tilesets/coast.png")};
     named_textures["characters"] = ImportNamedFolder("resources/graphics/characters");
-    overworld_rect_frames["coast"] = coast_rects();
-    overworld_rect_frames["characters"] = all_character_import("resources/graphics/characters");
+    named_rect_frames["coast"] = coast_rects();
+    face_rect_frames["characters"] = all_character_import("resources/graphics/characters");
 }
 
 TileInfo Game::GetTileInfo(const tmx_tile *tile, const int posX, const int posY)
@@ -170,42 +170,48 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         monster = monster->next;
     }
 
+    std::map<std::string, FacingDirection> face_name = {
+            {"down", DOWN},
+            {"left", LEFT},
+            {"up", UP},
+            {"right", RIGHT},
+    };
     auto entity = entities_layer->content.objgr->head;
     while (entity)
     {
+        std::map<FacingDirection, std::vector<TiledTexture>> face_frames;
+        std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
+        FacingDirection face_direction = face_name[direction];
+
         if (strcmp(entity->name, "Player") == 0)
         {
             if (strcmp(tmx_get_property(entity->properties, "pos")->value.string, player_start_position.c_str()) == 0)
             {
-                std::map<std::string, std::vector<TiledTexture>> named_frames;
-                for (const auto &[key, rectangles]: overworld_rect_frames["characters"]["player"])
+                for (const auto &[key, rectangles]: face_rect_frames["characters"]["player"])
                 {
                     for (const auto rect: rectangles)
                     {
-                        named_frames[key].push_back({&named_textures["characters"]["player"], rect});
+                        face_frames[key].push_back({&named_textures["characters"]["player"], rect});
                     }
                 }
-                std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
                 player = new Player(
-                        {float(entity->x), float(entity->y)}, named_frames, {all_sprites}, direction,
+                        {float(entity->x), float(entity->y)}, face_frames, {all_sprites}, face_direction,
                         collition_sprites);
             }
         }
         else
         {
             std::string graphic = tmx_get_property(entity->properties, "graphic")->value.string;
-            std::map<std::string, std::vector<TiledTexture>> named_frames;
-            for (const auto &[key, rectangles]: overworld_rect_frames["characters"][graphic])
+            for (const auto &[key, rectangles]: face_rect_frames["characters"][graphic])
             {
                 for (const auto rect: rectangles)
                 {
-                    named_frames[key].push_back({&named_textures["characters"][graphic], rect});
+                    face_frames[key].push_back({&named_textures["characters"][graphic], rect});
                 }
             }
-            std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
             new Character(
-                    {float(entity->x), float(entity->y)}, named_frames,
-                    {all_sprites, collition_sprites, characters_sprites}, direction);
+                    {float(entity->x), float(entity->y)}, face_frames,
+                    {all_sprites, collition_sprites, characters_sprites}, face_direction);
         }
 
         entity = entity->next;
@@ -219,7 +225,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
             for (int x = 0; x < water->width; x += TILE_SIZE)
             {
                 std::vector<TiledTexture> frames;
-                for (const auto rect: overworld_rect_frames["coast"]["grass"]["middle"])
+                for (const auto rect: named_rect_frames["coast"]["grass"]["middle"])
                 {
                     frames.push_back({&overworld_frames["coast"][0], rect});
                 }
@@ -237,7 +243,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         std::string side = tmx_get_property(coast->properties, "side")->value.string;
 
         std::vector<TiledTexture> frames;
-        for (const auto rect: overworld_rect_frames["coast"][terrain][side])
+        for (const auto rect: named_rect_frames["coast"][terrain][side])
         {
             frames.push_back({&overworld_frames["coast"][0], rect});
         }

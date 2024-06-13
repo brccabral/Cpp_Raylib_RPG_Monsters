@@ -30,6 +30,7 @@ inline std::map<std::string, Texture2D> ImportNamedFolder(const char *path)
 }
 
 typedef std::map<std::string, std::vector<Rectangle>> tilerect_name;
+typedef std::map<FacingDirection, std::vector<Rectangle>> tilerect_face;
 
 inline std::map<std::string, tilerect_name> coast_rects()
 {
@@ -64,25 +65,27 @@ inline std::map<std::string, tilerect_name> coast_rects()
     return new_dict;
 }
 
-inline tilerect_name CharacterImporter(const int cols, const int rows, const char *path)
+inline tilerect_face CharacterImporter(const int cols, const int rows, const char *path)
 {
-    tilerect_name new_dic = {};
-    const std::vector<std::string> directions = {"down", "left", "right", "up"};
+    tilerect_face new_dic = {};
+    // same order as in image set
+    const std::vector directions = {DOWN, LEFT, RIGHT, UP};
+    const std::vector idle_directions = {DOWN_IDLE, LEFT_IDLE, RIGHT_IDLE, UP_IDLE};
     for (int row = 0; row < directions.size(); ++row)
     {
         for (int col = 0; col < cols; ++col)
         {
             new_dic[directions[row]].push_back({col * 128.0f, row * 128.0f, 128.0f, 128.0f});
-            std::string idle_name = directions[row] + "_idle";
+            FacingDirection idle_name = idle_directions[row];
             new_dic[idle_name] = {{0, row * 128.0f, 128.0f, 128.0f}};
         }
     }
     return new_dic;
 }
 
-inline std::map<std::string, tilerect_name> all_character_import(const char *path)
+inline std::map<std::string, tilerect_face> all_character_import(const char *path)
 {
-    std::map<std::string, tilerect_name> new_dict = {};
+    std::map<std::string, tilerect_face> new_dict = {};
 
     for (const auto &dirEntry: recursive_directory_iterator(path))
     {
@@ -104,19 +107,23 @@ inline bool CheckConnections(const float radius, const Entity *entity, const Ent
     {
         // if player is facing left, player is on the right side of target,
         // and in same horizontal plane (not above or below target.y)
-        if (strcmp(entity->facing_direction.c_str(), "left") == 0 && relation.x < 0 && abs(relation.y) < tolerance)
+        if ((entity->facing_direction == LEFT || entity->facing_direction == LEFT_IDLE) && relation.x < 0 &&
+            abs(relation.y) < tolerance)
         {
             return true;
         }
-        if (strcmp(entity->facing_direction.c_str(), "right") == 0 && relation.x > 0 && abs(relation.y) < tolerance)
+        if ((entity->facing_direction == RIGHT || entity->facing_direction == RIGHT_IDLE) && relation.x > 0 &&
+            abs(relation.y) < tolerance)
         {
             return true;
         }
-        if (strcmp(entity->facing_direction.c_str(), "up") == 0 && relation.y < 0 && abs(relation.x) < tolerance)
+        if ((entity->facing_direction == UP || entity->facing_direction == UP_IDLE) && relation.y < 0 &&
+            abs(relation.x) < tolerance)
         {
             return true;
         }
-        if (strcmp(entity->facing_direction.c_str(), "down") == 0 && relation.y > 0 && abs(relation.x) < tolerance)
+        if ((entity->facing_direction == DOWN || entity->facing_direction == DOWN_IDLE) && relation.y > 0 &&
+            abs(relation.x) < tolerance)
         {
             return true;
         }

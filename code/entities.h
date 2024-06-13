@@ -5,8 +5,8 @@ class Entity : public SimpleSprite
 {
 public:
 
-    Entity(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms,
-           const std::vector<SpriteGroup *> &sgs, std::string facing_dir);
+    Entity(Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
+           const std::vector<SpriteGroup *> &sgs, FacingDirection facing_dir);
     void Animate(double dt);
     void Update(double dt) override;
     void Block();
@@ -16,7 +16,7 @@ public:
     int z = WORLD_LAYERS["main"];
     int y_sort{};
     Rectangle hitbox{};
-    std::string facing_direction = "down";
+    FacingDirection facing_direction = DOWN;
 
 protected:
 
@@ -26,10 +26,10 @@ protected:
 
 private:
 
-    std::string GetState();
+    FacingDirection GetState();
 
     double frame_index{};
-    std::map<std::string, std::vector<TiledTexture>> named_frames{};
+    std::map<FacingDirection, std::vector<TiledTexture>> face_frames{};
 };
 
 class Character : public Entity
@@ -37,16 +37,16 @@ class Character : public Entity
 public:
 
     Character(
-            Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms,
-            const std::vector<SpriteGroup *> &sgs, std::string facing_dir);
+            Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
+            const std::vector<SpriteGroup *> &sgs, FacingDirection facing_dir);
 };
 
 class Player : public Entity
 {
 public:
 
-    Player(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms,
-           const std::vector<SpriteGroup *> &sgs, std::string facing_dir, SpriteGroup *cs);
+    Player(Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
+           const std::vector<SpriteGroup *> &sgs, FacingDirection facing_dir, SpriteGroup *cs);
     void Input();
     void Move(double deltaTime);
     void Update(double deltaTime) override;

@@ -5,11 +5,11 @@
 
 
 Entity::Entity(
-        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms,
-        const std::vector<SpriteGroup *> &sgs, std::string facing_dir)
-    : SimpleSprite(sgs), facing_direction(std::move(facing_dir)), named_frames(named_frms)
+        const Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
+        const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir)
+    : SimpleSprite(sgs), facing_direction(facing_dir), face_frames(face_frms)
 {
-    image = named_frames[GetState()][0];
+    image = face_frames[GetState()][0];
     rect = image.rect;
     RectToCenter(rect, pos);
     y_sort = GetRectCenter(rect).y;
@@ -21,7 +21,7 @@ Entity::Entity(
 void Entity::Animate(const double dt)
 {
     frame_index += ANIMATION_SPEED * dt;
-    image = named_frames[GetState()][int(frame_index) % named_frames[GetState()].size()];
+    image = face_frames[GetState()][int(frame_index) % face_frames[GetState()].size()];
 }
 
 void Entity::Update(const double dt)
@@ -47,53 +47,71 @@ void Entity::ChangeFacingDirection(const Vector2 target_pos)
     {
         if (delta_x > 0)
         {
-            facing_direction = "right";
+            facing_direction = RIGHT;
         }
         else
         {
-            facing_direction = "left";
+            facing_direction = LEFT;
         }
     }
     else
     {
         if (delta_y > 0)
         {
-            facing_direction = "down";
+            facing_direction = DOWN;
         }
         else
         {
-            facing_direction = "up";
+            facing_direction = UP;
         }
     }
 }
 
-std::string Entity::GetState()
+FacingDirection Entity::GetState()
 {
-    const bool moving = (direction.x || direction.y);
-    if (moving)
+    if (direction.x || direction.y)
     {
         if (direction.x)
         {
-            facing_direction = direction.x > 0 ? "right" : "left";
+            facing_direction = direction.x > 0 ? RIGHT : LEFT;
         }
         if (direction.y)
         {
-            facing_direction = direction.y > 0 ? "down" : "up";
+            facing_direction = direction.y > 0 ? DOWN : UP;
         }
     }
-    return facing_direction + (moving ? "" : "_idle");
+    else
+    {
+        if (facing_direction == DOWN)
+        {
+            facing_direction = DOWN_IDLE;
+        }
+        if (facing_direction == UP)
+        {
+            facing_direction = UP_IDLE;
+        }
+        if (facing_direction == LEFT)
+        {
+            facing_direction = LEFT_IDLE;
+        }
+        if (facing_direction == RIGHT)
+        {
+            facing_direction = RIGHT_IDLE;
+        }
+    }
+    return facing_direction;
 }
 
 Character::Character(
-        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms,
-        const std::vector<SpriteGroup *> &sgs, std::string facing_dir)
-    : Entity(pos, named_frms, sgs, std::move(facing_dir))
+        const Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
+        const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir)
+    : Entity(pos, face_frms, sgs, facing_dir)
 {}
 
 Player::Player(
-        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms,
-        const std::vector<SpriteGroup *> &sgs, std::string facing_dir, SpriteGroup *cs)
-    : Entity(pos, named_frms, sgs, std::move(facing_dir)), collision_sprites(cs)
+        const Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
+        const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir, SpriteGroup *cs)
+    : Entity(pos, face_frms, sgs, facing_dir), collision_sprites(cs)
 {}
 
 void Player::Input()

@@ -105,3 +105,15 @@ enum Axis
     HORIZONTAL = 0,
     VERTICAL
 };
+
+enum FacingDirection
+{
+    DOWN = 0,
+    UP,
+    LEFT,
+    RIGHT,
+    DOWN_IDLE,
+    UP_IDLE,
+    LEFT_IDLE,
+    RIGHT_IDLE,
+};
