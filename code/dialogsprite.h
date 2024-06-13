@@ -13,4 +13,5 @@ public:
     std::string message;
     int y_sort{};
     const Font font;
+    Vector2 textsize{};
 };

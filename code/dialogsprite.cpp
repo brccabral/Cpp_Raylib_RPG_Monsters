@@ -11,9 +11,11 @@ DialogSprite::DialogSprite(
     z = WORLD_LAYERS["top"];
     type = DIALOGSPRITE;
 
-    constexpr unsigned long padding = 10;
-    rect.width = std::max(TextLength(message.c_str()) * 15 + padding * 2, 300ul);
-    rect.height = FONT_SIZE + padding * 2;
+    constexpr float padding = 10.0f;
+    // rect.width = std::max(TextLength(message.c_str()) * 16 + padding * 2, 300ul);
+    textsize = MeasureTextEx(font, message.c_str(), FONT_SIZE, 2);
+    rect.width = std::max(textsize.x + padding * 2, 300.0f);
+    rect.height = textsize.y + padding * 2;
     // dialog midbottom to trainer midtop
     const auto [x, y] = GetRectMidtop(trainer->rect);
     rect.x = x - rect.width / 2;
@@ -29,7 +31,10 @@ void DialogSprite::Draw(const Vector2 offset) const
     newRect.x = x;
     newRect.y = y;
 
-    DrawRectangle(newRect.x, newRect.y, newRect.width, newRect.height, COLORS["pure white"]);
-    MoveRect(newRect, {5, 5});
+    DrawRectangleRounded(newRect, 0.3, 10, COLORS["pure white"]);
+
+    // centralize text inside box
+    const auto dif = Vector2Subtract({newRect.width, newRect.height}, textsize);
+    MoveRect(newRect, Vector2Scale(dif, 0.5f));
     DrawTextEx(font, message.c_str(), {newRect.x, newRect.y}, FONT_SIZE, 2, COLORS["black"]);
 }
