@@ -19,6 +19,7 @@ protected:
     Vector2 direction{};
     float speed = 250;
     std::string facing_direction = "down";
+    Rectangle hitbox;
 
 private:
 

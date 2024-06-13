@@ -31,3 +31,11 @@ inline void MoveRect(Rectangle &rect, const Vector2 pos)
     rect.x += pos.x;
     rect.y += pos.y;
 }
+
+inline void RectInflate(Rectangle &rect, const float width, const float height)
+{
+    const Vector2 oldCenter = GetRectCenter(rect);
+    rect.width += width;
+    rect.height += height;
+    RectToCenter(rect, oldCenter);
+}

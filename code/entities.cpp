@@ -16,6 +16,8 @@ Entity::Entity(
     RectToCenter(rect, pos);
     y_sort = GetRectCenter(rect).y;
     type = ENTITY;
+    hitbox = rect;
+    RectInflate(hitbox, rect.width / 2.0f, -60.0f);
 }
 
 void Entity::Animate(const double dt)
@@ -56,8 +58,7 @@ Player::Player(
         const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms, SpriteGroup *sg,
         std::string facing_dir)
     : Entity(pos, named_frms, sg, std::move(facing_dir))
-{
-}
+{}
 
 void Player::Input()
 {
@@ -84,6 +85,7 @@ void Player::Input()
 void Player::Move(const double deltaTime)
 {
     MoveRect(rect, Vector2Scale(direction, speed * deltaTime));
+    RectToCenter(hitbox, GetRectCenter(rect));
 }
 
 void Player::Update(const double deltaTime)
