@@ -1,6 +1,5 @@
 #pragma once
 #include "sprite.h"
-#include "support.h"
 
 class Entity : public SimpleSprite
 {
@@ -13,7 +12,7 @@ public:
 
     int z = WORLD_LAYERS["main"];
     int y_sort{};
-    Rectangle hitbox;
+    Rectangle hitbox{};
 
 protected:
 

@@ -2,7 +2,6 @@
 #include "entities.h"
 #include "raylib_utils.h"
 #include "settings.h"
-#include "support.h"
 
 
 Entity::Entity(
@@ -100,11 +99,11 @@ void Player::Update(const double deltaTime)
     Animate(deltaTime);
 }
 
-void Player::Collisions(Axis axis)
+void Player::Collisions(const Axis axis)
 {
     for (const auto *sprite: collision_sprites->sprites)
     {
-        Rectangle sprite_hitbox = GetHitbox(sprite);
+        const Rectangle sprite_hitbox = GetHitbox(sprite);
         if (CheckCollisionRecs(sprite_hitbox, hitbox))
         {
             if (axis == HORIZONTAL)

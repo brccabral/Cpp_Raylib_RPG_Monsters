@@ -6,7 +6,7 @@
 #include "settings.h"
 #include "sprite.h"
 #include "entities.h"
-#include "support.h"
+#include <iostream>
 
 
 Game::Game(const int width, const int height)
@@ -19,6 +19,7 @@ Game::Game(const int width, const int height)
     // create all_sprites after InitWindow for it uses LoadTexture
     all_sprites = new AllSprites;
     collition_sprites = new SpriteGroup;
+    characters_sprites = new SpriteGroup;
 
     Setup(tmx_maps["world"], "house");
     // Setup(tmx_maps["hospital"], "world");
@@ -34,6 +35,7 @@ void Game::run()
 {
     while (!WindowShouldClose())
     {
+        Input();
         all_sprites->Update(GetFrameTime());
 
         BeginDrawing();
@@ -202,7 +204,8 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
             }
             std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
             new Character(
-                    {float(entity->x), float(entity->y)}, named_frames, {all_sprites, collition_sprites}, direction);
+                    {float(entity->x), float(entity->y)}, named_frames,
+                    {all_sprites, collition_sprites, characters_sprites}, direction);
         }
 
         entity = entity->next;
@@ -243,6 +246,21 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
     }
 }
 
+void Game::Input()
+{
+    if (IsKeyPressed(KEY_SPACE))
+    {
+        for (auto *sprite: characters_sprites->sprites)
+        {
+            const Character *character = (Character *) sprite;
+            if (CheckConnections(100, player, character))
+            {
+                std::cout << "dialog\n";
+            }
+        }
+    }
+}
+
 void Game::UnloadResources()
 {
     UnloadTMX(tmx_maps["world"]);
@@ -263,4 +281,5 @@ void Game::UnloadResources()
     }
     delete all_sprites;
     delete collition_sprites;
+    delete characters_sprites;
 }

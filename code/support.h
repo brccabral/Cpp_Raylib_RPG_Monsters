@@ -1,4 +1,7 @@
 #pragma once
+#include "raylib_utils.h"
+
+
 #include <filesystem>
 #include <map>
 #include <raylib.h>
@@ -92,4 +95,14 @@ inline std::map<std::string, tilerect_name> all_character_import(const char *pat
     }
 
     return new_dict;
+}
+
+inline bool CheckConnections(const float radius, const Entity *entity, const Entity *target, float tolerance = 30)
+{
+    const Vector2 relation = Vector2Subtract(GetRectCenter(target->rect), GetRectCenter(entity->rect));
+    if (Vector2Length(relation) < radius)
+    {
+        return true;
+    }
+    return false;
 }

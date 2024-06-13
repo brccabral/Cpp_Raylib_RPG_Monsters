@@ -24,6 +24,7 @@ public:
     static TileInfo GetTileInfo(const tmx_tile *tile, int posX, int posY);
     void CreateTileLayer(const tmx_map *map, const tmx_layer *layer, int z = WORLD_LAYERS["main"]);
     void Setup(const tmx_map *map, const std::string &player_start_position);
+    void Input();
 
 private:
 
@@ -34,5 +35,6 @@ private:
     std::map<std::string, std::map<std::string, tilerect_name>> overworld_rect_frames;
     AllSprites *all_sprites = nullptr;
     SpriteGroup *collition_sprites = nullptr;
+    SpriteGroup *characters_sprites = nullptr;
     Player *player{};
 };
