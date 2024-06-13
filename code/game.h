@@ -33,5 +33,6 @@ private:
     std::map<std::string, std::map<std::string, Texture2D>> named_textures;
     std::map<std::string, std::map<std::string, tilerect_name>> overworld_rect_frames;
     AllSprites *all_sprites = nullptr;
+    SpriteGroup *collition_sprites = nullptr;
     Player *player{};
 };

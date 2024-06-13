@@ -7,7 +7,7 @@ class AllSprites : public SpriteGroup
 public:
 
     AllSprites();
-    ~AllSprites();
+    ~AllSprites() override;
 
     void Draw(Vector2 player_center);
     Vector2 offset{};

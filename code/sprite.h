@@ -17,7 +17,7 @@ class SimpleSprite
 public:
 
 
-    explicit SimpleSprite(SpriteGroup *sprite_group);
+    explicit SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups);
     virtual ~SimpleSprite() = default;
 
     virtual void Draw(Vector2 offset) const;
@@ -38,10 +38,11 @@ class Sprite : public SimpleSprite
 {
 public:
 
-    Sprite(Vector2 pos, const TiledTexture &img, SpriteGroup *sg, int z_ = WORLD_LAYERS["main"]);
+    Sprite(Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs, int z_ = WORLD_LAYERS["main"]);
 
     int z = WORLD_LAYERS["main"];
     int y_sort{};
+    Rectangle hitbox{};
 
 private:
 
@@ -53,11 +54,20 @@ class MonsterPatchSprite : public Sprite
 {
 public:
 
-    MonsterPatchSprite(Vector2 pos, const TiledTexture &img, SpriteGroup *sg, std::string bio);
+    MonsterPatchSprite(Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs, std::string bio);
 
 private:
 
     std::string biome;
+};
+
+class BorderSprite : public Sprite
+{
+public:
+
+    BorderSprite(Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs);
+
+    Rectangle hitbox;
 };
 
 class AnimatedSprite : public Sprite
@@ -65,7 +75,7 @@ class AnimatedSprite : public Sprite
 public:
 
     AnimatedSprite(
-            Vector2 position, const std::vector<TiledTexture> &frms, SpriteGroup *sprite_group,
+            Vector2 position, const std::vector<TiledTexture> &frms, const std::vector<SpriteGroup *> &sgs,
             int z = WORLD_LAYERS["main"]);
     void Animate(double deltaTime);
     void Update(double deltaTime) override;

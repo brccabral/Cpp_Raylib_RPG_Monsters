@@ -7,9 +7,9 @@
 
 
 Entity::Entity(
-        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms, SpriteGroup *sg,
-        std::string facing_dir)
-    : SimpleSprite(sg), facing_direction(std::move(facing_dir)), named_frames(named_frms)
+        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms,
+        const std::vector<SpriteGroup *> &sgs, std::string facing_dir)
+    : SimpleSprite(sgs), facing_direction(std::move(facing_dir)), named_frames(named_frms)
 {
     image = named_frames[GetState()][0];
     rect = image.rect;
@@ -49,15 +49,15 @@ std::string Entity::GetState()
 }
 
 Character::Character(
-        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms, SpriteGroup *sg,
-        std::string facing_dir)
-    : Entity(pos, named_frms, sg, std::move(facing_dir))
+        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms,
+        const std::vector<SpriteGroup *> &sgs, std::string facing_dir)
+    : Entity(pos, named_frms, sgs, std::move(facing_dir))
 {}
 
 Player::Player(
-        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms, SpriteGroup *sg,
-        std::string facing_dir)
-    : Entity(pos, named_frms, sg, std::move(facing_dir))
+        const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms,
+        const std::vector<SpriteGroup *> &sgs, std::string facing_dir)
+    : Entity(pos, named_frms, sgs, std::move(facing_dir))
 {}
 
 void Player::Input()

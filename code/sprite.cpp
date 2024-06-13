@@ -8,9 +8,9 @@
 
 #include <cstring>
 
-SimpleSprite::SimpleSprite(SpriteGroup *sprite_group)
+SimpleSprite::SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups)
 {
-    if (sprite_group)
+    for (auto *sprite_group: sprite_groups)
     {
         groups.push_back(sprite_group);
         sprite_group->sprites.push_back(this);
@@ -23,12 +23,17 @@ void SimpleSprite::Draw(const Vector2 offset) const
     {
         DrawTextureRec(*image.texture, image.rect, Vector2Add({rect.x, rect.y}, offset), WHITE);
     }
+    else
+    {
+        DrawRectangleV(Vector2Add({rect.x, rect.y}, offset), {rect.width, rect.height}, BLACK);
+    }
 }
 
 void SimpleSprite::Update(const double deltaTime)
 {}
 
-Sprite::Sprite(const Vector2 pos, const TiledTexture &img, SpriteGroup *sg, const int z_) : SimpleSprite(sg)
+Sprite::Sprite(const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs, const int z_)
+    : SimpleSprite(sgs)
 {
     image = img;
     rect = image.rect;
@@ -36,10 +41,12 @@ Sprite::Sprite(const Vector2 pos, const TiledTexture &img, SpriteGroup *sg, cons
     z = z_;
     y_sort = GetRectCenter(rect).y;
     type = SPRITE;
+    hitbox = rect;
 }
 
-MonsterPatchSprite::MonsterPatchSprite(const Vector2 pos, const TiledTexture &img, SpriteGroup *sg, std::string bio)
-    : Sprite(pos, img, sg, WORLD_LAYERS["main"]), biome(std::move(bio))
+MonsterPatchSprite::MonsterPatchSprite(
+        const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs, std::string bio)
+    : Sprite(pos, img, sgs, WORLD_LAYERS["main"]), biome(std::move(bio))
 {
     y_sort -= 40;
     // move sand patches to background drawing layer
@@ -49,9 +56,14 @@ MonsterPatchSprite::MonsterPatchSprite(const Vector2 pos, const TiledTexture &im
     }
 }
 
+BorderSprite::BorderSprite(Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs)
+    : Sprite(pos, img, sgs)
+{}
+
 AnimatedSprite::AnimatedSprite(
-        const Vector2 position, const std::vector<TiledTexture> &frms, SpriteGroup *sprite_group, const int z)
-    : Sprite(position, frms[0], sprite_group, z), frame_index(0), frames(frms)
+        const Vector2 position, const std::vector<TiledTexture> &frms, const std::vector<SpriteGroup *> &sgs,
+        const int z)
+    : Sprite(position, frms[0], sgs, z), frame_index(0), frames(frms)
 {}
 
 void AnimatedSprite::Animate(const double deltaTime)

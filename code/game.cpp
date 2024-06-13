@@ -18,6 +18,7 @@ Game::Game(const int width, const int height)
     ImporAssets();
     // create all_sprites after InitWindow for it uses LoadTexture
     all_sprites = new AllSprites;
+    collition_sprites = new SpriteGroup;
 
     Setup(tmx_maps["world"], "house");
     // Setup(tmx_maps["hospital"], "world");
@@ -62,6 +63,17 @@ TileInfo Game::GetTileInfo(const tmx_tile *tile, const int posX, const int posY)
     TileInfo tile_info{};
     const tmx_image *im = tile->image;
     Texture2D *map_texture{};
+
+    tile_info.position = {float(posX), float(posY)};
+
+    Rectangle srcRect;
+    srcRect.x = tile->ul_x;
+    srcRect.y = tile->ul_y;
+    srcRect.width = tile->width;
+    srcRect.height = tile->height;
+
+    tile_info.image.rect = srcRect;
+
     if (im && im->resource_image)
     {
         map_texture = (Texture2D *) im->resource_image;
@@ -72,15 +84,7 @@ TileInfo Game::GetTileInfo(const tmx_tile *tile, const int posX, const int posY)
     }
     if (map_texture)
     {
-        const Vector2 position = {float(posX), float(posY)};
-        Rectangle srcRect;
-        srcRect.x = tile->ul_x;
-        srcRect.y = tile->ul_y;
-        srcRect.width = tile->width;
-        srcRect.height = tile->height;
-
-        tile_info.position = position;
-        tile_info.image = {map_texture, srcRect};
+        tile_info.image.texture = map_texture;
     }
     return tile_info;
 }
@@ -97,7 +101,7 @@ void Game::CreateTileLayer(const tmx_map *map, const tmx_layer *layer, const int
             {
                 const tmx_tileset *ts = map->tiles[gid]->tileset;
                 auto [position, image] = GetTileInfo(map->tiles[gid], x * ts->tile_width, y * ts->tile_height);
-                new Sprite(position, image, all_sprites, z);
+                new Sprite(position, image, {all_sprites}, z);
             }
         }
     }
@@ -111,6 +115,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
     const tmx_layer *water_layer = tmx_find_layer_by_name(map, "Water");
     const tmx_layer *coast_layer = tmx_find_layer_by_name(map, "Coast");
     const tmx_layer *monster_layer = tmx_find_layer_by_name(map, "Monsters");
+    const tmx_layer *collisions_layer = tmx_find_layer_by_name(map, "Collisions");
 
     CreateTileLayer(map, terrain_layer, WORLD_LAYERS["bg"]);
     CreateTileLayer(map, terrain_top_layer, WORLD_LAYERS["bg"]);
@@ -129,15 +134,25 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
             if (strcmp(name.c_str(), "top") == 0)
             {
                 auto [position, image] = GetTileInfo(map->tiles[gid], object->x, object->y - object->height);
-                new Sprite(position, image, all_sprites, WORLD_LAYERS["top"]);
+                new Sprite(position, image, {all_sprites}, WORLD_LAYERS["top"]);
             }
             else
             {
                 auto [position, image] = GetTileInfo(map->tiles[gid], object->x, object->y - object->height);
-                new Sprite(position, image, all_sprites);
+                new Sprite(position, image, {all_sprites, collition_sprites});
             }
         }
         object = object->next;
+    }
+
+    auto collision = collisions_layer->content.objgr->head;
+    while (collision)
+    {
+        TiledTexture image{};
+        image.rect = {0, 0, float(collision->width), float(collision->height)};
+        new BorderSprite({float(collision->x), float(collision->y)}, image, {collition_sprites});
+
+        collision = collision->next;
     }
 
     auto monster = monster_layer->content.objgr->head;
@@ -148,7 +163,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         {
             auto [position, image] = GetTileInfo(map->tiles[gid], monster->x, monster->y - monster->height);
             std::string biome = tmx_get_property(monster->properties, "biome")->value.string;
-            new MonsterPatchSprite(position, image, all_sprites, biome);
+            new MonsterPatchSprite(position, image, {all_sprites}, biome);
         }
         monster = monster->next;
     }
@@ -169,7 +184,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                     }
                 }
                 std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
-                player = new Player({float(entity->x), float(entity->y)}, named_frames, all_sprites, direction);
+                player = new Player({float(entity->x), float(entity->y)}, named_frames, {all_sprites}, direction);
             }
         }
         else
@@ -184,7 +199,8 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                 }
             }
             std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
-            new Character({float(entity->x), float(entity->y)}, named_frames, all_sprites, direction);
+            new Character(
+                    {float(entity->x), float(entity->y)}, named_frames, {all_sprites, collition_sprites}, direction);
         }
 
         entity = entity->next;
@@ -203,7 +219,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                     frames.push_back({&overworld_frames["coast"][0], rect});
                 }
                 new AnimatedSprite(
-                        {float(x + water->x), float(y + water->y)}, frames, all_sprites, WORLD_LAYERS["water"]);
+                        {float(x + water->x), float(y + water->y)}, frames, {all_sprites}, WORLD_LAYERS["water"]);
             }
         }
         water = water->next;
@@ -220,7 +236,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         {
             frames.push_back({&overworld_frames["coast"][0], rect});
         }
-        new AnimatedSprite({float(coast->x), float(coast->y)}, frames, all_sprites, WORLD_LAYERS["bg"]);
+        new AnimatedSprite({float(coast->x), float(coast->y)}, frames, {all_sprites}, WORLD_LAYERS["bg"]);
         coast = coast->next;
     }
 }
@@ -244,4 +260,5 @@ void Game::UnloadResources()
         }
     }
     delete all_sprites;
+    delete collition_sprites;
 }
