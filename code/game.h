@@ -19,12 +19,12 @@ public:
 
     Game(int width, int height);
     ~Game();
-    void run();
+    void run() const;
     void ImporAssets();
     static TileInfo GetTileInfo(const tmx_tile *tile, int posX, int posY);
     void CreateTileLayer(const tmx_map *map, const tmx_layer *layer, int z = WORLD_LAYERS["main"]);
     void Setup(const tmx_map *map, const std::string &player_start_position);
-    void Input();
+    void Input() const;
 
 private:
 

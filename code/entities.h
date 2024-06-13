@@ -9,6 +9,9 @@ public:
            const std::vector<SpriteGroup *> &sgs, std::string facing_dir);
     void Animate(double dt);
     void Update(double dt) override;
+    void Block();
+    void Unblock();
+    void ChangeFacingDirection(Vector2 target_pos);
 
     int z = WORLD_LAYERS["main"];
     int y_sort{};
@@ -19,6 +22,7 @@ protected:
 
     Vector2 direction{};
     float speed = 250;
+    bool blocked{}; // block player movements
 
 private:
 

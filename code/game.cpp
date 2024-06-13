@@ -31,7 +31,7 @@ Game::~Game()
     CloseWindow();
 }
 
-void Game::run()
+void Game::run() const
 {
     while (!WindowShouldClose())
     {
@@ -246,15 +246,17 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
     }
 }
 
-void Game::Input()
+void Game::Input() const
 {
     if (IsKeyPressed(KEY_SPACE))
     {
         for (auto *sprite: characters_sprites->sprites)
         {
-            const Character *character = (Character *) sprite;
+            auto *character = (Character *) sprite;
             if (CheckConnections(100, player, character))
             {
+                player->Block();
+                character->ChangeFacingDirection(GetRectCenter(player->rect));
                 std::cout << "dialog\n";
             }
         }

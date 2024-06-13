@@ -29,6 +29,44 @@ void Entity::Update(const double dt)
     Animate(dt);
 }
 
+void Entity::Block()
+{
+    blocked = true;
+    direction = {0, 0};
+}
+
+void Entity::Unblock()
+{
+    blocked = false;
+}
+
+void Entity::ChangeFacingDirection(const Vector2 target_pos)
+{
+    auto [delta_x, delta_y] = Vector2Subtract(target_pos, GetRectCenter(rect));
+    if (abs(delta_y) < 30)
+    {
+        if (delta_x > 0)
+        {
+            facing_direction = "right";
+        }
+        else
+        {
+            facing_direction = "left";
+        }
+    }
+    else
+    {
+        if (delta_y > 0)
+        {
+            facing_direction = "down";
+        }
+        else
+        {
+            facing_direction = "up";
+        }
+    }
+}
+
 std::string Entity::GetState()
 {
     const bool moving = (direction.x || direction.y);
@@ -93,9 +131,12 @@ void Player::Move(const double deltaTime)
 
 void Player::Update(const double deltaTime)
 {
-    Input();
-    Move(deltaTime);
     y_sort = GetRectCenter(rect).y;
+    if (!blocked)
+    {
+        Input();
+        Move(deltaTime);
+    }
     Animate(deltaTime);
 }
 
