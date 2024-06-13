@@ -40,6 +40,11 @@ public:
     Character(
             Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
             const std::vector<SpriteGroup *> &sgs, FacingDirection facing_dir, const CharacterData &character_data);
+    std::vector<std::string> GetDialog() const;
+
+private:
+
+    CharacterData character_data;
 };
 
 class Player : public Entity

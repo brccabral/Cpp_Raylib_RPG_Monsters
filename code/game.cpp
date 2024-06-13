@@ -269,7 +269,6 @@ void Game::Input()
                 player->Block();
                 character->ChangeFacingDirection(GetRectCenter(player->rect));
                 CreateDialog(character);
-                std::cout << "dialog\n";
             }
         }
     }

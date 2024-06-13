@@ -107,9 +107,18 @@ FacingDirection Entity::GetState()
 Character::Character(
         const Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
         const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir, const CharacterData &character_data)
-    : Entity(pos, face_frms, sgs, facing_dir)
+    : Entity(pos, face_frms, sgs, facing_dir), character_data(character_data)
 {
     std::cout << character_data.biome << "\n";
+}
+
+std::vector<std::string> Character::GetDialog() const
+{
+    if (character_data.defeated)
+    {
+        return character_data.dialog.defeated;
+    }
+    return character_data.dialog.default_;
 }
 
 Player::Player(
