@@ -7,6 +7,16 @@ inline Vector2 GetRectCenter(const Rectangle rect)
     return {rect.x + rect.width / 2, rect.y + rect.height / 2};
 }
 
+inline Vector2 GetRectMidbottom(const Rectangle rect)
+{
+    return {rect.x + rect.width / 2, rect.y + rect.height};
+}
+
+inline Vector2 GetRectMidtop(const Rectangle rect)
+{
+    return {rect.x + rect.width / 2, rect.y};
+}
+
 inline void RectToCenter(Rectangle &rect, const Vector2 pos)
 {
     rect.x = pos.x - rect.width / 2;
