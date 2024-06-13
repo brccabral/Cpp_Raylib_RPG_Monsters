@@ -3,6 +3,8 @@
 #define RAYLIB_TMX_IMPLEMENTATION
 #include "raylib-tmx.h"
 #include "game.h"
+
+#include "dialogtree.h"
 #include "settings.h"
 #include "sprite.h"
 #include "entities.h"
@@ -23,6 +25,8 @@ Game::Game(const int width, const int height)
 
     Setup(tmx_maps["world"], "house");
     // Setup(tmx_maps["hospital"], "world");
+
+    fonts["dialog"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 30, nullptr, 0);
 }
 
 Game::~Game()
@@ -31,7 +35,7 @@ Game::~Game()
     CloseWindow();
 }
 
-void Game::run() const
+void Game::run()
 {
     while (!WindowShouldClose())
     {
@@ -58,6 +62,8 @@ void Game::ImporAssets()
     named_textures["characters"] = ImportNamedFolder("resources/graphics/characters");
     named_rect_frames["coast"] = coast_rects();
     face_rect_frames["characters"] = all_character_import("resources/graphics/characters");
+
+    LoadTrainerData();
 }
 
 TileInfo Game::GetTileInfo(const tmx_tile *tile, const int posX, const int posY)
@@ -252,7 +258,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
     }
 }
 
-void Game::Input() const
+void Game::Input()
 {
     if (IsKeyPressed(KEY_SPACE))
     {
@@ -263,6 +269,7 @@ void Game::Input() const
             {
                 player->Block();
                 character->ChangeFacingDirection(GetRectCenter(player->rect));
+                CreateDialog(character);
                 std::cout << "dialog\n";
             }
         }
@@ -290,4 +297,20 @@ void Game::UnloadResources()
     delete all_sprites;
     delete collition_sprites;
     delete characters_sprites;
+}
+
+void Game::CreateDialog(Character *character)
+{
+    DialogTree(character, player, all_sprites, fonts["dialog"]);
+}
+
+void Game::LoadTrainerData()
+{
+    TRAINER_DATA["o1"] = {
+            .monsters = {{.name = "Jacana", .level = 14}, {.name = "Cleaf", 15}},
+            .dialog = {.default_ = {"Hey", "Oh"}, .defeated = {"You", "Lets"}},
+            .directions = {DOWN},
+            .look_around = true,
+            .defeated = false,
+            .biome = "forest"};
 }
