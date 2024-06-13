@@ -78,7 +78,7 @@ void Player::Input()
     {
         input_vector.x += 1;
     }
-    direction = input_vector;
+    direction = Vector2Normalize(input_vector);
 }
 
 void Player::Move(const double deltaTime)
