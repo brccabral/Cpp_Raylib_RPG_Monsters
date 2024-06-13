@@ -62,8 +62,6 @@ void Game::ImporAssets()
     named_textures["characters"] = ImportNamedFolder("resources/graphics/characters");
     named_rect_frames["coast"] = coast_rects();
     face_rect_frames["characters"] = all_character_import("resources/graphics/characters");
-
-    LoadTrainerData();
 }
 
 TileInfo Game::GetTileInfo(const tmx_tile *tile, const int posX, const int posY)
@@ -215,9 +213,10 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                     face_frames[key].push_back({&named_textures["characters"][graphic], rect});
                 }
             }
+            std::string character_id = tmx_get_property(entity->properties, "character_id")->value.string;
             new Character(
                     {float(entity->x), float(entity->y)}, face_frames,
-                    {all_sprites, collition_sprites, characters_sprites}, face_direction);
+                    {all_sprites, collition_sprites, characters_sprites}, face_direction, TRAINER_DATA[character_id]);
         }
 
         entity = entity->next;

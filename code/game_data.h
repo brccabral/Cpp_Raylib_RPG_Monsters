@@ -4,13 +4,13 @@
 #include <vector>
 
 
-struct Dialog
+struct TrainerDialog
 {
     std::vector<std::string> default_;
     std::vector<std::string> defeated;
 };
 
-struct Monster
+struct TrainerMonster
 {
     std::string name;
     int level;
@@ -18,8 +18,8 @@ struct Monster
 
 struct CharacterData
 {
-    std::vector<Monster> monsters;
-    Dialog dialog;
+    std::vector<TrainerMonster> monsters;
+    TrainerDialog dialog;
     std::vector<FacingDirection> directions;
     bool look_around;
     bool defeated;

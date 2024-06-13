@@ -3,6 +3,8 @@
 #include "raylib_utils.h"
 #include "settings.h"
 
+#include <iostream>
+
 
 Entity::Entity(
         const Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
@@ -104,9 +106,11 @@ FacingDirection Entity::GetState()
 
 Character::Character(
         const Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
-        const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir)
+        const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir, const CharacterData &character_data)
     : Entity(pos, face_frms, sgs, facing_dir)
-{}
+{
+    std::cout << character_data.biome << "\n";
+}
 
 Player::Player(
         const Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
