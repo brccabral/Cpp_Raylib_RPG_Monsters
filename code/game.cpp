@@ -303,14 +303,3 @@ void Game::CreateDialog(Character *character)
 {
     DialogTree(character, player, all_sprites, fonts["dialog"]);
 }
-
-void Game::LoadTrainerData()
-{
-    TRAINER_DATA["o1"] = {
-            .monsters = {{.name = "Jacana", .level = 14}, {.name = "Cleaf", 15}},
-            .dialog = {.default_ = {"Hey", "Oh"}, .defeated = {"You", "Lets"}},
-            .directions = {DOWN},
-            .look_around = true,
-            .defeated = false,
-            .biome = "forest"};
-}
