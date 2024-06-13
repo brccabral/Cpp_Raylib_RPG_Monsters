@@ -43,9 +43,11 @@ class Player : public Entity
 public:
 
     Player(Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms,
-           const std::vector<SpriteGroup *> &sgs, std::string facing_dir);
+           const std::vector<SpriteGroup *> &sgs, std::string facing_dir, SpriteGroup *cs);
     void Input();
     void Move(double deltaTime);
     void Update(double deltaTime) override;
+    void Collisions(Axis axis);
     [[nodiscard]] Vector2 GetCenter() const;
+    SpriteGroup *collision_sprites;
 };

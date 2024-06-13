@@ -184,7 +184,9 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                     }
                 }
                 std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
-                player = new Player({float(entity->x), float(entity->y)}, named_frames, {all_sprites}, direction);
+                player = new Player(
+                        {float(entity->x), float(entity->y)}, named_frames, {all_sprites}, direction,
+                        collition_sprites);
             }
         }
         else

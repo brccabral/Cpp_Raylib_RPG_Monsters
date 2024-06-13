@@ -99,3 +99,9 @@ enum SpriteType
     SPRITE,
     ENTITY,
 };
+
+enum Axis
+{
+    HORIZONTAL,
+    VERTICAL
+};

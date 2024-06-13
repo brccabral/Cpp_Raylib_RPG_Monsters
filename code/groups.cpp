@@ -1,9 +1,8 @@
+#include <algorithm>
 #include "groups.h"
 #include "entities.h"
-#include <raymath.h>
 #include "settings.h"
-
-#include <algorithm>
+#include "raylib_utils.h"
 
 AllSprites::AllSprites()
 {
@@ -17,8 +16,7 @@ AllSprites::~AllSprites()
 
 void AllSprites::Draw(const Vector2 player_center)
 {
-    offset = Vector2Subtract(player_center, Vector2Scale({WINDOW_WIDTH, WINDOW_HEIGHT}, 0.5));
-    offset = Vector2Scale(offset, -1);
+    offset = ViewOffset(player_center);
 
     std::vector<SimpleSprite *> bg_sprites;
     std::vector<SimpleSprite *> main_sprites;

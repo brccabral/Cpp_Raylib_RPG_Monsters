@@ -88,6 +88,7 @@ private:
 
 int GetZ(const SimpleSprite *sprite);
 int GetYsort(const SimpleSprite *sprite);
+Rectangle GetHitbox(const SimpleSprite *sprite);
 
 class SpriteGroup
 {

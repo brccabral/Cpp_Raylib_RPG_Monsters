@@ -1,7 +1,5 @@
 #include "sprite.h"
 #include "entities.h"
-#include <raymath.h>
-
 #include <utility>
 #include "raylib_utils.h"
 #include "settings.h"
@@ -19,13 +17,15 @@ SimpleSprite::SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups)
 
 void SimpleSprite::Draw(const Vector2 offset) const
 {
+    const Vector2 pos = Vector2Add({rect.x, rect.y}, offset);
+
     if (image.texture)
     {
-        DrawTextureRec(*image.texture, image.rect, Vector2Add({rect.x, rect.y}, offset), WHITE);
+        DrawTextureRec(*image.texture, image.rect, pos, WHITE);
     }
     else
     {
-        DrawRectangleV(Vector2Add({rect.x, rect.y}, offset), {rect.width, rect.height}, BLACK);
+        DrawRectangle(pos.x, pos.y, rect.width, rect.height, BLACK);
     }
 }
 
@@ -121,4 +121,19 @@ int GetYsort(const SimpleSprite *sprite)
         y = ((Entity *) sprite)->y_sort;
     }
     return y;
+}
+
+Rectangle GetHitbox(const SimpleSprite *sprite)
+{
+    Rectangle rect{};
+
+    if (sprite->type == SPRITE)
+    {
+        rect = ((Sprite *) sprite)->hitbox;
+    }
+    else if (sprite->type == ENTITY)
+    {
+        rect = ((Entity *) sprite)->hitbox;
+    }
+    return rect;
 }

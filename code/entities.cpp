@@ -1,6 +1,5 @@
 #include <utility>
 #include "entities.h"
-#include <raymath.h>
 #include "raylib_utils.h"
 #include "settings.h"
 #include "support.h"
@@ -17,7 +16,7 @@ Entity::Entity(
     y_sort = GetRectCenter(rect).y;
     type = ENTITY;
     hitbox = rect;
-    RectInflate(hitbox, rect.width / 2.0f, -60.0f);
+    RectInflate(hitbox, -rect.width / 2.0f, -60.0f);
 }
 
 void Entity::Animate(const double dt)
@@ -56,8 +55,8 @@ Character::Character(
 
 Player::Player(
         const Vector2 pos, const std::map<std::string, std::vector<TiledTexture>> &named_frms,
-        const std::vector<SpriteGroup *> &sgs, std::string facing_dir)
-    : Entity(pos, named_frms, sgs, std::move(facing_dir))
+        const std::vector<SpriteGroup *> &sgs, std::string facing_dir, SpriteGroup *cs)
+    : Entity(pos, named_frms, sgs, std::move(facing_dir)), collision_sprites(cs)
 {}
 
 void Player::Input()
@@ -84,8 +83,11 @@ void Player::Input()
 
 void Player::Move(const double deltaTime)
 {
-    MoveRect(rect, Vector2Scale(direction, speed * deltaTime));
+    // MoveRect(rect, Vector2Scale(direction, speed * deltaTime));
+    // RectToCenter(hitbox, GetRectCenter(rect));
+    rect.x += direction.x * speed * deltaTime;
     RectToCenter(hitbox, GetRectCenter(rect));
+    Collisions(HORIZONTAL);
 }
 
 void Player::Update(const double deltaTime)
@@ -94,6 +96,21 @@ void Player::Update(const double deltaTime)
     Move(deltaTime);
     y_sort = GetRectCenter(rect).y;
     Animate(deltaTime);
+}
+
+void Player::Collisions(Axis axis)
+{
+    for (const auto *sprite: collision_sprites->sprites)
+    {
+        if (CheckCollisionRecs(GetHitbox(sprite), hitbox))
+        {
+            if (direction.x > 0)
+            {
+                hitbox.x = GetHitbox(sprite).x - hitbox.width;
+            }
+            RectToCenter(rect, GetRectCenter(hitbox));
+        }
+    }
 }
 
 Vector2 Player::GetCenter() const

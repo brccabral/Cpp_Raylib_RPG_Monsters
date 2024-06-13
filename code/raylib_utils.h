@@ -1,5 +1,6 @@
 #pragma once
 #include <raylib.h>
+#include <raymath.h>
 
 inline Vector2 GetRectCenter(const Rectangle rect)
 {
@@ -17,6 +18,15 @@ inline void RectToTopleft(Rectangle &rect, const Vector2 pos)
     rect.x = pos.x;
     rect.y = pos.y;
 }
+
+inline Vector2 ViewOffset(const Vector2 player_center)
+{
+    Vector2 offset{};
+    offset = Vector2Subtract(player_center, Vector2Scale({WINDOW_WIDTH, WINDOW_HEIGHT}, 0.5));
+    offset = Vector2Scale(offset, -1);
+    return offset;
+}
+
 
 inline Rectangle GetCentereredRect(const Rectangle *rect, const Vector2 pos)
 {
