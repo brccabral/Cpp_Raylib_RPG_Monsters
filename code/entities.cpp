@@ -47,22 +47,22 @@ void Entity::ChangeFacingDirection(const Vector2 target_pos)
     {
         if (delta_x > 0)
         {
-            facing_direction = RIGHT;
+            facing_direction = RIGHT_IDLE;
         }
         else
         {
-            facing_direction = LEFT;
+            facing_direction = LEFT_IDLE;
         }
     }
     else
     {
         if (delta_y > 0)
         {
-            facing_direction = DOWN;
+            facing_direction = DOWN_IDLE;
         }
         else
         {
-            facing_direction = UP;
+            facing_direction = UP_IDLE;
         }
     }
 }
