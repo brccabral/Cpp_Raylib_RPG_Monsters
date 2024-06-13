@@ -1,4 +1,5 @@
 #pragma once
+#include "dialogsprite.h"
 #include "entities.h"
 #include "groups.h"
 
@@ -6,12 +7,16 @@ class DialogTree
 {
 public:
 
-    DialogTree(Character *character_, Player *player_, AllSprites *all_sprites_, const Font &font_);
+    DialogTree(const Character *character_, Player *player_, const std::vector<SpriteGroup *> &grps, const Font &font_);
+    ~DialogTree();
 
 private:
 
-    Character *character;
+    const Character *character;
     Player *player;
-    AllSprites *all_sprites;
-    Font font;
+    const Font font;
+    std::vector<std::string> dialog;
+    int dialog_num{};
+    int dialog_index{};
+    DialogSprite *currentDialog = nullptr;
 };

@@ -29,7 +29,7 @@ private:
     void Setup(const tmx_map *map, const std::string &player_start_position);
     void Input();
     void UnloadResources();
-    void CreateDialog(Character *character);
+    void CreateDialog(const Character *character);
     std::map<std::string, tmx_map *> tmx_maps;
     std::map<std::string, std::vector<Texture2D>> overworld_frames;
     std::map<std::string, std::map<std::string, Texture2D>> named_textures;

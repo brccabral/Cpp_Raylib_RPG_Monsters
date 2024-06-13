@@ -3,9 +3,19 @@
 #include <iostream>
 
 
-DialogTree::DialogTree(Character *character_, Player *player_, AllSprites *all_sprites_, const Font &font_)
-    : character(character_), player(player_), all_sprites(all_sprites_), font(font_)
+DialogTree::DialogTree(
+        const Character *character_, Player *player_, const std::vector<SpriteGroup *> &grps, const Font &font_)
+    : character(character_), player(player_), font(font_)
 {
-    const std::vector<std::string> dialog = character->GetDialog();
+    dialog = character->GetDialog();
+    dialog_num = dialog.size();
+
+    currentDialog = new DialogSprite(dialog[dialog_index], character, grps, font);
+
     std::cout << dialog[0] << "\n";
+}
+
+DialogTree::~DialogTree()
+{
+    delete currentDialog;
 }

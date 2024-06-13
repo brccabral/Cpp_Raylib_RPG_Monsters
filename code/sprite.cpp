@@ -1,9 +1,13 @@
 #include <cstring>
 #include <utility>
 #include "sprite.h"
+
+#include "dialogsprite.h"
 #include "entities.h"
 #include "raylib_utils.h"
 #include "settings.h"
+
+#include <iostream>
 
 
 SimpleSprite::SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups)
@@ -112,6 +116,10 @@ int GetZ(const SimpleSprite *sprite)
     {
         z = ((Entity *) sprite)->z;
     }
+    else if (sprite->type == DIALOGSPRITE)
+    {
+        z = ((DialogSprite *) sprite)->z;
+    }
     return z;
 }
 
@@ -126,6 +134,10 @@ int GetYsort(const SimpleSprite *sprite)
     else if (sprite->type == ENTITY)
     {
         y = ((Entity *) sprite)->y_sort;
+    }
+    else if (sprite->type == DIALOGSPRITE)
+    {
+        y = ((DialogSprite *) sprite)->y_sort;
     }
     return y;
 }

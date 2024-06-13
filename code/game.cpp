@@ -26,7 +26,7 @@ Game::Game(const int width, const int height)
     Setup(tmx_maps["world"], "house");
     // Setup(tmx_maps["hospital"], "world");
 
-    fonts["dialog"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 30, nullptr, 0);
+    fonts["dialog"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", FONT_SIZE, nullptr, 0);
 }
 
 Game::~Game()
@@ -297,7 +297,7 @@ void Game::UnloadResources()
     delete characters_sprites;
 }
 
-void Game::CreateDialog(Character *character)
+void Game::CreateDialog(const Character *character)
 {
-    DialogTree(character, player, all_sprites, fonts["dialog"]);
+    new DialogTree(character, player, {all_sprites}, fonts["dialog"]);
 }

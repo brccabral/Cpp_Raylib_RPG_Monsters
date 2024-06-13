@@ -43,10 +43,6 @@ public:
     int z = WORLD_LAYERS["main"];
     int y_sort{};
     Rectangle hitbox{};
-
-private:
-
-    std::vector<SpriteGroup *> groups;
 };
 
 // It is a Sprite with a small offset in the drawing sorting (delay in draw)
