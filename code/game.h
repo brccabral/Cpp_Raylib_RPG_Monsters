@@ -22,6 +22,7 @@ public:
 
     Game(int width, int height);
     ~Game();
+    void Draw() const;
     void run();
 
 private:

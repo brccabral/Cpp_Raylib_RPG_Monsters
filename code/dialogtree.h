@@ -2,6 +2,7 @@
 #include "dialogsprite.h"
 #include "entities.h"
 #include "groups.h"
+#include "timer.h"
 
 class DialogTree
 {
@@ -21,4 +22,5 @@ private:
     int dialog_num{};
     int dialog_index{};
     DialogSprite *currentDialog = nullptr;
+    Timer dialog_timer{0.5, false, true};
 };

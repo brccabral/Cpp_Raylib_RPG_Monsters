@@ -36,28 +36,35 @@ Game::~Game()
     CloseWindow();
 }
 
+void Game::Draw() const
+{
+    BeginDrawing();
+    ClearBackground(BLACK);
+
+    all_sprites->Draw(player->GetCenter());
+
+    EndDrawing();
+}
+
 void Game::run()
 {
     while (!WindowShouldClose())
     {
+        Input();
+        all_sprites->Update(GetFrameTime());
+
+        Draw();
+
         // dialog_tree checks for SPACE input, which conflicts
         // with Game input.
         // If player is next to a trainer, the Game.Input opens the first
         // dialog, and dialog_tree opens the second.
         // To avoid it, call dialog_tree.Input before Game.Input
+        // The tutorial uses a Timer to avoid the conflic
         if (dialog_tree)
         {
             dialog_tree->Update();
         }
-        Input();
-        all_sprites->Update(GetFrameTime());
-
-        BeginDrawing();
-        ClearBackground(BLACK);
-
-        all_sprites->Draw(player->GetCenter());
-
-        EndDrawing();
     }
 }
 

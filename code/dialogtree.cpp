@@ -17,7 +17,7 @@ DialogTree::DialogTree(
 
 void DialogTree::Input()
 {
-    if (IsKeyPressed(KEY_SPACE))
+    if (IsKeyPressed(KEY_SPACE) && !dialog_timer.active)
     {
         if (currentDialog)
         {
@@ -27,8 +27,8 @@ void DialogTree::Input()
         ++dialog_index;
         if (dialog_index < dialog_num)
         {
-            SpriteGroup *g0 = groups[0];
             currentDialog = new DialogSprite(dialog[dialog_index], character, groups, font);
+            dialog_timer.Activate();
         }
         else
         {
@@ -39,5 +39,6 @@ void DialogTree::Input()
 
 void DialogTree::Update()
 {
+    dialog_timer.Update();
     Input();
 }
