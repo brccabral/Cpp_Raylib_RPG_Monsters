@@ -20,6 +20,7 @@ Game::Game(const int width, const int height)
     ImporAssets();
     // create all_sprites after InitWindow for it uses LoadTexture
     all_sprites = new AllSprites;
+    not_all_sprites = new SpriteGroup;
     collition_sprites = new SpriteGroup;
     characters_sprites = new SpriteGroup;
 
@@ -41,6 +42,10 @@ void Game::run()
     {
         Input();
         all_sprites->Update(GetFrameTime());
+        if (dialog_tree)
+        {
+            dialog_tree->Update();
+        }
 
         BeginDrawing();
         ClearBackground(BLACK);
@@ -156,7 +161,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
     {
         TiledTexture image{};
         image.rect = {0, 0, float(collision->width), float(collision->height)};
-        new BorderSprite({float(collision->x), float(collision->y)}, image, {collition_sprites});
+        new BorderSprite({float(collision->x), float(collision->y)}, image, {collition_sprites, not_all_sprites});
 
         collision = collision->next;
     }
@@ -259,6 +264,10 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
 
 void Game::Input()
 {
+    if (dialog_tree)
+    {
+        return;
+    }
     if (IsKeyPressed(KEY_SPACE))
     {
         for (auto *sprite: characters_sprites->sprites)
@@ -293,11 +302,14 @@ void Game::UnloadResources()
         }
     }
     delete all_sprites;
-    delete collition_sprites;
-    delete characters_sprites;
+    delete not_all_sprites;
+    delete dialog_tree;
 }
 
 void Game::CreateDialog(const Character *character)
 {
-    new DialogTree(character, player, {all_sprites}, fonts["dialog"]);
+    if (!dialog_tree)
+    {
+        dialog_tree = new DialogTree(character, player, {all_sprites}, fonts["dialog"]);
+    }
 }

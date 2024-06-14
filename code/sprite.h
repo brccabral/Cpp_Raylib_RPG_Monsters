@@ -18,7 +18,7 @@ public:
 
 
     explicit SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups);
-    virtual ~SimpleSprite() = default;
+    virtual ~SimpleSprite();
 
     virtual void Draw(Vector2 offset) const;
     virtual void Update(double deltaTime);
@@ -28,9 +28,6 @@ public:
 protected:
 
     TiledTexture image{};
-
-private:
-
     std::vector<SpriteGroup *> groups;
 };
 
@@ -95,7 +92,7 @@ class SpriteGroup
 {
 public:
 
-    virtual ~SpriteGroup() = default;
+    virtual ~SpriteGroup();
     virtual void Draw() const;
     void Update(double deltaTime);
     std::vector<SimpleSprite *> sprites;

@@ -1,6 +1,8 @@
 #include "dialogsprite.h"
 #include <raymath.h>
 #include "raylib_utils.h"
+
+#include <iostream>
 #include <utility>
 
 
@@ -25,6 +27,24 @@ DialogSprite::DialogSprite(
 
     image.rect = {0, 0, rect.width, rect.height};
     image.texture = CreateImage();
+}
+
+DialogSprite::~DialogSprite()
+{
+    for (auto *group: groups)
+    {
+        for (auto it = group->sprites.begin(); it != group->sprites.end();)
+        {
+            if (*it == this)
+            {
+                group->sprites.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+    }
 }
 
 Texture2D *DialogSprite::CreateImage() const

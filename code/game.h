@@ -1,4 +1,7 @@
 #pragma once
+#include "dialogtree.h"
+
+
 #include <map>
 #include <string>
 #include <tmx.h>
@@ -35,9 +38,14 @@ private:
     std::map<std::string, std::map<std::string, Texture2D>> named_textures;
     std::map<std::string, std::map<std::string, tilerect_name>> named_rect_frames;
     std::map<std::string, std::map<std::string, tilerect_face>> face_rect_frames;
+    // not *all*, but all that needs drawing or updates
     AllSprites *all_sprites = nullptr;
+    // if a sprite is added to another group but not to all_sprites,
+    // add it to `not_all_sprites` so the sprite can be unloaded/deleted
+    SpriteGroup *not_all_sprites = nullptr;
     SpriteGroup *collition_sprites = nullptr;
     SpriteGroup *characters_sprites = nullptr;
     Player *player{};
     std::map<std::string, Font> fonts;
+    DialogTree *dialog_tree = nullptr;
 };
