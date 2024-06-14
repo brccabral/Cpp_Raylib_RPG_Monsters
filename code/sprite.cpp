@@ -1,13 +1,11 @@
 #include <cstring>
 #include <utility>
+#include <algorithm>
 #include "sprite.h"
-
 #include "dialogsprite.h"
 #include "entities.h"
 #include "raylib_utils.h"
 #include "settings.h"
-
-#include <iostream>
 
 
 SimpleSprite::SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups)

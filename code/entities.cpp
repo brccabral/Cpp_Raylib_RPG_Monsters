@@ -1,9 +1,6 @@
-#include <utility>
 #include "entities.h"
 #include "raylib_utils.h"
 #include "settings.h"
-
-#include <iostream>
 
 
 Entity::Entity(

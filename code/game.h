@@ -34,6 +34,7 @@ private:
     void Input();
     void UnloadResources();
     void CreateDialog(const Character *character);
+    void EndDialog(const Character *character);
     std::map<std::string, tmx_map *> tmx_maps;
     std::map<std::string, std::vector<Texture2D>> overworld_frames;
     std::map<std::string, std::map<std::string, Texture2D>> named_textures;

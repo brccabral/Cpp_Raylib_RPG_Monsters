@@ -8,7 +8,7 @@ class DialogSprite : public SimpleSprite
 public:
 
     DialogSprite(std::string msg, const Character *trainer, const std::vector<SpriteGroup *> &grps, const Font &font_);
-    ~DialogSprite();
+    ~DialogSprite() override;
     [[nodiscard]] Texture2D *CreateImage() const;
     int z = WORLD_LAYERS["top"];
     std::string message;

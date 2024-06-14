@@ -8,7 +8,6 @@
 #include "settings.h"
 #include "sprite.h"
 #include "entities.h"
-#include <iostream>
 
 
 Game::Game(const int width, const int height)
@@ -60,7 +59,10 @@ void Game::run()
         // If player is next to a trainer, the Game.Input opens the first
         // dialog, and dialog_tree opens the second.
         // To avoid it, call dialog_tree.Input before Game.Input
-        // The tutorial uses a Timer to avoid the conflic
+        // The tutorial uses a Timer to avoid the conflict
+        // raylib resets the KEY status on EndDrawing by calling PollInputEvents, but to keep
+        // this code the same as the tutorial, with the dialog update
+        // after the drawing, we need to call PollInputEvents outselves
         if (dialog_tree)
         {
             dialog_tree->Update();
@@ -313,15 +315,26 @@ void Game::UnloadResources()
             UnloadTexture(texture);
         }
     }
+    // delete before all_sprites, if there is a DialogSprite, it will
+    // remove itself from all_sprites and avoid double delete
+    delete dialog_tree;
     delete all_sprites;
     delete not_all_sprites;
-    delete dialog_tree;
 }
 
 void Game::CreateDialog(const Character *character)
 {
     if (!dialog_tree)
     {
-        dialog_tree = new DialogTree(character, player, {all_sprites}, fonts["dialog"]);
+        dialog_tree = new DialogTree(
+                character, player, {all_sprites}, fonts["dialog"], [this](const Character *ch) { EndDialog(ch); });
     }
+}
+
+// When there is no more phrases to show, unlock player
+void Game::EndDialog(const Character *character)
+{
+    delete dialog_tree;
+    dialog_tree = nullptr;
+    player->Unblock();
 }

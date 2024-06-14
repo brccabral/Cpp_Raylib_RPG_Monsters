@@ -1,6 +1,7 @@
 #pragma once
 #include <raylib.h>
 #include <raymath.h>
+#include "settings.h"
 
 inline Vector2 GetRectCenter(const Rectangle rect)
 {

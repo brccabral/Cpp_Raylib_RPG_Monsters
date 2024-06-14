@@ -4,8 +4,9 @@
 
 
 DialogTree::DialogTree(
-        const Character *character_, Player *player_, const std::vector<SpriteGroup *> &grps, const Font &font_)
-    : character(character_), player(player_), groups(grps), font(font_)
+        const Character *character_, Player *player_, const std::vector<SpriteGroup *> &grps, const Font &font_,
+        const std::function<void(const Character *)> &end_dialog)
+    : character(character_), player(player_), groups(grps), font(font_), end_dialog(end_dialog)
 {
     dialog = character->GetDialog();
     dialog_num = dialog.size();
@@ -13,6 +14,15 @@ DialogTree::DialogTree(
     currentDialog = new DialogSprite(dialog[dialog_index], character, groups, font);
 
     std::cout << dialog[0] << "\n";
+}
+
+DialogTree::~DialogTree()
+{
+    if (currentDialog)
+    {
+        delete currentDialog;
+        currentDialog = nullptr;
+    }
 }
 
 void DialogTree::Input()
@@ -32,9 +42,10 @@ void DialogTree::Input()
         }
         else
         {
-            std::cout << "No more dialogs.\n";
+            end_dialog(character);
         }
     }
+    PollInputEvents();
 }
 
 void DialogTree::Update()

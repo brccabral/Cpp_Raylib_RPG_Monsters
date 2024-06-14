@@ -1,9 +1,8 @@
-#include "dialogsprite.h"
-#include <raymath.h>
-#include "raylib_utils.h"
-
-#include <iostream>
 #include <utility>
+#include <algorithm>
+#include "raylib_utils.h"
+#include <raymath.h>
+#include "dialogsprite.h"
 
 
 DialogSprite::DialogSprite(
@@ -14,7 +13,6 @@ DialogSprite::DialogSprite(
     type = DIALOGSPRITE;
 
     constexpr float padding = 10.0f;
-    // rect.width = std::max(TextLength(message.c_str()) * 16 + padding * 2, 300ul);
     textsize = MeasureTextEx(font, message.c_str(), FONT_SIZE, 2);
     rect.width = std::max(textsize.x + padding * 2, 300.0f);
     rect.height = textsize.y + padding * 2;
@@ -31,19 +29,11 @@ DialogSprite::DialogSprite(
 
 DialogSprite::~DialogSprite()
 {
+    // remove itself from groups so that groups.update() won't
+    // call this object
     for (auto *group: groups)
     {
-        for (auto it = group->sprites.begin(); it != group->sprites.end();)
-        {
-            if (*it == this)
-            {
-                group->sprites.erase(it);
-            }
-            else
-            {
-                ++it;
-            }
-        }
+        group->sprites.erase(std::remove(group->sprites.begin(), group->sprites.end(), this), group->sprites.end());
     }
 }
 

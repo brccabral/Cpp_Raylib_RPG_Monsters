@@ -8,7 +8,10 @@ class DialogTree
 {
 public:
 
-    DialogTree(const Character *character_, Player *player_, const std::vector<SpriteGroup *> &grps, const Font &font_);
+    DialogTree(
+            const Character *character_, Player *player_, const std::vector<SpriteGroup *> &grps, const Font &font_,
+            const std::function<void(const Character *)> &end_dialog);
+    ~DialogTree();
     void Input();
     void Update();
 
@@ -23,4 +26,5 @@ private:
     int dialog_index{};
     DialogSprite *currentDialog = nullptr;
     Timer dialog_timer{0.5, false, true};
+    std::function<void(const Character *)> end_dialog;
 };
