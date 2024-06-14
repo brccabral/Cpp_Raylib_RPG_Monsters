@@ -40,12 +40,17 @@ void Game::run()
 {
     while (!WindowShouldClose())
     {
-        Input();
-        all_sprites->Update(GetFrameTime());
+        // dialog_tree checks for SPACE input, which conflicts
+        // with Game input.
+        // If player is next to a trainer, the Game.Input opens the first
+        // dialog, and dialog_tree opens the second.
+        // To avoid it, call dialog_tree.Input before Game.Input
         if (dialog_tree)
         {
             dialog_tree->Update();
         }
+        Input();
+        all_sprites->Update(GetFrameTime());
 
         BeginDrawing();
         ClearBackground(BLACK);
