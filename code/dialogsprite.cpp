@@ -22,19 +22,38 @@ DialogSprite::DialogSprite(
     rect.y = y - rect.height - 10;
 
     y_sort = GetRectCenter(rect).y;
+
+    image.rect = {0, 0, rect.width, rect.height};
+    image.texture = CreateImage();
 }
 
-void DialogSprite::Draw(const Vector2 offset) const
+Texture2D *DialogSprite::CreateImage() const
 {
-    const auto [x, y] = Vector2Add({rect.x, rect.y}, offset);
-    Rectangle newRect = rect;
-    newRect.x = x;
-    newRect.y = y;
+    const RenderTexture2D render = LoadRenderTexture(image.rect.width, image.rect.height);
+    while (!IsRenderTextureReady(render))
+    {}
+    BeginTextureMode(render);
 
-    DrawRectangleRounded(newRect, 0.3, 10, COLORS["pure white"]);
+    DrawRectangleRounded(image.rect, 0.3, 10, COLORS["pure white"]);
 
     // centralize text inside box
-    const auto dif = Vector2Subtract({newRect.width, newRect.height}, textsize);
-    MoveRect(newRect, Vector2Scale(dif, 0.5f));
-    DrawTextEx(font, message.c_str(), {newRect.x, newRect.y}, FONT_SIZE, 2, COLORS["black"]);
+    const auto offset = Vector2Subtract({image.rect.width, image.rect.height}, textsize);
+    DrawTextEx(font, message.c_str(), Vector2Scale(offset, 0.5f), FONT_SIZE, 2, COLORS["black"]);
+
+    EndTextureMode();
+
+    // need another render to invert the image
+    // https://github.com/raysan5/raylib/issues/3803
+    // https://github.com/raysan5/raylib/issues/378
+    const RenderTexture2D inverted = LoadRenderTexture(image.rect.width, image.rect.height);
+    while (!IsRenderTextureReady(inverted))
+    {}
+
+    BeginTextureMode(inverted);
+    DrawTextureRec(render.texture, image.rect, {0, 0}, WHITE);
+    EndTextureMode();
+
+    const auto result = (Texture2D *) MemAlloc(sizeof(Texture2D));
+    *result = inverted.texture;
+    return result;
 }
