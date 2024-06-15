@@ -149,8 +149,11 @@ void Character::Update(const double dt)
     }
 
     Entity::Update(dt);
-    Raycast();
-    Move(dt);
+    if (character_data.look_around)
+    {
+        Raycast();
+        Move(dt);
+    }
 }
 
 void Character::StartMove()
@@ -192,11 +195,14 @@ void Character::RandomViewDirection()
 
 void Character::Raycast()
 {
-    if (!has_moved && CheckConnections(radius, this, game->player) && HasLineOfSight())
+    if (!has_moved && !has_noticed && CheckConnections(radius, this, game->player) && HasLineOfSight())
     {
+        // character has seen player and moved towards player
         game->player->Block();
         game->player->ChangeFacingDirection(GetRectCenter(rect));
         StartMove();
+        can_rotate = false; // stop look around
+        has_noticed = true;
     }
 }
 

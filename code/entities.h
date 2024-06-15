@@ -65,6 +65,8 @@ public:
     void Move(double dt);
     void RandomViewDirection();
 
+    bool can_rotate = true;
+
 private:
 
     void Raycast();
@@ -73,7 +75,6 @@ private:
     CharacterData character_data;
     std::vector<Rectangle> collition_rects;
     bool has_moved{};
-    bool can_rotate = true;
     bool has_noticed{};
     float radius{};
     std::vector<FacingDirection> view_directions = {LEFT, RIGHT};
