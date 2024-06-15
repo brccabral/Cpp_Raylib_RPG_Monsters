@@ -33,20 +33,6 @@ private:
     std::map<FacingDirection, std::vector<TiledTexture>> face_frames{};
 };
 
-class Character : public Entity
-{
-public:
-
-    Character(
-            Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
-            const std::vector<SpriteGroup *> &sgs, FacingDirection facing_dir, const CharacterData &character_data);
-    std::vector<std::string> GetDialog() const;
-
-private:
-
-    CharacterData character_data;
-};
-
 class Player : public Entity
 {
 public:
@@ -59,4 +45,27 @@ public:
     void Collisions(Axis axis);
     [[nodiscard]] Vector2 GetCenter() const;
     SpriteGroup *collision_sprites;
+};
+
+
+class Character : public Entity
+{
+public:
+
+    Character(
+            Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
+            const std::vector<SpriteGroup *> &sgs, FacingDirection facing_dir, CharacterData char_data, Player *player,
+            const SpriteGroup *collision_sprites, float radius);
+    [[nodiscard]] std::vector<std::string> GetDialog() const;
+
+private:
+
+    CharacterData character_data;
+    Player *player;
+    std::vector<Rectangle> collition_rects;
+    bool has_moved{};
+    bool can_rotate = true;
+    bool has_noticed{};
+    float radius{};
+    std::vector<FacingDirection> view_directions = {LEFT, RIGHT};
 };

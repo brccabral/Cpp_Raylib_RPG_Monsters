@@ -1,4 +1,6 @@
 #include "entities.h"
+
+#include <utility>
 #include "raylib_utils.h"
 #include "settings.h"
 
@@ -103,9 +105,19 @@ FacingDirection Entity::GetState()
 
 Character::Character(
         const Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
-        const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir, const CharacterData &character_data)
-    : Entity(pos, face_frms, sgs, facing_dir), character_data(character_data)
-{}
+        const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir, CharacterData char_data,
+        Player *player, const SpriteGroup *collision_sprites, const float radius)
+    : Entity(pos, face_frms, sgs, facing_dir), character_data(std::move(char_data)), player(player), radius(radius)
+{
+    for (const auto sprite: collision_sprites->sprites)
+    {
+        if (sprite != this)
+        {
+            collition_rects.push_back(sprite->rect);
+        }
+    }
+    view_directions = character_data.directions;
+}
 
 std::vector<std::string> Character::GetDialog() const
 {
