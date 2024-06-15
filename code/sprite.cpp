@@ -39,9 +39,6 @@ void SimpleSprite::Draw(const Vector2 offset) const
     }
 }
 
-void SimpleSprite::Update(const double deltaTime)
-{}
-
 void SimpleSprite::LeaveOtherGroups(const SpriteGroup *sprite_group)
 {
     for (const auto group: groups)

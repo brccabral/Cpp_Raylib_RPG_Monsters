@@ -3,6 +3,9 @@
 #include <utility>
 #include "raylib_utils.h"
 #include "settings.h"
+#include "support.h"
+
+#include <iostream>
 
 
 Entity::Entity(
@@ -128,6 +131,20 @@ std::vector<std::string> Character::GetDialog() const
     return character_data.dialog.default_;
 }
 
+void Character::Update(double dt)
+{
+    Entity::Update(dt);
+    Raycast();
+}
+
+void Character::Raycast()
+{
+    if (CheckConnections(radius, this, player))
+    {
+        std::cout << "Found player\n";
+    }
+}
+
 Player::Player(
         const Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
         const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir, SpriteGroup *cs)
@@ -169,13 +186,13 @@ void Player::Move(const double deltaTime)
 
 void Player::Update(const double deltaTime)
 {
+    Entity::Update(deltaTime);
     y_sort = GetRectCenter(rect).y;
     if (!blocked)
     {
         Input();
         Move(deltaTime);
     }
-    Animate(deltaTime);
 }
 
 void Player::Collisions(const Axis axis)

@@ -57,8 +57,11 @@ public:
             const std::vector<SpriteGroup *> &sgs, FacingDirection facing_dir, CharacterData char_data, Player *player,
             const SpriteGroup *collision_sprites, float radius);
     [[nodiscard]] std::vector<std::string> GetDialog() const;
+    void Update(double dt) override;
 
 private:
+
+    void Raycast();
 
     CharacterData character_data;
     Player *player;

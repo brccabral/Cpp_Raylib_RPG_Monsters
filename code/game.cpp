@@ -198,17 +198,19 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
             {"up", UP},
             {"right", RIGHT},
     };
+
+    // we need to find the player first, so it can be passed to all characters in the next look
     auto entity = entities_layer->content.objgr->head;
     while (entity)
     {
-        std::map<FacingDirection, std::vector<TiledTexture>> face_frames;
-        std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
-        FacingDirection face_direction = face_name[direction];
-
         if (strcmp(entity->name, "Player") == 0)
         {
             if (strcmp(tmx_get_property(entity->properties, "pos")->value.string, player_start_position.c_str()) == 0)
             {
+                std::map<FacingDirection, std::vector<TiledTexture>> face_frames;
+                std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
+                FacingDirection face_direction = face_name[direction];
+
                 for (const auto &[key, rectangles]: face_rect_frames["characters"]["player"])
                 {
                     for (const auto rect: rectangles)
@@ -219,25 +221,39 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                 player = new Player(
                         {float(entity->x), float(entity->y)}, face_frames, {all_sprites}, face_direction,
                         collition_sprites);
+                break;
             }
         }
-        else
+
+        entity = entity->next;
+    }
+
+    // we can only create Characters after we have Player
+    entity = entities_layer->content.objgr->head;
+    while (entity)
+    {
+        if (strcmp(entity->name, "Player") == 0)
         {
-            std::string graphic = tmx_get_property(entity->properties, "graphic")->value.string;
-            for (const auto &[key, rectangles]: face_rect_frames["characters"][graphic])
-            {
-                for (const auto rect: rectangles)
-                {
-                    face_frames[key].push_back({&named_textures["characters"][graphic], rect});
-                }
-            }
-            std::string character_id = tmx_get_property(entity->properties, "character_id")->value.string;
-            float radius = tmx_get_property(entity->properties, "radius")->value.decimal;
-            new Character(
-                    {float(entity->x), float(entity->y)}, face_frames,
-                    {all_sprites, collition_sprites, characters_sprites}, face_direction, TRAINER_DATA[character_id],
-                    player, collition_sprites, radius);
+            entity = entity->next;
+            continue;
         }
+        std::map<FacingDirection, std::vector<TiledTexture>> face_frames;
+        std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
+        FacingDirection face_direction = face_name[direction];
+
+        std::string graphic = tmx_get_property(entity->properties, "graphic")->value.string;
+        for (const auto &[key, rectangles]: face_rect_frames["characters"][graphic])
+        {
+            for (const auto rect: rectangles)
+            {
+                face_frames[key].push_back({&named_textures["characters"][graphic], rect});
+            }
+        }
+        std::string character_id = tmx_get_property(entity->properties, "character_id")->value.string;
+        float radius = tmx_get_property(entity->properties, "radius")->value.decimal;
+        new Character(
+                {float(entity->x), float(entity->y)}, face_frames, {all_sprites, collition_sprites, characters_sprites},
+                face_direction, TRAINER_DATA[character_id], player, collition_sprites, radius);
 
         entity = entity->next;
     }
