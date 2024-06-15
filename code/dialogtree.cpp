@@ -12,8 +12,6 @@ DialogTree::DialogTree(
     dialog_num = dialog.size();
 
     currentDialog = new DialogSprite(dialog[dialog_index], character, groups, font);
-
-    std::cout << dialog[0] << "\n";
 }
 
 DialogTree::~DialogTree()

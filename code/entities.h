@@ -1,6 +1,7 @@
 #pragma once
 #include "game_data.h"
 #include "sprite.h"
+#include "timer.h"
 
 class Game;
 class Entity : public SimpleSprite
@@ -57,10 +58,12 @@ public:
             Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
             const std::vector<SpriteGroup *> &sgs, FacingDirection facing_dir, CharacterData char_data, float radius,
             Game *g);
+    ~Character() override;
     [[nodiscard]] std::vector<std::string> GetDialog() const;
     void Update(double dt) override;
     void StartMove();
     void Move(double dt);
+    void RandomViewDirection();
 
 private:
 
@@ -75,4 +78,5 @@ private:
     float radius{};
     std::vector<FacingDirection> view_directions = {LEFT, RIGHT};
     Game *game;
+    std::map<std::string, Timer *> timers;
 };

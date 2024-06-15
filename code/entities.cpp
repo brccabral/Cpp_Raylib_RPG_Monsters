@@ -1,4 +1,5 @@
 #include "entities.h"
+#include <functional>
 #include <utility>
 #include "raylib_utils.h"
 #include "settings.h"
@@ -120,6 +121,15 @@ Character::Character(
         }
     }
     view_directions = character_data.directions;
+    timers["look around"] = new Timer(1.5, true, true, std::bind(&Character::RandomViewDirection, this));
+}
+
+Character::~Character()
+{
+    for (const auto &[key, timer]: timers)
+    {
+        delete timer;
+    }
 }
 
 std::vector<std::string> Character::GetDialog() const
@@ -133,6 +143,11 @@ std::vector<std::string> Character::GetDialog() const
 
 void Character::Update(const double dt)
 {
+    for (auto [key, timer]: timers)
+    {
+        timer->Update();
+    }
+
     Entity::Update(dt);
     Raycast();
     Move(dt);
@@ -163,6 +178,15 @@ void Character::Move(const double dt)
             has_moved = true;
             game->CreateDialog(this);
         }
+    }
+}
+
+void Character::RandomViewDirection()
+{
+    if (can_rotate && view_directions.size() > 1)
+    {
+        const int randDirection = GetRandomValue(0, view_directions.size() - 1);
+        facing_direction = view_directions[randDirection];
     }
 }
 
