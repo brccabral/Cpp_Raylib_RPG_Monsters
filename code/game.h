@@ -1,7 +1,5 @@
 #pragma once
 #include "dialogtree.h"
-
-
 #include <map>
 #include <string>
 #include <tmx.h>
@@ -24,6 +22,8 @@ public:
     ~Game();
     void Draw() const;
     void run();
+
+    friend class Character; // allows Character to access Game private members
 
 private:
 

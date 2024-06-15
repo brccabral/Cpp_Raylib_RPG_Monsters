@@ -1,9 +1,9 @@
 #include "entities.h"
-
 #include <utility>
 #include "raylib_utils.h"
 #include "settings.h"
 #include "support.h"
+#include "game.h"
 
 #include <iostream>
 
@@ -109,10 +109,10 @@ FacingDirection Entity::GetState()
 Character::Character(
         const Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
         const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir, CharacterData char_data,
-        Player *player, const SpriteGroup *collision_sprites, const float radius)
-    : Entity(pos, face_frms, sgs, facing_dir), character_data(std::move(char_data)), player(player), radius(radius)
+        const float radius, Game *g)
+    : Entity(pos, face_frms, sgs, facing_dir), character_data(std::move(char_data)), radius(radius), game(g)
 {
-    for (const auto sprite: collision_sprites->sprites)
+    for (const auto sprite: game->collition_sprites->sprites)
     {
         if (sprite != this)
         {
@@ -140,7 +140,7 @@ void Character::Update(const double dt)
 
 void Character::StartMove()
 {
-    auto [x, y] = Vector2Normalize(Vector2Subtract(GetRectCenter(player->rect), GetRectCenter(rect)));
+    auto [x, y] = Vector2Normalize(Vector2Subtract(GetRectCenter(game->player->rect), GetRectCenter(rect)));
 
     // use round() to avoid diagonal movements
     direction = {std::round(x), std::round(y)};
@@ -152,7 +152,7 @@ void Character::Move(const double dt)
     {
         Rectangle newHitbox = hitbox;
         RectInflate(newHitbox, 10.0f, 10.0f);
-        if (!CheckCollisionRecs(newHitbox, player->hitbox))
+        if (!CheckCollisionRecs(newHitbox, game->player->hitbox))
         {
             MoveRect(rect, Vector2Scale(direction, speed * dt));
             RectToCenter(hitbox, GetRectCenter(rect));
@@ -161,16 +161,17 @@ void Character::Move(const double dt)
         {
             direction = {};
             has_moved = true;
+            game->CreateDialog(this);
         }
     }
 }
 
 void Character::Raycast()
 {
-    if (!has_moved && CheckConnections(radius, this, player) && HasLineOfSight())
+    if (!has_moved && CheckConnections(radius, this, game->player) && HasLineOfSight())
     {
-        player->Block();
-        player->ChangeFacingDirection(GetRectCenter(rect));
+        game->player->Block();
+        game->player->ChangeFacingDirection(GetRectCenter(rect));
         StartMove();
     }
 }
@@ -179,7 +180,7 @@ void Character::Raycast()
 bool Character::HasLineOfSight()
 {
     const Vector2 center = GetRectCenter(rect);
-    const Vector2 centerplayer = GetRectCenter(player->rect);
+    const Vector2 centerplayer = GetRectCenter(game->player->rect);
 
     if (Vector2Distance(center, centerplayer) < radius)
     {
