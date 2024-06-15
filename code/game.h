@@ -42,9 +42,6 @@ private:
     std::map<std::string, std::map<std::string, tilerect_face>> face_rect_frames;
     // not *all*, but all that needs drawing or updates
     AllSprites *all_sprites = nullptr;
-    // if a sprite is added to another group but not to all_sprites,
-    // add it to `not_all_sprites` so the sprite can be unloaded/deleted
-    SpriteGroup *not_all_sprites = nullptr;
     SpriteGroup *collition_sprites = nullptr;
     SpriteGroup *characters_sprites = nullptr;
     Player *player{};

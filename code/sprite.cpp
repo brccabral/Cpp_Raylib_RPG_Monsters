@@ -42,6 +42,17 @@ void SimpleSprite::Draw(const Vector2 offset) const
 void SimpleSprite::Update(const double deltaTime)
 {}
 
+void SimpleSprite::LeaveOtherGroups(const SpriteGroup *sprite_group)
+{
+    for (const auto group: groups)
+    {
+        if (group != sprite_group)
+        {
+            group->sprites.erase(std::remove(group->sprites.begin(), group->sprites.end(), this), group->sprites.end());
+        }
+    }
+}
+
 Sprite::Sprite(const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs, const int z_)
     : SimpleSprite(sgs)
 {
@@ -165,8 +176,10 @@ Rectangle GetHitbox(const SimpleSprite *sprite)
 
 SpriteGroup::~SpriteGroup()
 {
-    for (const auto *sprite: sprites)
+    for (auto *sprite: sprites)
     {
+        // remove sprite from other groups to avoid double `delete`
+        sprite->LeaveOtherGroups(this);
         delete sprite;
     }
 }

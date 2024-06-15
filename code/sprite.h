@@ -22,6 +22,8 @@ public:
 
     virtual void Draw(Vector2 offset) const;
     virtual void Update(double deltaTime);
+    void LeaveOtherGroups(const SpriteGroup *sprite_group);
+
     SpriteType type{SIMPLESPRITE};
     Rectangle rect{};
 
