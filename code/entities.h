@@ -62,6 +62,7 @@ public:
 private:
 
     void Raycast();
+    bool HasLineOfSight();
 
     CharacterData character_data;
     Player *player;

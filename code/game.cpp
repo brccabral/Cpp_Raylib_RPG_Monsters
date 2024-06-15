@@ -250,7 +250,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
             }
         }
         std::string character_id = tmx_get_property(entity->properties, "character_id")->value.string;
-        float radius = tmx_get_property(entity->properties, "radius")->value.decimal;
+        int radius = std::stoi(tmx_get_property(entity->properties, "radius")->value.string);
         new Character(
                 {float(entity->x), float(entity->y)}, face_frames, {all_sprites, collition_sprites, characters_sprites},
                 face_direction, TRAINER_DATA[character_id], player, collition_sprites, radius);

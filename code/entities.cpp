@@ -14,8 +14,8 @@ Entity::Entity(
     : SimpleSprite(sgs), facing_direction(facing_dir), face_frames(face_frms)
 {
     image = face_frames[GetState()][0];
-    rect = image.rect;
-    RectToCenter(rect, pos);
+    rect = CreateCenteredRect(image.rect, pos);
+
     y_sort = GetRectCenter(rect).y;
     type = ENTITY;
     hitbox = rect;
@@ -131,7 +131,7 @@ std::vector<std::string> Character::GetDialog() const
     return character_data.dialog.default_;
 }
 
-void Character::Update(double dt)
+void Character::Update(const double dt)
 {
     Entity::Update(dt);
     Raycast();
@@ -139,10 +139,33 @@ void Character::Update(double dt)
 
 void Character::Raycast()
 {
-    if (CheckConnections(radius, this, player))
+    if (CheckConnections(radius, this, player) && HasLineOfSight())
     {
-        std::cout << "Found player\n";
+        player->Block();
+        player->ChangeFacingDirection(GetRectCenter(rect));
     }
+}
+
+// There are no collision object (rectangle) between Character and Player
+bool Character::HasLineOfSight()
+{
+    const Vector2 center = GetRectCenter(rect);
+    const Vector2 centerplayer = GetRectCenter(player->rect);
+
+    if (Vector2Distance(center, centerplayer) < radius)
+    {
+        for (const auto rect: collition_rects)
+        {
+            Vector2 collision1{};
+            Vector2 collision2{};
+            if (CheckCollisionRectLine(rect, center, centerplayer, &collision1, &collision2))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 Player::Player(
