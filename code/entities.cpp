@@ -135,14 +135,43 @@ void Character::Update(const double dt)
 {
     Entity::Update(dt);
     Raycast();
+    Move(dt);
+}
+
+void Character::StartMove()
+{
+    auto [x, y] = Vector2Normalize(Vector2Subtract(GetRectCenter(player->rect), GetRectCenter(rect)));
+
+    // use round() to avoid diagonal movements
+    direction = {std::round(x), std::round(y)};
+}
+
+void Character::Move(const double dt)
+{
+    if (!has_moved && (direction.x || direction.y))
+    {
+        Rectangle newHitbox = hitbox;
+        RectInflate(newHitbox, 10.0f, 10.0f);
+        if (!CheckCollisionRecs(newHitbox, player->hitbox))
+        {
+            MoveRect(rect, Vector2Scale(direction, speed * dt));
+            RectToCenter(hitbox, GetRectCenter(rect));
+        }
+        else
+        {
+            direction = {};
+            has_moved = true;
+        }
+    }
 }
 
 void Character::Raycast()
 {
-    if (CheckConnections(radius, this, player) && HasLineOfSight())
+    if (!has_moved && CheckConnections(radius, this, player) && HasLineOfSight())
     {
         player->Block();
         player->ChangeFacingDirection(GetRectCenter(rect));
+        StartMove();
     }
 }
 

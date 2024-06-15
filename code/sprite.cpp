@@ -51,12 +51,11 @@ void SimpleSprite::LeaveOtherGroups(const SpriteGroup *sprite_group)
 }
 
 Sprite::Sprite(const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs, const int z_)
-    : SimpleSprite(sgs)
+    : SimpleSprite(sgs), z(z_)
 {
     image = img;
-    rect = image.rect;
-    RectToTopleft(rect, pos);
-    z = z_;
+    rect = {pos.x, pos.y, image.rect.width, image.rect.height};
+
     y_sort = GetRectCenter(rect).y;
     type = SPRITE;
     hitbox = rect;

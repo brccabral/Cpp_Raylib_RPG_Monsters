@@ -58,6 +58,8 @@ public:
             const SpriteGroup *collision_sprites, float radius);
     [[nodiscard]] std::vector<std::string> GetDialog() const;
     void Update(double dt) override;
+    void StartMove();
+    void Move(double dt);
 
 private:
 
