@@ -181,6 +181,7 @@ void Character::Move(const double dt)
             direction = {};
             has_moved = true;
             game->CreateDialog(this);
+            game->player->noticed = false;
         }
     }
 }
