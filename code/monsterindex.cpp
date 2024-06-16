@@ -39,6 +39,7 @@ void MonsterIndex::Update(double dt)
 
 void MonsterIndex::DisplayList()
 {
+    // BeginTextureMode was called in Update()
     // vertical offset
     const int v_offset = (index < visible_items) ? 0 : -(index - visible_items + 1) * item_height;
     for (int i = 0; i < monsters.size(); ++i)
@@ -53,7 +54,6 @@ void MonsterIndex::DisplayList()
 
         if (CheckCollisionRecs(item_rect, main_rect))
         {
-            // BeginTextureMode was called in Update()
             if (CheckCollisionPointRec(GetRectTopLeft(main_rect), item_rect))
             {
                 DrawRectangleRoundedCorners(item_rect, 0.3, 10, bg_color, true, false, false, false);
@@ -86,9 +86,14 @@ void MonsterIndex::DisplayList()
 
 void MonsterIndex::DisplayMain(const double dt)
 {
+    // BeginTextureMode was called in Update()
+    // bg
     const Rectangle rect = {main_rect.x + list_width, main_rect.y, main_rect.width - list_width, main_rect.height};
-    // DrawRectangleRec(rect, COLORS["dark"]);
     DrawRectangleRoundedCorners(rect, 0.3, 10, COLORS["dark"], false, true, true, false);
+
+    // monster
+    const Rectangle top_rect = {rect.x, rect.y, rect.width, rect.height * 0.4f};
+    DrawRectangleRoundedCorners(top_rect, 0.3, 10, RED, false, true, false, false);
 }
 
 void MonsterIndex::Input()
