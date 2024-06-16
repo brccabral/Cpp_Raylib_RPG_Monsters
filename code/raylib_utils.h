@@ -207,7 +207,7 @@ inline void DrawRectangleRoundedCorners(
     }
     else
     {
-        DrawRectangle(rec.x, rec.y, radius, radius, color);
+        DrawRectangle(rec.x, rec.y, radius + 1, radius, color);
     }
 
     if (TopRight)
@@ -222,7 +222,7 @@ inline void DrawRectangleRoundedCorners(
     if (BottomRight)
     {
         DrawCircleSector(
-                {rec.x + rec.width - radius, rec.y + rec.height - radius - 1}, radius, 0.0f, 90.0f, segments, color);
+                {rec.x + rec.width - radius, rec.y + rec.height - radius}, radius, 0.0f, 90.0f, segments, color);
     }
     else
     {
@@ -231,7 +231,7 @@ inline void DrawRectangleRoundedCorners(
 
     if (BottomLeft)
     {
-        DrawCircleSector({rec.x + radius, rec.y + rec.height - radius - 1}, radius, 90.0f, 180.0f, segments, color);
+        DrawCircleSector({rec.x + radius, rec.y + rec.height - radius}, radius, 90.0f, 180.0f, segments, color);
     }
     else
     {
@@ -242,11 +242,11 @@ inline void DrawRectangleRoundedCorners(
     // Top Rectangle
     DrawRectangle(rec.x + radius, rec.y, rec.width - 2 * radius + 1, radius, color);
     // Right Rectangle
-    DrawRectangle(rec.x + rec.width - radius, rec.y + radius, radius, rec.height - 2 * radius, color);
+    DrawRectangle(rec.x + rec.width - radius, rec.y + radius, radius, rec.height - 2 * radius + 1, color);
     // Bottom Rectangle
-    DrawRectangle(rec.x + radius, rec.y + rec.height - radius, rec.width - 2 * radius + 1, radius, color);
+    DrawRectangle(rec.x + radius - 1, rec.y + rec.height - radius, rec.width - 2 * radius + 2, radius, color);
     // Left Rectangle
-    DrawRectangle(rec.x, rec.y + radius, radius, rec.height - 2 * radius, color);
+    DrawRectangle(rec.x, rec.y + radius, radius + 1, rec.height - 2 * radius + 1, color);
     // Center Rectangle
-    DrawRectangle(rec.x + radius, rec.y + radius, rec.width - 2 * radius + 1, rec.height - 2 * radius, color);
+    DrawRectangle(rec.x + radius, rec.y + radius, rec.width - 2 * radius + 1, rec.height - 2 * radius + 1, color);
 }
