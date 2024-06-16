@@ -24,11 +24,6 @@ Game::Game(const int width, const int height)
 
     Setup(tmx_maps["world"], "house");
 
-    fonts["dialog"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", FONT_SIZE, nullptr, 0);
-    fonts["regular"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 18, nullptr, 0);
-    fonts["small"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 14, nullptr, 0);
-    fonts["bold"] = LoadFontEx("resources/graphics/fonts/dogicapixelbold.otf", 20, nullptr, 0);
-
     player_monsters.emplace_back("Charmadillo", 30);
     player_monsters.emplace_back("Friolera", 29);
     player_monsters.emplace_back("Larvea", 3);
@@ -142,6 +137,11 @@ void Game::ImporAssets()
     named_textures["characters"] = ImportNamedFolder("resources/graphics/characters");
     named_rect_frames["coast"] = coast_rects();
     face_rect_frames["characters"] = all_character_import("resources/graphics/characters");
+
+    fonts["dialog"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", FONT_SIZE, nullptr, 0);
+    fonts["regular"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 18, nullptr, 0);
+    fonts["small"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 14, nullptr, 0);
+    fonts["bold"] = LoadFontEx("resources/graphics/fonts/dogicapixelbold.otf", 20, nullptr, 0);
 }
 
 TileInfo Game::GetTileInfo(const tmx_tile *tile, const int posX, const int posY)
@@ -421,6 +421,10 @@ void Game::UnloadResources()
         {
             UnloadTexture(texture);
         }
+    }
+    for (auto &[key, font]: fonts)
+    {
+        UnloadFont(font);
     }
     delete dialog_tree; // delete dialog_tree before all_sprites, it will remove itself
     delete all_sprites;
