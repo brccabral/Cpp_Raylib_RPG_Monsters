@@ -15,7 +15,6 @@ MonsterIndex::MonsterIndex(
     BeginTextureMode(tint_surface);
     ClearBackground(BLACK);
     DrawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, Fade(BLACK, 200.0f / 255.0f));
-    DrawRectangleRec(main_rect, BLACK);
     EndTextureMode();
 
     icon_frames = monster_frames["icons"];
@@ -54,7 +53,18 @@ void MonsterIndex::DisplayList()
         if (CheckCollisionRecs(item_rect, main_rect))
         {
             // BeginTextureMode was called in Update()
-            DrawRectangleRec(item_rect, bg_color);
+            if (CheckCollisionPointRec(GetRectTopLeft(main_rect), item_rect))
+            {
+                DrawRectangleRoundedCorners(item_rect, 0.3, 10, bg_color, true, false, false, false);
+            }
+            else if (CheckCollisionPointRec(Vector2Add(GetRectBottomLeft(main_rect), {1, -1}), item_rect))
+            {
+                DrawRectangleRoundedCorners(item_rect, 0.3, 10, bg_color, false, false, false, true);
+            }
+            else
+            {
+                DrawRectangleRec(item_rect, bg_color);
+            }
             DrawTexture(icon_texture, x + 45 - icon_texture.width / 2.0f, y - icon_texture.height / 2.0f, WHITE);
             DrawTextEx(
                     fonts["regular"], monsters[i].name.c_str(), {x + 90, y - fonts["regular"].baseSize / 2.0f},
