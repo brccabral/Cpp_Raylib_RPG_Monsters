@@ -72,6 +72,13 @@ void MonsterIndex::DisplayList()
         }
     }
 
+    // lines between monsters
+    for (int i = 1; i < std::min(visible_items, (int) monsters.size()); ++i)
+    {
+        const float y = main_rect.y + item_height * i;
+        DrawLine(main_rect.x, y, main_rect.x + list_width, y, COLORS["light-gray"]);
+    }
+
     // shadow
     DrawRectangle(main_rect.x + list_width - 4, main_rect.y, 4, main_rect.height, Fade(BLACK, 100.0f / 255.0f));
 }
