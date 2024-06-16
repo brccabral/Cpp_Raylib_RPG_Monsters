@@ -122,6 +122,7 @@ Character::Character(
     }
     view_directions = character_data.directions;
     timers["look around"] = new Timer(1.5, true, true, std::bind(&Character::RandomViewDirection, this));
+    timers["notice"] = new Timer{0.5, false, false, std::bind(&Character::StartMove, this)};
 }
 
 Character::~Character()
@@ -200,7 +201,7 @@ void Character::Raycast()
         // character has seen player and moved towards player
         game->player->Block();
         game->player->ChangeFacingDirection(GetRectCenter(rect));
-        StartMove();
+        timers["notice"]->Activate();
         can_rotate = false; // stop look around
         has_noticed = true;
         game->player->noticed = true;
