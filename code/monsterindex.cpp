@@ -26,14 +26,15 @@ void MonsterIndex::Update(double dt)
     Input();
 
     BeginTextureMode(display_surface);
+
     // tint main game
     DrawTexture(tint_surface.texture, 0, 0, WHITE);
-
     // display list
     DisplayList();
-    EndTextureMode();
-
     // display the main section
+    DisplayMain(dt);
+
+    EndTextureMode();
 }
 
 void MonsterIndex::DisplayList()
@@ -81,6 +82,13 @@ void MonsterIndex::DisplayList()
 
     // shadow
     DrawRectangle(main_rect.x + list_width - 4, main_rect.y, 4, main_rect.height, Fade(BLACK, 100.0f / 255.0f));
+}
+
+void MonsterIndex::DisplayMain(const double dt)
+{
+    const Rectangle rect = {main_rect.x + list_width, main_rect.y, main_rect.width - list_width, main_rect.height};
+    // DrawRectangleRec(rect, COLORS["dark"]);
+    DrawRectangleRoundedCorners(rect, 0.3, 10, COLORS["dark"], false, true, true, false);
 }
 
 void MonsterIndex::Input()

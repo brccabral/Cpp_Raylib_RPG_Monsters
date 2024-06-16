@@ -17,6 +17,7 @@ public:
 private:
 
     void DisplayList();
+    void DisplayMain(double dt);
     void Input();
 
     RenderTexture2D tint_surface{};
