@@ -17,7 +17,7 @@ DialogSprite::DialogSprite(
     rect.width = std::max(textsize.x + padding * 2, 300.0f);
     rect.height = textsize.y + padding * 2;
     // dialog midbottom to trainer midtop
-    const auto [x, y] = GetRectMidtop(trainer->rect);
+    const auto [x, y] = GetRectMidTop(trainer->rect);
     rect.x = x - rect.width / 2;
     rect.y = y - rect.height - 10;
 

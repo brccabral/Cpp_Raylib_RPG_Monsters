@@ -17,7 +17,7 @@ MonsterIndex::MonsterIndex(const std::vector<Monster> &monsters, const std::map<
     EndTextureMode();
 }
 
-void MonsterIndex::Update(double dt) const
+void MonsterIndex::Update(double dt)
 {
     // input
 
@@ -32,12 +32,14 @@ void MonsterIndex::Update(double dt) const
     // display the main section
 }
 
-void MonsterIndex::DisplayList() const
+void MonsterIndex::DisplayList()
 {
     for (int i = 0; i < monsters.size(); ++i)
     {
         const float top = main_rect.y + i * item_height;
         const Rectangle item_rect = {main_rect.x, top, list_width, item_height};
+        const Vector2 pos = GetRectMidLeft(item_rect);
+        DrawTextEx(fonts["regular"], monsters[i].name.c_str(), pos, fonts["regular"].baseSize, 2, COLORS["white"]);
         // BeginTextureMode was called in Update()
         DrawRectangleRec(item_rect, Fade(COLORS["red"], (i + 1.0f) / monsters.size()));
     }

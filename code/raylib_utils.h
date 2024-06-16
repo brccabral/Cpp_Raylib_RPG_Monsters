@@ -8,14 +8,24 @@ inline Vector2 GetRectCenter(const Rectangle rect)
     return {rect.x + rect.width / 2, rect.y + rect.height / 2};
 }
 
-inline Vector2 GetRectMidbottom(const Rectangle rect)
+inline Vector2 GetRectMidBottom(const Rectangle rect)
 {
     return {rect.x + rect.width / 2, rect.y + rect.height};
 }
 
-inline Vector2 GetRectMidtop(const Rectangle rect)
+inline Vector2 GetRectMidTop(const Rectangle rect)
 {
     return {rect.x + rect.width / 2, rect.y};
+}
+
+inline Vector2 GetRectMidLeft(const Rectangle rect)
+{
+    return {rect.x, rect.y + rect.height / 2};
+}
+
+inline Vector2 GetRectMidRight(const Rectangle rect)
+{
+    return {rect.x + rect.width, rect.y + rect.height / 2};
 }
 
 inline Vector2 GetRectTopLeft(const Rectangle rect)

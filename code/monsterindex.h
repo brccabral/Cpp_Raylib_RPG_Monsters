@@ -10,11 +10,11 @@ class MonsterIndex
 public:
 
     MonsterIndex(const std::vector<Monster> &monsters, const std::map<std::string, Font> &fonts);
-    void Update(double dt) const;
+    void Update(double dt);
 
 private:
 
-    void DisplayList() const;
+    void DisplayList();
 
     RenderTexture2D tint_surface{};
     std::map<std::string, Font> fonts;
