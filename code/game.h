@@ -1,11 +1,12 @@
 #pragma once
-#include "dialogtree.h"
 #include <map>
 #include <string>
 #include <tmx.h>
+#include "dialogtree.h"
 #include "entities.h"
 #include "groups.h"
 #include "monster.h"
+#include "monsterindex.h"
 #include "support.h"
 
 
@@ -41,7 +42,6 @@ private:
     void TransitionCheck();
     void TintScreen(double dt);
 
-    RenderTexture2D display_surface{};
     // BeginTextureMode draws everything upsidedown,
     // we need a second RenderTexture2D to invert it.
     // https://github.com/raysan5/raylib/issues/3803
@@ -60,7 +60,10 @@ private:
     SpriteGroup *transition_sprites = nullptr;
     Player *player{};
     std::map<std::string, Font> fonts;
+
+    // overlays
     DialogTree *dialog_tree = nullptr;
+    MonsterIndex *monster_index;
 
     // Transition / tint
     Color render_tint = WHITE;

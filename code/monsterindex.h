@@ -8,10 +8,11 @@ class MonsterIndex
 {
 public:
 
-    MonsterIndex(std::vector<Monster> monsters, std::vector<Font> fonts);
+    MonsterIndex(std::vector<Monster> monsters, const std::map<std::string, Font> &fonts);
+    void Update(double dt);
 
 private:
 
-    RenderTexture2D display_surface{};
-    std::vector<Font> fonts;
+    RenderTexture2D tint_surface{};
+    std::map<std::string, Font> fonts;
 };

@@ -37,6 +37,8 @@ Game::Game(const int width, const int height)
     player_monsters.emplace_back("Gulfin", 24);
     player_monsters.emplace_back("Jacana", 2);
     player_monsters.emplace_back("Pouch", 3);
+
+    monster_index = new MonsterIndex(player_monsters, fonts);
 }
 
 Game::~Game()
@@ -87,12 +89,16 @@ void Game::run()
     while (!WindowShouldClose())
     {
         const double dt = GetFrameTime();
+
+        // update
         Input();
         TransitionCheck();
         all_sprites->Update(dt);
 
+        // drawing
         Draw();
 
+        // overlays
         // dialog_tree checks for SPACE input, which conflicts
         // with Game input.
         // If player is next to a trainer, the Game.Input opens the first
@@ -104,6 +110,10 @@ void Game::run()
         if (dialog_tree)
         {
             dialog_tree->Update();
+        }
+        if (monster_index)
+        {
+            monster_index->Update(dt);
         }
 
         TintScreen(dt);
@@ -411,6 +421,7 @@ void Game::UnloadResources()
     delete collition_sprites;
     delete characters_sprites;
     delete transition_sprites;
+    delete monster_index;
 }
 
 void Game::CreateDialog(const Character *character)

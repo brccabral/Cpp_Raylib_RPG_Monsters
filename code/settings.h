@@ -10,6 +10,9 @@ constexpr int TILE_SIZE = 64;
 constexpr int ANIMATION_SPEED = 6;
 constexpr int BATTLE_OUTLINE_WIDTH = 4;
 
+// Global Surface to draw into
+inline RenderTexture2D display_surface;
+
 inline std::map<std::string, Color> COLORS = {
         {"white", {0xf4, 0xfe, 0xfa, 0xff}}, //
         {"pure white", {0xff, 0xff, 0xff, 0xff}}, //
