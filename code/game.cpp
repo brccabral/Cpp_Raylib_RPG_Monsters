@@ -26,6 +26,15 @@ Game::Game(const int width, const int height)
     // Setup(tmx_maps["hospital"], "world");
 
     fonts["dialog"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", FONT_SIZE, nullptr, 0);
+
+    player_monsters.emplace_back("Charmadillo", 30);
+    player_monsters.emplace_back("Friolera", 29);
+    player_monsters.emplace_back("Larvea", 3);
+    player_monsters.emplace_back("Atrox", 24);
+    player_monsters.emplace_back("Sparchu", 24);
+    player_monsters.emplace_back("Gulfin", 24);
+    player_monsters.emplace_back("Jacana", 2);
+    player_monsters.emplace_back("Pouch", 3);
 }
 
 Game::~Game()

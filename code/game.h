@@ -5,6 +5,7 @@
 #include <tmx.h>
 #include "entities.h"
 #include "groups.h"
+#include "monster.h"
 #include "support.h"
 
 
@@ -68,4 +69,5 @@ private:
     float tint_progress = 255;
     int tint_direction = -1;
     double tint_speed = 600;
+    std::vector<Monster> player_monsters;
 };

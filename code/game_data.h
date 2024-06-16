@@ -292,3 +292,298 @@ inline std::map<std::string, CharacterData> TRAINER_DATA = {
         {"fx", fx}, //
         {"Nurse", Nurse}, //
 };
+
+struct MonsterData
+{
+    std::string name;
+    std::string element;
+    std::map<std::string, int> stats;
+    std::map<int, std::string> abilities;
+    std::pair<std::string, int> evolve;
+};
+
+inline MonsterData Plumette = {
+        "Plumette",
+        "plant",
+        {
+                {"15", 15}, //
+                {"17", 17}, //
+                {"4", 4}, //
+                {"8", 8}, //
+                {"1", 5}, //
+                {"1", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "spark"}},
+        {"Ivieron", 15} //
+};
+inline MonsterData Ivieron = {
+        "Ivieron",
+        "plant",
+        {
+                {"18", 15}, //
+                {"20", 17}, //
+                {"5", 4}, //
+                {"10", 8}, //
+                {"1.2", 5}, //
+                {"1.2", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "spark"}},
+        {"Pluma", 32} //
+};
+inline MonsterData Pluma = {
+        "Pluma",
+        "plant",
+        {
+                {"23", 15}, //
+                {"26", 17}, //
+                {"6", 4}, //
+                {"12", 8}, //
+                {"1.8", 5}, //
+                {"1.8", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "spark"}},
+        {} //
+};
+inline MonsterData Sparchu = {
+        "Sparchu",
+        "fire",
+        {
+                {"15", 15}, //
+                {"7", 17}, //
+                {"3", 4}, //
+                {"8", 8}, //
+                {"1.1", 5}, //
+                {"1", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "fire"}, //
+         {15, "battlecry"}, //
+         {26, "explosion"}},
+        {"Cindrill", 15} //
+};
+inline MonsterData Cindrill = {
+        "Cindrill",
+        "fire",
+        {
+                {"18", 15}, //
+                {"10", 17}, //
+                {"3.5", 4}, //
+                {"10", 8}, //
+                {"1.2", 5}, //
+                {"1.1", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "fire"}, //
+         {15, "battlecry"}, //
+         {26, "explosion"}},
+        {"Charmadillo", 33} //
+};
+inline MonsterData Charmadillo = {
+        "Charmadillo",
+        "fire",
+        {
+                {"29", 15}, //
+                {"12", 17}, //
+                {"4", 4}, //
+                {"17", 8}, //
+                {"1.35", 5}, //
+                {"1.1", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "fire"}, //
+         {15, "battlecry"}, //
+         {26, "explosion"}, //
+         {45, "annihilate"}},
+        {} //
+};
+inline MonsterData Finsta = {
+        "Finsta",
+        "water",
+        {
+                {"13", 15}, //
+                {"17", 17}, //
+                {"2", 4}, //
+                {"8", 8}, //
+                {"1.5", 5}, //
+                {"1.8", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "spark"}, //
+         {15, "splash"}, //
+         {20, "ice"}, //
+         {25, "heal"}},
+        {"Gulfin", 34} //
+};
+inline MonsterData Gulfin = {
+        "Gulfin",
+        "water",
+        {
+                {"18", 15}, //
+                {"20", 17}, //
+                {"3", 4}, //
+                {"10", 8}, //
+                {"1.8", 5}, //
+                {"2", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "spark"}, //
+         {15, "splash"}, //
+         {20, "ice"}, //
+         {25, "heal"}},
+        {"Finiette", 45} //
+};
+inline MonsterData Finiette = {
+        "Finiette",
+        "water",
+        {
+                {"27", 15}, //
+                {"23", 17}, //
+                {"4", 4}, //
+                {"17", 8}, //
+                {"2", 5}, //
+                {"2.5", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "spark"}, //
+         {15, "splash"}, //
+         {20, "ice"}, //
+         {25, "heal"}},
+        {} //
+};
+inline MonsterData Atrox = {
+        "Atrox",
+        "fire",
+        {
+                {"18", 15}, //
+                {"20", 17}, //
+                {"3", 4}, //
+                {"10", 8}, //
+                {"1.3", 5}, //
+                {"1.9", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "spark"}, //
+         {30, "fire"}},
+        {} //
+};
+inline MonsterData Pouch = {
+        "Pouch",
+        "plant",
+        {
+                {"23", 15}, //
+                {"25", 17}, //
+                {"4", 4}, //
+                {"12", 8}, //
+                {"1", 5}, //
+                {"1.5", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "spark"}, //
+         {25, "heal"}},
+        {} //
+};
+inline MonsterData Draem = {
+        "Draem",
+        "plant",
+        {
+                {"23", 15}, //
+                {"25", 17}, //
+                {"4", 4}, //
+                {"12", 8}, //
+                {"1.2", 5}, //
+                {"1.4", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "heal"}, //
+         {20, "explosion"}, //
+         {25, "splash"}},
+        {} //
+};
+inline MonsterData Larvea = {
+        "Larvea",
+        "plant",
+        {
+                {"15", 15}, //
+                {"17", 17}, //
+                {"1", 4}, //
+                {"8", 8}, //
+                {"1", 5}, //
+                {"1", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "spark"}},
+        {"Cleaf", 4} //
+};
+inline MonsterData Cleaf = {
+        "Cleaf",
+        "plant",
+        {
+                {"18", 15}, //
+                {"20", 17}, //
+                {"3", 4}, //
+                {"10", 8}, //
+                {"1.7", 5}, //
+                {"1.6", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "heal"}},
+        {} //
+};
+inline MonsterData Jacana = {
+        "Jacana",
+        "fire",
+        {
+                {"12", 15}, //
+                {"19", 17}, //
+                {"3", 4}, //
+                {"10", 8}, //
+                {"2.1", 5}, //
+                {"2.6", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "spark"}, //
+         {15, "burn"}, //
+         {20, "explosion"}, //
+         {25, "heal"}},
+        {} //
+};
+inline MonsterData Friolera = {
+        "Friolera",
+        "water",
+        {
+                {"13", 15}, //
+                {"20", 17}, //
+                {"4", 4}, //
+                {"6", 8}, //
+                {"1.3", 5}, //
+                {"2", 1}, //
+        },
+        {{0, "scratch"}, //
+         {5, "spark"}, //
+         {15, "splash"}, //
+         {20, "ice"}, //
+         {25, "heal"}},
+        {} //
+};
+
+inline std::map<std::string, MonsterData> MONSTER_DATA = {
+        {"Plumette", Plumette}, //
+        {"Ivieron", Ivieron}, //
+        {"Pluma", Pluma}, //
+        {"Sparchu", Sparchu}, //
+        {"Cindrill", Cindrill}, //
+        {"Charmadillo", Charmadillo}, //
+        {"Finsta", Finsta}, //
+        {"Gulfin", Gulfin}, //
+        {"Finiette", Finiette}, //
+        {"Atrox", Atrox}, //
+        {"Pouch", Pouch}, //
+        {"Draem", Draem}, //
+        {"Larvea", Larvea}, //
+        {"Cleaf", Cleaf}, //
+        {"Jacana", Jacana}, //
+        {"Friolera", Friolera}, //
+};

@@ -16,6 +16,7 @@ add_executable(${PROJECT_NAME} code/main.cpp
         code/dialogtree.cpp
         code/dialogsprite.cpp
         code/timer.cpp
+        code/monster.cpp
 )
 target_link_libraries(${PROJECT_NAME} raylib tmx m)
 install(TARGETS ${PROJECT_NAME})
