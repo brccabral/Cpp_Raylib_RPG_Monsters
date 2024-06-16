@@ -1,4 +1,5 @@
 #pragma once
+#include "entities.h"
 #include "sprite.h"
 
 
@@ -9,10 +10,11 @@ public:
     AllSprites();
     ~AllSprites() override;
 
-    void Draw(Vector2 player_center);
+    void Draw(const Player *player);
     Vector2 offset{};
 
 private:
 
     Texture2D shadow{};
+    Texture2D notice{};
 };

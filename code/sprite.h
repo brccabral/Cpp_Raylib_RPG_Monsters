@@ -6,8 +6,8 @@
 
 typedef struct TiledTexture
 {
-    Texture2D *texture;
-    Rectangle rect;
+    Texture2D *texture; // the atlas image
+    Rectangle rect; // this rect is the rect inside the atlas, not the position of an obj on the map
 } TiledTexture;
 
 class SpriteGroup;

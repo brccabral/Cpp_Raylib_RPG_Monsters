@@ -39,7 +39,7 @@ void Game::Draw() const
     BeginDrawing();
     ClearBackground(BLACK);
 
-    all_sprites->Draw(player->GetCenter());
+    all_sprites->Draw(player);
 
     EndDrawing();
 }
@@ -51,21 +51,20 @@ void Game::run()
         Input();
         all_sprites->Update(GetFrameTime());
 
-        Draw();
-
         // dialog_tree checks for SPACE input, which conflicts
         // with Game input.
         // If player is next to a trainer, the Game.Input opens the first
         // dialog, and dialog_tree opens the second.
-        // To avoid it, call dialog_tree.Input before Game.Input
         // The tutorial uses a Timer to avoid the conflict
-        // raylib resets the KEY status on EndDrawing by calling PollInputEvents, but to keep
-        // this code the same as the tutorial, with the dialog update
-        // after the drawing, we need to call PollInputEvents outselves
+        // The tutorial puts dialog after the drawing, but raylib
+        // resets all KEY status after EndDrawing. So, we need all
+        // inputs before drawing.
         if (dialog_tree)
         {
             dialog_tree->Update();
         }
+
+        Draw();
     }
 }
 
@@ -333,10 +332,10 @@ void Game::UnloadResources()
             UnloadTexture(texture);
         }
     }
+    delete dialog_tree; // delete dialog_tree before all_sprites, it will remove itself
     delete all_sprites;
     delete collition_sprites;
     delete characters_sprites;
-    delete dialog_tree;
 }
 
 void Game::CreateDialog(const Character *character)

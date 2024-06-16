@@ -1,22 +1,23 @@
 #include <algorithm>
 #include "groups.h"
-#include "entities.h"
 #include "settings.h"
 #include "raylib_utils.h"
 
 AllSprites::AllSprites()
 {
     shadow = LoadTexture("resources/graphics/other/shadow.png");
+    notice = LoadTexture("resources/graphics/ui/notice.png");
 }
 
 AllSprites::~AllSprites()
 {
     UnloadTexture(shadow);
+    UnloadTexture(notice);
 }
 
-void AllSprites::Draw(const Vector2 player_center)
+void AllSprites::Draw(const Player *player)
 {
-    offset = ViewOffset(player_center);
+    offset = ViewOffset(player->GetCenter());
 
     std::vector<SimpleSprite *> bg_sprites;
     std::vector<SimpleSprite *> main_sprites;
@@ -64,6 +65,15 @@ void AllSprites::Draw(const Vector2 player_center)
                     WHITE);
         }
         main->Draw(offset);
+        if (main == player && player->noticed)
+        {
+            Rectangle rect = {0, 0, float(notice.width), float(notice.height)};
+            RectToMidbottom(rect, GetRectMidtop(player->rect));
+
+            const Vector2 pos = Vector2Add({rect.x, rect.y}, offset);
+
+            DrawTexture(notice, pos.x, pos.y, WHITE);
+        }
     }
     for (const auto *top: top_sprites)
     {

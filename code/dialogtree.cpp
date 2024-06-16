@@ -43,7 +43,7 @@ void DialogTree::Input()
             end_dialog(character);
         }
     }
-    PollInputEvents();
+    // PollInputEvents(); // if pool events here the game won't exit during dialog
 }
 
 void DialogTree::Update()

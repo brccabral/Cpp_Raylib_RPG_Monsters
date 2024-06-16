@@ -203,6 +203,7 @@ void Character::Raycast()
         StartMove();
         can_rotate = false; // stop look around
         has_noticed = true;
+        game->player->noticed = true;
     }
 }
 

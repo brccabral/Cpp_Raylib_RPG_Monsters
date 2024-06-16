@@ -41,11 +41,16 @@ public:
 
     Player(Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
            const std::vector<SpriteGroup *> &sgs, FacingDirection facing_dir, SpriteGroup *cs);
+    void Update(double deltaTime) override;
+    [[nodiscard]] Vector2 GetCenter() const;
+
+    bool noticed = false;
+
+private:
+
     void Input();
     void Move(double deltaTime);
-    void Update(double deltaTime) override;
     void Collisions(Axis axis);
-    [[nodiscard]] Vector2 GetCenter() const;
     SpriteGroup *collision_sprites;
 };
 
