@@ -27,6 +27,7 @@ public:
 
 private:
 
+    void DisplayUpdate();
     void ImporAssets();
     static TileInfo GetTileInfo(const tmx_tile *tile, int posX, int posY);
     void CreateTileLayer(const tmx_map *map, const tmx_layer *layer, int z = WORLD_LAYERS["main"]);
@@ -36,6 +37,14 @@ private:
     void CreateDialog(const Character *character);
     void EndDialog(const Character *character);
     void TransitionCheck();
+
+    RenderTexture2D display_surface;
+    // BeginTextureMode draws everything upsidedown,
+    // we need a second RenderTexture2D to invert it.
+    // https://github.com/raysan5/raylib/issues/3803
+    // https://github.com/raysan5/raylib/issues/378
+    RenderTexture2D final_surface;
+
     std::map<std::string, tmx_map *> tmx_maps;
     std::map<std::string, std::vector<Texture2D>> overworld_frames;
     std::map<std::string, std::map<std::string, Texture2D>> named_textures;
@@ -49,4 +58,7 @@ private:
     Player *player{};
     std::map<std::string, Font> fonts;
     DialogTree *dialog_tree = nullptr;
+
+    // Transition / tint
+    Color render_tint = WHITE;
 };

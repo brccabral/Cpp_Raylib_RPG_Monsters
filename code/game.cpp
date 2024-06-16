@@ -16,6 +16,9 @@ Game::Game(const int width, const int height)
     InitWindow(width, height, "RPG Monsters");
     // SetTargetFPS(60);
 
+    display_surface = LoadRenderTexture(width, height);
+    final_surface = LoadRenderTexture(width, height);
+
     ImporAssets();
     // create all_sprites after InitWindow for it uses LoadTexture
     all_sprites = new AllSprites;
@@ -37,21 +40,21 @@ Game::~Game()
 
 void Game::Draw() const
 {
-    BeginDrawing();
-    ClearBackground(BLACK);
-
+    BeginTextureMode(display_surface);
     all_sprites->Draw(player);
-
-    EndDrawing();
+    EndTextureMode();
 }
 
 void Game::run()
 {
     while (!WindowShouldClose())
     {
+        const double dt = GetFrameTime();
         Input();
         TransitionCheck();
-        all_sprites->Update(GetFrameTime());
+        all_sprites->Update(dt);
+
+        Draw();
 
         // dialog_tree checks for SPACE input, which conflicts
         // with Game input.
@@ -67,7 +70,20 @@ void Game::run()
         }
 
         Draw();
+        DisplayUpdate();
     }
+}
+
+void Game::DisplayUpdate()
+{
+    BeginTextureMode(final_surface);
+    DrawTexture(display_surface.texture, 0, 0, WHITE);
+    EndTextureMode();
+
+    BeginDrawing();
+    ClearBackground(BLACK);
+    DrawTexture(final_surface.texture, 0, 0, render_tint);
+    EndDrawing();
 }
 
 void Game::ImporAssets()
