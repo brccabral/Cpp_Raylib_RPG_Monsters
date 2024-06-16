@@ -71,6 +71,9 @@ void MonsterIndex::DisplayList()
                     fonts["regular"].baseSize, 2, text_color);
         }
     }
+
+    // shadow
+    DrawRectangle(main_rect.x + list_width - 4, main_rect.y, 4, main_rect.height, Fade(BLACK, 100.0f / 255.0f));
 }
 
 void MonsterIndex::Input()
