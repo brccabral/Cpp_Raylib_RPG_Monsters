@@ -24,6 +24,7 @@ MonsterIndex::MonsterIndex(
 void MonsterIndex::Update(double dt)
 {
     // input
+    Input();
 
     BeginTextureMode(display_surface);
     // tint main game
@@ -38,19 +39,39 @@ void MonsterIndex::Update(double dt)
 
 void MonsterIndex::DisplayList()
 {
+    // vertical offset
+    const int v_offset = (index < visible_items) ? 0 : -(index - visible_items + 1) * item_height;
     for (int i = 0; i < monsters.size(); ++i)
     {
-        const float top = main_rect.y + i * item_height;
+        const Color bg_color = (i != index) ? COLORS["gray"] : COLORS["light"];
+        const Color text_color = COLORS["white"];
+        const float top = main_rect.y + i * item_height + v_offset;
         const Rectangle item_rect = {main_rect.x, top, list_width, item_height};
         const auto [x, y] = GetRectMidLeft(item_rect);
 
         const Texture2D icon_texture = icon_frames[monsters[i].name];
 
-        // BeginTextureMode was called in Update()
-        DrawRectangleRec(item_rect, Fade(COLORS["red"], (i + 1.0f) / monsters.size()));
-        DrawTexture(icon_texture, x + 45 - icon_texture.width / 2.0f, y - icon_texture.height / 2.0f, WHITE);
-        DrawTextEx(
-                fonts["regular"], monsters[i].name.c_str(), {x + 90, y - fonts["regular"].baseSize / 2.0f},
-                fonts["regular"].baseSize, 2, COLORS["white"]);
+        if (CheckCollisionRecs(item_rect, main_rect))
+        {
+            // BeginTextureMode was called in Update()
+            DrawRectangleRec(item_rect, bg_color);
+            DrawTexture(icon_texture, x + 45 - icon_texture.width / 2.0f, y - icon_texture.height / 2.0f, WHITE);
+            DrawTextEx(
+                    fonts["regular"], monsters[i].name.c_str(), {x + 90, y - fonts["regular"].baseSize / 2.0f},
+                    fonts["regular"].baseSize, 2, text_color);
+        }
     }
+}
+
+void MonsterIndex::Input()
+{
+    if (IsKeyPressed(KEY_UP))
+    {
+        --index;
+    }
+    if (IsKeyPressed(KEY_DOWN))
+    {
+        ++index;
+    }
+    index %= monsters.size();
 }

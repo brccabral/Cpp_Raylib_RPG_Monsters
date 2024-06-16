@@ -17,6 +17,7 @@ public:
 private:
 
     void DisplayList();
+    void Input();
 
     RenderTexture2D tint_surface{};
     std::map<std::string, Font> fonts;
@@ -26,4 +27,5 @@ private:
     float list_width = main_rect.width * 0.3;
     float item_height = main_rect.height / visible_items;
     std::map<std::string, Texture2D> icon_frames;
+    int index = 0;
 };
