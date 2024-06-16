@@ -21,6 +21,7 @@ Game::Game(const int width, const int height)
     all_sprites = new AllSprites;
     collition_sprites = new SpriteGroup;
     characters_sprites = new SpriteGroup;
+    transition_sprites = new SpriteGroup;
 
     Setup(tmx_maps["world"], "house");
     // Setup(tmx_maps["hospital"], "world");
@@ -49,6 +50,7 @@ void Game::run()
     while (!WindowShouldClose())
     {
         Input();
+        TransitionCheck();
         all_sprites->Update(GetFrameTime());
 
         // dialog_tree checks for SPACE input, which conflicts
@@ -129,6 +131,7 @@ void Game::CreateTileLayer(const tmx_map *map, const tmx_layer *layer, const int
         }
     }
 }
+
 void Game::Setup(const tmx_map *map, const std::string &player_start_position)
 {
     const tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
@@ -139,6 +142,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
     const tmx_layer *coast_layer = tmx_find_layer_by_name(map, "Coast");
     const tmx_layer *monster_layer = tmx_find_layer_by_name(map, "Monsters");
     const tmx_layer *collisions_layer = tmx_find_layer_by_name(map, "Collisions");
+    const tmx_layer *transition_layer = tmx_find_layer_by_name(map, "Transition");
 
     CreateTileLayer(map, terrain_layer, WORLD_LAYERS["bg"]);
     CreateTileLayer(map, terrain_top_layer, WORLD_LAYERS["bg"]);
@@ -166,6 +170,17 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
             }
         }
         object = object->next;
+    }
+
+    auto transition = transition_layer->content.objgr->head;
+    while (transition)
+    {
+        std::string target = tmx_get_property(transition->properties, "target")->value.string;
+        std::string pos = tmx_get_property(transition->properties, "pos")->value.string;
+        new TransitionSprite(
+                {float(transition->x), float(transition->y)}, {float(transition->width), float(transition->height)},
+                {target, pos}, {transition_sprites});
+        transition = transition->next;
     }
 
     auto collision = collisions_layer->content.objgr->head;
@@ -336,6 +351,7 @@ void Game::UnloadResources()
     delete all_sprites;
     delete collition_sprites;
     delete characters_sprites;
+    delete transition_sprites;
 }
 
 void Game::CreateDialog(const Character *character)
@@ -353,4 +369,21 @@ void Game::EndDialog(const Character *character)
     delete dialog_tree;
     dialog_tree = nullptr;
     player->Unblock();
+}
+
+void Game::TransitionCheck()
+{
+    std::vector<TransitionSprite *> sprites;
+    for (const auto transition: transition_sprites->sprites)
+    {
+        auto *sprite = (TransitionSprite *) transition;
+        if (CheckCollisionRecs(sprite->rect, player->rect))
+        {
+            sprites.push_back(sprite);
+        }
+    }
+    if (!sprites.empty())
+    {
+        player->Block();
+    }
 }

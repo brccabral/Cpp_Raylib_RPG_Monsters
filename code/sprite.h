@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <vector>
 #include <raylib.h>
 #include "settings.h"
@@ -61,6 +62,19 @@ class BorderSprite : public Sprite
 public:
 
     BorderSprite(Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs);
+};
+
+// Locations that changes the map
+class TransitionSprite : public Sprite
+{
+public:
+
+    TransitionSprite(
+            Vector2 pos, Vector2 size, std::array<std::string, 2> target, const std::vector<SpriteGroup *> &sgs);
+
+private:
+
+    std::array<std::string, 2> target;
 };
 
 class CollidableSprite : public Sprite

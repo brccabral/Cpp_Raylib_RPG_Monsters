@@ -77,6 +77,11 @@ BorderSprite::BorderSprite(const Vector2 pos, const TiledTexture &img, const std
     : Sprite(pos, img, sgs)
 {}
 
+TransitionSprite::TransitionSprite(
+        const Vector2 pos, const Vector2 size, std::array<std::string, 2> target, const std::vector<SpriteGroup *> &sgs)
+    : Sprite(pos, {{}, {0, 0, size.x, size.y}}, sgs), target(std::move(target))
+{}
+
 CollidableSprite::CollidableSprite(const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs)
     : Sprite(pos, img, sgs)
 {

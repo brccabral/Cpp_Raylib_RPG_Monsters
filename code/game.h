@@ -35,6 +35,7 @@ private:
     void UnloadResources();
     void CreateDialog(const Character *character);
     void EndDialog(const Character *character);
+    void TransitionCheck();
     std::map<std::string, tmx_map *> tmx_maps;
     std::map<std::string, std::vector<Texture2D>> overworld_frames;
     std::map<std::string, std::map<std::string, Texture2D>> named_textures;
@@ -44,6 +45,7 @@ private:
     AllSprites *all_sprites = nullptr;
     SpriteGroup *collition_sprites = nullptr;
     SpriteGroup *characters_sprites = nullptr;
+    SpriteGroup *transition_sprites = nullptr;
     Player *player{};
     std::map<std::string, Font> fonts;
     DialogTree *dialog_tree = nullptr;
