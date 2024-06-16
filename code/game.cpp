@@ -33,7 +33,7 @@ Game::Game(const int width, const int height)
     player_monsters.emplace_back("Jacana", 2);
     player_monsters.emplace_back("Pouch", 3);
 
-    monster_index = new MonsterIndex(player_monsters, fonts);
+    monster_index = new MonsterIndex(player_monsters, fonts, monster_frames);
 }
 
 Game::~Game()
@@ -142,6 +142,8 @@ void Game::ImporAssets()
     fonts["regular"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 18, nullptr, 0);
     fonts["small"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 14, nullptr, 0);
     fonts["bold"] = LoadFontEx("resources/graphics/fonts/dogicapixelbold.otf", 20, nullptr, 0);
+
+    monster_frames["icons"] = ImportNamedFolder("resources/graphics/icons");
 }
 
 TileInfo Game::GetTileInfo(const tmx_tile *tile, const int posX, const int posY)
@@ -418,6 +420,13 @@ void Game::UnloadResources()
     for (const auto &[key, named_texture]: named_textures)
     {
         for (const auto &[name, texture]: named_texture)
+        {
+            UnloadTexture(texture);
+        }
+    }
+    for (const auto &[key, monster_frame]: monster_frames)
+    {
+        for (const auto &[name, texture]: monster_frame)
         {
             UnloadTexture(texture);
         }

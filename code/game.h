@@ -60,6 +60,7 @@ private:
     SpriteGroup *transition_sprites = nullptr;
     Player *player{};
     std::map<std::string, Font> fonts;
+    std::map<std::string, std::map<std::string, Texture2D>> monster_frames;
 
     // overlays
     DialogTree *dialog_tree = nullptr;

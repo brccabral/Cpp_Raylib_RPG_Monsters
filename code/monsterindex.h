@@ -9,7 +9,9 @@ class MonsterIndex
 {
 public:
 
-    MonsterIndex(const std::vector<Monster> &monsters, const std::map<std::string, Font> &fonts);
+    MonsterIndex(
+            const std::vector<Monster> &monsters, const std::map<std::string, Font> &fonts,
+            std::map<std::string, std::map<std::string, Texture2D>> monster_frames);
     void Update(double dt);
 
 private:
@@ -23,4 +25,5 @@ private:
     int visible_items = 6;
     float list_width = main_rect.width * 0.3;
     float item_height = main_rect.height / visible_items;
+    std::map<std::string, Texture2D> icon_frames;
 };
