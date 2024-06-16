@@ -427,7 +427,7 @@ void Game::TransitionCheck()
     for (const auto transition: transition_sprites->sprites)
     {
         auto *sprite = (TransitionSprite *) transition;
-        if (CheckCollisionRecs(sprite->rect, player->rect))
+        if (CheckCollisionRecs(sprite->rect, player->hitbox))
         {
             sprites.push_back(sprite);
         }
