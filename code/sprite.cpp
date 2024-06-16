@@ -17,14 +17,6 @@ SimpleSprite::SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups)
     }
 }
 
-SimpleSprite::~SimpleSprite()
-{
-    if (image.texture)
-    {
-        UnloadTexture(*image.texture);
-    }
-}
-
 void SimpleSprite::Draw(const Vector2 offset) const
 {
     const Vector2 pos = Vector2Add({rect.x, rect.y}, offset);

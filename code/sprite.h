@@ -19,7 +19,7 @@ public:
 
 
     explicit SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups);
-    virtual ~SimpleSprite();
+    virtual ~SimpleSprite() = default;
 
     virtual void Draw(Vector2 offset) const;
     virtual void Update(double deltaTime){};

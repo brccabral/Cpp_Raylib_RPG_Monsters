@@ -20,11 +20,7 @@ Game::Game(const int width, const int height)
     final_surface = LoadRenderTexture(width, height);
 
     ImporAssets();
-    // create all_sprites after InitWindow for it uses LoadTexture
-    all_sprites = new AllSprites;
-    collition_sprites = new SpriteGroup;
-    characters_sprites = new SpriteGroup;
-    transition_sprites = new SpriteGroup;
+    ClearSpriteGroups();
 
     Setup(tmx_maps["world"], "house");
     // Setup(tmx_maps["hospital"], "world");
@@ -38,9 +34,39 @@ Game::~Game()
     CloseWindow();
 }
 
+void Game::ClearSpriteGroups()
+{
+    if (all_sprites)
+    {
+        delete all_sprites;
+        all_sprites = nullptr;
+    }
+    if (collition_sprites)
+    {
+        delete collition_sprites;
+        collition_sprites = nullptr;
+    }
+    if (characters_sprites)
+    {
+        delete characters_sprites;
+        characters_sprites = nullptr;
+    }
+    if (transition_sprites)
+    {
+        delete transition_sprites;
+        transition_sprites = nullptr;
+    }
+    // create all_sprites after InitWindow for it uses LoadTexture
+    all_sprites = new AllSprites;
+    collition_sprites = new SpriteGroup;
+    characters_sprites = new SpriteGroup;
+    transition_sprites = new SpriteGroup;
+}
+
 void Game::Draw() const
 {
     BeginTextureMode(display_surface);
+    ClearBackground(BLACK);
     all_sprites->Draw(player);
     EndTextureMode();
 }
@@ -89,10 +115,9 @@ void Game::DisplayUpdate()
 
 void Game::ImporAssets()
 {
-    tmx_map *world = LoadTMX("resources/data/maps/world.tmx");
-    tmx_maps["world"] = world;
-    tmx_map *hospital = LoadTMX("resources/data/maps/hospital.tmx");
-    tmx_maps["hospital"] = hospital;
+    tmx_maps["world"] = LoadTMX("resources/data/maps/world.tmx");
+    tmx_maps["hospital"] = LoadTMX("resources/data/maps/hospital.tmx");
+    tmx_maps["house"] = LoadTMX("resources/data/maps/house.tmx");
 
     overworld_frames["coast"] = {LoadTexture("resources/graphics/tilesets/coast.png")};
     named_textures["characters"] = ImportNamedFolder("resources/graphics/characters");
@@ -151,6 +176,8 @@ void Game::CreateTileLayer(const tmx_map *map, const tmx_layer *layer, const int
 
 void Game::Setup(const tmx_map *map, const std::string &player_start_position)
 {
+    ClearSpriteGroups();
+
     const tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
     const tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
     const tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
@@ -348,8 +375,14 @@ void Game::Input()
 
 void Game::UnloadResources()
 {
-    UnloadTMX(tmx_maps["world"]);
-    UnloadTMX(tmx_maps["hospital"]);
+    UnloadRenderTexture(display_surface);
+    UnloadRenderTexture(final_surface);
+
+    for (const auto &[key, map]: tmx_maps)
+    {
+        UnloadTMX(map);
+    }
+
     for (const auto &[key, textures]: overworld_frames)
     {
         for (const auto texture: textures)
@@ -410,12 +443,26 @@ void Game::TransitionCheck()
 // Fade to black
 void Game::TintScreen(const double dt)
 {
+    // in the tutorial the tint is "transparent to black"
+    // in raylib we do "white to transparent"
+
+    if (tint_mode == UNTINT)
+    {
+        tint_progress += tint_speed * dt;
+        if (tint_progress >= 255)
+        {
+            tint_progress = 255;
+        }
+    }
     if (tint_mode == TINT)
     {
         tint_progress -= tint_speed * dt;
         if (tint_progress <= 0)
         {
             tint_progress = 0;
+            Setup(tmx_maps[transition_target[0]], transition_target[1]);
+            tint_mode = UNTINT;
+            transition_target = {};
         }
     }
     render_tint = {255, 255, 255, (unsigned char) (tint_progress)};
