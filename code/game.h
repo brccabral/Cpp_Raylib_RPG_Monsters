@@ -64,6 +64,7 @@ private:
     // overlays
     DialogTree *dialog_tree = nullptr;
     MonsterIndex *monster_index;
+    bool index_open = false;
 
     // Transition / tint
     Color render_tint = WHITE;

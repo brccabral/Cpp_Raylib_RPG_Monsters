@@ -20,12 +20,12 @@ public:
     int y_sort{};
     Rectangle hitbox{};
     FacingDirection facing_direction = DOWN;
+    bool blocked{}; // block player movements
 
 protected:
 
     Vector2 direction{};
     float speed = 250;
-    bool blocked{}; // block player movements
 
 private:
 

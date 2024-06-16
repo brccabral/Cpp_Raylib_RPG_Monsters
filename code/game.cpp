@@ -111,7 +111,7 @@ void Game::run()
         {
             dialog_tree->Update();
         }
-        if (monster_index)
+        if (index_open)
         {
             monster_index->Update(dt);
         }
@@ -389,6 +389,12 @@ void Game::Input()
                 character->can_rotate = false;
             }
         }
+    }
+
+    if (IsKeyPressed(KEY_ENTER))
+    {
+        index_open = !index_open;
+        player->blocked = !player->blocked;
     }
 }
 
