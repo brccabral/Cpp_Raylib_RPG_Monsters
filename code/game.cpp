@@ -69,7 +69,8 @@ void Game::run()
             dialog_tree->Update();
         }
 
-        Draw();
+        TintScreen(dt);
+
         DisplayUpdate();
     }
 }
@@ -401,5 +402,21 @@ void Game::TransitionCheck()
     if (!sprites.empty())
     {
         player->Block();
+        transition_target = sprites[0]->target;
+        tint_mode = TINT;
     }
+}
+
+// Fade to black
+void Game::TintScreen(const double dt)
+{
+    if (tint_mode == TINT)
+    {
+        tint_progress -= tint_speed * dt;
+        if (tint_progress <= 0)
+        {
+            tint_progress = 0;
+        }
+    }
+    render_tint = {255, 255, 255, (unsigned char) (tint_progress)};
 }

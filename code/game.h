@@ -37,6 +37,7 @@ private:
     void CreateDialog(const Character *character);
     void EndDialog(const Character *character);
     void TransitionCheck();
+    void TintScreen(double dt);
 
     RenderTexture2D display_surface;
     // BeginTextureMode draws everything upsidedown,
@@ -61,4 +62,9 @@ private:
 
     // Transition / tint
     Color render_tint = WHITE;
+    std::array<std::string, 2> transition_target;
+    TINT_MODE tint_mode = UNTINT;
+    float tint_progress = 255;
+    int tint_direction = -1;
+    double tint_speed = 600;
 };

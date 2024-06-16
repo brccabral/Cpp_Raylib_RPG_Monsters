@@ -120,3 +120,9 @@ enum FacingDirection
     LEFT_IDLE,
     RIGHT_IDLE,
 };
+
+enum TINT_MODE
+{
+    UNTINT = 0,
+    TINT
+};

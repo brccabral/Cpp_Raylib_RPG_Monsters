@@ -72,8 +72,6 @@ public:
     TransitionSprite(
             Vector2 pos, Vector2 size, std::array<std::string, 2> target, const std::vector<SpriteGroup *> &sgs);
 
-private:
-
     std::array<std::string, 2> target;
 };
 
