@@ -86,6 +86,9 @@ void MonsterIndex::DisplayList()
 
 void MonsterIndex::DisplayMain(const double dt)
 {
+    // data
+    const Monster monster = monsters[index];
+
     // BeginTextureMode was called in Update()
     // bg
     const Rectangle rect = {main_rect.x + list_width, main_rect.y, main_rect.width - list_width, main_rect.height};
@@ -93,7 +96,7 @@ void MonsterIndex::DisplayMain(const double dt)
 
     // monster
     const Rectangle top_rect = {rect.x, rect.y, rect.width, rect.height * 0.4f};
-    DrawRectangleRoundedCorners(top_rect, 0.3, 10, RED, false, true, false, false);
+    DrawRectangleRoundedCorners(top_rect, 0.3, 10, COLORS[monster.element], false, true, false, false);
 }
 
 void MonsterIndex::Input()
