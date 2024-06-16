@@ -7,12 +7,12 @@ class Monster
 {
 public:
 
-    Monster(std::string name, int level);
+    Monster(std::string name_, int level);
     std::string name;
+    std::string element;
 
 private:
 
     int level;
-    std::string element;
     std::map<std::string, int> base_stats;
 };
