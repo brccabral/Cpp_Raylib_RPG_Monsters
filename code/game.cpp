@@ -101,7 +101,7 @@ void Game::run()
     }
 }
 
-void Game::DisplayUpdate()
+void Game::DisplayUpdate() const
 {
     BeginTextureMode(final_surface);
     DrawTexture(display_surface.texture, 0, 0, WHITE);
@@ -115,9 +115,7 @@ void Game::DisplayUpdate()
 
 void Game::ImporAssets()
 {
-    tmx_maps["world"] = LoadTMX("resources/data/maps/world.tmx");
-    tmx_maps["hospital"] = LoadTMX("resources/data/maps/hospital.tmx");
-    tmx_maps["house"] = LoadTMX("resources/data/maps/house.tmx");
+    tmx_maps = tmx_importer("resources/data/maps");
 
     overworld_frames["coast"] = {LoadTexture("resources/graphics/tilesets/coast.png")};
     named_textures["characters"] = ImportNamedFolder("resources/graphics/characters");

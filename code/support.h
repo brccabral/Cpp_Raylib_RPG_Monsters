@@ -5,6 +5,7 @@
 #include <vector>
 #include <raylib.h>
 #include "raylib_utils.h"
+#include "raylib-tmx.h"
 
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
@@ -129,4 +130,15 @@ inline bool CheckConnections(const float radius, const Entity *entity, const Ent
         }
     }
     return false;
+}
+
+inline std::map<std::string, tmx_map *> tmx_importer(const char *path)
+{
+    std::map<std::string, tmx_map *> maps;
+    for (const auto &dirEntry: recursive_directory_iterator(path))
+    {
+        auto filename = dirEntry.path().stem().string();
+        maps[filename] = LoadTMX(dirEntry.path().c_str());
+    }
+    return maps;
 }

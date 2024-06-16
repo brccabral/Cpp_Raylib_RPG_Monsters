@@ -28,7 +28,7 @@ public:
 
 private:
 
-    void DisplayUpdate();
+    void DisplayUpdate() const;
     void ImporAssets();
     static TileInfo GetTileInfo(const tmx_tile *tile, int posX, int posY);
     void CreateTileLayer(const tmx_map *map, const tmx_layer *layer, int z = WORLD_LAYERS["main"]);
