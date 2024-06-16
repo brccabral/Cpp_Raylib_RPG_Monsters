@@ -44,7 +44,7 @@ void MonsterIndex::DisplayList()
     for (int i = 0; i < monsters.size(); ++i)
     {
         const Color bg_color = (i != index) ? COLORS["gray"] : COLORS["light"];
-        const Color text_color = COLORS["white"];
+        const Color text_color = (selected_index != i) ? COLORS["white"] : COLORS["gold"];
         const float top = main_rect.y + i * item_height + v_offset;
         const Rectangle item_rect = {main_rect.x, top, list_width, item_height};
         const auto [x, y] = GetRectMidLeft(item_rect);
@@ -72,6 +72,24 @@ void MonsterIndex::Input()
     if (IsKeyPressed(KEY_DOWN))
     {
         ++index;
+    }
+    if (IsKeyPressed(KEY_SPACE))
+    {
+        // one SPACE to select, another to change order
+        if (selected_index != -1)
+        {
+            // second SPACE is to change the order
+            const auto selected_monster = monsters[selected_index];
+            const auto current_monster = monsters[index];
+            monsters[index] = selected_monster;
+            monsters[selected_index] = current_monster;
+            selected_index = -1;
+        }
+        else
+        {
+            // first SPACE is to select the monster from the list
+            selected_index = index;
+        }
     }
     index %= monsters.size();
 }

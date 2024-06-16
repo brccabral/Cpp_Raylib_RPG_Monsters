@@ -28,4 +28,5 @@ private:
     float item_height = main_rect.height / visible_items;
     std::map<std::string, Texture2D> icon_frames;
     int index = 0;
+    int selected_index = -1;
 };
