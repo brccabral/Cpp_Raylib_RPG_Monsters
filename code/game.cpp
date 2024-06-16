@@ -23,9 +23,11 @@ Game::Game(const int width, const int height)
     ClearSpriteGroups();
 
     Setup(tmx_maps["world"], "house");
-    // Setup(tmx_maps["hospital"], "world");
 
     fonts["dialog"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", FONT_SIZE, nullptr, 0);
+    fonts["regular"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 18, nullptr, 0);
+    fonts["small"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 14, nullptr, 0);
+    fonts["bold"] = LoadFontEx("resources/graphics/fonts/dogicapixelbold.otf", 20, nullptr, 0);
 
     player_monsters.emplace_back("Charmadillo", 30);
     player_monsters.emplace_back("Friolera", 29);

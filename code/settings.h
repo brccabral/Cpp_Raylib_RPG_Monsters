@@ -93,7 +93,7 @@ inline std::map<std::string, std::map<std::string, BattleChoice>> BATTLE_CHOICES
         }, //
 };
 
-inline int FONT_SIZE = 30;
+#define FONT_SIZE 30
 
 enum SpriteType
 {

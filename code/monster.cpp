@@ -1,8 +1,7 @@
+#include <utility>
 #include "monster.h"
-
 #include "game_data.h"
 
-#include <utility>
 
 Monster::Monster(std::string name, const int level) : name(std::move(name)), level(level)
 {

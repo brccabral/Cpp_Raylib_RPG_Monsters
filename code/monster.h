@@ -8,6 +8,9 @@ class Monster
 public:
 
     Monster(std::string name, int level);
+
+private:
+
     std::string name;
     int level;
     std::string element;
