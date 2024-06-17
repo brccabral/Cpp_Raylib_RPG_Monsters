@@ -23,7 +23,7 @@ void SimpleSprite::Draw(const Vector2 offset) const
 
     if (image.texture)
     {
-        DrawTextureRec(*image.texture, image.rect, pos, WHITE);
+        DrawTextureRec(*image.texture, image.rect.rectangle, pos, WHITE);
     }
     else
     {
@@ -152,9 +152,9 @@ int GetYsort(const SimpleSprite *sprite)
     return y;
 }
 
-Rectangle GetHitbox(const SimpleSprite *sprite)
+RectangleU GetHitbox(const SimpleSprite *sprite)
 {
-    Rectangle rect{};
+    RectangleU rect{};
 
     if (sprite->type == SPRITE)
     {

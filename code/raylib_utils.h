@@ -3,79 +3,142 @@
 #include <raymath.h>
 #include "settings.h"
 
-inline Vector2 GetRectCenter(const Rectangle rect)
+typedef union RectangleU
+{
+    struct
+    {
+        float x, y, width, height;
+    };
+    struct
+    {
+        Vector2 pos, size;
+    };
+    struct
+    {
+        Rectangle rectangle;
+    };
+} RectangleU;
+
+typedef union Vector2U
+{
+    struct
+    {
+        float x, y;
+    };
+    Vector2 vector2;
+    float f[2];
+} Vector2U;
+
+typedef union Vector3U
+{
+    struct
+    {
+        float x, y, z;
+    };
+    struct
+    {
+        float r, g, b;
+    };
+    Vector2U xy;
+    Vector3 vector3;
+    float f[3];
+} Vector3U;
+
+typedef union Vector4U
+{
+    struct
+    {
+        float x, y, z, w;
+    };
+    struct
+    {
+        float r, g, b, a;
+    };
+    struct
+    {
+        Vector2 xy, zw;
+    };
+    Vector3U xyz;
+    Vector3U rgb;
+    Vector4 vector4;
+    float f[4];
+} Vector4U;
+
+inline Vector2 GetRectCenter(const RectangleU rect)
 {
     return {rect.x + rect.width / 2, rect.y + rect.height / 2};
 }
 
-inline Vector2 GetRectMidBottom(const Rectangle rect)
+inline Vector2 GetRectMidBottom(const RectangleU rect)
 {
     return {rect.x + rect.width / 2, rect.y + rect.height};
 }
 
-inline Vector2 GetRectMidTop(const Rectangle rect)
+inline Vector2 GetRectMidTop(const RectangleU rect)
 {
     return {rect.x + rect.width / 2, rect.y};
 }
 
-inline Vector2 GetRectMidLeft(const Rectangle rect)
+inline Vector2 GetRectMidLeft(const RectangleU rect)
 {
     return {rect.x, rect.y + rect.height / 2};
 }
 
-inline Vector2 GetRectMidRight(const Rectangle rect)
+inline Vector2 GetRectMidRight(const RectangleU rect)
 {
     return {rect.x + rect.width, rect.y + rect.height / 2};
 }
 
-inline Vector2 GetRectTopLeft(const Rectangle rect)
+inline Vector2 GetRectTopLeft(const RectangleU rect)
 {
-    return {rect.x, rect.y};
+    // return {rect.x, rect.y};
+    return rect.pos;
 }
 
-inline Vector2 GetRectTopRight(const Rectangle rect)
+inline Vector2 GetRectTopRight(const RectangleU rect)
 {
     return {rect.x + rect.width, rect.y};
 }
 
-inline Vector2 GetRectBottomLeft(const Rectangle rect)
+inline Vector2 GetRectBottomLeft(const RectangleU rect)
 {
     return {rect.x, rect.y + rect.height};
 }
 
-inline Vector2 GetRectBottomRight(const Rectangle rect)
+inline Vector2 GetRectBottomRight(const RectangleU rect)
 {
     return {rect.x + rect.width, rect.y + rect.height};
 }
 
-inline void RectToCenter(Rectangle &rect, const Vector2 pos)
+inline void RectToCenter(RectangleU &rect, const Vector2 pos)
 {
     rect.x = pos.x - rect.width / 2;
     rect.y = pos.y - rect.height / 2;
 }
 
-inline void RectToMidBottom(Rectangle &rect, const Vector2 pos)
+inline void RectToMidBottom(RectangleU &rect, const Vector2 pos)
 {
     rect.x = pos.x - rect.width / 2;
     rect.y = pos.y - rect.height;
 }
 
-inline void RectToMidLeft(Rectangle &rect, const Vector2 pos)
+inline void RectToMidLeft(RectangleU &rect, const Vector2 pos)
 {
     rect.x = pos.x;
     rect.y = pos.y - rect.height / 2;
 }
 
-inline void RectToBottomLeft(Rectangle &rect, const Vector2 pos)
+inline void RectToBottomLeft(RectangleU &rect, const Vector2 pos)
 {
     rect.x = pos.x;
     rect.y = pos.y - rect.height;
 }
 
-inline void RectToTopLeft(Rectangle &rect, const Vector2 pos)
+inline void RectToTopLeft(RectangleU &rect, const Vector2 pos)
 {
-    rect.x = pos.x;
-    rect.y = pos.y;
+    // rect.x = pos.x;
+    // rect.y = pos.y;
+    rect.pos = pos;
 }
 
 inline Vector2 ViewOffset(const Vector2 player_center)
@@ -85,20 +148,27 @@ inline Vector2 ViewOffset(const Vector2 player_center)
     return offset;
 }
 
-inline Rectangle CreateCenteredRect(const Rectangle rect, const Vector2 pos)
+inline RectangleU CreateCenteredRect(const RectangleU rect, const Vector2 pos)
 {
-    Rectangle newRect = rect;
+    RectangleU newRect = rect;
     RectToCenter(newRect, pos);
     return newRect;
 }
 
-inline void MoveRect(Rectangle &rect, const Vector2 pos)
+inline void MoveVector2(Vector2 &pos, const Vector2 delta)
 {
-    rect.x += pos.x;
-    rect.y += pos.y;
+    pos.x += delta.x;
+    pos.y += delta.y;
 }
 
-inline void RectInflate(Rectangle &rect, const float width, const float height)
+inline void MoveRect(RectangleU &rect, const Vector2 pos)
+{
+    // rect.x += pos.x;
+    // rect.y += pos.y;
+    MoveVector2(rect.pos, pos);
+}
+
+inline void RectInflate(RectangleU &rect, const float width, const float height)
 {
     const Vector2 oldCenter = GetRectCenter(rect);
     rect.width += width;
@@ -106,7 +176,7 @@ inline void RectInflate(Rectangle &rect, const float width, const float height)
     RectToCenter(rect, oldCenter);
 }
 
-inline void AbsRect(Rectangle &rect)
+inline void AbsRect(RectangleU &rect)
 {
     if (rect.width < 0)
     {
@@ -122,7 +192,7 @@ inline void AbsRect(Rectangle &rect)
 }
 
 inline bool CheckCollisionRectLine(
-        const Rectangle rect, const Vector2 startPos, const Vector2 endPos, Vector2 *collisionPoint1,
+        const RectangleU rect, const Vector2 startPos, const Vector2 endPos, Vector2 *collisionPoint1,
         Vector2 *collisionPoint2)
 {
     bool hasCollision = false;
@@ -182,13 +252,13 @@ inline bool CheckCollisionRectLine(
 
 // Draw rectangle with rounded edges
 inline void DrawRectangleRoundedCorners(
-        const Rectangle rec, float roundness, int segments, const Color color, const bool TopLeft = true,
+        const RectangleU rec, float roundness, int segments, const Color color, const bool TopLeft = true,
         const bool TopRight = true, const bool BottomRight = true, const bool BottomLeft = true)
 {
     // Not a rounded rectangle
     if ((roundness <= 0.0f) || (rec.width < 1) || (rec.height < 1))
     {
-        DrawRectangleRec(rec, color);
+        DrawRectangleRec(rec.rectangle, color);
         return;
     }
 
@@ -248,15 +318,15 @@ inline void DrawRectangleRoundedCorners(
         DrawRectangle(rec.x, rec.y + rec.height - radius, radius + 1, radius + 1, color);
     }
 
-    // Top Rectangle
+    // Top RectangleU
     DrawRectangle(rec.x + radius, rec.y, rec.width - 2 * radius + 1, radius, color);
-    // Right Rectangle
+    // Right RectangleU
     DrawRectangle(rec.x + rec.width - radius, rec.y + radius, radius + 1, rec.height - 2 * radius + 1, color);
-    // Bottom Rectangle
+    // Bottom RectangleU
     DrawRectangle(rec.x + radius - 1, rec.y + rec.height - radius, rec.width - 2 * radius + 2, radius + 1, color);
-    // Left Rectangle
+    // Left RectangleU
     DrawRectangle(rec.x, rec.y + radius, radius + 1, rec.height - 2 * radius + 1, color);
-    // Center Rectangle
+    // Center RectangleU
     DrawRectangle(rec.x + radius, rec.y + radius, rec.width - 2 * radius + 1, rec.height - 2 * radius + 1, color);
 }
 

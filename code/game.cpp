@@ -173,7 +173,7 @@ TileInfo Game::GetTileInfo(const tmx_tile *tile, const int posX, const int posY)
 
     tile_info.position = {float(posX), float(posY)};
 
-    Rectangle srcRect;
+    RectangleU srcRect;
     srcRect.x = tile->ul_x;
     srcRect.y = tile->ul_y;
     srcRect.width = tile->width;
@@ -481,7 +481,7 @@ void Game::TransitionCheck()
     for (const auto transition: transition_sprites->sprites)
     {
         auto *sprite = (TransitionSprite *) transition;
-        if (CheckCollisionRecs(sprite->rect, player->hitbox))
+        if (CheckCollisionRecs(sprite->rect.rectangle, player->hitbox.rectangle))
         {
             sprites.push_back(sprite);
         }

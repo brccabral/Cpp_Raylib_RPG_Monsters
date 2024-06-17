@@ -18,7 +18,7 @@ public:
 
     int z = WORLD_LAYERS["main"];
     int y_sort{};
-    Rectangle hitbox{};
+    RectangleU hitbox{};
     FacingDirection facing_direction = DOWN;
     bool blocked{}; // block player movements
 
@@ -78,7 +78,7 @@ private:
     bool HasLineOfSight();
 
     CharacterData character_data;
-    std::vector<Rectangle> collition_rects;
+    std::vector<RectangleU> collition_rects;
     bool has_moved{};
     bool has_noticed{};
     float radius{};

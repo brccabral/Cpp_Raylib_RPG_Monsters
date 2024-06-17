@@ -61,24 +61,24 @@ void MonsterIndex::DisplayList()
         const Color bg_color = (i != index) ? COLORS["gray"] : COLORS["light"];
         const Color text_color = (selected_index != i) ? COLORS["white"] : COLORS["gold"];
         const float top = main_rect.y + i * item_height + v_offset;
-        const Rectangle item_rect = {main_rect.x, top, list_width, item_height};
+        const RectangleU item_rect = {main_rect.x, top, list_width, item_height};
         const auto [x, y] = GetRectMidLeft(item_rect);
 
         const Texture2D icon_texture = icon_frames[monsters[i].name];
 
-        if (CheckCollisionRecs(item_rect, main_rect))
+        if (CheckCollisionRecs(item_rect.rectangle, main_rect.rectangle))
         {
-            if (CheckCollisionPointRec(GetRectTopLeft(main_rect), item_rect))
+            if (CheckCollisionPointRec(GetRectTopLeft(main_rect), item_rect.rectangle))
             {
                 DrawRectangleRoundedCorners(item_rect, 0.3, 10, bg_color, true, false, false, false);
             }
-            else if (CheckCollisionPointRec(Vector2Add(GetRectBottomLeft(main_rect), {1, -1}), item_rect))
+            else if (CheckCollisionPointRec(Vector2Add(GetRectBottomLeft(main_rect), {1, -1}), item_rect.rectangle))
             {
                 DrawRectangleRoundedCorners(item_rect, 0.3, 10, bg_color, false, false, false, true);
             }
             else
             {
-                DrawRectangleRec(item_rect, bg_color);
+                DrawRectangleRec(item_rect.rectangle, bg_color);
             }
             DrawTexture(icon_texture, x + 45 - icon_texture.width / 2.0f, y - icon_texture.height / 2.0f, WHITE);
             DrawTextEx(
@@ -105,20 +105,20 @@ void MonsterIndex::DisplayMain(const double dt)
 
     // BeginTextureMode was called in Update()
     // bg
-    const Rectangle rect = {main_rect.x + list_width, main_rect.y, main_rect.width - list_width, main_rect.height};
+    const RectangleU rect = {main_rect.x + list_width, main_rect.y, main_rect.width - list_width, main_rect.height};
     DrawRectangleRoundedCorners(rect, 0.3, 10, COLORS["dark"], false, true, true, false);
 
     // monster
-    const Rectangle top_rect = {rect.x, rect.y, rect.width, rect.height * 0.4f};
+    const RectangleU top_rect = {rect.x, rect.y, rect.width, rect.height * 0.4f};
     DrawRectangleRoundedCorners(top_rect, 0.3, 10, COLORS[monster.element], false, true, false, false);
 
     // monster animation
     frame_index += ANIMATION_SPEED * dt;
     const auto frames = monsters_frames[monster.name]["idle"];
     const auto [surf_texture, surf_ref] = frames[int(frame_index) % frames.size()];
-    Rectangle monster_rect = surf_ref;
+    RectangleU monster_rect = surf_ref;
     RectToCenter(monster_rect, GetRectCenter(top_rect));
-    DrawTextureRec(*surf_texture, surf_ref, {monster_rect.x, monster_rect.y}, WHITE);
+    DrawTextureRec(*surf_texture, surf_ref.rectangle, {monster_rect.x, monster_rect.y}, WHITE);
 
     // name
     DrawTextEx(fonts["bold"], monster.name.c_str(), {top_rect.x + 10, top_rect.y + 10}, 14, 1, COLORS["white"]);
@@ -137,17 +137,17 @@ void MonsterIndex::DisplayMain(const double dt)
     DrawTextEx(fonts["regular"], monster.element.c_str(), pos_element, fonts["regular"].baseSize, 1, COLORS["white"]);
 
     // health and energy
-    const Rectangle bar_rect{
+    const RectangleU bar_rect{
             rect.x + rect.width * 0.03f, top_rect.y + top_rect.height + rect.width * 0.03f, rect.width * 0.45f, 30.0f};
 
-    const Rectangle health_rectangle{bar_rect.x, bar_rect.y, bar_rect.width, bar_rect.height};
+    const RectangleU health_rectangle{bar_rect.x, bar_rect.y, bar_rect.width, bar_rect.height};
     DrawBar(health_rectangle, monster.health, monster.GetStat("max_health"), COLORS["red"], COLORS["black"], 100);
     DrawTextEx(
             fonts["regular"], TextFormat("HP: %.f/%.f", monster.health, monster.GetStat("max_health")),
             Vector2Add(GetRectMidLeft(health_rectangle), {10, -fonts["regular"].baseSize / 2.0f}),
             fonts["regular"].baseSize, 1, COLORS["white"]);
 
-    const Rectangle energy_rectangle{bar_rect.x + rect.width / 2.0f, bar_rect.y, bar_rect.width, bar_rect.height};
+    const RectangleU energy_rectangle{bar_rect.x + rect.width / 2.0f, bar_rect.y, bar_rect.width, bar_rect.height};
     DrawBar(energy_rectangle, monster.energy, monster.GetStat("max_energy"), COLORS["blue"], COLORS["black"], 100);
     DrawTextEx(
             fonts["regular"], TextFormat("EP: %.f/%.f", monster.energy, monster.GetStat("max_energy")),
@@ -158,7 +158,7 @@ void MonsterIndex::DisplayMain(const double dt)
     const float info_height = rect.y + rect.height - (health_rectangle.y + health_rectangle.height);
 
     // stats
-    Rectangle stats_rectangle = {
+    RectangleU stats_rectangle = {
             health_rectangle.x, health_rectangle.y + health_rectangle.height, health_rectangle.width, info_height};
     RectInflate(stats_rectangle, 0, -60);
     MoveRect(stats_rectangle, {0, 15});
@@ -172,12 +172,12 @@ void MonsterIndex::DisplayMain(const double dt)
     int i = 0;
     for (auto &[stat, value]: monster_stats)
     {
-        Rectangle single_stat_rectangle = {
+        RectangleU single_stat_rectangle = {
                 stats_rectangle.x, stats_rectangle.y + i * stat_height, stats_rectangle.width, stat_height};
 
         // icon
         Texture2D icon_surf = ui_frames[stat];
-        Rectangle icon_rect = {0, 0, (float) icon_surf.width, (float) icon_surf.height};
+        RectangleU icon_rect = {0, 0, (float) icon_surf.width, (float) icon_surf.height};
         RectToMidLeft(icon_rect, Vector2Add(GetRectMidLeft(single_stat_rectangle), {5, 0}));
         DrawTextureV(icon_surf, GetRectTopLeft(icon_rect), WHITE);
 
@@ -186,7 +186,7 @@ void MonsterIndex::DisplayMain(const double dt)
         DrawTextEx(fonts["regular"], stat.c_str(), stat_text_pos, fonts["regular"].baseSize, 1, COLORS["white"]);
 
         // bar
-        Rectangle stat_bar_rect = {
+        RectangleU stat_bar_rect = {
                 stat_text_pos.x, stat_text_pos.y + fonts["regular"].baseSize + 2, single_stat_rectangle.width * 0.9f,
                 4};
         DrawBar(stat_bar_rect, value, max_stats[stat] * monster.level, COLORS["white"], COLORS["black"]);
@@ -195,25 +195,25 @@ void MonsterIndex::DisplayMain(const double dt)
     }
 
     // abilities
-    Rectangle ability_rect = stats_rectangle;
-    ability_rect.x = energy_rectangle.x;
-    const Vector2 ability_pos = GetRectTopLeft(ability_rect);
+    RectangleU abilities_rect = stats_rectangle;
+    abilities_rect.x = energy_rectangle.x;
+    const Vector2 abilities_pos = GetRectTopLeft(abilities_rect);
     DrawTextEx(
-            fonts["regular"], "Ability", {ability_pos.x, ability_pos.y - fonts["regular"].baseSize},
+            fonts["regular"], "Ability", {abilities_pos.x, abilities_pos.y - fonts["regular"].baseSize},
             fonts["regular"].baseSize, 1, COLORS["white"]);
 
     auto abilities = monster.GetAbilities();
     for (int a_index = 0; a_index < abilities.size(); ++a_index)
     {
         auto element = ATTACK_DATA[abilities[a_index]].element;
-        float x = ability_rect.x + a_index % 2 * ability_rect.width / 2;
-        float y = 20.f + ability_rect.y + int(a_index / 2) * (fonts["regular"].baseSize + 20);
+        float x = abilities_rect.x + a_index % 2 * abilities_rect.width / 2;
+        float y = 20.f + abilities_rect.y + int(a_index / 2) * (fonts["regular"].baseSize + 20);
         Vector2 ability_pos = {x, y};
         Vector2 ability_text_size = MeasureTextF(fonts["regular"], abilities[a_index].c_str(), 1);
-        Rectangle ability_rect = {ability_pos.x, ability_pos.y, ability_text_size.x, ability_text_size.y};
+        RectangleU ability_rect = {.pos = ability_pos, .size = ability_text_size};
         RectInflate(ability_rect, 10, 10);
 
-        DrawRectangleRounded(ability_rect, 0.3, 10, COLORS[element]);
+        DrawRectangleRounded(ability_rect.rectangle, 0.3, 10, COLORS[element]);
         DrawTextEx(
                 fonts["regular"], abilities[a_index].c_str(), ability_pos, fonts["regular"].baseSize, 1,
                 COLORS["black"]);

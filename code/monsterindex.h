@@ -27,7 +27,7 @@ private:
 
     RenderTexture2D tint_surface{};
     std::map<std::string, Font> fonts;
-    Rectangle main_rect{0, 0, WINDOW_WIDTH * 0.6, WINDOW_HEIGHT * 0.8};
+    RectangleU main_rect{0, 0, WINDOW_WIDTH * 0.6, WINDOW_HEIGHT * 0.8};
     std::vector<Monster> monsters;
     std::map<std::string, float> max_stats = GetMaxStats();
 

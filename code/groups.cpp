@@ -67,7 +67,7 @@ void AllSprites::Draw(const Player *player)
         main->Draw(offset);
         if (main == player && player->noticed)
         {
-            Rectangle rect = {0, 0, float(notice.width), float(notice.height)};
+            RectangleU rect = {0, 0, float(notice.width), float(notice.height)};
             RectToMidBottom(rect, GetRectMidTop(player->rect));
 
             const Vector2 pos = Vector2Add({rect.x, rect.y}, offset);

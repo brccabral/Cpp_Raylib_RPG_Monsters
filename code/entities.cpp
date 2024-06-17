@@ -169,9 +169,9 @@ void Character::Move(const double dt)
 {
     if (!has_moved && (direction.x || direction.y))
     {
-        Rectangle newHitbox = hitbox;
+        RectangleU newHitbox = hitbox;
         RectInflate(newHitbox, 10.0f, 10.0f);
-        if (!CheckCollisionRecs(newHitbox, game->player->hitbox))
+        if (!CheckCollisionRecs(newHitbox.rectangle, game->player->hitbox.rectangle))
         {
             MoveRect(rect, Vector2Scale(direction, speed * dt));
             RectToCenter(hitbox, GetRectCenter(rect));
@@ -285,8 +285,8 @@ void Player::Collisions(const Axis axis)
 {
     for (const auto *sprite: collision_sprites->sprites)
     {
-        const Rectangle sprite_hitbox = GetHitbox(sprite);
-        if (CheckCollisionRecs(sprite_hitbox, hitbox))
+        const RectangleU sprite_hitbox = GetHitbox(sprite);
+        if (CheckCollisionRecs(sprite_hitbox.rectangle, hitbox.rectangle))
         {
             if (axis == HORIZONTAL)
             {

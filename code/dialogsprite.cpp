@@ -44,7 +44,7 @@ Texture2D *DialogSprite::CreateImage() const
     {}
     BeginTextureMode(render);
 
-    DrawRectangleRounded(image.rect, 0.3, 10, COLORS["pure white"]);
+    DrawRectangleRounded(image.rect.rectangle, 0.3, 10, COLORS["pure white"]);
 
     // centralize text inside box
     const auto offset = Vector2Subtract({image.rect.width, image.rect.height}, textsize);
@@ -60,7 +60,7 @@ Texture2D *DialogSprite::CreateImage() const
     {}
 
     BeginTextureMode(inverted);
-    DrawTextureRec(render.texture, image.rect, {0, 0}, WHITE);
+    DrawTextureRec(render.texture, image.rect.rectangle, {0, 0}, WHITE);
     EndTextureMode();
 
     const auto result = (Texture2D *) MemAlloc(sizeof(Texture2D));

@@ -31,8 +31,8 @@ inline std::map<std::string, Texture2D> ImportNamedFolder(const char *path)
     return textures;
 }
 
-typedef std::map<std::string, std::vector<Rectangle>> tilerect_name;
-typedef std::map<FacingDirection, std::vector<Rectangle>> tilerect_face;
+typedef std::map<std::string, std::vector<RectangleU>> tilerect_name;
+typedef std::map<FacingDirection, std::vector<RectangleU>> tilerect_face;
 
 inline std::map<std::string, tilerect_name> coast_rects()
 {
@@ -66,9 +66,9 @@ inline std::map<std::string, tilerect_name> coast_rects()
     return new_dict;
 }
 
-inline std::vector<std::vector<Rectangle>> import_tilemap_rects(const int cols, const int rows, const char *path)
+inline std::vector<std::vector<RectangleU>> import_tilemap_rects(const int cols, const int rows, const char *path)
 {
-    std::vector<std::vector<Rectangle>> frames;
+    std::vector<std::vector<RectangleU>> frames;
     const Texture2D surf = LoadTexture(path);
 
     const auto cell_width = float(surf.width) / cols;
@@ -88,7 +88,7 @@ inline std::vector<std::vector<Rectangle>> import_tilemap_rects(const int cols, 
 
 inline tilerect_face CharacterImporter(const int cols, const int rows, const char *path)
 {
-    std::vector<std::vector<Rectangle>> frames = import_tilemap_rects(cols, rows, path);
+    std::vector<std::vector<RectangleU>> frames = import_tilemap_rects(cols, rows, path);
     tilerect_face new_dic = {};
     // same order as in image set
     const std::vector directions = {DOWN, LEFT, RIGHT, UP};
@@ -180,21 +180,21 @@ inline std::map<std::string, tmx_map *> tmx_importer(const char *path)
 }
 
 inline void
-DrawBar(const Rectangle rect, const float value, float max_value, const Color color, Color bg_color,
+DrawBar(const RectangleU rect, const float value, float max_value, const Color color, Color bg_color,
         const float radius = 0)
 {
     const float ratio = rect.width / max_value;
-    const Rectangle bg_rect = rect;
-    const Rectangle progress_rect = {rect.x, rect.y, Clamp(value * ratio, 0, rect.width), rect.height};
+    const RectangleU bg_rect = rect;
+    const RectangleU progress_rect = {rect.x, rect.y, Clamp(value * ratio, 0, rect.width), rect.height};
 
     if (radius == 0)
     {
-        DrawRectangleRec(bg_rect, bg_color);
-        DrawRectangleRec(progress_rect, color);
+        DrawRectangleRec(bg_rect.rectangle, bg_color);
+        DrawRectangleRec(progress_rect.rectangle, color);
     }
     else
     {
-        DrawRectangleRounded(bg_rect, radius / (rect.width + rect.height), 10, bg_color);
-        DrawRectangleRounded(progress_rect, radius / (rect.width + rect.height), 10, color);
+        DrawRectangleRounded(bg_rect.rectangle, radius / (rect.width + rect.height), 10, bg_color);
+        DrawRectangleRounded(progress_rect.rectangle, radius / (rect.width + rect.height), 10, color);
     }
 }

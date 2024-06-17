@@ -2,13 +2,14 @@
 #include <array>
 #include <vector>
 #include <raylib.h>
+#include "raylib_utils.h"
 #include "settings.h"
 
 
 typedef struct TiledTexture
 {
     Texture2D *texture; // the atlas image
-    Rectangle rect; // this rect is the rect inside the atlas, not the position of an obj on the map
+    RectangleU rect; // this rect is the rect inside the atlas, not the position of an obj on the map
 } TiledTexture;
 
 class SpriteGroup;
@@ -26,7 +27,7 @@ public:
     void LeaveOtherGroups(const SpriteGroup *sprite_group);
 
     SpriteType type{SIMPLESPRITE};
-    Rectangle rect{};
+    RectangleU rect{};
 
 protected:
 
@@ -42,7 +43,7 @@ public:
 
     int z = WORLD_LAYERS["main"];
     int y_sort{};
-    Rectangle hitbox{};
+    RectangleU hitbox{};
 };
 
 // It is a Sprite with a small offset in the drawing sorting (delay in draw)
@@ -100,7 +101,7 @@ private:
 
 int GetZ(const SimpleSprite *sprite);
 int GetYsort(const SimpleSprite *sprite);
-Rectangle GetHitbox(const SimpleSprite *sprite);
+RectangleU GetHitbox(const SimpleSprite *sprite);
 
 class SpriteGroup
 {
