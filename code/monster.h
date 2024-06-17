@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <map>
+#include <vector>
 
 
 class Monster
@@ -9,7 +10,7 @@ public:
 
     Monster(std::string name_, int level);
     float GetStat(const std::string &stat);
-    std::map<std::string, float> GetStats();
+    std::vector<std::pair<std::string, float>> GetStats();
 
     std::string name;
     int level;

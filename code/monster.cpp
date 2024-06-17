@@ -21,7 +21,7 @@ float Monster::GetStat(const std::string &stat)
     return base_stats[stat] * level;
 }
 
-std::map<std::string, float> Monster::GetStats()
+std::vector<std::pair<std::string, float>> Monster::GetStats()
 {
     return {
             {"health", GetStat("max_health")}, //
