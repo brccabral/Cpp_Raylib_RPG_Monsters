@@ -120,6 +120,13 @@ void MonsterIndex::DisplayMain(const double dt)
     const Vector2 pos_element =
             Vector2Subtract(Vector2Add(GetRectBottomRight(top_rect), {-10.0f, -10.0f}), size_element);
     DrawTextEx(fonts["regular"], monster.element.c_str(), pos_element, fonts["regular"].baseSize, 1, COLORS["white"]);
+
+    // health and energy
+    Rectangle bar_rect{
+            rect.x + rect.width * 0.03f, top_rect.y + top_rect.height + rect.width * 0.03f, rect.width * 0.45f, 30.0f};
+    Rectangle health_rectangle{bar_rect.x, bar_rect.y, bar_rect.width, bar_rect.height};
+
+    DrawBar(health_rectangle, 25, 100, COLORS["red"], COLORS["black"], 100);
 }
 
 void MonsterIndex::Input()
