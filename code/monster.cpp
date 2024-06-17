@@ -16,12 +16,12 @@ Monster::Monster(std::string name_, const int level) : name(std::move(name_)), l
     energy *= GetRandomValue(0, 100) / 100.0f;
 }
 
-int Monster::GetStat(const std::string &stat)
+float Monster::GetStat(const std::string &stat)
 {
     return base_stats[stat] * level;
 }
 
-std::map<std::string, int> Monster::GetStats()
+std::map<std::string, float> Monster::GetStats()
 {
     return {
             {"health", GetStat("max_health")}, //

@@ -36,9 +36,9 @@ void MonsterIndex::Update(const double dt)
     EndTextureMode();
 }
 
-std::map<std::string, int> MonsterIndex::GetMaxStats()
+std::map<std::string, float> MonsterIndex::GetMaxStats()
 {
-    std::map<std::string, int> max_stats;
+    std::map<std::string, float> max_stats;
     for (auto &[monster_name, monster_data]: MONSTER_DATA)
     {
         for (auto &[stat, value]: monster_data.stats)
@@ -46,6 +46,8 @@ std::map<std::string, int> MonsterIndex::GetMaxStats()
             max_stats[stat] = (value > max_stats[stat]) ? value : max_stats[stat];
         }
     }
+    max_stats["health"] = max_stats["max_health"];
+    max_stats["energy"] = max_stats["max_energy"];
     return max_stats;
 }
 
@@ -139,18 +141,16 @@ void MonsterIndex::DisplayMain(const double dt)
             rect.x + rect.width * 0.03f, top_rect.y + top_rect.height + rect.width * 0.03f, rect.width * 0.45f, 30.0f};
 
     const Rectangle health_rectangle{bar_rect.x, bar_rect.y, bar_rect.width, bar_rect.height};
-    DrawBar(health_rectangle, monster.health, float(monster.GetStat("max_health")), COLORS["red"], COLORS["black"],
-            100);
+    DrawBar(health_rectangle, monster.health, monster.GetStat("max_health"), COLORS["red"], COLORS["black"], 100);
     DrawTextEx(
-            fonts["regular"], TextFormat("HP: %i/%i", monster.health, monster.GetStat("max_health")),
+            fonts["regular"], TextFormat("HP: %.f/%.f", monster.health, monster.GetStat("max_health")),
             Vector2Add(GetRectMidLeft(health_rectangle), {10, -fonts["regular"].baseSize / 2.0f}),
             fonts["regular"].baseSize, 1, COLORS["white"]);
 
     const Rectangle energy_rectangle{bar_rect.x + rect.width / 2.0f, bar_rect.y, bar_rect.width, bar_rect.height};
-    DrawBar(energy_rectangle, monster.energy, float(monster.GetStat("max_energy")), COLORS["blue"], COLORS["black"],
-            100);
+    DrawBar(energy_rectangle, monster.energy, monster.GetStat("max_energy"), COLORS["blue"], COLORS["black"], 100);
     DrawTextEx(
-            fonts["regular"], TextFormat("EP: %i/%i", monster.energy, monster.GetStat("max_energy")),
+            fonts["regular"], TextFormat("EP: %.f/%.f", monster.energy, monster.GetStat("max_energy")),
             Vector2Add(GetRectMidLeft(energy_rectangle), {10, -fonts["regular"].baseSize / 2.0f}),
             fonts["regular"].baseSize, 1, COLORS["white"]);
 
@@ -186,10 +186,10 @@ void MonsterIndex::DisplayMain(const double dt)
         DrawTextEx(fonts["regular"], stat.c_str(), stat_text_pos, fonts["regular"].baseSize, 1, COLORS["white"]);
 
         // bar
-        Rectangle bar_rect = {
+        Rectangle stat_bar_rect = {
                 stat_text_pos.x, stat_text_pos.y + fonts["regular"].baseSize + 2, single_stat_rectangle.width * 0.9f,
                 4};
-        DrawBar(bar_rect, value, 100, COLORS["white"], COLORS["black"]);
+        DrawBar(stat_bar_rect, value, max_stats[stat] * monster.level, COLORS["white"], COLORS["black"]);
 
         ++i;
     }
