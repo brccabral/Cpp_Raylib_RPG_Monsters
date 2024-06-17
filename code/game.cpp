@@ -27,11 +27,11 @@ Game::Game(const int width, const int height)
     player_monsters.emplace_back("Charmadillo", 30);
     player_monsters.emplace_back("Friolera", 29);
     player_monsters.emplace_back("Larvea", 3);
-    player_monsters.emplace_back("Atrox", 24);
-    player_monsters.emplace_back("Sparchu", 24);
-    player_monsters.emplace_back("Gulfin", 24);
-    player_monsters.emplace_back("Jacana", 2);
-    player_monsters.emplace_back("Pouch", 3);
+    // player_monsters.emplace_back("Atrox", 24);
+    // player_monsters.emplace_back("Sparchu", 24);
+    // player_monsters.emplace_back("Gulfin", 24);
+    // player_monsters.emplace_back("Jacana", 2);
+    // player_monsters.emplace_back("Pouch", 3);
 
 
     std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> monsters_frames;

@@ -55,7 +55,7 @@ void MonsterIndex::DisplayList()
 {
     // BeginTextureMode was called in Update()
     RectangleU bg_rect = {main_rect.pos, {list_width, main_rect.height}};
-    DrawRectangleRoundedCorners(bg_rect, 0.3, 10, COLORS["gray"], true, false, false, true);
+    DrawRectangleRoundedCorners(bg_rect, 0.1, 10, COLORS["gray"], true, false, false, true);
 
     // vertical offset
     const int v_offset = (index < visible_items) ? 0 : -(index - visible_items + 1) * item_height;
@@ -109,11 +109,11 @@ void MonsterIndex::DisplayMain(const double dt)
     // BeginTextureMode was called in Update()
     // bg
     const RectangleU rect = {main_rect.x + list_width, main_rect.y, main_rect.width - list_width, main_rect.height};
-    DrawRectangleRoundedCorners(rect, 0.3, 10, COLORS["dark"], false, true, true, false);
+    DrawRectangleRoundedCorners(rect, 0.1, 10, COLORS["dark"], false, true, true, false);
 
     // monster
     const RectangleU top_rect = {rect.pos, rect.width, rect.height * 0.4f};
-    DrawRectangleRoundedCorners(top_rect, 0.3, 10, COLORS[monster.element], false, true, false, false);
+    DrawRectangleRoundedCorners(top_rect, 0.1, 10, COLORS[monster.element], false, true, false, false);
 
     // monster animation
     frame_index += ANIMATION_SPEED * dt;
