@@ -17,6 +17,7 @@ public:
             const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> &monsters_frms,
             const std::map<std::string, Texture2D> &ui_frms);
     void Update(double dt);
+    static std::map<std::string, int> GetMaxStats();
 
 private:
 
@@ -28,6 +29,7 @@ private:
     std::map<std::string, Font> fonts;
     Rectangle main_rect{0, 0, WINDOW_WIDTH * 0.6, WINDOW_HEIGHT * 0.8};
     std::vector<Monster> monsters;
+    std::map<std::string, int> max_stats = GetMaxStats();
 
     // frames
     std::map<std::string, Texture2D> icon_frames;

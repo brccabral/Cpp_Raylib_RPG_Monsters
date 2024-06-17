@@ -3,7 +3,6 @@
 #include "raylib_utils.h"
 #include "settings.h"
 
-
 MonsterIndex::MonsterIndex(
         const std::vector<Monster> &monsters, const std::map<std::string, Font> &fonts,
         const std::map<std::string, Texture2D> &monster_icons,
@@ -35,6 +34,19 @@ void MonsterIndex::Update(const double dt)
     DisplayMain(dt);
 
     EndTextureMode();
+}
+
+std::map<std::string, int> MonsterIndex::GetMaxStats()
+{
+    std::map<std::string, int> max_stats;
+    for (auto &[monster_name, monster_data]: MONSTER_DATA)
+    {
+        for (auto &[stat, value]: monster_data.stats)
+        {
+            max_stats[stat] = (value > max_stats[stat]) ? value : max_stats[stat];
+        }
+    }
+    return max_stats;
 }
 
 void MonsterIndex::DisplayList()
@@ -170,9 +182,14 @@ void MonsterIndex::DisplayMain(const double dt)
         DrawTextureV(icon_surf, GetRectTopLeft(icon_rect), WHITE);
 
         // text
-        DrawTextEx(
-                fonts["regular"], stat.c_str(), Vector2Add(GetRectTopLeft(icon_rect), {icon_rect.width + 14, -5}),
-                fonts["regular"].baseSize, 1, COLORS["white"]);
+        Vector2 stat_text_pos = Vector2Add(GetRectTopLeft(icon_rect), {icon_rect.width + 14, -5});
+        DrawTextEx(fonts["regular"], stat.c_str(), stat_text_pos, fonts["regular"].baseSize, 1, COLORS["white"]);
+
+        // bar
+        Rectangle bar_rect = {
+                stat_text_pos.x, stat_text_pos.y + fonts["regular"].baseSize + 2, single_stat_rectangle.width * 0.9f,
+                4};
+        DrawBar(bar_rect, value, 100, COLORS["white"], COLORS["black"]);
 
         ++i;
     }
