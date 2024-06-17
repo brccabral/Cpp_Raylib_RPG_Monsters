@@ -205,7 +205,15 @@ void MonsterIndex::DisplayMain(const double dt)
     auto abilities = monster.GetAbilities();
     for (int a_index = 0; a_index < abilities.size(); ++a_index)
     {
-        printf("%s\n", abilities[a_index].c_str());
+        float x = ability_rect.x;
+        float y = 20.f + ability_rect.y + a_index * fonts["regular"].baseSize;
+        Vector2 ability_pos = {x, y};
+        Vector2 ability_text_size =
+                MeasureTextEx(fonts["regular"], abilities[a_index].c_str(), fonts["regular"].baseSize, 1);
+        DrawRectangleV(ability_pos, ability_text_size, COLORS["white"]);
+        DrawTextEx(
+                fonts["regular"], abilities[a_index].c_str(), ability_pos, fonts["regular"].baseSize, 1,
+                COLORS["black"]);
     }
 }
 
