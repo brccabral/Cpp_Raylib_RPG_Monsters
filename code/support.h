@@ -6,6 +6,7 @@
 #include <raylib.h>
 #include "raylib_utils.h"
 #include "raylib-tmx.h"
+#include "entities.h"
 
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
@@ -66,8 +67,29 @@ inline std::map<std::string, tilerect_name> coast_rects()
     return new_dict;
 }
 
+inline std::vector<std::vector<Rectangle>> import_tilemap_rects(const int cols, const int rows, const char *path)
+{
+    std::vector<std::vector<Rectangle>> frames;
+    const Texture2D surf = LoadTexture(path);
+
+    const auto cell_width = float(surf.width) / cols;
+    const auto cell_height = float(surf.height) / rows;
+
+    for (int row = 0; row < rows; ++row)
+    {
+        frames.emplace_back();
+        for (int col = 0; col < cols; ++col)
+        {
+            frames[row].push_back({col * cell_width, row * cell_height, cell_width, cell_height});
+        }
+    }
+    UnloadTexture(surf);
+    return frames;
+}
+
 inline tilerect_face CharacterImporter(const int cols, const int rows, const char *path)
 {
+    std::vector<std::vector<Rectangle>> frames = import_tilemap_rects(cols, rows, path);
     tilerect_face new_dic = {};
     // same order as in image set
     const std::vector directions = {DOWN, LEFT, RIGHT, UP};
