@@ -124,13 +124,21 @@ void MonsterIndex::DisplayMain(const double dt)
     // health and energy
     Rectangle bar_rect{
             rect.x + rect.width * 0.03f, top_rect.y + top_rect.height + rect.width * 0.03f, rect.width * 0.45f, 30.0f};
-    Rectangle health_rectangle{bar_rect.x, bar_rect.y, bar_rect.width, bar_rect.height};
 
+    Rectangle health_rectangle{bar_rect.x, bar_rect.y, bar_rect.width, bar_rect.height};
     DrawBar(health_rectangle, monster.health, float(monster.GetStat("max_health")), COLORS["red"], COLORS["black"],
             100);
     DrawTextEx(
             fonts["regular"], TextFormat("HP: %i/%i", monster.health, monster.GetStat("max_health")),
             Vector2Add(GetRectMidLeft(health_rectangle), {10, -fonts["regular"].baseSize / 2.0f}),
+            fonts["regular"].baseSize, 1, COLORS["white"]);
+
+    Rectangle energy_rectangle{bar_rect.x + rect.width / 2.0f, bar_rect.y, bar_rect.width, bar_rect.height};
+    DrawBar(energy_rectangle, monster.energy, float(monster.GetStat("max_energy")), COLORS["blue"], COLORS["black"],
+            100);
+    DrawTextEx(
+            fonts["regular"], TextFormat("EP: %i/%i", monster.energy, monster.GetStat("max_energy")),
+            Vector2Add(GetRectMidLeft(energy_rectangle), {10, -fonts["regular"].baseSize / 2.0f}),
             fonts["regular"].baseSize, 1, COLORS["white"]);
 }
 

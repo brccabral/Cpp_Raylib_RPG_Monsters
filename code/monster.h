@@ -11,10 +11,11 @@ public:
     int GetStat(const std::string &stat);
 
     std::string name;
-    std::string element;
     int level;
-    int xp{};
-    int level_up{};
-    int health{};
+    std::string element;
     std::map<std::string, int> base_stats;
+    int level_up{};
+    int xp{};
+    int health{};
+    int energy{};
 };
