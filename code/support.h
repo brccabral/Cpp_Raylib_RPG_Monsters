@@ -57,7 +57,6 @@ inline std::map<std::string, tilerect_name> coast_rects()
         {
             for (int row = 0; row < 4; ++row)
             {
-                // new_dict[terrain][key].push_back(frame_dict[{std::get<0>(pos) + index * 3, std::get<1>(pos) + row}]);
                 new_dict[terrain][key].push_back(
                         {(std::get<0>(pos) + index * 3) * 64.0f, (std::get<1>(pos) + row * 3) * 64.0f, 64.0f, 64.0f});
             }
@@ -98,12 +97,27 @@ inline tilerect_face CharacterImporter(const int cols, const int rows, const cha
     {
         for (int col = 0; col < cols; ++col)
         {
-            new_dic[directions[row]].push_back({col * 128.0f, row * 128.0f, 128.0f, 128.0f});
+            new_dic[directions[row]].push_back(frames[row][col]);
         }
         FacingDirection idle_name = idle_directions[row];
-        new_dic[idle_name] = {{0, row * 128.0f, 128.0f, 128.0f}};
+        new_dic[idle_name] = {frames[row][0]};
     }
     return new_dic;
+}
+
+inline std::map<std::string, tilerect_name> MonsterImporter(const int cols, const int rows, const char *path)
+{
+    std::map<std::string, tilerect_name> monster_dict;
+
+    for (const auto &dirEntry: recursive_directory_iterator(path))
+    {
+        auto filename = dirEntry.path().stem().string();
+        auto frames = import_tilemap_rects(cols, rows, path);
+        monster_dict[filename]["idle"] = frames[0];
+        monster_dict[filename]["attack"] = frames[1];
+    }
+
+    return monster_dict;
 }
 
 inline std::map<std::string, tilerect_face> all_character_import(const char *path)

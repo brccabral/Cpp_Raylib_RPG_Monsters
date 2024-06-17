@@ -6,8 +6,9 @@
 
 MonsterIndex::MonsterIndex(
         const std::vector<Monster> &monsters, const std::map<std::string, Font> &fonts,
-        std::map<std::string, std::map<std::string, Texture2D>> monster_frames)
-    : fonts(fonts), monsters(monsters)
+        const std::map<std::string, Texture2D> &monster_icons,
+        const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> &monsters_frms)
+    : fonts(fonts), monsters(monsters), icon_frames(monster_icons), monsters_frames(monsters_frms)
 {
     RectToCenter(main_rect, {WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
 
@@ -16,11 +17,9 @@ MonsterIndex::MonsterIndex(
     ClearBackground(BLACK);
     DrawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, Fade(BLACK, 200.0f / 255.0f));
     EndTextureMode();
-
-    icon_frames = monster_frames["icons"];
 }
 
-void MonsterIndex::Update(double dt)
+void MonsterIndex::Update(const double dt)
 {
     // input
     Input();

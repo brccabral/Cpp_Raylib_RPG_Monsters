@@ -33,7 +33,20 @@ Game::Game(const int width, const int height)
     player_monsters.emplace_back("Jacana", 2);
     player_monsters.emplace_back("Pouch", 3);
 
-    monster_index = new MonsterIndex(player_monsters, fonts, monster_frames);
+
+    std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> monsters_frames;
+    for (const auto &[monster_name, animations]: named_rect_frames["monsters"])
+    {
+        for (const auto &[key, frames]: animations)
+        {
+            for (auto frame: frames)
+            {
+                TiledTexture tiled_texture = {&named_textures["monsters"][monster_name], frame};
+                monsters_frames[monster_name][key].push_back(tiled_texture);
+            }
+        }
+    }
+    monster_index = new MonsterIndex(player_monsters, fonts, named_textures["icons"], monsters_frames);
 }
 
 Game::~Game()
@@ -134,16 +147,20 @@ void Game::ImporAssets()
     tmx_maps = tmx_importer("resources/data/maps");
 
     overworld_frames["coast"] = {LoadTexture("resources/graphics/tilesets/coast.png")};
+
     named_textures["characters"] = ImportNamedFolder("resources/graphics/characters");
+    named_textures["monsters"] = ImportNamedFolder("resources/graphics/monsters");
+    named_textures["icons"] = ImportNamedFolder("resources/graphics/icons");
+
     named_rect_frames["coast"] = coast_rects();
+    named_rect_frames["monsters"] = MonsterImporter(4, 2, "resources/graphics/monsters");
+
     face_rect_frames["characters"] = all_character_import("resources/graphics/characters");
 
     fonts["dialog"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", FONT_SIZE, nullptr, 0);
     fonts["regular"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 18, nullptr, 0);
     fonts["small"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 14, nullptr, 0);
     fonts["bold"] = LoadFontEx("resources/graphics/fonts/dogicapixelbold.otf", 20, nullptr, 0);
-
-    monster_frames["icons"] = ImportNamedFolder("resources/graphics/icons");
 }
 
 TileInfo Game::GetTileInfo(const tmx_tile *tile, const int posX, const int posY)
@@ -417,6 +434,7 @@ void Game::UnloadResources()
             UnloadTexture(texture);
         }
     }
+
     for (const auto &[key, named_texture]: named_textures)
     {
         for (const auto &[name, texture]: named_texture)
@@ -424,17 +442,12 @@ void Game::UnloadResources()
             UnloadTexture(texture);
         }
     }
-    for (const auto &[key, monster_frame]: monster_frames)
-    {
-        for (const auto &[name, texture]: monster_frame)
-        {
-            UnloadTexture(texture);
-        }
-    }
+
     for (auto &[key, font]: fonts)
     {
         UnloadFont(font);
     }
+
     delete dialog_tree; // delete dialog_tree before all_sprites, it will remove itself
     delete all_sprites;
     delete collition_sprites;
