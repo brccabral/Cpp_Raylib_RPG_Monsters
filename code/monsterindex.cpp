@@ -205,13 +205,15 @@ void MonsterIndex::DisplayMain(const double dt)
     auto abilities = monster.GetAbilities();
     for (int a_index = 0; a_index < abilities.size(); ++a_index)
     {
+        auto element = ATTACK_DATA[abilities[a_index]].element;
         float x = ability_rect.x + a_index % 2 * ability_rect.width / 2;
         float y = 20.f + ability_rect.y + int(a_index / 2) * (fonts["regular"].baseSize + 20);
         Vector2 ability_pos = {x, y};
         Vector2 ability_text_size = MeasureTextF(fonts["regular"], abilities[a_index].c_str(), 1);
         Rectangle ability_rect = {ability_pos.x, ability_pos.y, ability_text_size.x, ability_text_size.y};
         RectInflate(ability_rect, 10, 10);
-        DrawRectangleRounded(ability_rect, 0.3, 10, COLORS["white"]);
+
+        DrawRectangleRounded(ability_rect, 0.3, 10, COLORS[element]);
         DrawTextEx(
                 fonts["regular"], abilities[a_index].c_str(), ability_pos, fonts["regular"].baseSize, 1,
                 COLORS["black"]);
