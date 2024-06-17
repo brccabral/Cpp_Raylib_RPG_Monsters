@@ -98,7 +98,9 @@ void MonsterIndex::DisplayMain(const double dt)
     DrawRectangleRoundedCorners(top_rect, 0.3, 10, COLORS[monster.element], false, true, false, false);
 
     // monster animation
-    const TiledTexture monster_surf = monsters_frames[monster.name]["idle"][0];
+    frame_index += ANIMATION_SPEED * dt;
+    const auto frames = monsters_frames[monster.name]["idle"];
+    const TiledTexture monster_surf = frames[int(frame_index) % frames.size()];
     Rectangle monster_rect = monster_surf.rect;
     RectToCenter(monster_rect, GetRectCenter(top_rect));
     DrawTextureRec(*monster_surf.texture, monster_surf.rect, {monster_rect.x, monster_rect.y}, WHITE);

@@ -31,6 +31,7 @@ private:
     // frames
     std::map<std::string, Texture2D> icon_frames;
     std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> monsters_frames;
+    double frame_index{};
 
     // list
     int visible_items = 6;
