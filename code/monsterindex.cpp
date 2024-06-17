@@ -201,6 +201,12 @@ void MonsterIndex::DisplayMain(const double dt)
     DrawTextEx(
             fonts["regular"], "Ability", {ability_pos.x, ability_pos.y - fonts["regular"].baseSize},
             fonts["regular"].baseSize, 1, COLORS["white"]);
+
+    auto abilities = monster.GetAbilities();
+    for (int a_index = 0; a_index < abilities.size(); ++a_index)
+    {
+        printf("%s\n", abilities[a_index].c_str());
+    }
 }
 
 void MonsterIndex::Input()

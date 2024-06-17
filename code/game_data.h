@@ -298,7 +298,7 @@ struct MonsterData
     std::string name;
     std::string element;
     std::map<std::string, float> stats;
-    std::map<int, std::string> abilities;
+    std::vector<std::pair<int, std::string>> abilities;
     std::pair<std::string, int> evolve;
 };
 
