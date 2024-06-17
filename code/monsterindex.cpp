@@ -161,11 +161,11 @@ void MonsterIndex::DisplayMain(const double dt)
     Rectangle stats_rectangle = {
             health_rectangle.x, health_rectangle.y + health_rectangle.height, health_rectangle.width, info_height};
     RectInflate(stats_rectangle, 0, -60);
+    MoveRect(stats_rectangle, {0, 15});
     const Vector2 stats_pos = GetRectTopLeft(stats_rectangle);
     DrawTextEx(
             fonts["regular"], "Stats", {stats_pos.x, stats_pos.y - fonts["regular"].baseSize},
             fonts["regular"].baseSize, 1, COLORS["white"]);
-    DrawRectangleRec(stats_rectangle, Fade(RED, 0.5f));
 
     auto monster_stats = monster.GetStats();
     float stat_height = stats_rectangle.height / monster_stats.size();
@@ -193,6 +193,14 @@ void MonsterIndex::DisplayMain(const double dt)
 
         ++i;
     }
+
+    // abilities
+    Rectangle ability_rect = stats_rectangle;
+    ability_rect.x = energy_rectangle.x;
+    const Vector2 ability_pos = GetRectTopLeft(ability_rect);
+    DrawTextEx(
+            fonts["regular"], "Ability", {ability_pos.x, ability_pos.y - fonts["regular"].baseSize},
+            fonts["regular"].baseSize, 1, COLORS["white"]);
 }
 
 void MonsterIndex::Input()
