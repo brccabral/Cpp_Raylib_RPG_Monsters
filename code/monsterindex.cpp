@@ -96,6 +96,12 @@ void MonsterIndex::DisplayMain(const double dt)
     // monster
     const Rectangle top_rect = {rect.x, rect.y, rect.width, rect.height * 0.4f};
     DrawRectangleRoundedCorners(top_rect, 0.3, 10, COLORS[monster.element], false, true, false, false);
+
+    // monster animation
+    const TiledTexture monster_surf = monsters_frames[monster.name]["idle"][0];
+    Rectangle monster_rect = monster_surf.rect;
+    RectToCenter(monster_rect, GetRectCenter(top_rect));
+    DrawTextureRec(*monster_surf.texture, monster_surf.rect, {monster_rect.x, monster_rect.y}, WHITE);
 }
 
 void MonsterIndex::Input()

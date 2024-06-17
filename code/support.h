@@ -112,7 +112,7 @@ inline std::map<std::string, tilerect_name> MonsterImporter(const int cols, cons
     for (const auto &dirEntry: recursive_directory_iterator(path))
     {
         auto filename = dirEntry.path().stem().string();
-        auto frames = import_tilemap_rects(cols, rows, path);
+        auto frames = import_tilemap_rects(cols, rows, dirEntry.path().c_str());
         monster_dict[filename]["idle"] = frames[0];
         monster_dict[filename]["attack"] = frames[1];
     }
