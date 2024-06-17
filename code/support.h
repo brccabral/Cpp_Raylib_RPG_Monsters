@@ -178,3 +178,23 @@ inline std::map<std::string, tmx_map *> tmx_importer(const char *path)
     }
     return maps;
 }
+
+inline void
+DrawBar(const Rectangle rect, const float value, float max_value, const Color color, Color bg_color,
+        const float radius = 0)
+{
+    const float ratio = rect.width / max_value;
+    const Rectangle bg_rect = rect;
+    const Rectangle progress_rect = {rect.x, rect.y, Clamp(value * ratio, 0, rect.width), rect.height};
+
+    if (radius == 0)
+    {
+        DrawRectangleRec(bg_rect, bg_color);
+        DrawRectangleRec(progress_rect, color);
+    }
+    else
+    {
+        DrawRectangleRounded(bg_rect, radius / (rect.width + rect.height), 10, bg_color);
+        DrawRectangleRounded(progress_rect, radius / (rect.width + rect.height), 10, color);
+    }
+}

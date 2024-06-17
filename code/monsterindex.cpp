@@ -109,12 +109,14 @@ void MonsterIndex::DisplayMain(const double dt)
     DrawTextEx(fonts["bold"], monster.name.c_str(), {top_rect.x + 10, top_rect.y + 10}, 14, 1, COLORS["white"]);
 
     // level
-    const Vector2 pos = Vector2Add(GetRectBottomLeft(top_rect), {10.0f, -10.0f - fonts["regular"].baseSize});
+    const Vector2 pos = Vector2Add(GetRectBottomLeft(top_rect), {10.0f, -16.0f - fonts["regular"].baseSize});
     DrawTextEx(
             fonts["regular"], TextFormat("Lvl: %i", monster.level), pos, fonts["regular"].baseSize, 1, COLORS["white"]);
+    DrawBar({pos.x, pos.y + fonts["regular"].baseSize, 100, 4}, monster.xp, monster.level_up, COLORS["white"],
+            COLORS["dark"]);
 
     // element
-    Vector2 size_element = MeasureTextEx(fonts["regular"], monster.element.c_str(), fonts["regular"].baseSize, 1);
+    const Vector2 size_element = MeasureTextEx(fonts["regular"], monster.element.c_str(), fonts["regular"].baseSize, 1);
     const Vector2 pos_element =
             Vector2Subtract(Vector2Add(GetRectBottomRight(top_rect), {-10.0f, -10.0f}), size_element);
     DrawTextEx(fonts["regular"], monster.element.c_str(), pos_element, fonts["regular"].baseSize, 1, COLORS["white"]);

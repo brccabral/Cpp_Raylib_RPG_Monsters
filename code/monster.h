@@ -11,6 +11,8 @@ public:
     std::string name;
     std::string element;
     int level;
+    int xp{};
+    int level_up{};
 
 private:
 
