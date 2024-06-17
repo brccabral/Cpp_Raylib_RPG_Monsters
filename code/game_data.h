@@ -306,12 +306,12 @@ inline MonsterData Plumette = {
         "Plumette",
         "plant",
         {
-                {"15", 15}, //
-                {"17", 17}, //
-                {"4", 4}, //
-                {"8", 8}, //
-                {"1", 5}, //
-                {"1", 1}, //
+                {"max_health", 15}, //
+                {"max_energy", 17}, //
+                {"attack", 4}, //
+                {"defense", 8}, //
+                {"recovery", 1}, //
+                {"speed", 1}, //
         },
         {{0, "scratch"}, //
          {5, "spark"}},
@@ -321,12 +321,12 @@ inline MonsterData Ivieron = {
         "Ivieron",
         "plant",
         {
-                {"18", 15}, //
-                {"20", 17}, //
-                {"5", 4}, //
-                {"10", 8}, //
-                {"1.2", 5}, //
-                {"1.2", 1}, //
+                {"max_health", 18}, //
+                {"max_energy", 20}, //
+                {"attack", 5}, //
+                {"defense", 10}, //
+                {"recovery", 1.2}, //
+                {"speed", 1.2}, //
         },
         {{0, "scratch"}, //
          {5, "spark"}},
@@ -336,12 +336,12 @@ inline MonsterData Pluma = {
         "Pluma",
         "plant",
         {
-                {"23", 15}, //
-                {"26", 17}, //
-                {"6", 4}, //
-                {"12", 8}, //
-                {"1.8", 5}, //
-                {"1.8", 1}, //
+                {"max_health", 23}, //
+                {"max_energy", 26}, //
+                {"attack", 6}, //
+                {"defense", 12}, //
+                {"recovery", 1.8}, //
+                {"speed", 1.8}, //
         },
         {{0, "scratch"}, //
          {5, "spark"}},
@@ -351,12 +351,12 @@ inline MonsterData Sparchu = {
         "Sparchu",
         "fire",
         {
-                {"15", 15}, //
-                {"7", 17}, //
-                {"3", 4}, //
-                {"8", 8}, //
-                {"1.1", 5}, //
-                {"1", 1}, //
+                {"max_health", 15}, //
+                {"max_energy", 7}, //
+                {"attack", 3}, //
+                {"defense", 8}, //
+                {"recovery", 1.1}, //
+                {"speed", 1}, //
         },
         {{0, "scratch"}, //
          {5, "fire"}, //
@@ -368,12 +368,12 @@ inline MonsterData Cindrill = {
         "Cindrill",
         "fire",
         {
-                {"18", 15}, //
-                {"10", 17}, //
-                {"3.5", 4}, //
-                {"10", 8}, //
-                {"1.2", 5}, //
-                {"1.1", 1}, //
+                {"max_health", 18}, //
+                {"max_energy", 10}, //
+                {"attack", 3.5}, //
+                {"defense", 10}, //
+                {"recovery", 1.2}, //
+                {"speed", 1.1}, //
         },
         {{0, "scratch"}, //
          {5, "fire"}, //
@@ -385,12 +385,12 @@ inline MonsterData Charmadillo = {
         "Charmadillo",
         "fire",
         {
-                {"29", 15}, //
-                {"12", 17}, //
-                {"4", 4}, //
-                {"17", 8}, //
-                {"1.35", 5}, //
-                {"1.1", 1}, //
+                {"max_health", 29}, //
+                {"max_energy", 12}, //
+                {"attack", 4}, //
+                {"defense", 17}, //
+                {"recovery", 1.35}, //
+                {"speed", 1.1}, //
         },
         {{0, "scratch"}, //
          {5, "fire"}, //
@@ -403,12 +403,12 @@ inline MonsterData Finsta = {
         "Finsta",
         "water",
         {
-                {"13", 15}, //
-                {"17", 17}, //
-                {"2", 4}, //
-                {"8", 8}, //
-                {"1.5", 5}, //
-                {"1.8", 1}, //
+                {"max_health", 13}, //
+                {"max_energy", 17}, //
+                {"attack", 2}, //
+                {"defense", 8}, //
+                {"recovery", 1.5}, //
+                {"speed", 1.8}, //
         },
         {{0, "scratch"}, //
          {5, "spark"}, //
@@ -421,12 +421,12 @@ inline MonsterData Gulfin = {
         "Gulfin",
         "water",
         {
-                {"18", 15}, //
-                {"20", 17}, //
-                {"3", 4}, //
-                {"10", 8}, //
-                {"1.8", 5}, //
-                {"2", 1}, //
+                {"max_health", 18}, //
+                {"max_energy", 20}, //
+                {"attack", 3}, //
+                {"defense", 10}, //
+                {"recovery", 1.8}, //
+                {"speed", 2}, //
         },
         {{0, "scratch"}, //
          {5, "spark"}, //
@@ -439,12 +439,12 @@ inline MonsterData Finiette = {
         "Finiette",
         "water",
         {
-                {"27", 15}, //
-                {"23", 17}, //
-                {"4", 4}, //
-                {"17", 8}, //
-                {"2", 5}, //
-                {"2.5", 1}, //
+                {"max_health", 27}, //
+                {"max_energy", 23}, //
+                {"attack", 4}, //
+                {"defense", 17}, //
+                {"recovery", 2}, //
+                {"speed", 2.5}, //
         },
         {{0, "scratch"}, //
          {5, "spark"}, //
@@ -457,12 +457,12 @@ inline MonsterData Atrox = {
         "Atrox",
         "fire",
         {
-                {"18", 15}, //
-                {"20", 17}, //
-                {"3", 4}, //
-                {"10", 8}, //
-                {"1.3", 5}, //
-                {"1.9", 1}, //
+                {"max_health", 18}, //
+                {"max_energy", 20}, //
+                {"attack", 3}, //
+                {"defense", 10}, //
+                {"recovery", 1.3}, //
+                {"speed", 1.9}, //
         },
         {{0, "scratch"}, //
          {5, "spark"}, //
@@ -473,12 +473,12 @@ inline MonsterData Pouch = {
         "Pouch",
         "plant",
         {
-                {"23", 15}, //
-                {"25", 17}, //
-                {"4", 4}, //
-                {"12", 8}, //
-                {"1", 5}, //
-                {"1.5", 1}, //
+                {"max_health", 23}, //
+                {"max_energy", 25}, //
+                {"attack", 4}, //
+                {"defense", 12}, //
+                {"recovery", 1}, //
+                {"speed", 1.5}, //
         },
         {{0, "scratch"}, //
          {5, "spark"}, //
@@ -489,12 +489,12 @@ inline MonsterData Draem = {
         "Draem",
         "plant",
         {
-                {"23", 15}, //
-                {"25", 17}, //
-                {"4", 4}, //
-                {"12", 8}, //
-                {"1.2", 5}, //
-                {"1.4", 1}, //
+                {"max_health", 23}, //
+                {"max_energy", 25}, //
+                {"attack", 4}, //
+                {"defense", 12}, //
+                {"recovery", 1.2}, //
+                {"speed", 1.4}, //
         },
         {{0, "scratch"}, //
          {5, "heal"}, //
@@ -506,12 +506,12 @@ inline MonsterData Larvea = {
         "Larvea",
         "plant",
         {
-                {"15", 15}, //
-                {"17", 17}, //
-                {"1", 4}, //
-                {"8", 8}, //
-                {"1", 5}, //
-                {"1", 1}, //
+                {"max_health", 15}, //
+                {"max_energy", 17}, //
+                {"attack", 1}, //
+                {"defense", 8}, //
+                {"recovery", 1}, //
+                {"speed", 1}, //
         },
         {{0, "scratch"}, //
          {5, "spark"}},
@@ -521,12 +521,12 @@ inline MonsterData Cleaf = {
         "Cleaf",
         "plant",
         {
-                {"18", 15}, //
-                {"20", 17}, //
-                {"3", 4}, //
-                {"10", 8}, //
-                {"1.7", 5}, //
-                {"1.6", 1}, //
+                {"max_health", 18}, //
+                {"max_energy", 20}, //
+                {"attack", 3}, //
+                {"defense", 10}, //
+                {"recovery", 1.7}, //
+                {"speed", 1.6}, //
         },
         {{0, "scratch"}, //
          {5, "heal"}},
@@ -536,12 +536,12 @@ inline MonsterData Jacana = {
         "Jacana",
         "fire",
         {
-                {"12", 15}, //
-                {"19", 17}, //
-                {"3", 4}, //
-                {"10", 8}, //
-                {"2.1", 5}, //
-                {"2.6", 1}, //
+                {"max_health", 12}, //
+                {"max_energy", 19}, //
+                {"attack", 3}, //
+                {"defense", 10}, //
+                {"recovery", 2.1}, //
+                {"speed", 2.6}, //
         },
         {{0, "scratch"}, //
          {5, "spark"}, //
@@ -554,12 +554,12 @@ inline MonsterData Friolera = {
         "Friolera",
         "water",
         {
-                {"13", 15}, //
-                {"20", 17}, //
-                {"4", 4}, //
-                {"6", 8}, //
-                {"1.3", 5}, //
-                {"2", 1}, //
+                {"max_health", 13}, //
+                {"max_energy", 20}, //
+                {"attack", 4}, //
+                {"defense", 6}, //
+                {"recovery", 1.3}, //
+                {"speed", 2}, //
         },
         {{0, "scratch"}, //
          {5, "spark"}, //

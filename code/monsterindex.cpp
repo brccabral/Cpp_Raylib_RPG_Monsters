@@ -86,7 +86,7 @@ void MonsterIndex::DisplayList()
 void MonsterIndex::DisplayMain(const double dt)
 {
     // data
-    const Monster monster = monsters[index];
+    Monster monster = monsters[index];
 
     // BeginTextureMode was called in Update()
     // bg
@@ -126,7 +126,12 @@ void MonsterIndex::DisplayMain(const double dt)
             rect.x + rect.width * 0.03f, top_rect.y + top_rect.height + rect.width * 0.03f, rect.width * 0.45f, 30.0f};
     Rectangle health_rectangle{bar_rect.x, bar_rect.y, bar_rect.width, bar_rect.height};
 
-    DrawBar(health_rectangle, 25, 100, COLORS["red"], COLORS["black"], 100);
+    DrawBar(health_rectangle, monster.health, float(monster.GetStat("max_health")), COLORS["red"], COLORS["black"],
+            100);
+    DrawTextEx(
+            fonts["regular"], TextFormat("HP: %i/%i", monster.health, monster.GetStat("max_health")),
+            Vector2Add(GetRectMidLeft(health_rectangle), {10, -fonts["regular"].baseSize / 2.0f}),
+            fonts["regular"].baseSize, 1, COLORS["white"]);
 }
 
 void MonsterIndex::Input()
