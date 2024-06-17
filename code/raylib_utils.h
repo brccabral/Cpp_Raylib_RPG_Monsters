@@ -259,3 +259,8 @@ inline void DrawRectangleRoundedCorners(
     // Center Rectangle
     DrawRectangle(rec.x + radius, rec.y + radius, rec.width - 2 * radius + 1, rec.height - 2 * radius + 1, color);
 }
+
+inline Vector2 MeasureTextF(const Font &font, const char *text, const int spacing)
+{
+    return MeasureTextEx(font, text, font.baseSize, spacing);
+}

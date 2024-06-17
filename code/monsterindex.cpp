@@ -131,7 +131,7 @@ void MonsterIndex::DisplayMain(const double dt)
             COLORS["dark"]);
 
     // element
-    const Vector2 size_element = MeasureTextEx(fonts["regular"], monster.element.c_str(), fonts["regular"].baseSize, 1);
+    const Vector2 size_element = MeasureTextF(fonts["regular"], monster.element.c_str(), 1);
     const Vector2 pos_element =
             Vector2Subtract(Vector2Add(GetRectBottomRight(top_rect), {-10.0f, -10.0f}), size_element);
     DrawTextEx(fonts["regular"], monster.element.c_str(), pos_element, fonts["regular"].baseSize, 1, COLORS["white"]);
@@ -208,8 +208,7 @@ void MonsterIndex::DisplayMain(const double dt)
         float x = ability_rect.x;
         float y = 20.f + ability_rect.y + a_index * fonts["regular"].baseSize;
         Vector2 ability_pos = {x, y};
-        Vector2 ability_text_size =
-                MeasureTextEx(fonts["regular"], abilities[a_index].c_str(), fonts["regular"].baseSize, 1);
+        Vector2 ability_text_size = MeasureTextF(fonts["regular"], abilities[a_index].c_str(), 1);
         DrawRectangleV(ability_pos, ability_text_size, COLORS["white"]);
         DrawTextEx(
                 fonts["regular"], abilities[a_index].c_str(), ability_pos, fonts["regular"].baseSize, 1,

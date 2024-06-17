@@ -13,7 +13,7 @@ DialogSprite::DialogSprite(
     type = DIALOGSPRITE;
 
     constexpr float padding = 10.0f;
-    textsize = MeasureTextEx(font, message.c_str(), FONT_SIZE, 2);
+    textsize = MeasureTextF(font, message.c_str(), 2);
     rect.width = std::max(textsize.x + padding * 2, 300.0f);
     rect.height = textsize.y + padding * 2;
     // dialog midbottom to trainer midtop
