@@ -7,8 +7,9 @@
 MonsterIndex::MonsterIndex(
         const std::vector<Monster> &monsters, const std::map<std::string, Font> &fonts,
         const std::map<std::string, Texture2D> &monster_icons,
-        const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> &monsters_frms)
-    : fonts(fonts), monsters(monsters), icon_frames(monster_icons), monsters_frames(monsters_frms)
+        const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> &monsters_frms,
+        const std::map<std::string, Texture2D> &ui_frms)
+    : fonts(fonts), monsters(monsters), icon_frames(monster_icons), monsters_frames(monsters_frms), ui_frames(ui_frms)
 {
     RectToCenter(main_rect, {WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
 
@@ -163,11 +164,14 @@ void MonsterIndex::DisplayMain(const double dt)
                 stats_rectangle.x, stats_rectangle.y + i * stat_height, stats_rectangle.width, stat_height};
 
         // icon
+        Texture2D icon_surf = ui_frames[stat];
+        Rectangle icon_rect = {0, 0, (float) icon_surf.width, (float) icon_surf.height};
+        RectToMidLeft(icon_rect, Vector2Add(GetRectMidLeft(single_stat_rectangle), {5, 0}));
+        DrawTextureV(icon_surf, GetRectTopLeft(icon_rect), WHITE);
 
         // text
         DrawTextEx(
-                fonts["regular"], stat.c_str(),
-                Vector2Add(GetRectMidLeft(single_stat_rectangle), {0, -fonts["regular"].baseSize / 2.0f}),
+                fonts["regular"], stat.c_str(), Vector2Add(GetRectTopLeft(icon_rect), {icon_rect.width + 14, -5}),
                 fonts["regular"].baseSize, 1, COLORS["white"]);
 
         ++i;

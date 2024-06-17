@@ -60,6 +60,12 @@ inline void RectToMidBottom(Rectangle &rect, const Vector2 pos)
     rect.y = pos.y - rect.height;
 }
 
+inline void RectToMidLeft(Rectangle &rect, const Vector2 pos)
+{
+    rect.x = pos.x;
+    rect.y = pos.y - rect.height / 2;
+}
+
 inline void RectToBottomLeft(Rectangle &rect, const Vector2 pos)
 {
     rect.x = pos.x;

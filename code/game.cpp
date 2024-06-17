@@ -46,7 +46,8 @@ Game::Game(const int width, const int height)
             }
         }
     }
-    monster_index = new MonsterIndex(player_monsters, fonts, named_textures["icons"], monsters_frames);
+    monster_index =
+            new MonsterIndex(player_monsters, fonts, named_textures["icons"], monsters_frames, named_textures["ui"]);
 }
 
 Game::~Game()
@@ -151,6 +152,7 @@ void Game::ImporAssets()
     named_textures["characters"] = ImportNamedFolder("resources/graphics/characters");
     named_textures["monsters"] = ImportNamedFolder("resources/graphics/monsters");
     named_textures["icons"] = ImportNamedFolder("resources/graphics/icons");
+    named_textures["ui"] = ImportNamedFolder("resources/graphics/ui");
 
     named_rect_frames["coast"] = coast_rects();
     named_rect_frames["monsters"] = MonsterImporter(4, 2, "resources/graphics/monsters");
