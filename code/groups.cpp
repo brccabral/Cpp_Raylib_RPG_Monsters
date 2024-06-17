@@ -70,9 +70,9 @@ void AllSprites::Draw(const Player *player)
             RectangleU rect = {0, 0, float(notice.width), float(notice.height)};
             RectToMidBottom(rect, GetRectMidTop(player->rect));
 
-            const Vector2 pos = Vector2Add({rect.x, rect.y}, offset);
+            const Vector2 pos = Vector2Add(rect.pos, offset);
 
-            DrawTexture(notice, pos.x, pos.y, WHITE);
+            DrawTextureV(notice, pos, WHITE);
         }
     }
     for (const auto *top: top_sprites)

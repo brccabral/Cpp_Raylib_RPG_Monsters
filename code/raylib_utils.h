@@ -7,15 +7,15 @@ typedef union RectangleU
 {
     struct
     {
-        float x, y, width, height;
-    };
-    struct
-    {
         Vector2 pos, size;
     };
     struct
     {
         Rectangle rectangle;
+    };
+    struct
+    {
+        float x, y, width, height;
     };
 } RectangleU;
 
@@ -333,4 +333,9 @@ inline void DrawRectangleRoundedCorners(
 inline Vector2 MeasureTextF(const Font &font, const char *text, const int spacing)
 {
     return MeasureTextEx(font, text, font.baseSize, spacing);
+}
+
+inline RenderTexture2D LoadRenderTextureV(const Vector2 size)
+{
+    return LoadRenderTexture(size.x, size.y);
 }

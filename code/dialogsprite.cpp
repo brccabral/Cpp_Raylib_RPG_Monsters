@@ -23,7 +23,7 @@ DialogSprite::DialogSprite(
 
     y_sort = GetRectCenter(rect).y;
 
-    image.rect = {0, 0, rect.width, rect.height};
+    image.rect = {0, 0, rect.size};
     image.texture = CreateImage();
 }
 
@@ -39,7 +39,7 @@ DialogSprite::~DialogSprite()
 
 Texture2D *DialogSprite::CreateImage() const
 {
-    const RenderTexture2D render = LoadRenderTexture(image.rect.width, image.rect.height);
+    const RenderTexture2D render = LoadRenderTextureV(image.rect.size);
     while (!IsRenderTextureReady(render))
     {}
     BeginTextureMode(render);
@@ -47,7 +47,7 @@ Texture2D *DialogSprite::CreateImage() const
     DrawRectangleRounded(image.rect.rectangle, 0.3, 10, COLORS["pure white"]);
 
     // centralize text inside box
-    const auto offset = Vector2Subtract({image.rect.width, image.rect.height}, textsize);
+    const auto offset = Vector2Subtract(image.rect.size, textsize);
     DrawTextEx(font, message.c_str(), Vector2Scale(offset, 0.5f), FONT_SIZE, 2, COLORS["black"]);
 
     EndTextureMode();
@@ -55,7 +55,7 @@ Texture2D *DialogSprite::CreateImage() const
     // need another render to invert the image
     // https://github.com/raysan5/raylib/issues/3803
     // https://github.com/raysan5/raylib/issues/378
-    const RenderTexture2D inverted = LoadRenderTexture(image.rect.width, image.rect.height);
+    const RenderTexture2D inverted = LoadRenderTextureV(image.rect.size);
     while (!IsRenderTextureReady(inverted))
     {}
 
