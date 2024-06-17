@@ -10,9 +10,9 @@ public:
     Monster(std::string name_, int level);
     std::string name;
     std::string element;
+    int level;
 
 private:
 
-    int level;
     std::map<std::string, int> base_stats;
 };

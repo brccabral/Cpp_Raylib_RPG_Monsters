@@ -107,6 +107,11 @@ void MonsterIndex::DisplayMain(const double dt)
 
     // name
     DrawTextEx(fonts["bold"], monster.name.c_str(), {top_rect.x + 10, top_rect.y + 10}, 14, 1, COLORS["white"]);
+
+    // level
+    const Vector2 pos = Vector2Add(GetRectBottomLeft(top_rect), {10.0f, -10.0f - fonts["regular"].baseSize});
+    DrawTextEx(
+            fonts["regular"], TextFormat("Lvl: %i", monster.level), pos, fonts["regular"].baseSize, 1, COLORS["white"]);
 }
 
 void MonsterIndex::Input()
