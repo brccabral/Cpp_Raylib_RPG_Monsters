@@ -104,6 +104,9 @@ void MonsterIndex::DisplayMain(const double dt)
     Rectangle monster_rect = monster_surf.rect;
     RectToCenter(monster_rect, GetRectCenter(top_rect));
     DrawTextureRec(*monster_surf.texture, monster_surf.rect, {monster_rect.x, monster_rect.y}, WHITE);
+
+    // name
+    DrawTextEx(fonts["bold"], monster.name.c_str(), {top_rect.x + 10, top_rect.y + 10}, 14, 1, COLORS["white"]);
 }
 
 void MonsterIndex::Input()
