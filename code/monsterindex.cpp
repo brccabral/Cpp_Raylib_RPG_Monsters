@@ -189,9 +189,10 @@ void MonsterIndex::DisplayMain(const double dt)
         DrawTextEx(fonts["regular"], stat.c_str(), stat_text_pos, fonts["regular"].baseSize, 1, COLORS["white"]);
 
         // bar
-        RectangleU stat_bar_rect = {
-                stat_text_pos.x, stat_text_pos.y + fonts["regular"].baseSize + 2, single_stat_rectangle.width * 0.9f,
-                4};
+        RectangleU stat_bar_rect = single_stat_rectangle;
+        stat_bar_rect.height = 4;
+        stat_bar_rect.pos = Vector2Add(stat_text_pos, {0, fonts["regular"].baseSize + 2.0f});
+        stat_bar_rect.size = Vector2Add(stat_bar_rect.size, {-(stat_text_pos.x - single_stat_rectangle.x), 4});
         DrawBar(stat_bar_rect, value, max_stats[stat] * monster.level, COLORS["white"], COLORS["black"]);
 
         ++i;
