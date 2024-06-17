@@ -100,10 +100,10 @@ void MonsterIndex::DisplayMain(const double dt)
     // monster animation
     frame_index += ANIMATION_SPEED * dt;
     const auto frames = monsters_frames[monster.name]["idle"];
-    const TiledTexture monster_surf = frames[int(frame_index) % frames.size()];
-    Rectangle monster_rect = monster_surf.rect;
+    const auto [surf_texture, surf_ref] = frames[int(frame_index) % frames.size()];
+    Rectangle monster_rect = surf_ref;
     RectToCenter(monster_rect, GetRectCenter(top_rect));
-    DrawTextureRec(*monster_surf.texture, monster_surf.rect, {monster_rect.x, monster_rect.y}, WHITE);
+    DrawTextureRec(*surf_texture, surf_ref, {monster_rect.x, monster_rect.y}, WHITE);
 
     // name
     DrawTextEx(fonts["bold"], monster.name.c_str(), {top_rect.x + 10, top_rect.y + 10}, 14, 1, COLORS["white"]);
@@ -122,10 +122,10 @@ void MonsterIndex::DisplayMain(const double dt)
     DrawTextEx(fonts["regular"], monster.element.c_str(), pos_element, fonts["regular"].baseSize, 1, COLORS["white"]);
 
     // health and energy
-    Rectangle bar_rect{
+    const Rectangle bar_rect{
             rect.x + rect.width * 0.03f, top_rect.y + top_rect.height + rect.width * 0.03f, rect.width * 0.45f, 30.0f};
 
-    Rectangle health_rectangle{bar_rect.x, bar_rect.y, bar_rect.width, bar_rect.height};
+    const Rectangle health_rectangle{bar_rect.x, bar_rect.y, bar_rect.width, bar_rect.height};
     DrawBar(health_rectangle, monster.health, float(monster.GetStat("max_health")), COLORS["red"], COLORS["black"],
             100);
     DrawTextEx(
@@ -133,13 +133,26 @@ void MonsterIndex::DisplayMain(const double dt)
             Vector2Add(GetRectMidLeft(health_rectangle), {10, -fonts["regular"].baseSize / 2.0f}),
             fonts["regular"].baseSize, 1, COLORS["white"]);
 
-    Rectangle energy_rectangle{bar_rect.x + rect.width / 2.0f, bar_rect.y, bar_rect.width, bar_rect.height};
+    const Rectangle energy_rectangle{bar_rect.x + rect.width / 2.0f, bar_rect.y, bar_rect.width, bar_rect.height};
     DrawBar(energy_rectangle, monster.energy, float(monster.GetStat("max_energy")), COLORS["blue"], COLORS["black"],
             100);
     DrawTextEx(
             fonts["regular"], TextFormat("EP: %i/%i", monster.energy, monster.GetStat("max_energy")),
             Vector2Add(GetRectMidLeft(energy_rectangle), {10, -fonts["regular"].baseSize / 2.0f}),
             fonts["regular"].baseSize, 1, COLORS["white"]);
+
+    // info
+    const float info_height = rect.y + rect.height - (health_rectangle.y + health_rectangle.height);
+
+    // stats
+    Rectangle stats_rectangle = {
+            health_rectangle.x, health_rectangle.y + health_rectangle.height, health_rectangle.width, info_height};
+    RectInflate(stats_rectangle, 0, -60);
+    const Vector2 stats_pos = GetRectTopLeft(stats_rectangle);
+    DrawTextEx(
+            fonts["regular"], "Stats", {stats_pos.x, stats_pos.y - fonts["regular"].baseSize},
+            fonts["regular"].baseSize, 1, COLORS["white"]);
+    DrawRectangleRec(stats_rectangle, Fade(RED, 0.5f));
 }
 
 void MonsterIndex::Input()
