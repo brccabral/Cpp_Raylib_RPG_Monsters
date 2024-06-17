@@ -153,6 +153,25 @@ void MonsterIndex::DisplayMain(const double dt)
             fonts["regular"], "Stats", {stats_pos.x, stats_pos.y - fonts["regular"].baseSize},
             fonts["regular"].baseSize, 1, COLORS["white"]);
     DrawRectangleRec(stats_rectangle, Fade(RED, 0.5f));
+
+    auto monster_stats = monster.GetStats();
+    float stat_height = stats_rectangle.height / monster_stats.size();
+    int i = 0;
+    for (auto &[stat, value]: monster_stats)
+    {
+        Rectangle single_stat_rectangle = {
+                stats_rectangle.x, stats_rectangle.y + i * stat_height, stats_rectangle.width, stat_height};
+
+        // icon
+
+        // text
+        DrawTextEx(
+                fonts["regular"], stat.c_str(),
+                Vector2Add(GetRectMidLeft(single_stat_rectangle), {0, -fonts["regular"].baseSize / 2.0f}),
+                fonts["regular"].baseSize, 1, COLORS["white"]);
+
+        ++i;
+    }
 }
 
 void MonsterIndex::Input()

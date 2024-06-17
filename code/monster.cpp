@@ -20,3 +20,15 @@ int Monster::GetStat(const std::string &stat)
 {
     return base_stats[stat] * level;
 }
+
+std::map<std::string, int> Monster::GetStats()
+{
+    return {
+            {"health", GetStat("max_health")}, //
+            {"energy", GetStat("max_energy")}, //
+            {"attack", GetStat("attack")}, //
+            {"defense", GetStat("defense")}, //
+            {"speed", GetStat("speed")}, //
+            {"recovery", GetStat("recovery")}, //
+    };
+}

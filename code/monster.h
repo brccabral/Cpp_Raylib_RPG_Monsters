@@ -9,6 +9,7 @@ public:
 
     Monster(std::string name_, int level);
     int GetStat(const std::string &stat);
+    std::map<std::string, int> GetStats();
 
     std::string name;
     int level;
