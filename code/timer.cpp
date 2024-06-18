@@ -2,7 +2,9 @@
 
 #include <raylib.h>
 
-Timer::Timer(const float duration, const bool repeat, const bool autostart, const std::function<void()> &func)
+Timer::Timer(
+        const float duration, const bool repeat, const bool autostart,
+        const std::function<void()> &func)
     : duration(duration), repeat(repeat), autostart(autostart), func(func)
 {
     if (autostart)

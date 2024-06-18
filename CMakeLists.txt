@@ -18,6 +18,7 @@ add_executable(${PROJECT_NAME} code/main.cpp
         code/timer.cpp
         code/monster.cpp
         code/monsterindex.cpp
+        code/battle.cpp
 )
 target_link_libraries(${PROJECT_NAME} raylib tmx m)
 install(TARGETS ${PROJECT_NAME})

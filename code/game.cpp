@@ -48,6 +48,9 @@ Game::Game(const int width, const int height)
     }
     monster_index =
             new MonsterIndex(player_monsters, fonts, named_textures["icons"], monsters_frames, named_textures["ui"]);
+    monster_index = new MonsterIndex(
+            player_monsters, fonts, named_textures["icons"], monsters_frames, named_textures["ui"]);
+
 }
 
 Game::~Game()
@@ -159,7 +162,8 @@ void Game::ImporAssets()
 
     face_rect_frames["characters"] = all_character_import("resources/graphics/characters");
 
-    fonts["dialog"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", FONT_SIZE, nullptr, 0);
+    fonts["dialog"] =
+            LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", FONT_SIZE, nullptr, 0);
     fonts["regular"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 18, nullptr, 0);
     fonts["small"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 14, nullptr, 0);
     fonts["bold"] = LoadFontEx("resources/graphics/fonts/dogicapixelbold.otf", 20, nullptr, 0);
@@ -207,7 +211,8 @@ void Game::CreateTileLayer(const tmx_map *map, const tmx_layer *layer, const int
             if (map->tiles[gid])
             {
                 const tmx_tileset *ts = map->tiles[gid]->tileset;
-                auto [position, image] = GetTileInfo(map->tiles[gid], x * ts->tile_width, y * ts->tile_height);
+                auto [position, image] =
+                        GetTileInfo(map->tiles[gid], x * ts->tile_width, y * ts->tile_height);
                 new Sprite(position, image, {all_sprites}, z);
             }
         }
@@ -244,12 +249,14 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
             }
             if (strcmp(name.c_str(), "top") == 0)
             {
-                auto [position, image] = GetTileInfo(map->tiles[gid], object->x, object->y - object->height);
+                auto [position, image] =
+                        GetTileInfo(map->tiles[gid], object->x, object->y - object->height);
                 new Sprite(position, image, {all_sprites}, WORLD_LAYERS["top"]);
             }
             else
             {
-                auto [position, image] = GetTileInfo(map->tiles[gid], object->x, object->y - object->height);
+                auto [position, image] =
+                        GetTileInfo(map->tiles[gid], object->x, object->y - object->height);
                 new CollidableSprite(position, image, {all_sprites, collition_sprites});
             }
         }
@@ -262,8 +269,9 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         std::string target = tmx_get_property(transition->properties, "target")->value.string;
         std::string pos = tmx_get_property(transition->properties, "pos")->value.string;
         new TransitionSprite(
-                {float(transition->x), float(transition->y)}, {float(transition->width), float(transition->height)},
-                {target, pos}, {transition_sprites});
+                {float(transition->x), float(transition->y)},
+                {float(transition->width), float(transition->height)}, {target, pos},
+                {transition_sprites});
         transition = transition->next;
     }
 
@@ -283,7 +291,8 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         const int gid = monster->content.gid;
         if (map->tiles[gid])
         {
-            auto [position, image] = GetTileInfo(map->tiles[gid], monster->x, monster->y - monster->height);
+            auto [position, image] =
+                    GetTileInfo(map->tiles[gid], monster->x, monster->y - monster->height);
             std::string biome = tmx_get_property(monster->properties, "biome")->value.string;
             new MonsterPatchSprite(position, image, {all_sprites}, biome);
         }
@@ -303,10 +312,12 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
     {
         if (strcmp(entity->name, "Player") == 0)
         {
-            if (strcmp(tmx_get_property(entity->properties, "pos")->value.string, player_start_position.c_str()) == 0)
+            if (strcmp(tmx_get_property(entity->properties, "pos")->value.string,
+                       player_start_position.c_str()) == 0)
             {
                 std::map<FacingDirection, std::vector<TiledTexture>> face_frames;
-                std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
+                std::string direction =
+                        tmx_get_property(entity->properties, "direction")->value.string;
                 FacingDirection face_direction = face_name[direction];
 
                 for (const auto &[key, rectangles]: face_rect_frames["characters"]["player"])
@@ -317,8 +328,8 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                     }
                 }
                 player = new Player(
-                        {float(entity->x), float(entity->y)}, face_frames, {all_sprites}, face_direction,
-                        collition_sprites);
+                        {float(entity->x), float(entity->y)}, face_frames, {all_sprites},
+                        face_direction, collition_sprites);
                 break;
             }
         }
@@ -347,11 +358,13 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                 face_frames[key].push_back({&named_textures["characters"][graphic], rect});
             }
         }
-        std::string character_id = tmx_get_property(entity->properties, "character_id")->value.string;
+        std::string character_id =
+                tmx_get_property(entity->properties, "character_id")->value.string;
         int radius = std::stoi(tmx_get_property(entity->properties, "radius")->value.string);
         new Character(
-                {float(entity->x), float(entity->y)}, face_frames, {all_sprites, collition_sprites, characters_sprites},
-                face_direction, TRAINER_DATA[character_id], radius, this);
+                {float(entity->x), float(entity->y)}, face_frames,
+                {all_sprites, collition_sprites, characters_sprites}, face_direction,
+                TRAINER_DATA[character_id], radius, this);
 
         entity = entity->next;
     }
@@ -369,7 +382,8 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
                     frames.push_back({&overworld_frames["coast"][0], rect});
                 }
                 new AnimatedSprite(
-                        {float(x + water->x), float(y + water->y)}, frames, {all_sprites}, WORLD_LAYERS["water"]);
+                        {float(x + water->x), float(y + water->y)}, frames, {all_sprites},
+                        WORLD_LAYERS["water"]);
             }
         }
         water = water->next;
@@ -386,7 +400,8 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         {
             frames.push_back({&overworld_frames["coast"][0], rect});
         }
-        new AnimatedSprite({float(coast->x), float(coast->y)}, frames, {all_sprites}, WORLD_LAYERS["bg"]);
+        new AnimatedSprite(
+                {float(coast->x), float(coast->y)}, frames, {all_sprites}, WORLD_LAYERS["bg"]);
         coast = coast->next;
     }
 }
@@ -463,7 +478,8 @@ void Game::CreateDialog(const Character *character)
     if (!dialog_tree)
     {
         dialog_tree = new DialogTree(
-                character, player, {all_sprites}, fonts["dialog"], [this](const Character *ch) { EndDialog(ch); });
+                character, player, {all_sprites}, fonts["dialog"],
+                [this](const Character *ch) { EndDialog(ch); });
     }
 }
 

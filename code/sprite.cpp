@@ -37,12 +37,16 @@ void SimpleSprite::LeaveOtherGroups(const SpriteGroup *sprite_group)
     {
         if (group != sprite_group)
         {
-            group->sprites.erase(std::remove(group->sprites.begin(), group->sprites.end(), this), group->sprites.end());
+            group->sprites.erase(
+                    std::remove(group->sprites.begin(), group->sprites.end(), this),
+                    group->sprites.end());
         }
     }
 }
 
-Sprite::Sprite(const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs, const int z_)
+Sprite::Sprite(
+        const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs,
+        const int z_)
     : SimpleSprite(sgs), z(z_)
 {
     image = img;
@@ -54,7 +58,8 @@ Sprite::Sprite(const Vector2 pos, const TiledTexture &img, const std::vector<Spr
 }
 
 MonsterPatchSprite::MonsterPatchSprite(
-        const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs, std::string bio)
+        const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs,
+        std::string bio)
     : Sprite(pos, img, sgs, WORLD_LAYERS["main"]), biome(std::move(bio))
 {
     y_sort -= 40;
@@ -65,16 +70,19 @@ MonsterPatchSprite::MonsterPatchSprite(
     }
 }
 
-BorderSprite::BorderSprite(const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs)
+BorderSprite::BorderSprite(
+        const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs)
     : Sprite(pos, img, sgs)
 {}
 
 TransitionSprite::TransitionSprite(
-        const Vector2 pos, const Vector2 size, std::array<std::string, 2> target, const std::vector<SpriteGroup *> &sgs)
+        const Vector2 pos, const Vector2 size, std::array<std::string, 2> target,
+        const std::vector<SpriteGroup *> &sgs)
     : Sprite(pos, {{}, {0, 0, size.x, size.y}}, sgs), target(std::move(target))
 {}
 
-CollidableSprite::CollidableSprite(const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs)
+CollidableSprite::CollidableSprite(
+        const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs)
     : Sprite(pos, img, sgs)
 {
     // smaller hitbox for better view perpective on Y axis
@@ -82,8 +90,8 @@ CollidableSprite::CollidableSprite(const Vector2 pos, const TiledTexture &img, c
 }
 
 AnimatedSprite::AnimatedSprite(
-        const Vector2 position, const std::vector<TiledTexture> &frms, const std::vector<SpriteGroup *> &sgs,
-        const int z)
+        const Vector2 position, const std::vector<TiledTexture> &frms,
+        const std::vector<SpriteGroup *> &sgs, const int z)
     : Sprite(position, frms[0], sgs, z), frame_index(0), frames(frms)
 {}
 

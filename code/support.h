@@ -37,7 +37,8 @@ typedef std::map<FacingDirection, std::vector<RectangleU>> tilerect_face;
 inline std::map<std::string, tilerect_name> coast_rects()
 {
     std::map<std::string, tilerect_name> new_dict;
-    const std::vector<std::string> terrains = {"grass", "grass_i", "sand_i", "sand", "rock", "rock_i", "ice", "ice_i"};
+    const std::vector<std::string> terrains = {"grass", "grass_i", "sand_i", "sand",
+                                               "rock",  "rock_i",  "ice",    "ice_i"};
     const std::map<std::string, std::tuple<int, int>> sides = {
             {"topleft", {0, 0}}, //
             {"top", {1, 0}}, //
@@ -58,7 +59,8 @@ inline std::map<std::string, tilerect_name> coast_rects()
             for (int row = 0; row < 4; ++row)
             {
                 new_dict[terrain][key].push_back(
-                        {(std::get<0>(pos) + index * 3) * 64.0f, (std::get<1>(pos) + row * 3) * 64.0f, 64.0f, 64.0f});
+                        {(std::get<0>(pos) + index * 3) * 64.0f,
+                         (std::get<1>(pos) + row * 3) * 64.0f, 64.0f, 64.0f});
             }
         }
     }
@@ -66,7 +68,8 @@ inline std::map<std::string, tilerect_name> coast_rects()
     return new_dict;
 }
 
-inline std::vector<std::vector<RectangleU>> import_tilemap_rects(const int cols, const int rows, const char *path)
+inline std::vector<std::vector<RectangleU>>
+import_tilemap_rects(const int cols, const int rows, const char *path)
 {
     std::vector<std::vector<RectangleU>> frames;
     const Texture2D surf = LoadTexture(path);
@@ -105,7 +108,8 @@ inline tilerect_face CharacterImporter(const int cols, const int rows, const cha
     return new_dic;
 }
 
-inline std::map<std::string, tilerect_name> MonsterImporter(const int cols, const int rows, const char *path)
+inline std::map<std::string, tilerect_name>
+MonsterImporter(const int cols, const int rows, const char *path)
 {
     std::map<std::string, tilerect_name> monster_dict;
 
@@ -136,31 +140,33 @@ inline std::map<std::string, tilerect_face> all_character_import(const char *pat
     return new_dict;
 }
 
-inline bool CheckConnections(const float radius, const Entity *entity, const Entity *target, float tolerance = 30)
+inline bool CheckConnections(
+        const float radius, const Entity *entity, const Entity *target, float tolerance = 30)
 {
-    const Vector2 relation = Vector2Subtract(GetRectCenter(target->rect), GetRectCenter(entity->rect));
+    const Vector2 relation =
+            Vector2Subtract(GetRectCenter(target->rect), GetRectCenter(entity->rect));
     // player is close to target
     if (Vector2Length(relation) < radius)
     {
         // if player is facing left, player is on the right side of target,
         // and in same horizontal plane (not above or below target.y)
-        if ((entity->facing_direction == LEFT || entity->facing_direction == LEFT_IDLE) && relation.x < 0 &&
-            abs(relation.y) < tolerance)
+        if ((entity->facing_direction == LEFT || entity->facing_direction == LEFT_IDLE) &&
+            relation.x < 0 && abs(relation.y) < tolerance)
         {
             return true;
         }
-        if ((entity->facing_direction == RIGHT || entity->facing_direction == RIGHT_IDLE) && relation.x > 0 &&
-            abs(relation.y) < tolerance)
+        if ((entity->facing_direction == RIGHT || entity->facing_direction == RIGHT_IDLE) &&
+            relation.x > 0 && abs(relation.y) < tolerance)
         {
             return true;
         }
-        if ((entity->facing_direction == UP || entity->facing_direction == UP_IDLE) && relation.y < 0 &&
-            abs(relation.x) < tolerance)
+        if ((entity->facing_direction == UP || entity->facing_direction == UP_IDLE) &&
+            relation.y < 0 && abs(relation.x) < tolerance)
         {
             return true;
         }
-        if ((entity->facing_direction == DOWN || entity->facing_direction == DOWN_IDLE) && relation.y > 0 &&
-            abs(relation.x) < tolerance)
+        if ((entity->facing_direction == DOWN || entity->facing_direction == DOWN_IDLE) &&
+            relation.y > 0 && abs(relation.x) < tolerance)
         {
             return true;
         }
@@ -180,12 +186,13 @@ inline std::map<std::string, tmx_map *> tmx_importer(const char *path)
 }
 
 inline void
-DrawBar(const RectangleU rect, const float value, float max_value, const Color color, Color bg_color,
-        const float radius = 0)
+DrawBar(const RectangleU rect, const float value, float max_value, const Color color,
+        Color bg_color, const float radius = 0)
 {
     const float ratio = rect.width / max_value;
     const RectangleU bg_rect = rect;
-    const RectangleU progress_rect = {rect.x, rect.y, Clamp(value * ratio, 0, rect.width), rect.height};
+    const RectangleU progress_rect = {
+            rect.x, rect.y, Clamp(value * ratio, 0, rect.width), rect.height};
 
     if (radius == 0)
     {
@@ -195,6 +202,7 @@ DrawBar(const RectangleU rect, const float value, float max_value, const Color c
     else
     {
         DrawRectangleRounded(bg_rect.rectangle, radius / (rect.width + rect.height), 10, bg_color);
-        DrawRectangleRounded(progress_rect.rectangle, radius / (rect.width + rect.height), 10, color);
+        DrawRectangleRounded(
+                progress_rect.rectangle, radius / (rect.width + rect.height), 10, color);
     }
 }

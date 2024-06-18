@@ -143,7 +143,8 @@ inline void RectToTopLeft(RectangleU &rect, const Vector2 pos)
 
 inline Vector2 ViewOffset(const Vector2 player_center)
 {
-    Vector2 offset = Vector2Subtract(player_center, Vector2Scale({WINDOW_WIDTH, WINDOW_HEIGHT}, 0.5));
+    Vector2 offset =
+            Vector2Subtract(player_center, Vector2Scale({WINDOW_WIDTH, WINDOW_HEIGHT}, 0.5));
     offset = Vector2Scale(offset, -1);
     return offset;
 }
@@ -192,8 +193,8 @@ inline void AbsRect(RectangleU &rect)
 }
 
 inline bool CheckCollisionRectLine(
-        const RectangleU rect, const Vector2 startPos, const Vector2 endPos, Vector2 *collisionPoint1,
-        Vector2 *collisionPoint2)
+        const RectangleU rect, const Vector2 startPos, const Vector2 endPos,
+        Vector2 *collisionPoint1, Vector2 *collisionPoint2)
 {
     bool hasCollision = false;
     bool secondCollision = false;
@@ -221,7 +222,8 @@ inline bool CheckCollisionRectLine(
         }
         hasCollision = true;
     }
-    if (!secondCollision && CheckCollisionLines(startPos, endPos, topLeft, bottomLeft, collisionPoint))
+    if (!secondCollision &&
+        CheckCollisionLines(startPos, endPos, topLeft, bottomLeft, collisionPoint))
     {
         if (hasCollision)
         {
@@ -233,7 +235,8 @@ inline bool CheckCollisionRectLine(
         }
         hasCollision = true;
     }
-    if (!secondCollision && CheckCollisionLines(startPos, endPos, topRight, bottomRight, collisionPoint))
+    if (!secondCollision &&
+        CheckCollisionLines(startPos, endPos, topRight, bottomRight, collisionPoint))
     {
         hasCollision = true;
     }
@@ -252,8 +255,9 @@ inline bool CheckCollisionRectLine(
 
 // Draw rectangle with rounded edges
 inline void DrawRectangleRoundedCorners(
-        const RectangleU rec, float roundness, int segments, const Color color, const bool TopLeft = true,
-        const bool TopRight = true, const bool BottomRight = true, const bool BottomLeft = true)
+        const RectangleU rec, float roundness, int segments, const Color color,
+        const bool TopLeft = true, const bool TopRight = true, const bool BottomRight = true,
+        const bool BottomLeft = true)
 {
     // Not a rounded rectangle
     if ((roundness <= 0.0f) || (rec.width < 1) || (rec.height < 1))
@@ -292,7 +296,9 @@ inline void DrawRectangleRoundedCorners(
 
     if (TopRight)
     {
-        DrawCircleSector({rec.x + rec.width - radius, rec.y + radius}, radius, 270.0f, 360.0f, segments, color);
+        DrawCircleSector(
+                {rec.x + rec.width - radius, rec.y + radius}, radius, 270.0f, 360.0f, segments,
+                color);
     }
     else
     {
@@ -302,16 +308,21 @@ inline void DrawRectangleRoundedCorners(
     if (BottomRight)
     {
         DrawCircleSector(
-                {rec.x + rec.width - radius, rec.y + rec.height - radius}, radius, 0.0f, 90.0f, segments, color);
+                {rec.x + rec.width - radius, rec.y + rec.height - radius}, radius, 0.0f, 90.0f,
+                segments, color);
     }
     else
     {
-        DrawRectangle(rec.x + rec.width - radius, rec.y + rec.height - radius, radius + 1, radius + 1, color);
+        DrawRectangle(
+                rec.x + rec.width - radius, rec.y + rec.height - radius, radius + 1, radius + 1,
+                color);
     }
 
     if (BottomLeft)
     {
-        DrawCircleSector({rec.x + radius, rec.y + rec.height - radius}, radius, 90.0f, 180.0f, segments, color);
+        DrawCircleSector(
+                {rec.x + radius, rec.y + rec.height - radius}, radius, 90.0f, 180.0f, segments,
+                color);
     }
     else
     {
@@ -321,13 +332,19 @@ inline void DrawRectangleRoundedCorners(
     // Top RectangleU
     DrawRectangle(rec.x + radius, rec.y, rec.width - 2 * radius + 1, radius, color);
     // Right RectangleU
-    DrawRectangle(rec.x + rec.width - radius, rec.y + radius, radius + 1, rec.height - 2 * radius + 1, color);
+    DrawRectangle(
+            rec.x + rec.width - radius, rec.y + radius, radius + 1, rec.height - 2 * radius + 1,
+            color);
     // Bottom RectangleU
-    DrawRectangle(rec.x + radius - 1, rec.y + rec.height - radius, rec.width - 2 * radius + 2, radius + 1, color);
+    DrawRectangle(
+            rec.x + radius - 1, rec.y + rec.height - radius, rec.width - 2 * radius + 2, radius + 1,
+            color);
     // Left RectangleU
     DrawRectangle(rec.x, rec.y + radius, radius + 1, rec.height - 2 * radius + 1, color);
     // Center RectangleU
-    DrawRectangle(rec.x + radius, rec.y + radius, rec.width - 2 * radius + 1, rec.height - 2 * radius + 1, color);
+    DrawRectangle(
+            rec.x + radius, rec.y + radius, rec.width - 2 * radius + 1, rec.height - 2 * radius + 1,
+            color);
 }
 
 inline Vector2 MeasureTextF(const Font &font, const char *text, const int spacing)

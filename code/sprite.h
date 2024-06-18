@@ -9,7 +9,8 @@
 typedef struct TiledTexture
 {
     Texture2D *texture; // the atlas image
-    RectangleU rect; // this rect is the rect inside the atlas, not the position of an obj on the map
+    RectangleU
+            rect; // this rect is the rect inside the atlas, not the position of an obj on the map
 } TiledTexture;
 
 class SpriteGroup;
@@ -17,7 +18,6 @@ class SpriteGroup;
 class SimpleSprite
 {
 public:
-
 
     explicit SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups);
     virtual ~SimpleSprite() = default;
@@ -39,7 +39,8 @@ class Sprite : public SimpleSprite
 {
 public:
 
-    Sprite(Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs, int z_ = WORLD_LAYERS["main"]);
+    Sprite(Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs,
+           int z_ = WORLD_LAYERS["main"]);
 
     int z = WORLD_LAYERS["main"];
     int y_sort{};
@@ -51,7 +52,9 @@ class MonsterPatchSprite : public Sprite
 {
 public:
 
-    MonsterPatchSprite(Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs, std::string bio);
+    MonsterPatchSprite(
+            Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs,
+            std::string bio);
 
 private:
 
@@ -71,7 +74,8 @@ class TransitionSprite : public Sprite
 public:
 
     TransitionSprite(
-            Vector2 pos, Vector2 size, std::array<std::string, 2> target, const std::vector<SpriteGroup *> &sgs);
+            Vector2 pos, Vector2 size, std::array<std::string, 2> target,
+            const std::vector<SpriteGroup *> &sgs);
 
     std::array<std::string, 2> target;
 };
@@ -88,8 +92,8 @@ class AnimatedSprite : public Sprite
 public:
 
     AnimatedSprite(
-            Vector2 position, const std::vector<TiledTexture> &frms, const std::vector<SpriteGroup *> &sgs,
-            int z = WORLD_LAYERS["main"]);
+            Vector2 position, const std::vector<TiledTexture> &frms,
+            const std::vector<SpriteGroup *> &sgs, int z = WORLD_LAYERS["main"]);
     void Animate(double deltaTime);
     void Update(double deltaTime) override;
 

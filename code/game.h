@@ -20,11 +20,11 @@ class Game
 {
 public:
 
-    void ClearSpriteGroups();
     Game(int width, int height);
     ~Game();
     void Draw() const;
     void run();
+    void ClearSpriteGroups();
 
     friend class Character; // allows Character to access Game private members
 

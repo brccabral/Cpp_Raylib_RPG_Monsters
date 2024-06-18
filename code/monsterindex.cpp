@@ -6,9 +6,11 @@
 MonsterIndex::MonsterIndex(
         const std::vector<Monster> &monsters, const std::map<std::string, Font> &fonts,
         const std::map<std::string, Texture2D> &monster_icons,
-        const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> &monsters_frms,
+        const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
+                &monsters_frms,
         const std::map<std::string, Texture2D> &ui_frms)
-    : fonts(fonts), monsters(monsters), icon_frames(monster_icons), monsters_frames(monsters_frms), ui_frames(ui_frms)
+    : fonts(fonts), monsters(monsters), icon_frames(monster_icons), monsters_frames(monsters_frms),
+      ui_frames(ui_frms)
 {
     RectToCenter(main_rect, {WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
 
@@ -73,20 +75,27 @@ void MonsterIndex::DisplayList()
         {
             if (CheckCollisionPointRec(GetRectTopLeft(main_rect), item_rect.rectangle))
             {
-                DrawRectangleRoundedCorners(item_rect, 0.3, 10, bg_color, true, false, false, false);
+                DrawRectangleRoundedCorners(
+                        item_rect, 0.3, 10, bg_color, true, false, false, false);
             }
-            else if (CheckCollisionPointRec(Vector2Add(GetRectBottomLeft(main_rect), {1, -1}), item_rect.rectangle))
+            else if (CheckCollisionPointRec(
+                             Vector2Add(GetRectBottomLeft(main_rect), {1, -1}),
+                             item_rect.rectangle))
             {
-                DrawRectangleRoundedCorners(item_rect, 0.3, 10, bg_color, false, false, false, true);
+                DrawRectangleRoundedCorners(
+                        item_rect, 0.3, 10, bg_color, false, false, false, true);
             }
             else
             {
                 DrawRectangleRec(item_rect.rectangle, bg_color);
             }
-            DrawTexture(icon_texture, x + 45 - icon_texture.width / 2.0f, y - icon_texture.height / 2.0f, WHITE);
+            DrawTexture(
+                    icon_texture, x + 45 - icon_texture.width / 2.0f,
+                    y - icon_texture.height / 2.0f, WHITE);
             DrawTextEx(
-                    fonts["regular"], monsters[i].name.c_str(), {x + 90, y - fonts["regular"].baseSize / 2.0f},
-                    fonts["regular"].baseSize, 2, text_color);
+                    fonts["regular"], monsters[i].name.c_str(),
+                    {x + 90, y - fonts["regular"].baseSize / 2.0f}, fonts["regular"].baseSize, 2,
+                    text_color);
         }
     }
 
@@ -98,7 +107,9 @@ void MonsterIndex::DisplayList()
     }
 
     // shadow
-    DrawRectangle(main_rect.x + list_width - 4, main_rect.y, 4, main_rect.height, Fade(BLACK, 100.0f / 255.0f));
+    DrawRectangle(
+            main_rect.x + list_width - 4, main_rect.y, 4, main_rect.height,
+            Fade(BLACK, 100.0f / 255.0f));
 }
 
 void MonsterIndex::DisplayMain(const double dt)
@@ -108,12 +119,14 @@ void MonsterIndex::DisplayMain(const double dt)
 
     // BeginTextureMode was called in Update()
     // bg
-    const RectangleU rect = {main_rect.x + list_width, main_rect.y, main_rect.width - list_width, main_rect.height};
+    const RectangleU rect = {
+            main_rect.x + list_width, main_rect.y, main_rect.width - list_width, main_rect.height};
     DrawRectangleRoundedCorners(rect, 0.1, 10, COLORS["dark"], false, true, true, false);
 
     // monster
     const RectangleU top_rect = {rect.pos, rect.width, rect.height * 0.4f};
-    DrawRectangleRoundedCorners(top_rect, 0.1, 10, COLORS[monster.element], false, true, false, false);
+    DrawRectangleRoundedCorners(
+            top_rect, 0.1, 10, COLORS[monster.element], false, true, false, false);
 
     // monster animation
     frame_index += ANIMATION_SPEED * dt;
@@ -124,36 +137,47 @@ void MonsterIndex::DisplayMain(const double dt)
     DrawTextureRec(*surf_texture, surf_ref.rectangle, monster_rect.pos, WHITE);
 
     // name
-    DrawTextEx(fonts["bold"], monster.name.c_str(), {top_rect.x + 10, top_rect.y + 10}, 14, 1, COLORS["white"]);
+    DrawTextEx(
+            fonts["bold"], monster.name.c_str(), {top_rect.x + 10, top_rect.y + 10}, 14, 1,
+            COLORS["white"]);
 
     // level
-    const Vector2 pos = Vector2Add(GetRectBottomLeft(top_rect), {10.0f, -16.0f - fonts["regular"].baseSize});
+    const Vector2 pos =
+            Vector2Add(GetRectBottomLeft(top_rect), {10.0f, -16.0f - fonts["regular"].baseSize});
     DrawTextEx(
-            fonts["regular"], TextFormat("Lvl: %i", monster.level), pos, fonts["regular"].baseSize, 1, COLORS["white"]);
-    DrawBar({pos.x, pos.y + fonts["regular"].baseSize, 100, 4}, monster.xp, monster.level_up, COLORS["white"],
-            COLORS["dark"]);
+            fonts["regular"], TextFormat("Lvl: %i", monster.level), pos, fonts["regular"].baseSize,
+            1, COLORS["white"]);
+    DrawBar({pos.x, pos.y + fonts["regular"].baseSize, 100, 4}, monster.xp, monster.level_up,
+            COLORS["white"], COLORS["dark"]);
 
     // element
     const Vector2 size_element = MeasureTextF(fonts["regular"], monster.element.c_str(), 1);
-    const Vector2 pos_element =
-            Vector2Subtract(Vector2Add(GetRectBottomRight(top_rect), {-10.0f, -10.0f}), size_element);
-    DrawTextEx(fonts["regular"], monster.element.c_str(), pos_element, fonts["regular"].baseSize, 1, COLORS["white"]);
+    const Vector2 pos_element = Vector2Subtract(
+            Vector2Add(GetRectBottomRight(top_rect), {-10.0f, -10.0f}), size_element);
+    DrawTextEx(
+            fonts["regular"], monster.element.c_str(), pos_element, fonts["regular"].baseSize, 1,
+            COLORS["white"]);
 
     // health and energy
     const RectangleU bar_rect{
-            rect.x + rect.width * 0.03f, top_rect.y + top_rect.height + rect.width * 0.03f, rect.width * 0.45f, 30.0f};
+            rect.x + rect.width * 0.03f, top_rect.y + top_rect.height + rect.width * 0.03f,
+            rect.width * 0.45f, 30.0f};
 
     const RectangleU health_rectangle = bar_rect;
-    DrawBar(health_rectangle, monster.health, monster.GetStat("max_health"), COLORS["red"], COLORS["black"], 100);
+    DrawBar(health_rectangle, monster.health, monster.GetStat("max_health"), COLORS["red"],
+            COLORS["black"], 100);
     DrawTextEx(
-            fonts["regular"], TextFormat("HP: %.f/%.f", monster.health, monster.GetStat("max_health")),
+            fonts["regular"],
+            TextFormat("HP: %.f/%.f", monster.health, monster.GetStat("max_health")),
             Vector2Add(GetRectMidLeft(health_rectangle), {10, -fonts["regular"].baseSize / 2.0f}),
             fonts["regular"].baseSize, 1, COLORS["white"]);
 
     const RectangleU energy_rectangle{bar_rect.x + rect.width / 2.0f, bar_rect.y, bar_rect.size};
-    DrawBar(energy_rectangle, monster.energy, monster.GetStat("max_energy"), COLORS["blue"], COLORS["black"], 100);
+    DrawBar(energy_rectangle, monster.energy, monster.GetStat("max_energy"), COLORS["blue"],
+            COLORS["black"], 100);
     DrawTextEx(
-            fonts["regular"], TextFormat("EP: %.f/%.f", monster.energy, monster.GetStat("max_energy")),
+            fonts["regular"],
+            TextFormat("EP: %.f/%.f", monster.energy, monster.GetStat("max_energy")),
             Vector2Add(GetRectMidLeft(energy_rectangle), {10, -fonts["regular"].baseSize / 2.0f}),
             fonts["regular"].baseSize, 1, COLORS["white"]);
 
@@ -162,7 +186,8 @@ void MonsterIndex::DisplayMain(const double dt)
 
     // stats
     RectangleU stats_rectangle = {
-            health_rectangle.x, health_rectangle.y + health_rectangle.height, health_rectangle.width, info_height};
+            health_rectangle.x, health_rectangle.y + health_rectangle.height,
+            health_rectangle.width, info_height};
     RectInflate(stats_rectangle, 0, -60);
     MoveRect(stats_rectangle, {0, 15});
     const Vector2 stats_pos = GetRectTopLeft(stats_rectangle);
@@ -176,7 +201,8 @@ void MonsterIndex::DisplayMain(const double dt)
     for (auto &[stat, value]: monster_stats)
     {
         RectangleU single_stat_rectangle = {
-                stats_rectangle.x, stats_rectangle.y + i * stat_height, stats_rectangle.width, stat_height};
+                stats_rectangle.x, stats_rectangle.y + i * stat_height, stats_rectangle.width,
+                stat_height};
 
         // icon
         Texture2D icon_surf = ui_frames[stat];
@@ -186,14 +212,18 @@ void MonsterIndex::DisplayMain(const double dt)
 
         // text
         Vector2 stat_text_pos = Vector2Add(GetRectTopLeft(icon_rect), {icon_rect.width + 14, -5});
-        DrawTextEx(fonts["regular"], stat.c_str(), stat_text_pos, fonts["regular"].baseSize, 1, COLORS["white"]);
+        DrawTextEx(
+                fonts["regular"], stat.c_str(), stat_text_pos, fonts["regular"].baseSize, 1,
+                COLORS["white"]);
 
         // bar
         RectangleU stat_bar_rect = single_stat_rectangle;
         stat_bar_rect.height = 4;
         stat_bar_rect.pos = Vector2Add(stat_text_pos, {0, fonts["regular"].baseSize + 2.0f});
-        stat_bar_rect.size = Vector2Add(stat_bar_rect.size, {-(stat_text_pos.x - single_stat_rectangle.x), 4});
-        DrawBar(stat_bar_rect, value, max_stats[stat] * monster.level, COLORS["white"], COLORS["black"]);
+        stat_bar_rect.size =
+                Vector2Add(stat_bar_rect.size, {-(stat_text_pos.x - single_stat_rectangle.x), 4});
+        DrawBar(stat_bar_rect, value, max_stats[stat] * monster.level, COLORS["white"],
+                COLORS["black"]);
 
         ++i;
     }
@@ -203,7 +233,8 @@ void MonsterIndex::DisplayMain(const double dt)
     abilities_rect.x = energy_rectangle.x;
     const Vector2 abilities_pos = GetRectTopLeft(abilities_rect);
     DrawTextEx(
-            fonts["regular"], "Ability", {abilities_pos.x, abilities_pos.y - fonts["regular"].baseSize},
+            fonts["regular"], "Ability",
+            {abilities_pos.x, abilities_pos.y - fonts["regular"].baseSize},
             fonts["regular"].baseSize, 1, COLORS["white"]);
 
     auto abilities = monster.GetAbilities();
@@ -219,8 +250,8 @@ void MonsterIndex::DisplayMain(const double dt)
 
         DrawRectangleRounded(ability_rect.rectangle, 0.3, 10, COLORS[element]);
         DrawTextEx(
-                fonts["regular"], abilities[a_index].c_str(), ability_pos, fonts["regular"].baseSize, 1,
-                COLORS["black"]);
+                fonts["regular"], abilities[a_index].c_str(), ability_pos,
+                fonts["regular"].baseSize, 1, COLORS["black"]);
     }
 }
 

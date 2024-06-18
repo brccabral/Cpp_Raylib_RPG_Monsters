@@ -17,7 +17,8 @@
  *   will the authors be held liable for any damages arising from the use of this software.
  *
  *   Permission is granted to anyone to use this software for any purpose, including commercial
- *   applications, and to alter it and redistribute it freely, subject to the following restrictions:
+ *   applications, and to alter it and redistribute it freely, subject to the following
+ *restrictions:
  *
  *     1. The origin of this software must not be misrepresented; you must not claim that you
  *     wrote the original software. If you use this software in a product, an acknowledgment
@@ -45,13 +46,17 @@ extern "C"
     tmx_map *LoadTMX(const char *fileName); // Load a Tiled .tmx tile map
     void UnloadTMX(tmx_map *map); // Unload the given Tiled map
     Color ColorFromTMX(uint32_t color); // Convert a Tiled color number to a raylib Color
-    void DrawTMX(tmx_map *map, int posX, int posY, Color tint); // Render the given Tiled map to the screen
+    void
+    DrawTMX(tmx_map *map, int posX, int posY,
+            Color tint); // Render the given Tiled map to the screen
     void DrawTMXLayers(
             tmx_map *map, tmx_layer *layers, int posX, int posY,
             Color tint); // Render all the given map layers to the screen
     void DrawTMXLayer(
-            tmx_map *map, tmx_layer *layer, int posX, int posY, Color tint); // Render a single map layer on the screen
-    void DrawTMXTile(tmx_tile *tile, int posX, int posY, Color tint); // Render the given tile to the screen
+            tmx_map *map, tmx_layer *layer, int posX, int posY,
+            Color tint); // Render a single map layer on the screen
+    void DrawTMXTile(
+            tmx_tile *tile, int posX, int posY, Color tint); // Render the given tile to the screen
 
 #ifdef __cplusplus
 }
@@ -131,7 +136,8 @@ extern "C"
      * @return A TMX Tiled map object pointer.
      *
      * @see UnloadTMX()
-     * @todo Add LoadTMXFromMemory() to allow loading through a buffer: https://github.com/baylej/tmx/pull/58
+     * @todo Add LoadTMXFromMemory() to allow loading through a buffer:
+     * https://github.com/baylej/tmx/pull/58
      */
     tmx_map *LoadTMX(const char *fileName)
     {
@@ -183,12 +189,15 @@ extern "C"
     /**
      * @internal
      */
-    void DrawTMXPolyline(double offset_x, double offset_y, double **points, int points_count, Color color)
+    void DrawTMXPolyline(
+            double offset_x, double offset_y, double **points, int points_count, Color color)
     {
         for (int i = 1; i < points_count; i++)
         {
             DrawLineEx(
-                    (Vector2){(float) (offset_x + points[i - 1][0]), (float) (offset_y + points[i - 1][1])},
+                    (Vector2){
+                            (float) (offset_x + points[i - 1][0]),
+                            (float) (offset_y + points[i - 1][1])},
                     (Vector2){(float) (offset_x + points[i][0]), (float) (offset_y + points[i][1])},
                     RAYLIB_TMX_LINE_THICKNESS, color);
         }
@@ -197,7 +206,8 @@ extern "C"
     /**
      * @internal
      */
-    void DrawTMXPolygon(double offset_x, double offset_y, double **points, int points_count, Color color)
+    void
+    DrawTMXPolygon(double offset_x, double offset_y, double **points, int points_count, Color color)
     {
         DrawTMXPolyline(offset_x, offset_y, points, points_count, color);
         if (points_count > 2)
@@ -265,8 +275,8 @@ extern "C"
             if (head->visible)
             {
                 Rectangle dest = (Rectangle){
-                        (float) posX + (float) head->x, (float) posY + (float) head->y, (float) head->width,
-                        (float) head->height};
+                        (float) posX + (float) head->x, (float) posY + (float) head->y,
+                        (float) head->width, (float) head->height};
                 switch (head->obj_type)
                 {
                     case OT_SQUARE:
@@ -274,16 +284,18 @@ extern "C"
                         break;
                     case OT_POLYGON:
                         DrawTMXPolygon(
-                                dest.x, dest.y, head->content.shape->points, head->content.shape->points_len, color);
+                                dest.x, dest.y, head->content.shape->points,
+                                head->content.shape->points_len, color);
                         break;
                     case OT_POLYLINE:
                         DrawTMXPolyline(
-                                dest.x, dest.y, head->content.shape->points, head->content.shape->points_len, color);
+                                dest.x, dest.y, head->content.shape->points,
+                                head->content.shape->points_len, color);
                         break;
                     case OT_ELLIPSE:
                         DrawEllipseLines(
-                                dest.x + head->width / 2.0, dest.y + head->height / 2.0, head->width / 2.0f,
-                                head->height / 2.0f, color);
+                                dest.x + head->width / 2.0, dest.y + head->height / 2.0,
+                                head->width / 2.0f, head->height / 2.0f, color);
                         break;
                     case OT_TILE:
                     {
@@ -304,7 +316,8 @@ extern "C"
                     }
                     break;
                     case OT_POINT:
-                        DrawCircle(dest.x + head->width / 2.0, dest.y + head->height / 2.0, 5, color);
+                        DrawCircle(
+                                dest.x + head->width / 2.0, dest.y + head->height / 2.0, 5, color);
                         break;
                 }
             }
@@ -397,7 +410,8 @@ extern "C"
                         {
                             ts = map->tiles[gid]->tileset;
                             DrawTMXTile(
-                                    map->tiles[gid], posX + x * ts->tile_width, posY + y * ts->tile_height, newTint);
+                                    map->tiles[gid], posX + x * ts->tile_width,
+                                    posY + y * ts->tile_height, newTint);
                         }
                     }
                 }
@@ -415,7 +429,8 @@ extern "C"
                         {
                             ts = map->tiles[gid]->tileset;
                             DrawTMXTile(
-                                    map->tiles[gid], posX + x * ts->tile_width, posY + y * ts->tile_height, newTint);
+                                    map->tiles[gid], posX + x * ts->tile_width,
+                                    posY + y * ts->tile_height, newTint);
                         }
                     }
                 }
@@ -433,7 +448,8 @@ extern "C"
                         {
                             ts = map->tiles[gid]->tileset;
                             DrawTMXTile(
-                                    map->tiles[gid], posX + x * ts->tile_width, posY + y * ts->tile_height, newTint);
+                                    map->tiles[gid], posX + x * ts->tile_width,
+                                    posY + y * ts->tile_height, newTint);
                         }
                     }
                 }
@@ -451,7 +467,8 @@ extern "C"
                         {
                             ts = map->tiles[gid]->tileset;
                             DrawTMXTile(
-                                    map->tiles[gid], posX + x * ts->tile_width, posY + y * ts->tile_height, newTint);
+                                    map->tiles[gid], posX + x * ts->tile_width,
+                                    posY + y * ts->tile_height, newTint);
                         }
                     }
                 }
@@ -474,14 +491,18 @@ extern "C"
         {
             case L_GROUP:
                 DrawTMXLayers(
-                        map, layer->content.group_head, posX + layer->offsetx, posY + layer->offsety,
+                        map, layer->content.group_head, posX + layer->offsetx,
+                        posY + layer->offsety,
                         tint); // recursive call
                 break;
             case L_OBJGR:
-                DrawTMXLayerObjects(map, layer->content.objgr, posX + layer->offsetx, posY + layer->offsety, tint);
+                DrawTMXLayerObjects(
+                        map, layer->content.objgr, posX + layer->offsetx, posY + layer->offsety,
+                        tint);
                 break;
             case L_IMAGE:
-                DrawTMXLayerImage(layer->content.image, posX + layer->offsetx, posY + layer->offsety, tint);
+                DrawTMXLayerImage(
+                        layer->content.image, posX + layer->offsetx, posY + layer->offsety, tint);
                 break;
             case L_LAYER:
                 DrawTMXLayerTiles(map, layer, posX + layer->offsetx, posY + layer->offsety, tint);
