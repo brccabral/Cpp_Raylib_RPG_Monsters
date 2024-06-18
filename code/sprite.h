@@ -4,6 +4,7 @@
 #include <raylib.h>
 #include "raylib_utils.h"
 #include "settings.h"
+#include "monster.h"
 
 
 typedef struct TiledTexture
@@ -13,7 +14,17 @@ typedef struct TiledTexture
             rect; // this rect is the rect inside the atlas, not the position of an obj on the map
 } TiledTexture;
 
-class SpriteGroup;
+class SimpleSprite;
+
+class SpriteGroup
+{
+public:
+
+    virtual ~SpriteGroup();
+    virtual void Draw() const;
+    void Update(double deltaTime);
+    std::vector<SimpleSprite *> sprites;
+};
 
 class SimpleSprite
 {
@@ -35,6 +46,11 @@ protected:
     std::vector<SpriteGroup *> groups;
 };
 
+int GetZ(const SimpleSprite *sprite);
+int GetYsort(const SimpleSprite *sprite);
+RectangleU GetHitbox(const SimpleSprite *sprite);
+
+// Overworld sprites
 class Sprite : public SimpleSprite
 {
 public:
@@ -103,16 +119,24 @@ private:
     std::vector<TiledTexture> frames;
 };
 
-int GetZ(const SimpleSprite *sprite);
-int GetYsort(const SimpleSprite *sprite);
-RectangleU GetHitbox(const SimpleSprite *sprite);
-
-class SpriteGroup
+// Battle Sprites
+class MonsterSprite : public SimpleSprite
 {
 public:
 
-    virtual ~SpriteGroup();
-    virtual void Draw() const;
-    void Update(double deltaTime);
-    std::vector<SimpleSprite *> sprites;
+    MonsterSprite(
+            Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
+            const std::vector<SpriteGroup *> &sgs, Monster monster, int index, int pos_index,
+            std::string entity);
+
+private:
+
+    int index;
+    int pos_index;
+    std::string entity;
+    Monster monster;
+
+    float frame_index{};
+    std::map<std::string, std::vector<TiledTexture>> frames;
+    std::string state = "idle";
 };

@@ -15,8 +15,10 @@ public:
            const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
                    &monsters_frames,
            const Texture2D &bg_surf, const std::map<std::string, Font> &fonts);
+    ~Battle();
     void Update(double dt);
     void Setup();
+    void CreateMonster(const Monster &monster, int index, int pos_index, const std::string &entity);
 
 private:
 
@@ -24,4 +26,8 @@ private:
     std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> monsters_frames;
     std::map<std::string, Font> fonts;
     std::map<std::string, std::vector<Monster>> monster_data;
+
+    SpriteGroup *battle_sprites = nullptr;
+    SpriteGroup *player_sprites = nullptr;
+    SpriteGroup *opponent_sprites = nullptr;
 };

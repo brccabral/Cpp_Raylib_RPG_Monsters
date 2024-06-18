@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include <vector>
 #include <string>
 #include <utility>
 #include <raylib.h>
@@ -38,24 +39,21 @@ inline std::map<std::string, int> WORLD_LAYERS = {
         {"top", 4}, //
 };
 
-inline std::map<std::string, std::map<std::string, Vector2>> BATTLE_POSITIONS = {
-        //
+inline std::map<std::string, std::vector<Vector2>> BATTLE_POSITIONS = {
         {
                 "left",
                 {
-                        //
-                        {"top", {360, 260}}, //
-                        {"center", {190, 400}}, //
-                        {"bottom", {410, 520}} //
+                        {360, 260}, // top
+                        {190, 400}, // center
+                        {410, 520} // bottom
                 } //
         }, //
         {
                 "right",
                 {
-                        //
-                        {"top", {900, 260}}, //
-                        {"center", {1110, 390}}, //
-                        {"bottom", {900, 550}} //
+                        {900, 260}, // top
+                        {1110, 390}, // center
+                        {900, 550} // bottom
                 } //
         } //
 };

@@ -106,6 +106,18 @@ void AnimatedSprite::Update(const double deltaTime)
     Animate(deltaTime);
 }
 
+MonsterSprite::MonsterSprite(
+        const Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
+        const std::vector<SpriteGroup *> &sgs, Monster monster, const int index,
+        const int pos_index, std::string entity)
+    : SimpleSprite(sgs), index(index), pos_index(pos_index), entity(std::move(entity)),
+      monster(std::move(monster)), frames(frms)
+{
+    image = frames[state][int(frame_index)];
+    rect = image.rect;
+    RectToCenter(rect, position);
+}
+
 void SpriteGroup::Draw() const
 {
     for (const auto *sprite: sprites)

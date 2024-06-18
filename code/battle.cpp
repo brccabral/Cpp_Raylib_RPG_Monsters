@@ -1,6 +1,7 @@
+#include <cstring>
+#include <iostream>
 #include "battle.h"
 
-#include <iostream>
 
 Battle::Battle(
         const std::vector<Monster> &player_monsters, const std::vector<Monster> &opponent_monsters,
@@ -10,13 +11,25 @@ Battle::Battle(
     : bg_surf(bg_surf), monsters_frames(monsters_frames), fonts(fonts),
       monster_data({{"player", player_monsters}, {"opponent", opponent_monsters}})
 {
+    battle_sprites = new SpriteGroup();
+    player_sprites = new SpriteGroup();
+    opponent_sprites = new SpriteGroup();
+
     Setup();
+}
+
+Battle::~Battle()
+{
+    delete battle_sprites;
+    delete player_sprites;
+    delete opponent_sprites;
 }
 
 void Battle::Update(const double dt)
 {
     BeginTextureMode(display_surface);
     DrawTexture(bg_surf, 0, 0, WHITE);
+    battle_sprites->Draw();
     EndTextureMode();
 }
 
@@ -26,7 +39,21 @@ void Battle::Setup()
     {
         for (int index = 0; index <= 2; ++index)
         {
-            std::cout << monsters[index] << "\n";
+            CreateMonster(monsters[index], index, index, entity);
         }
     }
+}
+
+void Battle::CreateMonster(
+        const Monster &monster, int index, const int pos_index, const std::string &entity)
+{
+    const auto frames = monsters_frames[monster.name];
+    if (std::strcmp(entity.c_str(), "player") == 0)
+    {
+        const Vector2 pos = BATTLE_POSITIONS["left"][pos_index];
+        const std::vector<SpriteGroup *> groups = {battle_sprites, player_sprites};
+        new MonsterSprite(pos, frames, groups, monster, index, pos_index, entity);
+    }
+    else
+    {}
 }
