@@ -27,11 +27,17 @@ Game::Game(const int width, const int height)
     player_monsters.emplace_back("Charmadillo", 30);
     player_monsters.emplace_back("Friolera", 29);
     player_monsters.emplace_back("Larvea", 3);
-    // player_monsters.emplace_back("Atrox", 24);
-    // player_monsters.emplace_back("Sparchu", 24);
-    // player_monsters.emplace_back("Gulfin", 24);
-    // player_monsters.emplace_back("Jacana", 2);
-    // player_monsters.emplace_back("Pouch", 3);
+    player_monsters.emplace_back("Atrox", 24);
+    player_monsters.emplace_back("Sparchu", 24);
+    player_monsters.emplace_back("Gulfin", 24);
+    player_monsters.emplace_back("Jacana", 2);
+    player_monsters.emplace_back("Pouch", 3);
+
+    dummy_monsters.emplace_back("Atrox", 12);
+    dummy_monsters.emplace_back("Sparchu", 15);
+    dummy_monsters.emplace_back("Gulfin", 19);
+    dummy_monsters.emplace_back("Jacana", 2);
+    dummy_monsters.emplace_back("Pouch", 3);
 
 
     std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> monsters_frames;
@@ -46,11 +52,12 @@ Game::Game(const int width, const int height)
             }
         }
     }
-    monster_index =
-            new MonsterIndex(player_monsters, fonts, named_textures["icons"], monsters_frames, named_textures["ui"]);
     monster_index = new MonsterIndex(
             player_monsters, fonts, named_textures["icons"], monsters_frames, named_textures["ui"]);
 
+    battle = new Battle(
+            player_monsters, dummy_monsters, monsters_frames, named_textures["bg_frames"]["forest"],
+            fonts);
 }
 
 Game::~Game()
@@ -127,6 +134,10 @@ void Game::run()
         {
             monster_index->Update(dt);
         }
+        if (battle)
+        {
+            battle->Update(dt);
+        }
 
         TintScreen(dt);
 
@@ -156,6 +167,7 @@ void Game::ImporAssets()
     named_textures["monsters"] = ImportNamedFolder("resources/graphics/monsters");
     named_textures["icons"] = ImportNamedFolder("resources/graphics/icons");
     named_textures["ui"] = ImportNamedFolder("resources/graphics/ui");
+    named_textures["bg_frames"] = ImportNamedFolder("resources/graphics/backgrounds");
 
     named_rect_frames["coast"] = coast_rects();
     named_rect_frames["monsters"] = MonsterImporter(4, 2, "resources/graphics/monsters");
@@ -471,6 +483,7 @@ void Game::UnloadResources()
     delete characters_sprites;
     delete transition_sprites;
     delete monster_index;
+    delete battle;
 }
 
 void Game::CreateDialog(const Character *character)

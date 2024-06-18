@@ -1,4 +1,7 @@
 #pragma once
+#include "battle.h"
+
+
 #include <map>
 #include <string>
 #include <tmx.h>
@@ -63,7 +66,8 @@ private:
 
     // overlays
     DialogTree *dialog_tree = nullptr;
-    MonsterIndex *monster_index;
+    MonsterIndex *monster_index = nullptr;
+    Battle *battle = nullptr;
     bool index_open = false;
 
     // Transition / tint
@@ -74,4 +78,5 @@ private:
     int tint_direction = -1;
     double tint_speed = 600;
     std::vector<Monster> player_monsters;
+    std::vector<Monster> dummy_monsters;
 };
