@@ -47,3 +47,11 @@ std::vector<std::string> Monster::GetAbilities()
     }
     return result;
 }
+
+std::ostream &operator<<(std::ostream &os, Monster const &m)
+{
+    char level[3];
+    sprintf(level, "%d", m.level);
+    os << std::string("Monster: ") << m.name << std::string(", lvl: ") << std::string(level);
+    return os;
+}

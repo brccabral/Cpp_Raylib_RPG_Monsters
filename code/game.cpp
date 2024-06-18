@@ -420,7 +420,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
 
 void Game::Input()
 {
-    if (dialog_tree)
+    if (dialog_tree || battle)
     {
         return;
     }

@@ -12,6 +12,7 @@ public:
     float GetStat(const std::string &stat);
     std::vector<std::pair<std::string, float>> GetStats();
     std::vector<std::string> GetAbilities();
+    friend std::ostream &operator<<(std::ostream &os, Monster const &m);
 
     std::string name;
     int level;

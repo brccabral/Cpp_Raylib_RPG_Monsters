@@ -16,6 +16,7 @@ public:
                    &monsters_frames,
            const Texture2D &bg_surf, const std::map<std::string, Font> &fonts);
     void Update(double dt);
+    void Setup();
 
 private:
 
