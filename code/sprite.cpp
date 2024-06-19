@@ -17,13 +17,9 @@ SimpleSprite::SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups)
     }
 }
 
-SimpleSprite::~SimpleSprite()
-{
-    if (image.texture)
-    {
-        UnloadTexture(*image.texture);
-    }
-}
+// the TMX images are unloaded in ~Game()::UnloadTMX
+// if the sub class has its own render/texture, unload it there
+SimpleSprite::~SimpleSprite() = default;
 
 void SimpleSprite::Draw(const Vector2 offset) const
 {

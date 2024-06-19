@@ -61,13 +61,10 @@ Texture2D *DialogSprite::CreateImage()
     // we unload in ~DialogSprite()
     render = LoadRenderTextureV(image.rect.size);
 
-    BeginTextureModeC(render, BLACK);
+    BeginTextureModeC(render, BLANK);
     DrawTextureRec(inverted.texture, image.rect.rectangle, {0, 0}, WHITE);
     EndTextureMode();
 
-    const auto result = (Texture2D *) MemAlloc(sizeof(Texture2D));
-    *result = render.texture;
-
     UnloadRenderTexture(inverted);
-    return result;
+    return &render.texture;
 }
