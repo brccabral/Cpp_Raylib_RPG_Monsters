@@ -31,7 +31,7 @@ class SimpleSprite
 public:
 
     explicit SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups);
-    virtual ~SimpleSprite() = default;
+    virtual ~SimpleSprite();
 
     virtual void Draw(Vector2 offset) const;
     virtual void Update(double deltaTime){};

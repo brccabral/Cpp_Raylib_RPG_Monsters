@@ -6,7 +6,8 @@
 
 
 DialogSprite::DialogSprite(
-        std::string msg, const Character *trainer, const std::vector<SpriteGroup *> &grps, const Font &font_)
+        std::string msg, const Character *trainer, const std::vector<SpriteGroup *> &grps,
+        const Font &font_)
     : SimpleSprite(grps), message(std::move(msg)), font(font_)
 {
     z = WORLD_LAYERS["top"];
@@ -29,19 +30,20 @@ DialogSprite::DialogSprite(
 
 DialogSprite::~DialogSprite()
 {
+    UnloadRenderTexture(inverted);
     // remove itself from groups so that groups.update() won't
     // call this object
     for (auto *group: groups)
     {
-        group->sprites.erase(std::remove(group->sprites.begin(), group->sprites.end(), this), group->sprites.end());
+        group->sprites.erase(
+                std::remove(group->sprites.begin(), group->sprites.end(), this),
+                group->sprites.end());
     }
 }
 
-Texture2D *DialogSprite::CreateImage() const
+Texture2D *DialogSprite::CreateImage()
 {
     const RenderTexture2D render = LoadRenderTextureV(image.rect.size);
-    while (!IsRenderTextureReady(render))
-    {}
     BeginTextureMode(render);
 
     DrawRectangleRounded(image.rect.rectangle, 0.3, 10, COLORS["pure white"]);
@@ -55,9 +57,8 @@ Texture2D *DialogSprite::CreateImage() const
     // need another render to invert the image
     // https://github.com/raysan5/raylib/issues/3803
     // https://github.com/raysan5/raylib/issues/378
-    const RenderTexture2D inverted = LoadRenderTextureV(image.rect.size);
-    while (!IsRenderTextureReady(inverted))
-    {}
+    // we unload in ~DialogSprite()
+    inverted = LoadRenderTextureV(image.rect.size);
 
     BeginTextureMode(inverted);
     DrawTextureRec(render.texture, image.rect.rectangle, {0, 0}, WHITE);
@@ -65,5 +66,7 @@ Texture2D *DialogSprite::CreateImage() const
 
     const auto result = (Texture2D *) MemAlloc(sizeof(Texture2D));
     *result = inverted.texture;
+
+    UnloadRenderTexture(render);
     return result;
 }

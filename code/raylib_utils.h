@@ -354,5 +354,8 @@ inline Vector2 MeasureTextF(const Font &font, const char *text, const int spacin
 
 inline RenderTexture2D LoadRenderTextureV(const Vector2 size)
 {
-    return LoadRenderTexture(size.x, size.y);
+    const RenderTexture2D render = LoadRenderTexture(size.x, size.y);
+    while (!IsRenderTextureReady(render))
+    {}
+    return render;
 }

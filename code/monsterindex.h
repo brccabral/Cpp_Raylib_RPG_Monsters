@@ -17,6 +17,7 @@ public:
             const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
                     &monsters_frms,
             const std::map<std::string, Texture2D> &ui_frms);
+    ~MonsterIndex();
     void Update(double dt);
     static std::map<std::string, float> GetMaxStats();
 

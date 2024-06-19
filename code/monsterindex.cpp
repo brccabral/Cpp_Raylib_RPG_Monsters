@@ -9,16 +9,23 @@ MonsterIndex::MonsterIndex(
         const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
                 &monsters_frms,
         const std::map<std::string, Texture2D> &ui_frms)
-    : fonts(fonts), monsters(monsters), icon_frames(monster_icons), monsters_frames(monsters_frms),
-      ui_frames(ui_frms)
+    : fonts(fonts), monsters(monsters), icon_frames(monster_icons), ui_frames(ui_frms),
+      monsters_frames(monsters_frms)
 {
     RectToCenter(main_rect, {WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
 
     tint_surface = LoadRenderTexture(WINDOW_WIDTH, WINDOW_HEIGHT);
+    while (!IsRenderTextureReady(tint_surface))
+    {}
     BeginTextureMode(tint_surface);
     ClearBackground(BLACK);
     DrawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, Fade(BLACK, 200.0f / 255.0f));
     EndTextureMode();
+}
+
+MonsterIndex::~MonsterIndex()
+{
+    UnloadRenderTexture(tint_surface);
 }
 
 void MonsterIndex::Update(const double dt)
@@ -56,7 +63,7 @@ std::map<std::string, float> MonsterIndex::GetMaxStats()
 void MonsterIndex::DisplayList()
 {
     // BeginTextureMode was called in Update()
-    RectangleU bg_rect = {main_rect.pos, {list_width, main_rect.height}};
+    const RectangleU bg_rect = {main_rect.pos, {list_width, main_rect.height}};
     DrawRectangleRoundedCorners(bg_rect, 0.1, 10, COLORS["gray"], true, false, false, true);
 
     // vertical offset
