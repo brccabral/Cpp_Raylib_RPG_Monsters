@@ -27,7 +27,7 @@ Battle::~Battle()
 
 void Battle::Update(const double dt)
 {
-    BeginTextureMode(display_surface);
+    BeginTextureModeC(display_surface, BLACK);
     DrawTexture(bg_surf, 0, 0, WHITE);
     battle_sprites->Draw();
     EndTextureMode();

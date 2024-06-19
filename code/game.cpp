@@ -98,8 +98,7 @@ void Game::ClearSpriteGroups()
 
 void Game::Draw() const
 {
-    BeginTextureMode(display_surface);
-    ClearBackground(BLACK);
+    BeginTextureModeC(display_surface, BLACK);
     all_sprites->Draw(player);
     EndTextureMode();
 }

@@ -17,5 +17,5 @@ public:
     int y_sort{};
     const Font font;
     Vector2 textsize{};
-    RenderTexture2D inverted{};
+    RenderTexture2D render{};
 };

@@ -17,8 +17,7 @@ MonsterIndex::MonsterIndex(
     tint_surface = LoadRenderTexture(WINDOW_WIDTH, WINDOW_HEIGHT);
     while (!IsRenderTextureReady(tint_surface))
     {}
-    BeginTextureMode(tint_surface);
-    ClearBackground(BLACK);
+    BeginTextureModeC(tint_surface, BLANK);
     DrawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, Fade(BLACK, 200.0f / 255.0f));
     EndTextureMode();
 }
@@ -33,7 +32,8 @@ void MonsterIndex::Update(const double dt)
     // input
     Input();
 
-    BeginTextureMode(display_surface);
+    // we draw on top of main game
+    BeginTextureMode(display_surface); // we don't want to clear what is there
 
     // tint main game
     DrawTexture(tint_surface.texture, 0, 0, WHITE);

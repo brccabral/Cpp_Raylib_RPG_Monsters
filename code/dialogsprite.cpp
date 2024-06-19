@@ -30,7 +30,7 @@ DialogSprite::DialogSprite(
 
 DialogSprite::~DialogSprite()
 {
-    UnloadRenderTexture(inverted);
+    UnloadRenderTexture(render);
     // remove itself from groups so that groups.update() won't
     // call this object
     for (auto *group: groups)
@@ -43,8 +43,9 @@ DialogSprite::~DialogSprite()
 
 Texture2D *DialogSprite::CreateImage()
 {
-    const RenderTexture2D render = LoadRenderTextureV(image.rect.size);
-    BeginTextureMode(render);
+    // we Unload in ~DialogSprite()
+    const RenderTexture2D inverted = LoadRenderTextureV(image.rect.size);
+    BeginTextureModeC(inverted, BLANK);
 
     DrawRectangleRounded(image.rect.rectangle, 0.3, 10, COLORS["pure white"]);
 
@@ -58,15 +59,15 @@ Texture2D *DialogSprite::CreateImage()
     // https://github.com/raysan5/raylib/issues/3803
     // https://github.com/raysan5/raylib/issues/378
     // we unload in ~DialogSprite()
-    inverted = LoadRenderTextureV(image.rect.size);
+    render = LoadRenderTextureV(image.rect.size);
 
-    BeginTextureMode(inverted);
-    DrawTextureRec(render.texture, image.rect.rectangle, {0, 0}, WHITE);
+    BeginTextureModeC(render, BLACK);
+    DrawTextureRec(inverted.texture, image.rect.rectangle, {0, 0}, WHITE);
     EndTextureMode();
 
     const auto result = (Texture2D *) MemAlloc(sizeof(Texture2D));
-    *result = inverted.texture;
+    *result = render.texture;
 
-    UnloadRenderTexture(render);
+    UnloadRenderTexture(inverted);
     return result;
 }
