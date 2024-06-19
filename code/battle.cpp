@@ -48,12 +48,18 @@ void Battle::CreateMonster(
         const Monster &monster, int index, const int pos_index, const std::string &entity)
 {
     const auto frames = monsters_frames[monster.name];
+    Vector2 pos;
+    std::vector<SpriteGroup *> groups;
     if (std::strcmp(entity.c_str(), "player") == 0)
     {
-        const Vector2 pos = BATTLE_POSITIONS["left"][pos_index];
-        const std::vector<SpriteGroup *> groups = {battle_sprites, player_sprites};
+        pos = BATTLE_POSITIONS["left"][pos_index];
+        groups = {battle_sprites, player_sprites};
         new MonsterSprite(pos, frames, groups, monster, index, pos_index, entity);
     }
     else
-    {}
+    {
+        pos = BATTLE_POSITIONS["right"][pos_index];
+        groups = {battle_sprites, opponent_sprites};
+    }
+    new MonsterSprite(pos, frames, groups, monster, index, pos_index, entity);
 }
