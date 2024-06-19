@@ -36,6 +36,7 @@ public:
     virtual void Draw(Vector2 offset) const;
     virtual void Update(double deltaTime){};
     void LeaveOtherGroups(const SpriteGroup *sprite_group);
+    void FlipH();
 
     SpriteType type{SIMPLESPRITE};
     RectangleU rect{};

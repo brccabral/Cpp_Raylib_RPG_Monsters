@@ -48,6 +48,11 @@ void SimpleSprite::LeaveOtherGroups(const SpriteGroup *sprite_group)
     }
 }
 
+void SimpleSprite::FlipH()
+{
+    image.rect.width = -image.rect.width;
+}
+
 Sprite::Sprite(
         const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs,
         const int z_)
