@@ -17,7 +17,8 @@ Game::Game(const int width, const int height)
     // SetTargetFPS(60);
 
     display_surface = LoadRenderTexture(width, height);
-    final_surface = LoadRenderTexture(width, height);
+    while (!IsRenderTextureReady(display_surface))
+    {}
 
     ImporAssets();
     ClearSpriteGroups();
@@ -147,13 +148,18 @@ void Game::run()
 
 void Game::DisplayUpdate() const
 {
-    BeginTextureMode(final_surface);
-    DrawTexture(display_surface.texture, 0, 0, WHITE);
-    EndTextureMode();
-
     BeginDrawing();
     ClearBackground(BLACK);
-    DrawTexture(final_surface.texture, 0, 0, render_tint);
+
+    // RenderTexture renders things flipped in Y axis, we draw it "unflipped"
+    // we need a second RenderTexture2D to invert it.
+    // https://github.com/raysan5/raylib/issues/3803
+    // https://github.com/raysan5/raylib/issues/378=
+    DrawTextureRec(
+            display_surface.texture,
+            {0, 0, (float) display_surface.texture.width, (float) -display_surface.texture.height},
+            {0, 0}, render_tint);
+
     EndDrawing();
 }
 
@@ -449,7 +455,6 @@ void Game::Input()
 void Game::UnloadResources()
 {
     UnloadRenderTexture(display_surface);
-    UnloadRenderTexture(final_surface);
 
     for (const auto &[key, map]: tmx_maps)
     {

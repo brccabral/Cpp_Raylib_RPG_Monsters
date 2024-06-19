@@ -45,12 +45,6 @@ private:
     void TransitionCheck();
     void TintScreen(double dt);
 
-    // BeginTextureMode draws everything upsidedown,
-    // we need a second RenderTexture2D to invert it.
-    // https://github.com/raysan5/raylib/issues/3803
-    // https://github.com/raysan5/raylib/issues/378
-    RenderTexture2D final_surface{};
-
     std::map<std::string, tmx_map *> tmx_maps;
     std::map<std::string, std::vector<Texture2D>> overworld_frames;
     std::map<std::string, std::map<std::string, Texture2D>> named_textures;
