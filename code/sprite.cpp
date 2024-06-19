@@ -115,6 +115,14 @@ void AnimatedSprite::Update(const double deltaTime)
     Animate(deltaTime);
 }
 
+void AnimatedSprite::FlipH()
+{
+    for (auto &[texture, rect]: frames)
+    {
+        rect.width = -rect.width;
+    }
+}
+
 MonsterSprite::MonsterSprite(
         const Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
         const std::vector<SpriteGroup *> &sgs, Monster monster, const int index,
@@ -125,6 +133,28 @@ MonsterSprite::MonsterSprite(
     image = frames[state][int(frame_index)];
     rect = image.rect;
     RectToCenter(rect, position);
+}
+
+void MonsterSprite::Animate(const double dt)
+{
+    frame_index += ANIMATION_SPEED * dt;
+    image = frames[state][int(frame_index) % frames[state].size()];
+}
+
+void MonsterSprite::Update(const double dt)
+{
+    Animate(dt);
+}
+
+void MonsterSprite::FlipH()
+{
+    for (auto &[state, tiles]: frames)
+    {
+        for (auto &[texture, rect]: tiles)
+        {
+            rect.width = -rect.width;
+        }
+    }
 }
 
 void SpriteGroup::Draw() const

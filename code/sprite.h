@@ -36,7 +36,7 @@ public:
     virtual void Draw(Vector2 offset) const;
     virtual void Update(double deltaTime){};
     void LeaveOtherGroups(const SpriteGroup *sprite_group);
-    void FlipH();
+    virtual void FlipH();
 
     SpriteType type{SIMPLESPRITE};
     RectangleU rect{};
@@ -113,6 +113,7 @@ public:
             const std::vector<SpriteGroup *> &sgs, int z = WORLD_LAYERS["main"]);
     void Animate(double deltaTime);
     void Update(double deltaTime) override;
+    void FlipH() override;
 
 private:
 
@@ -129,6 +130,9 @@ public:
             Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
             const std::vector<SpriteGroup *> &sgs, Monster monster, int index, int pos_index,
             std::string entity);
+    void Animate(double dt);
+    void Update(double dt) override;
+    void FlipH() override;
 
 private:
 
