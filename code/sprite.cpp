@@ -127,8 +127,8 @@ MonsterSprite::MonsterSprite(
         const Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
         const std::vector<SpriteGroup *> &sgs, Monster monster, const int index,
         const int pos_index, std::string entity)
-    : SimpleSprite(sgs), index(index), pos_index(pos_index), entity(std::move(entity)),
-      monster(std::move(monster)), frames(frms)
+    : SimpleSprite(sgs), monster(std::move(monster)), index(index), pos_index(pos_index),
+      entity(std::move(entity)), frames(frms)
 {
     image = frames[state][int(frame_index)];
     rect = image.rect;
@@ -156,6 +156,46 @@ void MonsterSprite::FlipH()
             rect.width = -rect.width;
         }
     }
+}
+
+MonsterNameSprite::MonsterNameSprite(
+        const Vector2 pos, MonsterSprite *monster_sprite, const std::vector<SpriteGroup *> &sgs,
+        Font font)
+    : SimpleSprite(sgs), monster_sprite(monster_sprite)
+{
+    const auto [text_width, text_height] =
+            MeasureTextEx(font, monster_sprite->monster.name.c_str(), font.baseSize, 1);
+    int padding = 10;
+    const Vector2 render_size = {text_width + 2 * padding, text_height + 2 * padding};
+
+    // need another render to invert the image
+    // https://github.com/raysan5/raylib/issues/3803
+    // https://github.com/raysan5/raylib/issues/378
+    RenderTexture2D inverted = LoadRenderTextureV(render_size);
+    Vector2 text_pos =
+            GetRectMidTop({0, 0, (float) inverted.texture.width, (float) inverted.texture.height});
+    text_pos = Vector2Add(text_pos, {-text_width / 2, text_height / 2});
+    BeginTextureModeC(inverted, BLANK);
+    DrawRectangle(0, 0, render_size.x, render_size.y, WHITE);
+    DrawTextEx(
+            font, monster_sprite->monster.name.c_str(), text_pos, font.baseSize, 1,
+            COLORS["black"]);
+    EndTextureMode();
+
+    render = LoadRenderTextureV(render_size);
+    BeginTextureModeC(render, BLANK);
+    DrawTexture(inverted.texture, 0, 0, WHITE);
+    EndTextureMode();
+
+    rect.pos = pos;
+    image.rect = {Vector2{0.0f, 0.0f}, render_size};
+    image.texture = &render.texture;
+    UnloadRenderTexture(inverted);
+}
+
+MonsterNameSprite::~MonsterNameSprite()
+{
+    UnloadRenderTexture(render);
 }
 
 void SpriteGroup::Draw() const

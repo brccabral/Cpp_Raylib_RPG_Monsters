@@ -133,16 +133,31 @@ public:
     void Animate(double dt);
     void Update(double dt) override;
     void FlipH() override;
+    Monster monster;
 
 private:
 
     int index;
     int pos_index;
     std::string entity;
-    Monster monster;
 
     float frame_index{};
     std::map<std::string, std::vector<TiledTexture>> frames;
     std::string state = "idle";
     float animation_speed{};
+};
+
+class MonsterNameSprite : SimpleSprite
+{
+public:
+
+    MonsterNameSprite(
+            Vector2 pos, MonsterSprite *monster_sprite, const std::vector<SpriteGroup *> &sgs,
+            Font font);
+    ~MonsterNameSprite() override;
+
+private:
+
+    MonsterSprite *monster_sprite;
+    RenderTexture2D render{};
 };
