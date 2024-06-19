@@ -365,3 +365,9 @@ inline void BeginTextureModeC(const RenderTexture2D &render, const Color color)
     BeginTextureMode(render);
     ClearBackground(color); // remove old memory
 }
+
+inline void BeginDrawingC(const Color color)
+{
+    BeginDrawing();
+    ClearBackground(color);
+}

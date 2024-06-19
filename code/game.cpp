@@ -57,8 +57,8 @@ Game::Game(const int width, const int height)
             player_monsters, fonts, named_textures["icons"], monsters_frames, named_textures["ui"]);
 
     battle = new Battle(
-            player_monsters, dummy_monsters, monsters_frames, named_textures["bg_frames"]["forest"],
-            fonts);
+            player_monsters, dummy_monsters, monsters_frames,
+            named_textures["bg_frames"]["forest"], fonts);
 }
 
 Game::~Game()
@@ -147,11 +147,9 @@ void Game::run()
 
 void Game::DisplayUpdate() const
 {
-    BeginDrawing();
-    ClearBackground(BLACK);
+    BeginDrawingC(BLACK);
 
     // RenderTexture renders things flipped in Y axis, we draw it "unflipped"
-    // we need a second RenderTexture2D to invert it.
     // https://github.com/raysan5/raylib/issues/3803
     // https://github.com/raysan5/raylib/issues/378=
     DrawTextureRec(
