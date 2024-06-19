@@ -15,6 +15,7 @@ Game::Game(const int width, const int height)
     SetTraceLogLevel(LOG_ERROR);
     InitWindow(width, height, "RPG Monsters");
     // SetTargetFPS(60);
+    SetRandomSeed(GetTime());
 
     display_surface = LoadRenderTexture(width, height);
     while (!IsRenderTextureReady(display_surface))
@@ -57,8 +58,8 @@ Game::Game(const int width, const int height)
             player_monsters, fonts, named_textures["icons"], monsters_frames, named_textures["ui"]);
 
     battle = new Battle(
-            player_monsters, dummy_monsters, monsters_frames,
-            named_textures["bg_frames"]["forest"], fonts);
+            player_monsters, dummy_monsters, monsters_frames, named_textures["bg_frames"]["forest"],
+            fonts);
 }
 
 Game::~Game()

@@ -1,4 +1,5 @@
 #pragma once
+#include <random>
 #include <raylib.h>
 #include <raymath.h>
 #include "settings.h"
@@ -370,4 +371,13 @@ inline void BeginDrawingC(const Color color)
 {
     BeginDrawing();
     ClearBackground(color);
+}
+
+static std::default_random_engine rd{};
+static std::mt19937 e2(rd());
+
+inline float GetRandomUniform(const float min, const float max)
+{
+    std::uniform_real_distribution<> dist(min, (max));
+    return dist(e2);
 }

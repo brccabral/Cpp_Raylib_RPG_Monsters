@@ -133,11 +133,12 @@ MonsterSprite::MonsterSprite(
     image = frames[state][int(frame_index)];
     rect = image.rect;
     RectToCenter(rect, position);
+    animation_speed = ANIMATION_SPEED + GetRandomUniform(-1, 1);
 }
 
 void MonsterSprite::Animate(const double dt)
 {
-    frame_index += ANIMATION_SPEED * dt;
+    frame_index += animation_speed * dt;
     image = frames[state][int(frame_index) % frames[state].size()];
 }
 

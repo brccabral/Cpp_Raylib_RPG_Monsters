@@ -144,4 +144,5 @@ private:
     float frame_index{};
     std::map<std::string, std::vector<TiledTexture>> frames;
     std::string state = "idle";
+    float animation_speed{};
 };
