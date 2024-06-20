@@ -19,7 +19,7 @@ MonsterIndex::MonsterIndex(
     {}
     BeginTextureModeC(tint_surface, BLANK);
     DrawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, Fade(BLACK, 200.0f / 255.0f));
-    EndTextureMode();
+    EndTextureModeSafe();
 }
 
 MonsterIndex::~MonsterIndex()
@@ -33,7 +33,7 @@ void MonsterIndex::Update(const double dt)
     Input();
 
     // we draw on top of main game
-    BeginTextureMode(display_surface); // we don't want to clear what is there
+    BeginTextureModeSafe(display_surface); // we don't want to clear what is there
 
     // tint main game
     DrawTexture(tint_surface.texture, 0, 0, WHITE);
@@ -42,7 +42,7 @@ void MonsterIndex::Update(const double dt)
     // display the main section
     DisplayMain(dt);
 
-    EndTextureMode();
+    EndTextureModeSafe();
 }
 
 std::map<std::string, float> MonsterIndex::GetMaxStats()

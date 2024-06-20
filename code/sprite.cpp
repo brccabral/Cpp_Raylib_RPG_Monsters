@@ -177,12 +177,12 @@ MonsterNameSprite::MonsterNameSprite(
     BeginTextureModeC(inverted, BLANK);
     DrawRectangleRec(image.rect.rectangle, WHITE);
     DrawCenteredTextEx(font, monster_sprite->monster.name.c_str(), image.rect);
-    EndTextureMode();
+    EndTextureModeSafe();
 
     render = LoadRenderTextureV(render_size);
     BeginTextureModeC(render, BLANK);
     DrawTexture(inverted.texture, 0, 0, WHITE);
-    EndTextureMode();
+    EndTextureModeSafe();
 
     image.texture = &render.texture;
 
@@ -204,11 +204,11 @@ void MonsterLevelSprite::UpdateTexture() const
     DrawCenteredTextEx(font, TextFormat("Lvl %i", monster_sprite->monster.level), image.rect);
     DrawBar(xp_rect, monster_sprite->monster.xp, monster_sprite->monster.level_up, COLORS["black"],
             COLORS["white"]);
-    EndTextureMode();
+    EndTextureModeSafe();
 
     BeginTextureMode(render);
     DrawTexture(inverted.texture, 0, 0, WHITE);
-    EndTextureMode();
+    EndTextureModeSafe();
 }
 
 MonsterLevelSprite::MonsterLevelSprite(

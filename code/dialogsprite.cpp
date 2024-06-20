@@ -53,7 +53,7 @@ Texture2D *DialogSprite::CreateImage()
     const auto offset = Vector2Subtract(image.rect.size, textsize);
     DrawTextEx(font, message.c_str(), Vector2Scale(offset, 0.5f), FONT_SIZE, 2, COLORS["black"]);
 
-    EndTextureMode();
+    EndTextureModeSafe();
 
     // need another render to invert the image
     // https://github.com/raysan5/raylib/issues/3803
@@ -63,7 +63,7 @@ Texture2D *DialogSprite::CreateImage()
 
     BeginTextureModeC(render, BLANK);
     DrawTextureRec(inverted.texture, image.rect.rectangle, {0, 0}, WHITE);
-    EndTextureMode();
+    EndTextureModeSafe();
 
     UnloadRenderTexture(inverted);
     return &render.texture;

@@ -101,7 +101,7 @@ void Game::Draw() const
 {
     BeginTextureModeC(display_surface, BLACK);
     all_sprites->Draw(player);
-    EndTextureMode();
+    EndTextureModeSafe();
 }
 
 void Game::run()

@@ -367,9 +367,13 @@ inline RenderTexture2D LoadRenderTextureV(const Vector2 size)
     return render;
 }
 
+void BeginTextureModeSafe(const RenderTexture2D &render);
+
+void EndTextureModeSafe();
+
 inline void BeginTextureModeC(const RenderTexture2D &render, const Color color)
 {
-    BeginTextureMode(render);
+    BeginTextureModeSafe(render);
     ClearBackground(color); // remove old memory
 }
 

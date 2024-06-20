@@ -34,7 +34,7 @@ void Battle::Update(const double dt)
     BeginTextureModeC(display_surface, BLACK);
     DrawTexture(bg_surf, 0, 0, WHITE);
     battle_sprites->Draw();
-    EndTextureMode();
+    EndTextureModeSafe();
 }
 
 void Battle::Setup()
