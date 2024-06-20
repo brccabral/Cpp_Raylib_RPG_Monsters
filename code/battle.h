@@ -1,10 +1,6 @@
 #pragma once
-#include "groups.h"
-#include "monster.h"
-#include "sprite.h"
-
-
 #include <vector>
+#include "groups.h"
 
 
 class Battle

@@ -1,14 +1,7 @@
 #pragma once
+#include "raylib-tmx.h"
 #include "battle.h"
-
-
-#include <map>
-#include <string>
-#include <tmx.h>
 #include "dialogtree.h"
-#include "entities.h"
-#include "groups.h"
-#include "monster.h"
 #include "monsterindex.h"
 #include "support.h"
 

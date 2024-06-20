@@ -1,8 +1,7 @@
 #pragma once
-#include "settings.h"
 #include <string>
 #include <vector>
-
+#include "settings.h"
 
 struct TrainerDialog
 {
@@ -39,7 +38,8 @@ inline CharacterData o1 = {
 
 inline CharacterData o2 = {
         {{"Atrox", 14}, {"Pouch", 15}, {"Draem", 13}, {"Cindrill", 13}}, //
-        {{"I don't like sand", "It's coarse and rough", "oh god, fight"}, {"May the force be with you"}}, //
+        {{"I don't like sand", "It's coarse and rough", "oh god, fight"},
+         {"May the force be with you"}}, //
         {LEFT, DOWN},
         false,
         false,
@@ -85,7 +85,8 @@ inline CharacterData o6 = {
 
 inline CharacterData o7 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
-        {{"There are no bugs in the snow!"}, {"Maybe I should check a vulcano...", "It's so cold in here"}}, //
+        {{"There are no bugs in the snow!"},
+         {"Maybe I should check a vulcano...", "It's so cold in here"}}, //
         {RIGHT},
         false,
         false,
@@ -139,7 +140,8 @@ inline CharacterData px = {
 
 inline CharacterData w1 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
-        {{"It's so cold in here", "maybe a fight will warm me up"}, {"Good luck with the boss!"}}, //
+        {{"It's so cold in here", "maybe a fight will warm me up"},
+         {"Good luck with the boss!"}}, //
         {LEFT},
         true,
         false,
@@ -148,7 +150,8 @@ inline CharacterData w1 = {
 
 inline CharacterData w2 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
-        {{"It's so cold in here", "maybe a fight will warm me up"}, {"Good luck with the boss!"}}, //
+        {{"It's so cold in here", "maybe a fight will warm me up"},
+         {"Good luck with the boss!"}}, //
         {RIGHT},
         true,
         false,
@@ -157,7 +160,8 @@ inline CharacterData w2 = {
 
 inline CharacterData w3 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
-        {{"It's so cold in here", "maybe a fight will warm me up"}, {"Good luck with the boss!"}}, //
+        {{"It's so cold in here", "maybe a fight will warm me up"},
+         {"Good luck with the boss!"}}, //
         {RIGHT},
         true,
         false,
@@ -166,7 +170,8 @@ inline CharacterData w3 = {
 
 inline CharacterData w4 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
-        {{"It's so cold in here", "maybe a fight will warm me up"}, {"Good luck with the boss!"}}, //
+        {{"It's so cold in here", "maybe a fight will warm me up"},
+         {"Good luck with the boss!"}}, //
         {LEFT},
         true,
         false,
@@ -175,7 +180,8 @@ inline CharacterData w4 = {
 
 inline CharacterData w5 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
-        {{"It's so cold in here", "maybe a fight will warm me up"}, {"Good luck with the boss!"}}, //
+        {{"It's so cold in here", "maybe a fight will warm me up"},
+         {"Good luck with the boss!"}}, //
         {RIGHT},
         true,
         false,

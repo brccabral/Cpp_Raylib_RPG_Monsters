@@ -1,7 +1,5 @@
 #include <algorithm>
 #include "groups.h"
-#include "settings.h"
-#include "raylib_utils.h"
 
 AllSprites::AllSprites()
 {

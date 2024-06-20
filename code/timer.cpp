@@ -1,6 +1,6 @@
+#include <raylib.h>
 #include "timer.h"
 
-#include <raylib.h>
 
 Timer::Timer(
         const float duration, const bool repeat, const bool autostart,

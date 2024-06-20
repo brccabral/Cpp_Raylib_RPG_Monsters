@@ -3,6 +3,7 @@
 #include "sprite.h"
 #include "timer.h"
 
+
 class Game;
 class Entity : public SimpleSprite
 {

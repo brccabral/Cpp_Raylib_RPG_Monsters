@@ -1,10 +1,8 @@
 #pragma once
-#include <vector>
 #include <raylib.h>
+#include <vector>
 #include "monster.h"
-#include "settings.h"
 #include "sprite.h"
-#include "support.h"
 
 
 class MonsterIndex

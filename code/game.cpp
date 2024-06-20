@@ -3,11 +3,7 @@
 #define RAYLIB_TMX_IMPLEMENTATION
 #include "raylib-tmx.h"
 #include "game.h"
-
-#include "dialogtree.h"
-#include "settings.h"
-#include "sprite.h"
-#include "entities.h"
+#include "raylib_utils.h"
 
 
 Game::Game(const int width, const int height)
@@ -47,7 +43,7 @@ Game::Game(const int width, const int height)
     {
         for (const auto &[key, frames]: animations)
         {
-            for (auto frame: frames)
+            for (const auto frame: frames)
             {
                 TiledTexture tiled_texture = {&named_textures["monsters"][monster_name], frame};
                 monsters_frames[monster_name][key].push_back(tiled_texture);

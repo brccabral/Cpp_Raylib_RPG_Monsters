@@ -1,12 +1,8 @@
 #include <cstring>
-#include <utility>
 #include <algorithm>
 #include "sprite.h"
-#include "dialogsprite.h"
-#include "entities.h"
-#include "raylib_utils.h"
-#include "settings.h"
 #include "support.h"
+#include "dialogsprite.h"
 
 
 SimpleSprite::SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups)
@@ -74,7 +70,7 @@ MonsterPatchSprite::MonsterPatchSprite(
 {
     y_sort -= 40;
     // move sand patches to background drawing layer
-    if (strcmp(biome.c_str(), "sand") == 0)
+    if (std::strcmp(biome.c_str(), "sand") == 0)
     {
         z = WORLD_LAYERS["bg"];
     }
@@ -176,7 +172,7 @@ MonsterNameSprite::MonsterNameSprite(
     // https://github.com/raysan5/raylib/issues/378
     RenderTexture2D inverted = LoadRenderTextureV(render_size);
     BeginTextureModeC(inverted, WHITE);
-    DrawCenteredTextEx(font, monster_sprite->monster.name.c_str(), image.rect);
+    DrawCenteredTextEx(font, monster_sprite->monster.name.c_str(), image.rect, COLORS["black"]);
     EndTextureModeSafe();
 
     render = LoadRenderTextureV(render_size);
@@ -202,7 +198,8 @@ MonsterNameSprite::~MonsterNameSprite()
 void MonsterLevelSprite::UpdateTexture() const
 {
     BeginTextureModeC(inverted, WHITE);
-    DrawCenteredTextEx(font, TextFormat("Lvl %i", monster_sprite->monster.level), image.rect);
+    DrawCenteredTextEx(
+            font, TextFormat("Lvl %i", monster_sprite->monster.level), image.rect, COLORS["black"]);
     DrawBar(xp_rect, monster_sprite->monster.xp, monster_sprite->monster.level_up, COLORS["black"],
             COLORS["white"]);
     EndTextureModeSafe();
@@ -253,8 +250,8 @@ void MonsterLevelSprite::Update(const double deltaTime)
 }
 
 MonsterStatsSprite::MonsterStatsSprite(
-        Vector2 pos, MonsterSprite *monster_sprite, Vector2 size,
-        const std::vector<SpriteGroup *> &sgs, Font font)
+        const Vector2 pos, MonsterSprite *monster_sprite, const Vector2 size,
+        const std::vector<SpriteGroup *> &sgs, const Font &font)
     : SimpleSprite(sgs), monster_sprite(monster_sprite), font(font)
 {
     render = LoadRenderTextureV(size);

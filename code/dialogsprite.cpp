@@ -1,7 +1,6 @@
 #include <utility>
 #include <algorithm>
 #include "raylib_utils.h"
-#include <raymath.h>
 #include "dialogsprite.h"
 
 

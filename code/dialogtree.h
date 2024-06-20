@@ -1,16 +1,13 @@
 #pragma once
 #include "dialogsprite.h"
-#include "entities.h"
-#include "groups.h"
-#include "timer.h"
 
 class DialogTree
 {
 public:
 
     DialogTree(
-            const Character *character_, Player *player_, const std::vector<SpriteGroup *> &grps, const Font &font_,
-            const std::function<void(const Character *)> &end_dialog);
+            const Character *character_, Player *player_, const std::vector<SpriteGroup *> &grps,
+            const Font &font_, const std::function<void(const Character *)> &end_dialog);
     ~DialogTree();
     void Input();
     void Update();

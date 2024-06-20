@@ -1,8 +1,6 @@
 #pragma once
-#include <random>
 #include <raylib.h>
 #include <raymath.h>
-#include "settings.h"
 
 typedef union RectangleU
 {
@@ -65,336 +63,69 @@ typedef union Vector4U
     float f[4];
 } Vector4U;
 
-inline Vector2 GetRectCenter(const RectangleU rect)
-{
-    return {rect.x + rect.width / 2, rect.y + rect.height / 2};
-}
+RLAPI Vector2 GetRectCenter(RectangleU rect);
 
-inline Vector2 GetRectMidBottom(const RectangleU rect)
-{
-    return {rect.x + rect.width / 2, rect.y + rect.height};
-}
+RLAPI Vector2 GetRectMidBottom(RectangleU rect);
 
-inline Vector2 GetRectMidTop(const RectangleU rect)
-{
-    return {rect.x + rect.width / 2, rect.y};
-}
+RLAPI Vector2 GetRectMidTop(RectangleU rect);
 
-inline Vector2 GetRectMidLeft(const RectangleU rect)
-{
-    return {rect.x, rect.y + rect.height / 2};
-}
+RLAPI Vector2 GetRectMidLeft(RectangleU rect);
 
-inline Vector2 GetRectMidRight(const RectangleU rect)
-{
-    return {rect.x + rect.width, rect.y + rect.height / 2};
-}
+RLAPI Vector2 GetRectMidRight(RectangleU rect);
 
-inline Vector2 GetRectTopLeft(const RectangleU rect)
-{
-    // return {rect.x, rect.y};
-    return rect.pos;
-}
+RLAPI Vector2 GetRectTopLeft(RectangleU rect);
 
-inline Vector2 GetRectTopRight(const RectangleU rect)
-{
-    return {rect.x + rect.width, rect.y};
-}
+RLAPI Vector2 GetRectTopRight(RectangleU rect);
 
-inline Vector2 GetRectBottomLeft(const RectangleU rect)
-{
-    return {rect.x, rect.y + rect.height};
-}
+RLAPI Vector2 GetRectBottomLeft(RectangleU rect);
 
-inline Vector2 GetRectBottomRight(const RectangleU rect)
-{
-    return {rect.x + rect.width, rect.y + rect.height};
-}
+RLAPI Vector2 GetRectBottomRight(RectangleU rect);
 
-inline void RectToCenter(RectangleU &rect, const Vector2 pos)
-{
-    rect.x = pos.x - rect.width / 2;
-    rect.y = pos.y - rect.height / 2;
-}
+RLAPI void RectToCenter(RectangleU &rect, Vector2 pos);
 
-inline void RectToMidBottom(RectangleU &rect, const Vector2 pos)
-{
-    rect.x = pos.x - rect.width / 2;
-    rect.y = pos.y - rect.height;
-}
+RLAPI void RectToMidBottom(RectangleU &rect, Vector2 pos);
 
-inline void RectToMidLeft(RectangleU &rect, const Vector2 pos)
-{
-    rect.x = pos.x;
-    rect.y = pos.y - rect.height / 2;
-}
+RLAPI void RectToMidLeft(RectangleU &rect, Vector2 pos);
 
-inline void RectToBottomLeft(RectangleU &rect, const Vector2 pos)
-{
-    rect.x = pos.x;
-    rect.y = pos.y - rect.height;
-}
+RLAPI void RectToBottomLeft(RectangleU &rect, Vector2 pos);
 
-inline void RectToTopLeft(RectangleU &rect, const Vector2 pos)
-{
-    // rect.x = pos.x;
-    // rect.y = pos.y;
-    rect.pos = pos;
-}
+RLAPI void RectToTopLeft(RectangleU &rect, Vector2 pos);
 
-inline void RectToTopRight(RectangleU &rect, const Vector2 pos)
-{
-    rect.x = pos.x - rect.width;
-    rect.y = pos.y;
-}
+RLAPI void RectToTopRight(RectangleU &rect, Vector2 pos);
 
-inline Vector2 ViewOffset(const Vector2 player_center)
-{
-    Vector2 offset =
-            Vector2Subtract(player_center, Vector2Scale({WINDOW_WIDTH, WINDOW_HEIGHT}, 0.5));
-    offset = Vector2Scale(offset, -1);
-    return offset;
-}
+RLAPI Vector2 ViewOffset(Vector2 player_center);
 
-inline RectangleU CreateCenteredRect(const RectangleU rect, const Vector2 pos)
-{
-    RectangleU newRect = rect;
-    RectToCenter(newRect, pos);
-    return newRect;
-}
+RLAPI RectangleU CreateCenteredRect(RectangleU rect, Vector2 pos);
 
-inline void MoveVector2(Vector2 &pos, const Vector2 delta)
-{
-    pos.x += delta.x;
-    pos.y += delta.y;
-}
+RLAPI void MoveVector2(Vector2 &pos, Vector2 delta);
 
-inline void MoveRect(RectangleU &rect, const Vector2 pos)
-{
-    // rect.x += pos.x;
-    // rect.y += pos.y;
-    MoveVector2(rect.pos, pos);
-}
+RLAPI void MoveRect(RectangleU &rect, Vector2 pos);
 
-inline void RectInflate(RectangleU &rect, const float width, const float height)
-{
-    const Vector2 oldCenter = GetRectCenter(rect);
-    rect.width += width;
-    rect.height += height;
-    RectToCenter(rect, oldCenter);
-}
+RLAPI void RectInflate(RectangleU &rect, float width, float height);
 
-inline void AbsRect(RectangleU &rect)
-{
-    if (rect.width < 0)
-    {
-        rect.x += rect.width;
-        rect.width = -rect.width;
-    }
+RLAPI void AbsRect(RectangleU &rect);
 
-    if (rect.height < 0)
-    {
-        rect.y += rect.height;
-        rect.height = -rect.height;
-    }
-}
-
-inline bool CheckCollisionRectLine(
-        const RectangleU rect, const Vector2 startPos, const Vector2 endPos,
-        Vector2 *collisionPoint1, Vector2 *collisionPoint2)
-{
-    bool hasCollision = false;
-    bool secondCollision = false;
-    Vector2 *collisionPoint = collisionPoint1;
-
-    const Vector2 topLeft = GetRectTopLeft(rect);
-    const Vector2 topRight = GetRectTopRight(rect);
-    const Vector2 bottomLeft = GetRectBottomLeft(rect);
-    const Vector2 bottomRight = GetRectBottomRight(rect);
-
-    if (CheckCollisionLines(startPos, endPos, topLeft, topRight, collisionPoint))
-    {
-        collisionPoint = collisionPoint2;
-        hasCollision = true;
-    }
-    if (CheckCollisionLines(startPos, endPos, bottomLeft, bottomRight, collisionPoint))
-    {
-        if (hasCollision)
-        {
-            secondCollision = true;
-        }
-        else
-        {
-            collisionPoint = collisionPoint2;
-        }
-        hasCollision = true;
-    }
-    if (!secondCollision &&
-        CheckCollisionLines(startPos, endPos, topLeft, bottomLeft, collisionPoint))
-    {
-        if (hasCollision)
-        {
-            secondCollision = true;
-        }
-        else
-        {
-            collisionPoint = collisionPoint2;
-        }
-        hasCollision = true;
-    }
-    if (!secondCollision &&
-        CheckCollisionLines(startPos, endPos, topRight, bottomRight, collisionPoint))
-    {
-        hasCollision = true;
-    }
-
-    return hasCollision;
-}
-
-
-// ************* Adapted from Raylib "rshapes.c" ***************
-
-// Error rate to calculate how many segments we need to draw a smooth circle,
-// taken from https://stackoverflow.com/a/2244088
-#ifndef SMOOTH_CIRCLE_ERROR_RATE
-#define SMOOTH_CIRCLE_ERROR_RATE 0.5f // Circle error rate
-#endif
+RLAPI bool CheckCollisionRectLine(
+        RectangleU rect, Vector2 startPos, Vector2 endPos, Vector2 *collisionPoint1,
+        Vector2 *collisionPoint2);
 
 // Draw rectangle with rounded edges
-inline void DrawRectangleRoundedCorners(
-        const RectangleU rec, float roundness, int segments, const Color color,
-        const bool TopLeft = true, const bool TopRight = true, const bool BottomRight = true,
-        const bool BottomLeft = true)
-{
-    // Not a rounded rectangle
-    if ((roundness <= 0.0f) || (rec.width < 1) || (rec.height < 1))
-    {
-        DrawRectangleRec(rec.rectangle, color);
-        return;
-    }
+RLAPI void DrawRectangleRoundedCorners(
+        RectangleU rec, float roundness, int segments, Color color, bool TopLeft = true,
+        bool TopRight = true, bool BottomRight = true, bool BottomLeft = true);
 
-    if (roundness >= 1.0f)
-        roundness = 1.0f;
+RLAPI Vector2 MeasureTextF(const Font &font, const char *text, int spacing);
 
-    // Calculate corner radius
-    const float radius = ((rec.width + rec.height) / 2) * roundness / 2;
-    if (radius <= 0.0f)
-        return;
-
-    // Calculate number of segments to use for the corners
-    if (segments < 4)
-    {
-        // Calculate the maximum angle between segments based on the error rate (usually 0.5f)
-        const float th = acosf(2 * powf(1 - SMOOTH_CIRCLE_ERROR_RATE / radius, 2) - 1);
-        segments = (int) (ceilf(2 * PI / th) / 4.0f);
-        if (segments <= 0)
-            segments = 4;
-    }
-
-    // the roundness reduces some dimensions by 1 pixel, we correct it
-    if (TopLeft)
-    {
-        DrawCircleSector({rec.x + radius, rec.y + radius}, radius, 180.0f, 270.0f, segments, color);
-    }
-    else
-    {
-        DrawRectangle(rec.x, rec.y, radius + 1, radius, color);
-    }
-
-    if (TopRight)
-    {
-        DrawCircleSector(
-                {rec.x + rec.width - radius, rec.y + radius}, radius, 270.0f, 360.0f, segments,
-                color);
-    }
-    else
-    {
-        DrawRectangle(rec.x + rec.width - radius, rec.y, radius + 1, radius, color);
-    }
-
-    if (BottomRight)
-    {
-        DrawCircleSector(
-                {rec.x + rec.width - radius, rec.y + rec.height - radius}, radius, 0.0f, 90.0f,
-                segments, color);
-    }
-    else
-    {
-        DrawRectangle(
-                rec.x + rec.width - radius, rec.y + rec.height - radius, radius + 1, radius + 1,
-                color);
-    }
-
-    if (BottomLeft)
-    {
-        DrawCircleSector(
-                {rec.x + radius, rec.y + rec.height - radius}, radius, 90.0f, 180.0f, segments,
-                color);
-    }
-    else
-    {
-        DrawRectangle(rec.x, rec.y + rec.height - radius, radius, radius + 1, color);
-    }
-
-    // Top RectangleU
-    DrawRectangle(rec.x + radius - 1, rec.y, rec.width - 2 * radius + 3, radius, color);
-    // Right RectangleU
-    DrawRectangle(
-            rec.x + rec.width - radius, rec.y + radius - 1, radius + 1, rec.height - 2 * radius + 3,
-            color);
-    // Bottom RectangleU
-    DrawRectangle(
-            rec.x + radius - 1, rec.y + rec.height - radius, rec.width - 2 * radius + 3, radius + 1,
-            color);
-    // Left RectangleU
-    DrawRectangle(rec.x, rec.y + radius - 1, radius, rec.height - 2 * radius + 3, color);
-    // Center RectangleU
-    DrawRectangle(
-            rec.x + radius - 1, rec.y + radius - 1, rec.width - 2 * radius + 2,
-            rec.height - 2 * radius + 2, color);
-}
-
-inline Vector2 MeasureTextF(const Font &font, const char *text, const int spacing)
-{
-    return MeasureTextEx(font, text, font.baseSize, spacing);
-}
-
-inline RenderTexture2D LoadRenderTextureV(const Vector2 size)
-{
-    const RenderTexture2D render = LoadRenderTexture(size.x, size.y);
-    while (!IsRenderTextureReady(render))
-    {}
-    return render;
-}
+RLAPI RenderTexture2D LoadRenderTextureV(Vector2 size);
 
 void BeginTextureModeSafe(const RenderTexture2D &render);
 
 void EndTextureModeSafe();
 
-inline void BeginTextureModeC(const RenderTexture2D &render, const Color color)
-{
-    BeginTextureModeSafe(render);
-    ClearBackground(color); // remove old memory
-}
+RLAPI void BeginTextureModeC(const RenderTexture2D &render, Color color);
 
-inline void BeginDrawingC(const Color color)
-{
-    BeginDrawing();
-    ClearBackground(color);
-}
+RLAPI void BeginDrawingC(Color color);
 
-static std::default_random_engine rd{};
-static std::mt19937 e2(rd());
+RLAPI float GetRandomUniform(float min, float max);
 
-inline float GetRandomUniform(const float min, const float max)
-{
-    std::uniform_real_distribution<> dist(min, (max));
-    return dist(e2);
-}
-
-inline void DrawCenteredTextEx(const Font &font, const char *text, const RectangleU rect)
-{
-    const auto [text_width, text_height] = MeasureTextEx(font, text, font.baseSize, 1);
-    const Vector2 text_pos = {(rect.width - text_width) / 2, (rect.height - text_height) / 2};
-    DrawTextEx(font, text, text_pos, font.baseSize, 1, COLORS["black"]);
-}
+RLAPI void DrawCenteredTextEx(const Font &font, const char *text, RectangleU rect, Color color);

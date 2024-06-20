@@ -1,9 +1,5 @@
 #pragma once
-#include <cstring>
 #include <filesystem>
-#include <map>
-#include <vector>
-#include <raylib.h>
 #include "raylib_utils.h"
 #include "raylib-tmx.h"
 #include "entities.h"

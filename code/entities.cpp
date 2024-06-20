@@ -1,12 +1,6 @@
 #include "entities.h"
-#include <functional>
-#include <utility>
-#include "raylib_utils.h"
-#include "settings.h"
 #include "support.h"
 #include "game.h"
-
-#include <iostream>
 
 
 Entity::Entity(
@@ -109,9 +103,10 @@ FacingDirection Entity::GetState()
 
 Character::Character(
         const Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
-        const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir, CharacterData char_data,
-        const float radius, Game *g)
-    : Entity(pos, face_frms, sgs, facing_dir), character_data(std::move(char_data)), radius(radius), game(g)
+        const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir,
+        CharacterData char_data, const float radius, Game *g)
+    : Entity(pos, face_frms, sgs, facing_dir), character_data(std::move(char_data)), radius(radius),
+      game(g)
 {
     for (const auto sprite: game->collition_sprites->sprites)
     {
@@ -121,7 +116,8 @@ Character::Character(
         }
     }
     view_directions = character_data.directions;
-    timers["look around"] = new Timer(1.5, true, true, std::bind(&Character::RandomViewDirection, this));
+    timers["look around"] =
+            new Timer(1.5, true, true, std::bind(&Character::RandomViewDirection, this));
     timers["notice"] = new Timer{0.5, false, false, std::bind(&Character::StartMove, this)};
 }
 
@@ -159,7 +155,8 @@ void Character::Update(const double dt)
 
 void Character::StartMove()
 {
-    auto [x, y] = Vector2Normalize(Vector2Subtract(GetRectCenter(game->player->rect), GetRectCenter(rect)));
+    auto [x, y] = Vector2Normalize(
+            Vector2Subtract(GetRectCenter(game->player->rect), GetRectCenter(rect)));
 
     // use round() to avoid diagonal movements
     direction = {std::round(x), std::round(y)};
@@ -197,7 +194,8 @@ void Character::RandomViewDirection()
 
 void Character::Raycast()
 {
-    if (!has_moved && !has_noticed && CheckConnections(radius, this, game->player) && HasLineOfSight())
+    if (!has_moved && !has_noticed && CheckConnections(radius, this, game->player) &&
+        HasLineOfSight())
     {
         // character has seen player and moved towards player
         game->player->Block();

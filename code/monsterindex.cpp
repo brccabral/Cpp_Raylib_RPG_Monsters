@@ -1,7 +1,8 @@
 #include "monsterindex.h"
-
+#include "game_data.h"
+#include "support.h"
 #include "raylib_utils.h"
-#include "settings.h"
+
 
 MonsterIndex::MonsterIndex(
         const std::vector<Monster> &monsters, const std::map<std::string, Font> &fonts,

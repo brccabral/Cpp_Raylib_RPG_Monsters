@@ -1,12 +1,9 @@
 #pragma once
-
-
 #include <array>
-#include <vector>
 #include <raylib.h>
 #include "raylib_utils.h"
-#include "settings.h"
 #include "monster.h"
+#include "settings.h"
 
 
 typedef struct TiledTexture
@@ -198,7 +195,7 @@ public:
 
     MonsterStatsSprite(
             Vector2 pos, MonsterSprite *monster_sprite, Vector2 size,
-            const std::vector<SpriteGroup *> &sgs, Font font);
+            const std::vector<SpriteGroup *> &sgs, const Font &font);
     ~MonsterStatsSprite() override;
     void Update(double deltaTime) override;
 
