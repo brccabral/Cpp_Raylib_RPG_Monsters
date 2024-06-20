@@ -333,25 +333,25 @@ inline void DrawRectangleRoundedCorners(
     }
     else
     {
-        DrawRectangle(rec.x, rec.y + rec.height - radius, radius + 1, radius + 1, color);
+        DrawRectangle(rec.x, rec.y + rec.height - radius, radius, radius + 1, color);
     }
 
     // Top RectangleU
-    DrawRectangle(rec.x + radius, rec.y, rec.width - 2 * radius + 1, radius, color);
+    DrawRectangle(rec.x + radius - 1, rec.y, rec.width - 2 * radius + 3, radius, color);
     // Right RectangleU
     DrawRectangle(
-            rec.x + rec.width - radius, rec.y + radius, radius + 1, rec.height - 2 * radius + 1,
+            rec.x + rec.width - radius, rec.y + radius - 1, radius + 1, rec.height - 2 * radius + 3,
             color);
     // Bottom RectangleU
     DrawRectangle(
-            rec.x + radius - 1, rec.y + rec.height - radius, rec.width - 2 * radius + 2, radius + 1,
+            rec.x + radius - 1, rec.y + rec.height - radius, rec.width - 2 * radius + 3, radius + 1,
             color);
     // Left RectangleU
-    DrawRectangle(rec.x, rec.y + radius, radius + 1, rec.height - 2 * radius + 1, color);
+    DrawRectangle(rec.x, rec.y + radius - 1, radius, rec.height - 2 * radius + 3, color);
     // Center RectangleU
     DrawRectangle(
-            rec.x + radius, rec.y + radius, rec.width - 2 * radius + 1, rec.height - 2 * radius + 1,
-            color);
+            rec.x + radius - 1, rec.y + radius - 1, rec.width - 2 * radius + 2,
+            rec.height - 2 * radius + 2, color);
 }
 
 inline Vector2 MeasureTextF(const Font &font, const char *text, const int spacing)
