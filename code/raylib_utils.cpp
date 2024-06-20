@@ -341,9 +341,14 @@ void BeginDrawingC(const Color color)
 std::random_device rd{};
 std::mt19937 gen(rd());
 
-float GetRandomUniform(const float min, const float max)
+std::uniform_real_distribution<float> GetRandomUniformDist(const float min, const float max)
 {
-    std::uniform_real_distribution<> dist(min, max);
+    const std::uniform_real_distribution<float> dist(min, max);
+    return dist;
+}
+
+float GetRandomUniform(std::uniform_real_distribution<float> dist)
+{
     return dist(gen);
 }
 

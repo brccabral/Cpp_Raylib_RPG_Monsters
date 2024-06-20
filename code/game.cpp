@@ -11,7 +11,7 @@ Game::Game(const int width, const int height)
     SetTraceLogLevel(LOG_WARNING);
     InitWindow(width, height, "RPG Monsters");
     // SetTargetFPS(60);
-    SetRandomSeed(GetTime());
+    SetRandomSeed(std::time(nullptr));
 
     display_surface = LoadRenderTexture(width, height);
     while (!IsRenderTextureReady(display_surface))

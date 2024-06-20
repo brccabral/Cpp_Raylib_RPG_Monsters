@@ -1,6 +1,7 @@
 #pragma once
 #include <raylib.h>
 #include <raymath.h>
+#include <random>
 
 typedef union RectangleU
 {
@@ -126,6 +127,8 @@ RLAPI void BeginTextureModeC(const RenderTexture2D &render, Color color);
 
 RLAPI void BeginDrawingC(Color color);
 
-RLAPI float GetRandomUniform(float min, float max);
+RLAPI std::uniform_real_distribution<float> GetRandomUniformDist(float min, float max);
+
+RLAPI float GetRandomUniform(std::uniform_real_distribution<float> dist);
 
 RLAPI void DrawCenteredTextEx(const Font &font, const char *text, RectangleU rect, Color color);
