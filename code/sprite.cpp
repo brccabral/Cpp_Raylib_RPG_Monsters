@@ -288,7 +288,10 @@ void MonsterStatsSprite::Update(double deltaTime)
             DrawBar(bar_rect, value, max_value, color, COLORS["black"], 0.9f, 10);
         }
         else
-        {}
+        {
+            const RectangleU init_rect = {0.0f, rect.height - 2, rect.width, 2};
+            DrawBar(init_rect, value, max_value, color, COLORS["white"]);
+        }
     }
 
     EndTextureModeSafe();

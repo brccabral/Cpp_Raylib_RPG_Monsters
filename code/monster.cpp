@@ -15,6 +15,7 @@ Monster::Monster(std::string name_, const int level) : name(std::move(name_)), l
     health *= GetRandomValue(0, 100) / 100.0f;
     energy = base_stats["max_energy"] * level;
     energy *= GetRandomValue(0, 100) / 100.0f;
+    initiative = GetRandomValue(0, 100);
 }
 
 float Monster::GetStat(const std::string &stat)
