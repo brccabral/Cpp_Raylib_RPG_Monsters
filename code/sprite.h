@@ -42,10 +42,10 @@ public:
 
     SpriteType type{SIMPLESPRITE};
     RectangleU rect{}; // world position
+    TiledTexture image{}; // contains texture atlas, and atlas position
 
 protected:
 
-    TiledTexture image{}; // contains texture atlas, and atlas position
     std::vector<SpriteGroup *> groups;
 };
 
@@ -135,7 +135,9 @@ public:
     void Animate(double dt);
     void Update(double dt) override;
     void FlipH() override;
+
     Monster monster;
+    int z = BATTLE_LAYERS["monster"];
 
 private:
 
@@ -158,6 +160,8 @@ public:
             Font font);
     ~MonsterNameSprite() override;
 
+    int z = BATTLE_LAYERS["name"];
+
 private:
 
     MonsterSprite *monster_sprite;
@@ -173,6 +177,8 @@ public:
             const std::vector<SpriteGroup *> &sgs, const Font &font);
     ~MonsterLevelSprite() override;
     void Update(double deltaTime) override;
+
+    int z = BATTLE_LAYERS["name"];
 
 private:
 
@@ -195,6 +201,8 @@ public:
             const std::vector<SpriteGroup *> &sgs, Font font);
     ~MonsterStatsSprite() override;
     void Update(double deltaTime) override;
+
+    int z = BATTLE_LAYERS["overlay"];
 
 private:
 

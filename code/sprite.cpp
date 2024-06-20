@@ -135,6 +135,7 @@ MonsterSprite::MonsterSprite(
     rect = image.rect;
     RectToCenter(rect, position);
     animation_speed = ANIMATION_SPEED + GetRandomUniform(-1, 1);
+    type = MONSTERSPRITE;
 }
 
 void MonsterSprite::Animate(const double dt)
@@ -189,6 +190,8 @@ MonsterNameSprite::MonsterNameSprite(
     rect.pos = pos;
 
     UnloadRenderTexture(inverted);
+
+    type = MONSTERNAMESPRITE;
 }
 
 MonsterNameSprite::~MonsterNameSprite()
@@ -234,6 +237,8 @@ MonsterLevelSprite::MonsterLevelSprite(
     {
         RectToTopRight(rect, pos);
     }
+
+    type = MONSTERLEVELSPRITE;
 }
 
 MonsterLevelSprite::~MonsterLevelSprite()
@@ -259,6 +264,8 @@ MonsterStatsSprite::MonsterStatsSprite(
     image.texture = &render.texture;
     rect = image.rect;
     RectToMidBottom(rect, pos);
+
+    type = MONSTERSTATSSPRITE;
 }
 
 MonsterStatsSprite::~MonsterStatsSprite()
@@ -351,6 +358,22 @@ int GetYsort(const SimpleSprite *sprite)
     else if (sprite->type == DIALOGSPRITE)
     {
         y = ((DialogSprite *) sprite)->y_sort;
+    }
+    else if (sprite->type == MONSTERSPRITE)
+    {
+        y = ((MonsterSprite *) sprite)->z;
+    }
+    else if (sprite->type == MONSTERNAMESPRITE)
+    {
+        y = ((MonsterNameSprite *) sprite)->z;
+    }
+    else if (sprite->type == MONSTERLEVELSPRITE)
+    {
+        y = ((MonsterLevelSprite *) sprite)->z;
+    }
+    else if (sprite->type == MONSTERSTATSSPRITE)
+    {
+        y = ((MonsterStatsSprite *) sprite)->z;
     }
     return y;
 }

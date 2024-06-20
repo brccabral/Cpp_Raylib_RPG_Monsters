@@ -1,4 +1,5 @@
 #pragma once
+#include "groups.h"
 #include "monster.h"
 #include "sprite.h"
 
@@ -27,7 +28,7 @@ private:
     std::map<std::string, Font> fonts;
     std::map<std::string, std::vector<Monster>> monster_data;
 
-    SpriteGroup *battle_sprites = nullptr;
+    BattleSprites *battle_sprites = nullptr;
     SpriteGroup *player_sprites = nullptr;
     SpriteGroup *opponent_sprites = nullptr;
 };

@@ -18,3 +18,11 @@ private:
     Texture2D shadow{};
     Texture2D notice{};
 };
+
+class BattleSprites : public SpriteGroup
+{
+public:
+
+    BattleSprites() = default;
+    void Draw();
+};

@@ -11,7 +11,7 @@ Battle::Battle(
     : bg_surf(bg_surf), monsters_frames(monsters_frames), fonts(fonts),
       monster_data({{"player", player_monsters}, {"opponent", opponent_monsters}})
 {
-    battle_sprites = new SpriteGroup();
+    battle_sprites = new BattleSprites();
     player_sprites = new SpriteGroup();
     opponent_sprites = new SpriteGroup();
 
@@ -64,7 +64,7 @@ void Battle::CreateMonster(
         groups = {battle_sprites, player_sprites};
         monster_sprite = new MonsterSprite(pos, frames, groups, monster, index, pos_index, entity);
         monster_sprite->FlipH();
-        name_pos = Vector2Add(GetRectMidLeft(monster_sprite->rect), {-30, -70});
+        name_pos = Vector2Add(GetRectMidLeft(monster_sprite->rect), {-40, -70});
         name_sprite =
                 new MonsterNameSprite(name_pos, monster_sprite, {battle_sprites}, fonts["regular"]);
         level_pos = GetRectBottomLeft(name_sprite->rect);
@@ -74,7 +74,7 @@ void Battle::CreateMonster(
         pos = BATTLE_POSITIONS["right"][pos_index];
         groups = {battle_sprites, opponent_sprites};
         monster_sprite = new MonsterSprite(pos, frames, groups, monster, index, pos_index, entity);
-        name_pos = Vector2Add(GetRectMidRight(monster_sprite->rect), {-90, -70});
+        name_pos = Vector2Add(GetRectMidRight(monster_sprite->rect), {-60, -70});
         name_sprite =
                 new MonsterNameSprite(name_pos, monster_sprite, {battle_sprites}, fonts["regular"]);
         level_pos = GetRectBottomRight(name_sprite->rect);

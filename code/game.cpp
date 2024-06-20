@@ -116,10 +116,11 @@ void Game::run()
         if (!battle)
         {
             all_sprites->Update(dt);
+
+            // drawing
+            Draw();
         }
 
-        // drawing
-        Draw();
 
         // overlays
         // dialog_tree checks for SPACE input, which conflicts

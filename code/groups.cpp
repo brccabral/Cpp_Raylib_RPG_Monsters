@@ -80,3 +80,21 @@ void AllSprites::Draw(const Player *player)
         top->Draw(offset);
     }
 }
+
+void BattleSprites::Draw()
+{
+    std::sort(
+            sprites.begin(), sprites.end(),
+            [](const SimpleSprite *l, const SimpleSprite *r)
+            {
+                const int yl = GetYsort(l);
+                const int yr = GetYsort(r);
+
+                return yl < yr;
+            });
+    for (const auto *sprite: sprites)
+    {
+        DrawTextureRec(
+                *sprite->image.texture, sprite->image.rect.rectangle, sprite->rect.pos, WHITE);
+    }
+}
