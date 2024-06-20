@@ -255,7 +255,8 @@ void MonsterIndex::DisplayMain(const double dt)
         RectangleU ability_rect = {ability_pos, ability_text_size};
         RectInflate(ability_rect, 10, 10);
 
-        DrawRectangleRounded(ability_rect.rectangle, 0.3, 10, COLORS[element]);
+        DrawRectangleRoundedCorners(
+                ability_rect, 0.3f, 10, COLORS[element], true, true, true, true);
         DrawTextEx(
                 fonts["regular"], abilities[a_index].c_str(), ability_pos,
                 fonts["regular"].baseSize, 1, COLORS["black"]);
