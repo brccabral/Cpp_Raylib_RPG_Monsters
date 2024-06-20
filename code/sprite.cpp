@@ -167,19 +167,15 @@ MonsterNameSprite::MonsterNameSprite(
             MeasureTextEx(font, monster_sprite->monster.name.c_str(), font.baseSize, 1);
     int padding = 10;
     const Vector2 render_size = {text_width + 2 * padding, text_height + 2 * padding};
+    image.rect = {Vector2{0.0f, 0.0f}, render_size};
 
     // need another render to invert the image
     // https://github.com/raysan5/raylib/issues/3803
     // https://github.com/raysan5/raylib/issues/378
     RenderTexture2D inverted = LoadRenderTextureV(render_size);
-    Vector2 text_pos =
-            GetRectMidTop({0, 0, (float) inverted.texture.width, (float) inverted.texture.height});
-    text_pos = Vector2Add(text_pos, {-text_width / 2, text_height / 2});
     BeginTextureModeC(inverted, BLANK);
-    DrawRectangle(0, 0, render_size.x, render_size.y, WHITE);
-    DrawTextEx(
-            font, monster_sprite->monster.name.c_str(), text_pos, font.baseSize, 1,
-            COLORS["black"]);
+    DrawRectangleRec(image.rect.rectangle, WHITE);
+    DrawCenteredTextEx(font, monster_sprite->monster.name.c_str(), image.rect);
     EndTextureMode();
 
     render = LoadRenderTextureV(render_size);
@@ -187,7 +183,6 @@ MonsterNameSprite::MonsterNameSprite(
     DrawTexture(inverted.texture, 0, 0, WHITE);
     EndTextureMode();
 
-    image.rect = {Vector2{0.0f, 0.0f}, render_size};
     image.texture = &render.texture;
 
     rect = image.rect;
@@ -203,29 +198,27 @@ MonsterNameSprite::~MonsterNameSprite()
 
 void MonsterLevelSprite::UpdateTexture()
 {
-    constexpr Vector2 render_size = {60, 26};
-    const RenderTexture2D inverted = LoadRenderTextureV(render_size);
     BeginTextureModeC(inverted, BLANK);
-    DrawRectangle(0, 0, render_size.x, render_size.y, WHITE);
-    DrawTextEx(
-            font, TextFormat("Lvl %i", monster_sprite->monster.level), {0, 0}, font.baseSize, 1,
-            COLORS["black"]);
+    DrawRectangleRec(image.rect.rectangle, WHITE);
+    DrawCenteredTextEx(font, TextFormat("Lvl %i", monster_sprite->monster.level), image.rect);
     EndTextureMode();
 
-    render = LoadRenderTextureV(render_size);
-    BeginTextureModeC(render, BLANK);
+    BeginTextureMode(render);
     DrawTexture(inverted.texture, 0, 0, WHITE);
     EndTextureMode();
-    UnloadRenderTexture(inverted);
-
-    image.texture = &render.texture;
-    image.rect = {0, 0, render_size};
 }
+
 MonsterLevelSprite::MonsterLevelSprite(
         const std::string &entity, const Vector2 pos, MonsterSprite *monster_sprite,
         const std::vector<SpriteGroup *> &sgs, const Font &font)
     : SimpleSprite(sgs), entity(entity), monster_sprite(monster_sprite), font(font)
 {
+    constexpr Vector2 render_size = {60, 26};
+    image.rect = {0, 0, render_size};
+
+    render = LoadRenderTextureV(render_size);
+    inverted = LoadRenderTextureV(render_size);
+    image.texture = &render.texture;
 
     UpdateTexture();
 
@@ -243,11 +236,12 @@ MonsterLevelSprite::MonsterLevelSprite(
 MonsterLevelSprite::~MonsterLevelSprite()
 {
     UnloadRenderTexture(render);
+    UnloadRenderTexture(inverted);
 }
 
 void MonsterLevelSprite::Update(double deltaTime)
 {
-    SimpleSprite::Update(deltaTime);
+    UpdateTexture();
 }
 
 void SpriteGroup::Draw() const

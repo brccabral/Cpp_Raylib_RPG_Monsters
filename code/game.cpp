@@ -12,7 +12,7 @@
 
 Game::Game(const int width, const int height)
 {
-    SetTraceLogLevel(LOG_ERROR);
+    SetTraceLogLevel(LOG_WARNING);
     InitWindow(width, height, "RPG Monsters");
     // SetTargetFPS(60);
     SetRandomSeed(GetTime());
@@ -113,7 +113,10 @@ void Game::run()
         // update
         Input();
         TransitionCheck();
-        all_sprites->Update(dt);
+        if (!battle)
+        {
+            all_sprites->Update(dt);
+        }
 
         // drawing
         Draw();

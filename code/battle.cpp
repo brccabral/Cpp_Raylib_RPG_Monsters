@@ -27,9 +27,12 @@ Battle::~Battle()
 
 void Battle::Update(const double dt)
 {
+    // Update Sprites before drawing into `display_surface`, as
+    // some sprites open renderes to draw into
+    battle_sprites->Update(dt);
+
     BeginTextureModeC(display_surface, BLACK);
     DrawTexture(bg_surf, 0, 0, WHITE);
-    battle_sprites->Update(dt);
     battle_sprites->Draw();
     EndTextureMode();
 }

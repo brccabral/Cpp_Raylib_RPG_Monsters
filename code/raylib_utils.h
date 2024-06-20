@@ -387,3 +387,10 @@ inline float GetRandomUniform(const float min, const float max)
     std::uniform_real_distribution<> dist(min, (max));
     return dist(e2);
 }
+
+inline void DrawCenteredTextEx(const Font &font, const char *text, const RectangleU rect)
+{
+    const auto [text_width, text_height] = MeasureTextEx(font, text, font.baseSize, 1);
+    const Vector2 text_pos = {(rect.width - text_width) / 2, (rect.height - text_height) / 2};
+    DrawTextEx(font, text, text_pos, font.baseSize, 1, COLORS["black"]);
+}

@@ -41,11 +41,11 @@ public:
     virtual void FlipH();
 
     SpriteType type{SIMPLESPRITE};
-    RectangleU rect{};
+    RectangleU rect{}; // world position
 
 protected:
 
-    TiledTexture image{};
+    TiledTexture image{}; // contains texture atlas, and atlas position
     std::vector<SpriteGroup *> groups;
 };
 
@@ -164,7 +164,6 @@ private:
     RenderTexture2D render{};
 };
 
-class Entity;
 class MonsterLevelSprite : public SimpleSprite
 {
 public:
@@ -180,6 +179,7 @@ private:
     void UpdateTexture();
 
     RenderTexture2D render{};
+    RenderTexture2D inverted{}; // as we update everyframe, inverted is a class member
     std::string entity;
     MonsterSprite *monster_sprite;
     Font font;
