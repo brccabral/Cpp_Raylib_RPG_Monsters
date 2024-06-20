@@ -174,8 +174,7 @@ MonsterNameSprite::MonsterNameSprite(
     // https://github.com/raysan5/raylib/issues/3803
     // https://github.com/raysan5/raylib/issues/378
     RenderTexture2D inverted = LoadRenderTextureV(render_size);
-    BeginTextureModeC(inverted, BLANK);
-    DrawRectangleRec(image.rect.rectangle, WHITE);
+    BeginTextureModeC(inverted, WHITE);
     DrawCenteredTextEx(font, monster_sprite->monster.name.c_str(), image.rect);
     EndTextureModeSafe();
 
@@ -199,8 +198,7 @@ MonsterNameSprite::~MonsterNameSprite()
 
 void MonsterLevelSprite::UpdateTexture() const
 {
-    BeginTextureModeC(inverted, BLANK);
-    DrawRectangleRec(image.rect.rectangle, WHITE);
+    BeginTextureModeC(inverted, WHITE);
     DrawCenteredTextEx(font, TextFormat("Lvl %i", monster_sprite->monster.level), image.rect);
     DrawBar(xp_rect, monster_sprite->monster.xp, monster_sprite->monster.level_up, COLORS["black"],
             COLORS["white"]);
@@ -247,6 +245,36 @@ MonsterLevelSprite::~MonsterLevelSprite()
 void MonsterLevelSprite::Update(const double deltaTime)
 {
     UpdateTexture();
+}
+
+MonsterStatsSprite::MonsterStatsSprite(
+        Vector2 pos, MonsterSprite *monster_sprite, Vector2 size,
+        const std::vector<SpriteGroup *> &sgs, Font font)
+    : SimpleSprite(sgs), monster_sprite(monster_sprite), font(font)
+{
+    render = LoadRenderTextureV(size);
+    inverted = LoadRenderTextureV(size);
+
+    image.rect = {0.0f, 0.0f, size};
+    image.texture = &render.texture;
+    rect = image.rect;
+    RectToMidBottom(rect, pos);
+}
+
+MonsterStatsSprite::~MonsterStatsSprite()
+{
+    UnloadRenderTexture(render);
+    UnloadRenderTexture(inverted);
+}
+
+void MonsterStatsSprite::Update(double deltaTime)
+{
+    BeginTextureModeC(inverted, WHITE);
+    EndTextureModeSafe();
+
+    BeginTextureModeC(render, WHITE);
+    DrawTexture(inverted.texture, 0, 0, WHITE);
+    EndTextureModeSafe();
 }
 
 void SpriteGroup::Draw() const

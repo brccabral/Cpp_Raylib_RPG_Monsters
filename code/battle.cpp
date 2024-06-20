@@ -64,7 +64,7 @@ void Battle::CreateMonster(
         groups = {battle_sprites, player_sprites};
         monster_sprite = new MonsterSprite(pos, frames, groups, monster, index, pos_index, entity);
         monster_sprite->FlipH();
-        name_pos = Vector2Add(GetRectMidLeft(monster_sprite->rect), {-50, -70});
+        name_pos = Vector2Add(GetRectMidLeft(monster_sprite->rect), {-30, -70});
         name_sprite =
                 new MonsterNameSprite(name_pos, monster_sprite, {battle_sprites}, fonts["regular"]);
         level_pos = GetRectBottomLeft(name_sprite->rect);
@@ -80,4 +80,7 @@ void Battle::CreateMonster(
         level_pos = GetRectBottomRight(name_sprite->rect);
     }
     new MonsterLevelSprite(entity, level_pos, monster_sprite, {battle_sprites}, fonts["small"]);
+    new MonsterStatsSprite(
+            Vector2Add(GetRectMidBottom(monster_sprite->rect), {0.20}), monster_sprite, {150, 48},
+            {battle_sprites}, fonts["small"]);
 }

@@ -185,3 +185,21 @@ private:
     Font font;
     RectangleU xp_rect{};
 };
+
+class MonsterStatsSprite : public SimpleSprite
+{
+public:
+
+    MonsterStatsSprite(
+            Vector2 pos, MonsterSprite *monster_sprite, Vector2 size,
+            const std::vector<SpriteGroup *> &sgs, Font font);
+    ~MonsterStatsSprite() override;
+    void Update(double deltaTime) override;
+
+private:
+
+    MonsterSprite *monster_sprite;
+    RenderTexture2D render{};
+    RenderTexture2D inverted{};
+    Font font;
+};
