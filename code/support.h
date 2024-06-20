@@ -186,23 +186,22 @@ inline std::map<std::string, tmx_map *> tmx_importer(const char *path)
 }
 
 inline void
-DrawBar(const RectangleU rect, const float value, float max_value, const Color color,
-        Color bg_color, const float radius = 0)
+DrawBar(const RectangleU rect, const float value, const float max_value, const Color color,
+        const Color bg_color, const float roundness = 0.0f, const int segments = 0)
 {
     const float ratio = rect.width / max_value;
     const RectangleU bg_rect = rect;
     const RectangleU progress_rect = {
             rect.x, rect.y, Clamp(value * ratio, 0, rect.width), rect.height};
 
-    if (radius == 0)
+    if (roundness == 0)
     {
         DrawRectangleRec(bg_rect.rectangle, bg_color);
         DrawRectangleRec(progress_rect.rectangle, color);
     }
     else
     {
-        DrawRectangleRounded(bg_rect.rectangle, radius / (rect.width + rect.height), 10, bg_color);
-        DrawRectangleRounded(
-                progress_rect.rectangle, radius / (rect.width + rect.height), 10, color);
+        DrawRectangleRounded(bg_rect.rectangle, roundness, segments, bg_color);
+        DrawRectangleRounded(progress_rect.rectangle, roundness, segments, color);
     }
 }
