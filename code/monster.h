@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <array>
 
 
 class Monster
@@ -12,6 +13,7 @@ public:
     float GetStat(const std::string &stat);
     std::vector<std::pair<std::string, float>> GetStats();
     std::vector<std::string> GetAbilities();
+    std::array<std::pair<float, float>, 3> GetInfo();
     friend std::ostream &operator<<(std::ostream &os, Monster const &m);
 
     std::string name;
@@ -23,4 +25,5 @@ public:
     int xp{};
     float health{};
     float energy{};
+    float initiative{};
 };

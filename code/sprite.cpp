@@ -270,6 +270,27 @@ MonsterStatsSprite::~MonsterStatsSprite()
 void MonsterStatsSprite::Update(double deltaTime)
 {
     BeginTextureModeC(inverted, WHITE);
+
+    const auto info = monster_sprite->monster.GetInfo();
+    const std::array<Color, 3> colors = {COLORS["red"], COLORS["blue"], COLORS["gray"]};
+    for (int index = 0; index < info.size(); ++index)
+    {
+        const auto [value, max_value] = info[index];
+        const auto color = colors[index];
+        if (index < 2)
+        {
+            const Vector2 pos = {rect.width * 0.05f, index * rect.height / 2.0f};
+            DrawTextEx(
+                    font, TextFormat("%i/%i", int(value), int(max_value)), pos, font.baseSize, 1,
+                    COLORS["black"]);
+            // height less than 6 there is no roundness
+            const RectangleU bar_rect = {pos.x, pos.y + font.baseSize - 2, rect.width * 0.9f, 6};
+            DrawBar(bar_rect, value, max_value, color, COLORS["black"], 0.9f, 10);
+        }
+        else
+        {}
+    }
+
     EndTextureModeSafe();
 
     BeginTextureModeC(render, WHITE);
