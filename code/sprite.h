@@ -176,11 +176,12 @@ public:
 
 private:
 
-    void UpdateTexture();
+    void UpdateTexture() const;
 
     RenderTexture2D render{};
     RenderTexture2D inverted{}; // as we update everyframe, inverted is a class member
     std::string entity;
     MonsterSprite *monster_sprite;
     Font font;
+    RectangleU xp_rect{};
 };

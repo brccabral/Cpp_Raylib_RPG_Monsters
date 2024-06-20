@@ -6,6 +6,7 @@
 #include "entities.h"
 #include "raylib_utils.h"
 #include "settings.h"
+#include "support.h"
 
 
 SimpleSprite::SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups)
@@ -196,11 +197,13 @@ MonsterNameSprite::~MonsterNameSprite()
     UnloadRenderTexture(render);
 }
 
-void MonsterLevelSprite::UpdateTexture()
+void MonsterLevelSprite::UpdateTexture() const
 {
     BeginTextureModeC(inverted, BLANK);
     DrawRectangleRec(image.rect.rectangle, WHITE);
     DrawCenteredTextEx(font, TextFormat("Lvl %i", monster_sprite->monster.level), image.rect);
+    DrawBar(xp_rect, monster_sprite->monster.xp, monster_sprite->monster.level_up, COLORS["black"],
+            COLORS["white"]);
     EndTextureMode();
 
     BeginTextureMode(render);
@@ -213,8 +216,10 @@ MonsterLevelSprite::MonsterLevelSprite(
         const std::vector<SpriteGroup *> &sgs, const Font &font)
     : SimpleSprite(sgs), entity(entity), monster_sprite(monster_sprite), font(font)
 {
+
     constexpr Vector2 render_size = {60, 26};
     image.rect = {0, 0, render_size};
+    xp_rect = {0, image.rect.height - 2, image.rect.width, 2.0f};
 
     render = LoadRenderTextureV(render_size);
     inverted = LoadRenderTextureV(render_size);
@@ -239,7 +244,7 @@ MonsterLevelSprite::~MonsterLevelSprite()
     UnloadRenderTexture(inverted);
 }
 
-void MonsterLevelSprite::Update(double deltaTime)
+void MonsterLevelSprite::Update(const double deltaTime)
 {
     UpdateTexture();
 }
