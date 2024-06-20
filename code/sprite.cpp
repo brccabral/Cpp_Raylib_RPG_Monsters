@@ -144,6 +144,7 @@ void MonsterSprite::Animate(const double dt)
 void MonsterSprite::Update(const double dt)
 {
     Animate(dt);
+    monster.Update(dt);
 }
 
 void MonsterSprite::FlipH()
