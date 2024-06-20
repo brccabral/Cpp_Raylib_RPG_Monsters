@@ -1,4 +1,6 @@
 #pragma once
+
+
 #include <array>
 #include <vector>
 #include <raylib.h>
@@ -129,7 +131,7 @@ public:
     MonsterSprite(
             Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
             const std::vector<SpriteGroup *> &sgs, Monster monster, int index, int pos_index,
-            std::string entity);
+            const std::string &entity);
     void Animate(double dt);
     void Update(double dt) override;
     void FlipH() override;
@@ -147,7 +149,7 @@ private:
     float animation_speed{};
 };
 
-class MonsterNameSprite : SimpleSprite
+class MonsterNameSprite : public SimpleSprite
 {
 public:
 
@@ -160,4 +162,23 @@ private:
 
     MonsterSprite *monster_sprite;
     RenderTexture2D render{};
+};
+
+class Entity;
+class MonsterLevelSprite : public SimpleSprite
+{
+public:
+
+    MonsterLevelSprite(
+            const std::string &entity, Vector2 pos, MonsterSprite *monster_sprite,
+            const std::vector<SpriteGroup *> &sgs, const Font &font);
+    ~MonsterLevelSprite() override;
+    void Update(double deltaTime) override;
+
+private:
+
+    RenderTexture2D render{};
+    std::string entity;
+    MonsterSprite *monster_sprite;
+    Font font;
 };

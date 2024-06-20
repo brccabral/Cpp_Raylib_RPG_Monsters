@@ -52,21 +52,29 @@ void Battle::CreateMonster(
     Vector2 pos;
     std::vector<SpriteGroup *> groups{};
     MonsterSprite *monster_sprite;
+    MonsterNameSprite *name_sprite;
+    Vector2 name_pos;
+    Vector2 level_pos;
     if (std::strcmp(entity.c_str(), "player") == 0)
     {
         pos = BATTLE_POSITIONS["left"][pos_index];
         groups = {battle_sprites, player_sprites};
         monster_sprite = new MonsterSprite(pos, frames, groups, monster, index, pos_index, entity);
         monster_sprite->FlipH();
-        const Vector2 name_pos = Vector2Add(GetRectMidLeft(monster_sprite->rect), {-50, -70});
-        new MonsterNameSprite(name_pos, monster_sprite, {battle_sprites}, fonts["regular"]);
+        name_pos = Vector2Add(GetRectMidLeft(monster_sprite->rect), {-50, -70});
+        name_sprite =
+                new MonsterNameSprite(name_pos, monster_sprite, {battle_sprites}, fonts["regular"]);
+        level_pos = GetRectBottomLeft(name_sprite->rect);
     }
     else
     {
         pos = BATTLE_POSITIONS["right"][pos_index];
         groups = {battle_sprites, opponent_sprites};
         monster_sprite = new MonsterSprite(pos, frames, groups, monster, index, pos_index, entity);
-        const Vector2 name_pos = Vector2Add(GetRectMidRight(monster_sprite->rect), {-90, -70});
-        new MonsterNameSprite(name_pos, monster_sprite, {battle_sprites}, fonts["regular"]);
+        name_pos = Vector2Add(GetRectMidRight(monster_sprite->rect), {-90, -70});
+        name_sprite =
+                new MonsterNameSprite(name_pos, monster_sprite, {battle_sprites}, fonts["regular"]);
+        level_pos = GetRectBottomRight(name_sprite->rect);
     }
+    new MonsterLevelSprite(entity, level_pos, monster_sprite, {battle_sprites}, fonts["small"]);
 }

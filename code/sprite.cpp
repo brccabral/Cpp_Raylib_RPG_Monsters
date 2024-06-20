@@ -126,9 +126,9 @@ void AnimatedSprite::FlipH()
 MonsterSprite::MonsterSprite(
         const Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
         const std::vector<SpriteGroup *> &sgs, Monster monster, const int index,
-        const int pos_index, std::string entity)
+        const int pos_index, const std::string &entity)
     : SimpleSprite(sgs), monster(std::move(monster)), index(index), pos_index(pos_index),
-      entity(std::move(entity)), frames(frms)
+      entity(entity), frames(frms)
 {
     image = frames[state][int(frame_index)];
     rect = image.rect;
@@ -187,15 +187,62 @@ MonsterNameSprite::MonsterNameSprite(
     DrawTexture(inverted.texture, 0, 0, WHITE);
     EndTextureMode();
 
-    rect.pos = pos;
     image.rect = {Vector2{0.0f, 0.0f}, render_size};
     image.texture = &render.texture;
+
+    rect = image.rect;
+    rect.pos = pos;
+
     UnloadRenderTexture(inverted);
 }
 
 MonsterNameSprite::~MonsterNameSprite()
 {
     UnloadRenderTexture(render);
+}
+
+MonsterLevelSprite::MonsterLevelSprite(
+        const std::string &entity, const Vector2 pos, MonsterSprite *monster_sprite,
+        const std::vector<SpriteGroup *> &sgs, const Font &font)
+    : SimpleSprite(sgs), entity(entity), monster_sprite(monster_sprite), font(font)
+{
+    constexpr Vector2 render_size = {60, 26};
+
+    RenderTexture2D inverted = LoadRenderTextureV(render_size);
+    BeginTextureModeC(inverted, BLANK);
+    DrawRectangle(0, 0, 60, 26, WHITE);
+    DrawText("Lvl", 0, 0, 20, BLACK);
+    EndTextureMode();
+
+    render = LoadRenderTextureV(render_size);
+    BeginTextureModeC(render, BLANK);
+    DrawTexture(inverted.texture, 0, 0, WHITE);
+    EndTextureMode();
+
+    image.rect = {0, 0, render_size};
+    image.texture = &render.texture;
+
+    rect = image.rect;
+    if (strcmp(entity.c_str(), "player") == 0)
+    {
+        RectToTopLeft(rect, pos);
+    }
+    else
+    {
+        RectToTopRight(rect, pos);
+    }
+
+    UnloadRenderTexture(inverted);
+}
+
+MonsterLevelSprite::~MonsterLevelSprite()
+{
+    UnloadRenderTexture(render);
+}
+
+void MonsterLevelSprite::Update(double deltaTime)
+{
+    SimpleSprite::Update(deltaTime);
 }
 
 void SpriteGroup::Draw() const

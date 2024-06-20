@@ -142,6 +142,12 @@ inline void RectToTopLeft(RectangleU &rect, const Vector2 pos)
     rect.pos = pos;
 }
 
+inline void RectToTopRight(RectangleU &rect, const Vector2 pos)
+{
+    rect.x = pos.x - rect.width;
+    rect.y = pos.y;
+}
+
 inline Vector2 ViewOffset(const Vector2 player_center)
 {
     Vector2 offset =
