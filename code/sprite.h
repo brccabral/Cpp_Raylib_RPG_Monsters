@@ -177,6 +177,8 @@ public:
 
 private:
 
+    void UpdateTexture();
+
     RenderTexture2D render{};
     std::string entity;
     MonsterSprite *monster_sprite;

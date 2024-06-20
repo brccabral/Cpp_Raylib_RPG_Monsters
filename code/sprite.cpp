@@ -201,26 +201,33 @@ MonsterNameSprite::~MonsterNameSprite()
     UnloadRenderTexture(render);
 }
 
-MonsterLevelSprite::MonsterLevelSprite(
-        const std::string &entity, const Vector2 pos, MonsterSprite *monster_sprite,
-        const std::vector<SpriteGroup *> &sgs, const Font &font)
-    : SimpleSprite(sgs), entity(entity), monster_sprite(monster_sprite), font(font)
+void MonsterLevelSprite::UpdateTexture()
 {
     constexpr Vector2 render_size = {60, 26};
-
-    RenderTexture2D inverted = LoadRenderTextureV(render_size);
+    const RenderTexture2D inverted = LoadRenderTextureV(render_size);
     BeginTextureModeC(inverted, BLANK);
-    DrawRectangle(0, 0, 60, 26, WHITE);
-    DrawText("Lvl", 0, 0, 20, BLACK);
+    DrawRectangle(0, 0, render_size.x, render_size.y, WHITE);
+    DrawTextEx(
+            font, TextFormat("Lvl %i", monster_sprite->monster.level), {0, 0}, font.baseSize, 1,
+            COLORS["black"]);
     EndTextureMode();
 
     render = LoadRenderTextureV(render_size);
     BeginTextureModeC(render, BLANK);
     DrawTexture(inverted.texture, 0, 0, WHITE);
     EndTextureMode();
+    UnloadRenderTexture(inverted);
 
-    image.rect = {0, 0, render_size};
     image.texture = &render.texture;
+    image.rect = {0, 0, render_size};
+}
+MonsterLevelSprite::MonsterLevelSprite(
+        const std::string &entity, const Vector2 pos, MonsterSprite *monster_sprite,
+        const std::vector<SpriteGroup *> &sgs, const Font &font)
+    : SimpleSprite(sgs), entity(entity), monster_sprite(monster_sprite), font(font)
+{
+
+    UpdateTexture();
 
     rect = image.rect;
     if (strcmp(entity.c_str(), "player") == 0)
@@ -231,8 +238,6 @@ MonsterLevelSprite::MonsterLevelSprite(
     {
         RectToTopRight(rect, pos);
     }
-
-    UnloadRenderTexture(inverted);
 }
 
 MonsterLevelSprite::~MonsterLevelSprite()
