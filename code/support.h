@@ -26,4 +26,4 @@ CheckConnections(float radius, const Entity *entity, const Entity *target, float
 RLAPI std::map<std::string, tmx_map *> tmx_importer(const char *path);
 
 RLAPI std::map<std::string, Texture2D>
-OutlineCreator(const std::map<std::string, Texture2D> &texture_dict, int width);
+OutlineCreator(const std::map<std::string, Texture2D> &texture_dict, float width);
