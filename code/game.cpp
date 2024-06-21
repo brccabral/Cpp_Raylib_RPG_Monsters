@@ -1,4 +1,5 @@
 #include <cstring>
+#include <ctime>
 #include <raylib.h>
 #define RAYLIB_TMX_IMPLEMENTATION
 #include "raylib-tmx.h"
