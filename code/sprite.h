@@ -137,8 +137,8 @@ public:
     Monster monster;
     int z = BATTLE_LAYERS["monster"];
     std::string state = "idle";
-    float frame_index{};
     std::map<std::string, std::vector<TiledTexture>> state_frames;
+    int adjusted_frame_index;
 
 private:
 
@@ -147,6 +147,7 @@ private:
     std::string entity;
 
     float animation_speed{};
+    float frame_index{};
 
     bool highlight{};
 };

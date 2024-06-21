@@ -141,4 +141,4 @@ RLAPI Texture2D *Texture2DToPointer(const Texture2D &texture);
 
 RLAPI Image ImageMaskFromImage(const Image &image, Color color, float threshold = 0);
 
-RLAPI Image GenRandomPixelsImage(float width, float height);
+RLAPI Image GenImageRandomPixels(float width, float height);

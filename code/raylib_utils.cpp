@@ -591,7 +591,7 @@ Image ImageMaskFromImage(const Image &image, const Color color, const float thre
 }
 
 
-Image GenRandomPixelsImage(const float width, const float height)
+Image GenImageRandomPixels(const float width, const float height)
 {
     Image image{};
     image.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;

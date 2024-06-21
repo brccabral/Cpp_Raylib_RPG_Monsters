@@ -140,7 +140,8 @@ MonsterSprite::MonsterSprite(
 void MonsterSprite::Animate(const double dt)
 {
     frame_index += animation_speed * dt;
-    image = state_frames[state][int(frame_index) % state_frames[state].size()];
+    adjusted_frame_index = int(frame_index) % state_frames[state].size();
+    image = state_frames[state][adjusted_frame_index];
 }
 
 void MonsterSprite::Update(const double dt)
@@ -327,9 +328,7 @@ MonsterOutlineSprite::MonsterOutlineSprite(
 
 void MonsterOutlineSprite::Update(double deltaTime)
 {
-    image = state_frames[monster_sprite->state]
-                        [int(monster_sprite->frame_index) %
-                         state_frames[monster_sprite->state].size()];
+    image = state_frames[monster_sprite->state][monster_sprite->adjusted_frame_index];
 }
 
 void MonsterOutlineSprite::FlipH()
