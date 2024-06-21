@@ -151,9 +151,9 @@ void MonsterSprite::FlipH()
 {
     for (auto &[state, tiles]: frames)
     {
-        for (auto &[texture, rect]: tiles)
+        for (auto &[texture, tile_rect]: tiles)
         {
-            rect.width = -rect.width;
+            tile_rect.width = -tile_rect.width;
         }
     }
 }

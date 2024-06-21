@@ -17,6 +17,12 @@ public:
     void Setup();
     void CreateMonster(const Monster &monster, int index, int pos_index, const std::string &entity);
 
+    // check what is the first monster to get Initiative = 100
+    // it depends on monster speed
+    // when the first monter achieves 100, pause the others
+    void CheckActive();
+    void UpdateAllMonsters(bool do_pause);
+
 private:
 
     Texture2D bg_surf;

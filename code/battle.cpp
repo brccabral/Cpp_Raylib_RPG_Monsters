@@ -30,6 +30,7 @@ void Battle::Update(const double dt)
     // Update Sprites before drawing into `display_surface`, as
     // some sprites open renderes to draw into
     battle_sprites->Update(dt);
+    CheckActive();
 
     BeginTextureModeC(display_surface, BLACK);
     DrawTexture(bg_surf, 0, 0, WHITE);
@@ -83,4 +84,34 @@ void Battle::CreateMonster(
     new MonsterStatsSprite(
             Vector2Add(GetRectMidBottom(monster_sprite->rect), {0.20}), monster_sprite, {150, 48},
             {battle_sprites}, fonts["small"]);
+}
+
+void Battle::CheckActive()
+{
+    for (const auto *sprite: player_sprites->sprites)
+    {
+        if (((MonsterSprite *) sprite)->monster.initiative >= 100)
+        {
+            UpdateAllMonsters(true);
+        }
+    }
+    for (const auto *sprite: opponent_sprites->sprites)
+    {
+        if (((MonsterSprite *) sprite)->monster.initiative >= 100)
+        {
+            UpdateAllMonsters(true);
+        }
+    }
+}
+
+void Battle::UpdateAllMonsters(const bool do_pause)
+{
+    for (const auto *sprite: player_sprites->sprites)
+    {
+        ((MonsterSprite *) sprite)->monster.paused = do_pause;
+    }
+    for (const auto *sprite: opponent_sprites->sprites)
+    {
+        ((MonsterSprite *) sprite)->monster.paused = do_pause;
+    }
 }
