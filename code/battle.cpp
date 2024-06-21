@@ -88,23 +88,25 @@ void Battle::CreateMonster(
 
 void Battle::CheckActive()
 {
-    for (const auto *sprite: player_sprites->sprites)
+    CheckActiveGroup(player_sprites);
+    CheckActiveGroup(opponent_sprites);
+}
+
+void Battle::CheckActiveGroup(const SpriteGroup *group)
+{
+    for (const auto *sprite: group->sprites)
     {
         if (((MonsterSprite *) sprite)->monster.initiative >= 100)
         {
             UpdateAllMonsters(true);
-        }
-    }
-    for (const auto *sprite: opponent_sprites->sprites)
-    {
-        if (((MonsterSprite *) sprite)->monster.initiative >= 100)
-        {
-            UpdateAllMonsters(true);
+            ((MonsterSprite *) sprite)->monster.initiative = 0;
+            ((MonsterSprite *) sprite)->SetHighlight(true);
+            current_monster = ((MonsterSprite *) sprite);
         }
     }
 }
 
-void Battle::UpdateAllMonsters(const bool do_pause)
+void Battle::UpdateAllMonsters(const bool do_pause) const
 {
     for (const auto *sprite: player_sprites->sprites)
     {

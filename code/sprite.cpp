@@ -158,6 +158,11 @@ void MonsterSprite::FlipH()
     }
 }
 
+void MonsterSprite::SetHighlight(const bool value)
+{
+    highlight = value;
+}
+
 MonsterNameSprite::MonsterNameSprite(
         const Vector2 pos, MonsterSprite *monster_sprite, const std::vector<SpriteGroup *> &sgs,
         Font font)

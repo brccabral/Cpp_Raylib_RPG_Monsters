@@ -21,7 +21,8 @@ public:
     // it depends on monster speed
     // when the first monter achieves 100, pause the others
     void CheckActive();
-    void UpdateAllMonsters(bool do_pause);
+    void CheckActiveGroup(const SpriteGroup *group);
+    void UpdateAllMonsters(bool do_pause) const;
 
 private:
 
@@ -30,7 +31,11 @@ private:
     std::map<std::string, Font> fonts;
     std::map<std::string, std::vector<Monster>> monster_data;
 
+    // gorups
     BattleSprites *battle_sprites = nullptr;
     SpriteGroup *player_sprites = nullptr;
     SpriteGroup *opponent_sprites = nullptr;
+
+    // control
+    MonsterSprite *current_monster = nullptr;
 };

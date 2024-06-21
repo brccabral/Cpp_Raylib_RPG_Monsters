@@ -132,6 +132,7 @@ public:
     void Animate(double dt);
     void Update(double dt) override;
     void FlipH() override;
+    void SetHighlight(bool value);
 
     Monster monster;
     int z = BATTLE_LAYERS["monster"];
@@ -146,6 +147,8 @@ private:
     std::map<std::string, std::vector<TiledTexture>> frames;
     std::string state = "idle";
     float animation_speed{};
+
+    bool highlight{};
 };
 
 class MonsterNameSprite : public SimpleSprite
