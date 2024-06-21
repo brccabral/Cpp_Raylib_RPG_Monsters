@@ -59,7 +59,7 @@ Game::Game(const int width, const int height)
             player_monsters, fonts, named_textures["icons"], monsters_frames, named_textures["ui"]);
 
     battle = new Battle(
-            player_monsters, dummy_monsters, monsters_frames, outline_frames,
+            player_monsters, dummy_monsters, monsters_frames, outline_frames, named_textures["ui"],
             named_textures["bg_frames"]["forest"], fonts);
 }
 
@@ -162,6 +162,12 @@ void Game::DisplayUpdate() const
             display_surface.texture,
             {0, 0, (float) display_surface.texture.width, (float) -display_surface.texture.height},
             {0, 0}, render_tint);
+
+    const auto [mouse_x, mouse_y] = GetMousePosition();
+    const char *mouse_text = TextFormat("%.f / %.f", mouse_x, mouse_y);
+    DrawCircle((int) mouse_x, (int) mouse_y, 4.0f, BLACK);
+    DrawRectangle(mouse_x, mouse_y, 60, 15, WHITE);
+    DrawText(mouse_text, (int) mouse_x + 5, (int) mouse_y + 5, 10, BLACK);
 
     EndDrawing();
 }

@@ -3,6 +3,21 @@
 #include "groups.h"
 
 
+enum SelectionMode
+{
+    NONE = 0,
+    GENERAL,
+    MONSTER,
+    ATTACKS,
+    SWITCH,
+    TARGET,
+};
+
+enum SelectionSide
+{
+    PLAYER = 0,
+};
+
 class Battle
 {
 public:
@@ -13,7 +28,8 @@ public:
                    &monsters_frames,
            const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
                    &outline_frames,
-           const Texture2D &bg_surf, const std::map<std::string, Font> &fonts);
+           const std::map<std::string, Texture2D> &ui_frms, const Texture2D &bg_surf,
+           const std::map<std::string, Font> &fonts);
     ~Battle();
     void Update(double dt);
     void Setup();
@@ -26,11 +42,16 @@ public:
     void CheckActiveGroup(const SpriteGroup *group);
     void UpdateAllMonsters(bool do_pause) const;
 
+    // ui
+    void DrawUi();
+    void DrawGeneral();
+
 private:
 
     Texture2D bg_surf;
     std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> monsters_frames;
     std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> outline_frames;
+    std::map<std::string, Texture2D> ui_frames;
     std::map<std::string, Font> fonts;
     std::map<std::string, std::vector<Monster>> monster_data;
 
@@ -41,4 +62,7 @@ private:
 
     // control
     MonsterSprite *current_monster = nullptr;
+    SelectionMode selection_mode{};
+    SelectionSide selection_side{};
+    std::map<SelectionMode, int> indexes;
 };

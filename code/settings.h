@@ -73,24 +73,24 @@ typedef struct BattleChoice
 } BattleChoice;
 
 inline std::map<std::string, std::map<std::string, BattleChoice>> BATTLE_CHOICES = {
-        //
+        // numbers adjusted from tutorial
         {
                 "full",
                 {
                         //
-                        {"fight", {{30, -60}, "sword"}}, //
-                        {"defend", {{40, -20}, "shield"}}, //
-                        {"switch", {{40, 20}, "arrows"}}, //
-                        {"catch", {{30, 60}, "hand"}}, //
+                        {"fight", {{105, 10}, "sword"}}, //
+                        {"defend", {{115, 50}, "shield"}}, //
+                        {"switch", {{115, 90}, "arrows"}}, //
+                        {"catch", {{105, 130}, "hand"}}, //
                 }, //
         }, //
         {
                 "limited",
                 {
                         //
-                        {"fight", {{30, -40}, "sword"}}, //
-                        {"defend", {{40, 0}, "shield"}}, //
-                        {"switch", {{30, 40}, "arrows"}}, //
+                        {"fight", {{105, 30}, "sword"}}, //
+                        {"defend", {{115, 70}, "shield"}}, //
+                        {"switch", {{105, 110}, "arrows"}}, //
                 }, //
         }, //
 };

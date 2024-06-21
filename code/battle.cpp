@@ -9,13 +9,21 @@ Battle::Battle(
                 &monsters_frames,
         const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
                 &outline_frames,
-        const Texture2D &bg_surf, const std::map<std::string, Font> &fonts)
+        const std::map<std::string, Texture2D> &ui_frms, const Texture2D &bg_surf,
+        const std::map<std::string, Font> &fonts)
     : bg_surf(bg_surf), monsters_frames(monsters_frames), outline_frames(outline_frames),
-      fonts(fonts), monster_data({{"player", player_monsters}, {"opponent", opponent_monsters}})
+      ui_frames(ui_frms), fonts(fonts),
+      monster_data({{"player", player_monsters}, {"opponent", opponent_monsters}})
 {
     battle_sprites = new BattleSprites();
     player_sprites = new SpriteGroup();
     opponent_sprites = new SpriteGroup();
+
+    indexes[GENERAL] = 0;
+    indexes[MONSTER] = 0;
+    indexes[ATTACKS] = 0;
+    indexes[SWITCH] = 0;
+    indexes[TARGET] = 0;
 
     Setup();
 }
@@ -37,6 +45,7 @@ void Battle::Update(const double dt)
     BeginTextureModeC(display_surface, BLACK);
     DrawTexture(bg_surf, 0, 0, WHITE);
     battle_sprites->Draw(current_monster);
+    DrawUi();
     EndTextureModeSafe();
 }
 
@@ -108,6 +117,8 @@ void Battle::CheckActiveGroup(const SpriteGroup *group)
             ((MonsterSprite *) sprite)->monster.initiative = 0;
             ((MonsterSprite *) sprite)->SetHighlight(true);
             current_monster = ((MonsterSprite *) sprite);
+            selection_mode = GENERAL;
+            selection_side = PLAYER;
         }
     }
 }
@@ -121,5 +132,27 @@ void Battle::UpdateAllMonsters(const bool do_pause) const
     for (const auto *sprite: opponent_sprites->sprites)
     {
         ((MonsterSprite *) sprite)->monster.paused = do_pause;
+    }
+}
+
+void Battle::DrawUi()
+{
+    if (current_monster)
+    {
+        if (selection_mode == GENERAL)
+        {
+            DrawGeneral();
+        }
+    }
+}
+
+void Battle::DrawGeneral()
+{
+    for (auto &[option, battle_choice]: BATTLE_CHOICES["full"])
+    {
+        const auto texture = ui_frames[battle_choice.icon];
+        auto rect = current_monster->rect;
+        RectToCenter(rect, GetRectMidRight(rect));
+        DrawTextureV(texture, Vector2Add(rect.pos, battle_choice.pos), WHITE);
     }
 }
