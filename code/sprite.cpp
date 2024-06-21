@@ -135,6 +135,17 @@ MonsterSprite::MonsterSprite(
     const auto dist = GetRandomUniformDist(-1, 1);
     animation_speed = ANIMATION_SPEED + GetRandomUniform(dist);
     type = MONSTERSPRITE;
+
+    for (auto &[state, tiles]: state_frames)
+    {
+        std::vector<TiledTexture> highlight_tiles;
+        for (auto &[tile_texture, tile_rect]: tiles)
+        {
+            Texture2D highlight_texture = TextureMaskFromTexture(tile_texture, COLORS["white"]);
+            highlight_tiles.push_back({Texture2DToPointer(highlight_texture), {tile_rect}});
+        }
+        state_frames_highlight[state] = highlight_tiles;
+    }
 }
 
 void MonsterSprite::Animate(const double dt)
@@ -142,6 +153,11 @@ void MonsterSprite::Animate(const double dt)
     frame_index += animation_speed * dt;
     adjusted_frame_index = int(frame_index) % state_frames[state].size();
     image = state_frames[state][adjusted_frame_index];
+
+    if (highlight)
+    {
+        image = state_frames_highlight[state][adjusted_frame_index];
+    }
 }
 
 void MonsterSprite::Update(const double dt)
@@ -153,6 +169,13 @@ void MonsterSprite::Update(const double dt)
 void MonsterSprite::FlipH()
 {
     for (auto &[state, tiles]: state_frames)
+    {
+        for (auto &[texture, tile_rect]: tiles)
+        {
+            tile_rect.width = -tile_rect.width;
+        }
+    }
+    for (auto &[state, tiles]: state_frames_highlight)
     {
         for (auto &[texture, tile_rect]: tiles)
         {

@@ -590,6 +590,15 @@ Image ImageMaskFromImage(const Image &image, const Color color, const float thre
     return mask;
 }
 
+Texture TextureMaskFromTexture(const Texture2D *texture, const Color color, const float threshold)
+{
+    const Image image = LoadImageFromTexture(*texture);
+    const Image mask = ImageMaskFromImage(image, color, threshold);
+    const Texture result = LoadTextureFromImage(mask);
+    UnloadImage(image);
+    UnloadImage(mask);
+    return result;
+}
 
 Image GenImageRandomPixels(const float width, const float height)
 {

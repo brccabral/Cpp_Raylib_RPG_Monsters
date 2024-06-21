@@ -138,7 +138,8 @@ public:
     int z = BATTLE_LAYERS["monster"];
     std::string state = "idle";
     std::map<std::string, std::vector<TiledTexture>> state_frames;
-    int adjusted_frame_index;
+    std::map<std::string, std::vector<TiledTexture>> state_frames_highlight;
+    int adjusted_frame_index{};
 
 private:
 
