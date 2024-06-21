@@ -34,7 +34,7 @@ void Battle::Update(const double dt)
 
     BeginTextureModeC(display_surface, BLACK);
     DrawTexture(bg_surf, 0, 0, WHITE);
-    battle_sprites->Draw();
+    battle_sprites->Draw(current_monster);
     EndTextureModeSafe();
 }
 
@@ -84,6 +84,7 @@ void Battle::CreateMonster(
     new MonsterStatsSprite(
             Vector2Add(GetRectMidBottom(monster_sprite->rect), {0.20}), monster_sprite, {150, 48},
             {battle_sprites}, fonts["small"]);
+    new MonsterOutlineSprite(monster_sprite, {battle_sprites});
 }
 
 void Battle::CheckActive()

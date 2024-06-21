@@ -79,7 +79,7 @@ void AllSprites::Draw(const Player *player)
     }
 }
 
-void BattleSprites::Draw()
+void BattleSprites::Draw(const MonsterSprite *current_monster_sprite)
 {
     std::sort(
             sprites.begin(), sprites.end(),
@@ -92,7 +92,17 @@ void BattleSprites::Draw()
             });
     for (const auto *sprite: sprites)
     {
-        DrawTextureRec(
-                *sprite->image.texture, sprite->image.rect.rectangle, sprite->rect.pos, WHITE);
+        if (GetYsort(sprite) == BATTLE_LAYERS["outline"])
+        {
+            if (((MonsterOutlineSprite *) sprite)->monster_sprite == current_monster_sprite)
+            {
+                ((MonsterOutlineSprite *) sprite)->Draw({0, 0});
+            }
+        }
+        else
+        {
+            DrawTextureRec(
+                    *sprite->image.texture, sprite->image.rect.rectangle, sprite->rect.pos, WHITE);
+        }
     }
 }

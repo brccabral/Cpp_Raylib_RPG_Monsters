@@ -211,3 +211,22 @@ private:
     RenderTexture2D inverted{};
     Font font;
 };
+
+class MonsterOutlineSprite : public SimpleSprite
+{
+public:
+
+    MonsterOutlineSprite(MonsterSprite *monster_sprite, std::vector<SpriteGroup *> sgs);
+    ~MonsterOutlineSprite() override;
+    void Draw(Vector2 offset) const override;
+
+    MonsterSprite *monster_sprite;
+    int z = BATTLE_LAYERS["outline"];
+
+private:
+
+
+    // creates a highlight around monster during battle
+    Shader shdrOutline{};
+    int textureSizeLoc;
+};

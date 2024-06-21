@@ -24,5 +24,5 @@ class BattleSprites : public SpriteGroup
 public:
 
     BattleSprites() = default;
-    void Draw();
+    void Draw(const MonsterSprite *current_monster_sprite);
 };

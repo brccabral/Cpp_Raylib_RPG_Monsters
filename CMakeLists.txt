@@ -8,6 +8,9 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(raylib REQUIRED)
 find_package(tmx REQUIRED)
 
+set(PLATFORM "Desktop" CACHE STRING "Desktop, Android, Web")
+message("PLATFORM ${PLATFORM}")
+
 add_executable(${PROJECT_NAME} code/main.cpp
         code/game.cpp
         code/sprite.cpp
@@ -21,6 +24,9 @@ add_executable(${PROJECT_NAME} code/main.cpp
         code/battle.cpp
         code/raylib_utils.cpp
 )
+if (PLATFORM STREQUAL "Desktop")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE PLATFORM_DESKTOP)
+endif ()
 target_link_libraries(${PROJECT_NAME} raylib tmx m)
 install(TARGETS ${PROJECT_NAME})
 

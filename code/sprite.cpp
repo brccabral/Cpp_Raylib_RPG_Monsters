@@ -130,7 +130,7 @@ MonsterSprite::MonsterSprite(
     image = frames[state][int(frame_index)];
     rect = image.rect;
     RectToCenter(rect, position);
-    auto dist = GetRandomUniformDist(-1, 1);
+    const auto dist = GetRandomUniformDist(-1, 1);
     animation_speed = ANIMATION_SPEED + GetRandomUniform(dist);
     type = MONSTERSPRITE;
 }
@@ -312,6 +312,55 @@ void MonsterStatsSprite::Update(double deltaTime)
     EndTextureModeSafe();
 }
 
+MonsterOutlineSprite::MonsterOutlineSprite(
+        MonsterSprite *monster_sprite, std::vector<SpriteGroup *> sgs)
+    : SimpleSprite(sgs), monster_sprite(monster_sprite)
+{
+    type = MONSTEROUTLINESPRITE;
+
+    // Highlight shader (outline)
+    shdrOutline =
+            LoadShader(nullptr, TextFormat("resources/shaders/glsl%i/outline.fs", GLSL_VERSION));
+
+    // shader parameters
+    constexpr float outlineSize = 3.0f;
+    const auto [r, g, b, a] = COLORS["white"];
+    const float outlineColor[4] = {
+            r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f}; // normalized color
+    const float textureSize[2] = {
+            (float) monster_sprite->image.texture->width,
+            (float) monster_sprite->image.texture->height};
+
+    // Get shader locations
+    const int outlineSizeLoc = GetShaderLocation(shdrOutline, "outlineSize");
+    const int outlineColorLoc = GetShaderLocation(shdrOutline, "outlineColor");
+    textureSizeLoc = GetShaderLocation(shdrOutline, "textureSize");
+
+    // Set shader values (they can be changed later)
+    SetShaderValue(shdrOutline, outlineSizeLoc, &outlineSize, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(shdrOutline, outlineColorLoc, outlineColor, SHADER_UNIFORM_VEC4);
+    SetShaderValue(shdrOutline, textureSizeLoc, textureSize, SHADER_UNIFORM_VEC2);
+}
+
+MonsterOutlineSprite::~MonsterOutlineSprite()
+{
+    UnloadShader(shdrOutline);
+}
+
+// Draws the Monster texture with an outline
+void MonsterOutlineSprite::Draw(const Vector2 offset) const
+{
+    const float textureSize[2] = {
+            (float) monster_sprite->image.texture->width,
+            (float) monster_sprite->image.texture->height};
+    SetShaderValue(shdrOutline, textureSizeLoc, textureSize, SHADER_UNIFORM_VEC2);
+    BeginShaderMode(shdrOutline);
+    DrawTextureRec(
+            *monster_sprite->image.texture, monster_sprite->image.rect.rectangle,
+            monster_sprite->rect.pos, WHITE);
+    EndShaderMode();
+}
+
 void SpriteGroup::Draw() const
 {
     for (const auto *sprite: sprites)
@@ -378,6 +427,10 @@ int GetYsort(const SimpleSprite *sprite)
     else if (sprite->type == MONSTERSTATSSPRITE)
     {
         y = ((MonsterStatsSprite *) sprite)->z;
+    }
+    else if (sprite->type == MONSTEROUTLINESPRITE)
+    {
+        y = ((MonsterOutlineSprite *) sprite)->z;
     }
     return y;
 }
