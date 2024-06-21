@@ -181,23 +181,35 @@ inline std::map<std::string, tmx_map *> tmx_importer(const char *path)
     return maps;
 }
 
-inline void
-DrawBar(const RectangleU rect, const float value, const float max_value, const Color color,
-        const Color bg_color, const float roundness = 0.0f, const int segments = 0)
+inline std::map<std::string, Texture2D>
+OutlineCreator(const std::map<std::string, Texture2D> &texture_dict, const int width)
 {
-    const float ratio = rect.width / max_value;
-    const RectangleU bg_rect = rect;
-    const RectangleU progress_rect = {
-            rect.x, rect.y, Clamp(value * ratio, 0, rect.width), rect.height};
+    std::map<std::string, Texture2D> outline_texture_dict;
+    for (auto &[monster, monster_texture]: texture_dict)
+    {
+        Image image = LoadImageFromTexture(monster_texture);
+        const Image mask = ImageMaskFromImage(image, COLORS["blue"]);
 
-    if (roundness == 0)
-    {
-        DrawRectangleRec(bg_rect.rectangle, bg_color);
-        DrawRectangleRec(progress_rect.rectangle, color);
+        Image new_image = GenImageColor(image.width, image.height, {0});
+
+        ImageDraw(
+                &new_image, mask, {0, 0, (float) image.width, (float) image.height},
+                {5, 0, (float) image.width, (float) image.height}, WHITE);
+        ImageDraw(
+                &new_image, mask, {0, 0, (float) image.width, (float) image.height},
+                {0, 5, (float) image.width, (float) image.height}, WHITE);
+        ImageDraw(
+                &new_image, mask, {0, 0, (float) image.width, (float) image.height},
+                {-5, 0, (float) image.width, (float) image.height}, WHITE);
+        ImageDraw(
+                &new_image, mask, {0, 0, (float) image.width, (float) image.height},
+                {0, -5, (float) image.width, (float) image.height}, WHITE);
+
+        outline_texture_dict[monster] = LoadTextureFromImage(new_image);
+
+        UnloadImage(new_image);
+        UnloadImage(image);
+        UnloadImage(mask);
     }
-    else
-    {
-        DrawRectangleRounded(bg_rect.rectangle, roundness, segments, bg_color);
-        DrawRectangleRounded(progress_rect.rectangle, roundness, segments, color);
-    }
+    return outline_texture_dict;
 }

@@ -39,6 +39,7 @@ Game::Game(const int width, const int height)
 
 
     std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> monsters_frames;
+    std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> outline_frames;
     for (const auto &[monster_name, animations]: named_rect_frames["monsters"])
     {
         for (const auto &[key, frames]: animations)
@@ -47,6 +48,9 @@ Game::Game(const int width, const int height)
             {
                 TiledTexture tiled_texture = {&named_textures["monsters"][monster_name], frame};
                 monsters_frames[monster_name][key].push_back(tiled_texture);
+
+                TiledTexture outline_texture = {&named_textures["outlines"][monster_name], frame};
+                outline_frames[monster_name][key].push_back(outline_texture);
             }
         }
     }
@@ -54,8 +58,8 @@ Game::Game(const int width, const int height)
             player_monsters, fonts, named_textures["icons"], monsters_frames, named_textures["ui"]);
 
     battle = new Battle(
-            player_monsters, dummy_monsters, monsters_frames, named_textures["bg_frames"]["forest"],
-            fonts);
+            player_monsters, dummy_monsters, monsters_frames, outline_frames,
+            named_textures["bg_frames"]["forest"], fonts);
 }
 
 Game::~Game()
@@ -172,6 +176,7 @@ void Game::ImporAssets()
     named_textures["icons"] = ImportNamedFolder("resources/graphics/icons");
     named_textures["ui"] = ImportNamedFolder("resources/graphics/ui");
     named_textures["bg_frames"] = ImportNamedFolder("resources/graphics/backgrounds");
+    named_textures["outlines"] = OutlineCreator(named_textures["monsters"], 4);
 
     named_rect_frames["coast"] = coast_rects();
     named_rect_frames["monsters"] = MonsterImporter(4, 2, "resources/graphics/monsters");

@@ -11,6 +11,8 @@ public:
            const std::vector<Monster> &opponent_monsters,
            const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
                    &monsters_frames,
+           const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
+                   &outline_frames,
            const Texture2D &bg_surf, const std::map<std::string, Font> &fonts);
     ~Battle();
     void Update(double dt);
@@ -28,6 +30,7 @@ private:
 
     Texture2D bg_surf;
     std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> monsters_frames;
+    std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> outline_frames;
     std::map<std::string, Font> fonts;
     std::map<std::string, std::vector<Monster>> monster_data;
 

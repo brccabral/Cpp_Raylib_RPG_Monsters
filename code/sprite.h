@@ -136,6 +136,9 @@ public:
 
     Monster monster;
     int z = BATTLE_LAYERS["monster"];
+    std::string state = "idle";
+    float frame_index{};
+    std::map<std::string, std::vector<TiledTexture>> state_frames;
 
 private:
 
@@ -143,9 +146,6 @@ private:
     int pos_index;
     std::string entity;
 
-    float frame_index{};
-    std::map<std::string, std::vector<TiledTexture>> frames;
-    std::string state = "idle";
     float animation_speed{};
 
     bool highlight{};
@@ -216,17 +216,16 @@ class MonsterOutlineSprite : public SimpleSprite
 {
 public:
 
-    MonsterOutlineSprite(MonsterSprite *monster_sprite, std::vector<SpriteGroup *> sgs);
-    ~MonsterOutlineSprite() override;
-    void Draw(Vector2 offset) const override;
+    MonsterOutlineSprite(
+            MonsterSprite *monster_sprite, const std::vector<SpriteGroup *> &sgs,
+            const std::map<std::string, std::vector<TiledTexture>> &frms);
+    void Update(double deltaTime) override;
+    void FlipH() override;
 
     MonsterSprite *monster_sprite;
     int z = BATTLE_LAYERS["outline"];
 
 private:
 
-
-    // creates a highlight around monster during battle
-    Shader shdrOutline{};
-    int textureSizeLoc;
+    std::map<std::string, std::vector<TiledTexture>> state_frames;
 };

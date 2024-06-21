@@ -7,9 +7,11 @@ Battle::Battle(
         const std::vector<Monster> &player_monsters, const std::vector<Monster> &opponent_monsters,
         const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
                 &monsters_frames,
+        const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
+                &outline_frames,
         const Texture2D &bg_surf, const std::map<std::string, Font> &fonts)
-    : bg_surf(bg_surf), monsters_frames(monsters_frames), fonts(fonts),
-      monster_data({{"player", player_monsters}, {"opponent", opponent_monsters}})
+    : bg_surf(bg_surf), monsters_frames(monsters_frames), outline_frames(outline_frames),
+      fonts(fonts), monster_data({{"player", player_monsters}, {"opponent", opponent_monsters}})
 {
     battle_sprites = new BattleSprites();
     player_sprites = new SpriteGroup();
@@ -53,6 +55,7 @@ void Battle::CreateMonster(
         const Monster &monster, const int index, const int pos_index, const std::string &entity)
 {
     const auto frames = monsters_frames[monster.name];
+    const auto outlines = outline_frames[monster.name];
     Vector2 pos;
     std::vector<SpriteGroup *> groups{};
     MonsterSprite *monster_sprite;
@@ -69,6 +72,8 @@ void Battle::CreateMonster(
         name_sprite =
                 new MonsterNameSprite(name_pos, monster_sprite, {battle_sprites}, fonts["regular"]);
         level_pos = GetRectBottomLeft(name_sprite->rect);
+        auto *outline_sprite = new MonsterOutlineSprite(monster_sprite, {battle_sprites}, outlines);
+        outline_sprite->FlipH();
     }
     else
     {
@@ -79,12 +84,12 @@ void Battle::CreateMonster(
         name_sprite =
                 new MonsterNameSprite(name_pos, monster_sprite, {battle_sprites}, fonts["regular"]);
         level_pos = GetRectBottomRight(name_sprite->rect);
+        new MonsterOutlineSprite(monster_sprite, {battle_sprites}, outlines);
     }
     new MonsterLevelSprite(entity, level_pos, monster_sprite, {battle_sprites}, fonts["small"]);
     new MonsterStatsSprite(
             Vector2Add(GetRectMidBottom(monster_sprite->rect), {0.20}), monster_sprite, {150, 48},
             {battle_sprites}, fonts["small"]);
-    new MonsterOutlineSprite(monster_sprite, {battle_sprites});
 }
 
 void Battle::CheckActive()

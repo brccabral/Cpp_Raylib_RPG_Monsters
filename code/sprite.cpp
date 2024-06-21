@@ -1,8 +1,10 @@
 #include <cstring>
 #include <algorithm>
 #include "sprite.h"
-#include "support.h"
 #include "dialogsprite.h"
+#include "raylib_utils.h"
+
+#include <complex>
 
 
 SimpleSprite::SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups)
@@ -125,9 +127,9 @@ MonsterSprite::MonsterSprite(
         const std::vector<SpriteGroup *> &sgs, Monster monster, const int index,
         const int pos_index, const std::string &entity)
     : SimpleSprite(sgs), monster(std::move(monster)), index(index), pos_index(pos_index),
-      entity(entity), frames(frms)
+      entity(entity), state_frames(frms)
 {
-    image = frames[state][int(frame_index)];
+    image = state_frames[state][int(frame_index)];
     rect = image.rect;
     RectToCenter(rect, position);
     const auto dist = GetRandomUniformDist(-1, 1);
@@ -138,7 +140,7 @@ MonsterSprite::MonsterSprite(
 void MonsterSprite::Animate(const double dt)
 {
     frame_index += animation_speed * dt;
-    image = frames[state][int(frame_index) % frames[state].size()];
+    image = state_frames[state][int(frame_index) % state_frames[state].size()];
 }
 
 void MonsterSprite::Update(const double dt)
@@ -149,7 +151,7 @@ void MonsterSprite::Update(const double dt)
 
 void MonsterSprite::FlipH()
 {
-    for (auto &[state, tiles]: frames)
+    for (auto &[state, tiles]: state_frames)
     {
         for (auto &[texture, tile_rect]: tiles)
         {
@@ -313,52 +315,32 @@ void MonsterStatsSprite::Update(double deltaTime)
 }
 
 MonsterOutlineSprite::MonsterOutlineSprite(
-        MonsterSprite *monster_sprite, std::vector<SpriteGroup *> sgs)
-    : SimpleSprite(sgs), monster_sprite(monster_sprite)
+        MonsterSprite *monster_sprite, const std::vector<SpriteGroup *> &sgs,
+        const std::map<std::string, std::vector<TiledTexture>> &frms)
+    : SimpleSprite(sgs), monster_sprite(monster_sprite), state_frames(frms)
 {
     type = MONSTEROUTLINESPRITE;
 
-    // Highlight shader (outline)
-    shdrOutline =
-            LoadShader(nullptr, TextFormat("resources/shaders/glsl%i/outline.fs", GLSL_VERSION));
-
-    // shader parameters
-    constexpr float outlineSize = 3.0f;
-    const auto [r, g, b, a] = COLORS["white"];
-    const float outlineColor[4] = {
-            r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f}; // normalized color
-    const float textureSize[2] = {
-            (float) monster_sprite->image.texture->width,
-            (float) monster_sprite->image.texture->height};
-
-    // Get shader locations
-    const int outlineSizeLoc = GetShaderLocation(shdrOutline, "outlineSize");
-    const int outlineColorLoc = GetShaderLocation(shdrOutline, "outlineColor");
-    textureSizeLoc = GetShaderLocation(shdrOutline, "textureSize");
-
-    // Set shader values (they can be changed later)
-    SetShaderValue(shdrOutline, outlineSizeLoc, &outlineSize, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(shdrOutline, outlineColorLoc, outlineColor, SHADER_UNIFORM_VEC4);
-    SetShaderValue(shdrOutline, textureSizeLoc, textureSize, SHADER_UNIFORM_VEC2);
+    image = state_frames[monster_sprite->state][0];
+    rect = monster_sprite->rect;
 }
 
-MonsterOutlineSprite::~MonsterOutlineSprite()
+void MonsterOutlineSprite::Update(double deltaTime)
 {
-    UnloadShader(shdrOutline);
+    image = state_frames[monster_sprite->state]
+                        [int(monster_sprite->frame_index) %
+                         state_frames[monster_sprite->state].size()];
 }
 
-// Draws the Monster texture with an outline
-void MonsterOutlineSprite::Draw(const Vector2 offset) const
+void MonsterOutlineSprite::FlipH()
 {
-    const float textureSize[2] = {
-            (float) monster_sprite->image.texture->width,
-            (float) monster_sprite->image.texture->height};
-    SetShaderValue(shdrOutline, textureSizeLoc, textureSize, SHADER_UNIFORM_VEC2);
-    BeginShaderMode(shdrOutline);
-    DrawTextureRec(
-            *monster_sprite->image.texture, monster_sprite->image.rect.rectangle,
-            monster_sprite->rect.pos, WHITE);
-    EndShaderMode();
+    for (auto &[state, tiles]: state_frames)
+    {
+        for (auto &[texture, tile_rect]: tiles)
+        {
+            tile_rect.width = -tile_rect.width;
+        }
+    }
 }
 
 void SpriteGroup::Draw() const

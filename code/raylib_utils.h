@@ -132,3 +132,13 @@ RLAPI std::uniform_real_distribution<float> GetRandomUniformDist(float min, floa
 RLAPI float GetRandomUniform(std::uniform_real_distribution<float> dist);
 
 RLAPI void DrawCenteredTextEx(const Font &font, const char *text, RectangleU rect, Color color);
+
+RLAPI void
+DrawBar(RectangleU rect, float value, float max_value, Color color, Color bg_color,
+        float roundness = 0.0f, int segments = 0);
+
+RLAPI Texture2D *Texture2DToPointer(const Texture2D &texture);
+
+RLAPI Image ImageMaskFromImage(const Image &image, Color color, float threshold = 0);
+
+RLAPI Image GenRandomPixelsImage(float width, float height);

@@ -359,3 +359,255 @@ void DrawCenteredTextEx(
     const Vector2 text_pos = {(rect.width - text_width) / 2, (rect.height - text_height) / 2};
     DrawTextEx(font, text, text_pos, font.baseSize, 1, color);
 }
+
+void DrawBar(
+        const RectangleU rect, const float value, const float max_value, const Color color,
+        const Color bg_color, const float roundness, const int segments)
+{
+    const float ratio = rect.width / max_value;
+    const RectangleU bg_rect = rect;
+    const RectangleU progress_rect = {
+            rect.x, rect.y, Clamp(value * ratio, 0, rect.width), rect.height};
+
+    if (roundness == 0)
+    {
+        DrawRectangleRec(bg_rect.rectangle, bg_color);
+        DrawRectangleRec(progress_rect.rectangle, color);
+    }
+    else
+    {
+        DrawRectangleRounded(bg_rect.rectangle, roundness, segments, bg_color);
+        DrawRectangleRounded(progress_rect.rectangle, roundness, segments, color);
+    }
+}
+
+Texture2D *Texture2DToPointer(const Texture2D &texture)
+{
+    auto *returnValue = (Texture2D *) MemAlloc(sizeof(Texture2D));
+    *returnValue = texture;
+    return returnValue;
+}
+
+// Convert half-float (stored as unsigned short) to float
+// REF:
+// https://stackoverflow.com/questions/1659440/32-bit-to-16-bit-floating-point-conversion/60047308#60047308
+static float HalfToFloat(const unsigned short x)
+{
+
+    const unsigned int e = (x & 0x7C00) >> 10; // Exponent
+    const unsigned int m = (x & 0x03FF) << 13; // Mantissa
+    const auto fm = (float) m;
+    const unsigned int v = (*(unsigned int *) &fm) >>
+                           23; // Evil log2 bit hack to count leading zeros in denormalized format
+    const unsigned int r =
+            (x & 0x8000) << 16 | (e != 0) * ((e + 112) << 23 | m) |
+            ((e == 0) & (m != 0)) *
+                    ((v - 37) << 23 |
+                     ((m << (150 - v)) & 0x007FE000)); // sign : normalized : denormalized
+
+    const float result = *(float *) &r;
+
+    return result;
+}
+
+// Get pixel data from image as Vector4 array (float normalized)
+static Vector4 *LoadImageDataNormalized(const Image &image)
+{
+    auto *pixels = (Vector4 *) RL_MALLOC(image.width * image.height * sizeof(Vector4));
+
+    if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB)
+        TraceLog(
+                LOG_WARNING,
+                "IMAGE: Pixel data retrieval not supported for compressed image formats");
+    else
+    {
+        for (int i = 0, k = 0; i < image.width * image.height; i++)
+        {
+            switch (image.format)
+            {
+                case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE:
+                {
+                    pixels[i].x = (float) ((unsigned char *) image.data)[i] / 255.0f;
+                    pixels[i].y = (float) ((unsigned char *) image.data)[i] / 255.0f;
+                    pixels[i].z = (float) ((unsigned char *) image.data)[i] / 255.0f;
+                    pixels[i].w = 1.0f;
+                }
+                break;
+                case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
+                {
+                    pixels[i].x = (float) ((unsigned char *) image.data)[k] / 255.0f;
+                    pixels[i].y = (float) ((unsigned char *) image.data)[k] / 255.0f;
+                    pixels[i].z = (float) ((unsigned char *) image.data)[k] / 255.0f;
+                    pixels[i].w = (float) ((unsigned char *) image.data)[k + 1] / 255.0f;
+
+                    k += 2;
+                }
+                break;
+                case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
+                {
+                    const unsigned short pixel = ((unsigned short *) image.data)[i];
+
+                    pixels[i].x = (float) ((pixel & 0b1111100000000000) >> 11) * (1.0f / 31);
+                    pixels[i].y = (float) ((pixel & 0b0000011111000000) >> 6) * (1.0f / 31);
+                    pixels[i].z = (float) ((pixel & 0b0000000000111110) >> 1) * (1.0f / 31);
+                    pixels[i].w = ((pixel & 0b0000000000000001) == 0) ? 0.0f : 1.0f;
+                }
+                break;
+                case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
+                {
+                    const unsigned short pixel = ((unsigned short *) image.data)[i];
+
+                    pixels[i].x = (float) ((pixel & 0b1111100000000000) >> 11) * (1.0f / 31);
+                    pixels[i].y = (float) ((pixel & 0b0000011111100000) >> 5) * (1.0f / 63);
+                    pixels[i].z = (float) (pixel & 0b0000000000011111) * (1.0f / 31);
+                    pixels[i].w = 1.0f;
+                }
+                break;
+                case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
+                {
+                    const unsigned short pixel = ((unsigned short *) image.data)[i];
+
+                    pixels[i].x = (float) ((pixel & 0b1111000000000000) >> 12) * (1.0f / 15);
+                    pixels[i].y = (float) ((pixel & 0b0000111100000000) >> 8) * (1.0f / 15);
+                    pixels[i].z = (float) ((pixel & 0b0000000011110000) >> 4) * (1.0f / 15);
+                    pixels[i].w = (float) (pixel & 0b0000000000001111) * (1.0f / 15);
+                }
+                break;
+                case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
+                {
+                    pixels[i].x = (float) ((unsigned char *) image.data)[k] / 255.0f;
+                    pixels[i].y = (float) ((unsigned char *) image.data)[k + 1] / 255.0f;
+                    pixels[i].z = (float) ((unsigned char *) image.data)[k + 2] / 255.0f;
+                    pixels[i].w = (float) ((unsigned char *) image.data)[k + 3] / 255.0f;
+
+                    k += 4;
+                }
+                break;
+                case PIXELFORMAT_UNCOMPRESSED_R8G8B8:
+                {
+                    pixels[i].x = (float) ((unsigned char *) image.data)[k] / 255.0f;
+                    pixels[i].y = (float) ((unsigned char *) image.data)[k + 1] / 255.0f;
+                    pixels[i].z = (float) ((unsigned char *) image.data)[k + 2] / 255.0f;
+                    pixels[i].w = 1.0f;
+
+                    k += 3;
+                }
+                break;
+                case PIXELFORMAT_UNCOMPRESSED_R32:
+                {
+                    pixels[i].x = ((float *) image.data)[k];
+                    pixels[i].y = 0.0f;
+                    pixels[i].z = 0.0f;
+                    pixels[i].w = 1.0f;
+                }
+                break;
+                case PIXELFORMAT_UNCOMPRESSED_R32G32B32:
+                {
+                    pixels[i].x = ((float *) image.data)[k];
+                    pixels[i].y = ((float *) image.data)[k + 1];
+                    pixels[i].z = ((float *) image.data)[k + 2];
+                    pixels[i].w = 1.0f;
+
+                    k += 3;
+                }
+                break;
+                case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32:
+                {
+                    pixels[i].x = ((float *) image.data)[k];
+                    pixels[i].y = ((float *) image.data)[k + 1];
+                    pixels[i].z = ((float *) image.data)[k + 2];
+                    pixels[i].w = ((float *) image.data)[k + 3];
+
+                    k += 4;
+                }
+                break;
+                case PIXELFORMAT_UNCOMPRESSED_R16:
+                {
+                    pixels[i].x = HalfToFloat(((unsigned short *) image.data)[k]);
+                    pixels[i].y = 0.0f;
+                    pixels[i].z = 0.0f;
+                    pixels[i].w = 1.0f;
+                }
+                break;
+                case PIXELFORMAT_UNCOMPRESSED_R16G16B16:
+                {
+                    pixels[i].x = HalfToFloat(((unsigned short *) image.data)[k]);
+                    pixels[i].y = HalfToFloat(((unsigned short *) image.data)[k + 1]);
+                    pixels[i].z = HalfToFloat(((unsigned short *) image.data)[k + 2]);
+                    pixels[i].w = 1.0f;
+
+                    k += 3;
+                }
+                break;
+                case PIXELFORMAT_UNCOMPRESSED_R16G16B16A16:
+                {
+                    pixels[i].x = HalfToFloat(((unsigned short *) image.data)[k]);
+                    pixels[i].y = HalfToFloat(((unsigned short *) image.data)[k + 1]);
+                    pixels[i].z = HalfToFloat(((unsigned short *) image.data)[k + 2]);
+                    pixels[i].w = HalfToFloat(((unsigned short *) image.data)[k + 3]);
+
+                    k += 4;
+                }
+                break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    return pixels;
+}
+
+Image ImageMaskFromImage(const Image &image, const Color color, const float threshold)
+{
+    // Security check to avoid program crash
+    if ((image.data == nullptr) || (image.width == 0) || (image.height == 0))
+        return {};
+
+    Vector4 *pixels = LoadImageDataNormalized(image);
+
+    Image mask{};
+    mask.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
+    mask.height = image.height;
+    mask.width = image.width;
+    mask.mipmaps = 1;
+
+    auto *new_pixels = (Color *) RL_CALLOC(image.width * image.height, sizeof(Color));
+
+    for (int i = 0; i < mask.width * mask.height; i++)
+    {
+        if (pixels[i].w > threshold)
+            new_pixels[i] = color;
+        else
+            new_pixels[i] = {};
+    }
+
+    mask.data = new_pixels;
+
+    RL_FREE(pixels);
+    pixels = nullptr;
+
+    return mask;
+}
+
+
+Image GenRandomPixelsImage(const float width, const float height)
+{
+    Image image{};
+    image.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
+    image.height = height;
+    image.width = width;
+    image.mipmaps = 1;
+
+    auto *pixels = (Color *) RL_CALLOC(width * height, sizeof(Color));
+    for (int i = 0; i < width * height; i++)
+    {
+        pixels[i].r = GetRandomValue(0, 255);
+        pixels[i].g = GetRandomValue(0, 255);
+        pixels[i].b = GetRandomValue(0, 255);
+        pixels[i].a = GetRandomValue(0, 255);
+    }
+    image.data = pixels;
+
+    return image;
+}
