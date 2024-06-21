@@ -146,6 +146,17 @@ MonsterSprite::MonsterSprite(
         }
         state_frames_highlight[state] = highlight_tiles;
     }
+
+    timers["remove_highlight"] =
+            new Timer(0.3f, false, false, std::bind(&MonsterSprite::SetHighlight, this, false));
+}
+
+MonsterSprite::~MonsterSprite()
+{
+    for (const auto &[key, timer]: timers)
+    {
+        delete timer;
+    }
 }
 
 void MonsterSprite::Animate(const double dt)
@@ -162,6 +173,10 @@ void MonsterSprite::Animate(const double dt)
 
 void MonsterSprite::Update(const double dt)
 {
+    for (auto &[key, timer]: timers)
+    {
+        timer->Update();
+    }
     Animate(dt);
     monster.Update(dt);
 }
@@ -187,6 +202,10 @@ void MonsterSprite::FlipH()
 void MonsterSprite::SetHighlight(const bool value)
 {
     highlight = value;
+    if (highlight)
+    {
+        timers["remove_highlight"]->Activate();
+    }
 }
 
 MonsterNameSprite::MonsterNameSprite(

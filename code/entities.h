@@ -62,8 +62,8 @@ public:
 
     Character(
             Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
-            const std::vector<SpriteGroup *> &sgs, FacingDirection facing_dir, CharacterData char_data, float radius,
-            Game *g);
+            const std::vector<SpriteGroup *> &sgs, FacingDirection facing_dir,
+            CharacterData char_data, float radius, Game *g);
     ~Character() override;
     [[nodiscard]] std::vector<std::string> GetDialog() const;
     void Update(double dt) override;

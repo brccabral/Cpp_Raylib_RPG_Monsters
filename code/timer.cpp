@@ -2,6 +2,7 @@
 #include "timer.h"
 
 
+// duration is in seconds
 Timer::Timer(
         const float duration, const bool repeat, const bool autostart,
         const std::function<void()> &func)

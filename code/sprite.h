@@ -4,6 +4,7 @@
 #include "raylib_utils.h"
 #include "monster.h"
 #include "settings.h"
+#include "timer.h"
 
 
 typedef struct TiledTexture
@@ -129,6 +130,7 @@ public:
             Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
             const std::vector<SpriteGroup *> &sgs, Monster monster, int index, int pos_index,
             const std::string &entity);
+    ~MonsterSprite() override;
     void Animate(double dt);
     void Update(double dt) override;
     void FlipH() override;
@@ -151,6 +153,7 @@ private:
     float frame_index{};
 
     bool highlight{};
+    std::map<std::string, Timer *> timers;
 };
 
 class MonsterNameSprite : public SimpleSprite
