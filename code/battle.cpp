@@ -114,16 +114,21 @@ void Battle::Input()
                 limiter = BATTLE_CHOICES["full"].size();
                 break;
             }
+            case ATTACKS:
+            {
+                limiter = current_monster->monster.GetAbilities().size();
+                break;
+            }
             default:
                 break;
         }
         if (IsKeyPressed(KEY_DOWN))
         {
-            indexes[selection_mode] = ((indexes[GENERAL] + 1) % limiter + limiter) % limiter;
+            indexes[selection_mode] = ((indexes[selection_mode] + 1) % limiter + limiter) % limiter;
         }
         if (IsKeyPressed(KEY_UP))
         {
-            indexes[selection_mode] = ((indexes[GENERAL] - 1) % limiter + limiter) % limiter;
+            indexes[selection_mode] = ((indexes[selection_mode] - 1) % limiter + limiter) % limiter;
         }
         if (IsKeyPressed(KEY_SPACE))
         {
@@ -244,10 +249,27 @@ void Battle::DrawAttacks()
     for (int index = 0; index < abilities.size(); ++index)
     {
         bool selected = index == indexes[ATTACKS];
+        Color text_color;
+        if (selected)
+        {
+            std::string element = ATTACK_DATA[abilities[index]].element;
+            if (std::strcmp(element.c_str(), "normal") == 0)
+            {
+                text_color = COLORS["black"];
+            }
+            else
+            {
+                text_color = COLORS[element];
+            }
+        }
+        else
+        {
+            text_color = COLORS["light"];
+        }
         // rect
         RectangleU text_rect = {
                 bg_rect.x, bg_rect.y + index * item_height, bg_rect.width, (float) item_height};
-        DrawCenteredTextEx(fonts["regular"], abilities[index].c_str(), text_rect, COLORS["light"]);
+        DrawCenteredTextEx(fonts["regular"], abilities[index].c_str(), text_rect, text_color);
     }
 }
 
