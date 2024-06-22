@@ -37,6 +37,7 @@ Battle::~Battle()
 
 void Battle::Update(const double dt)
 {
+    Input();
     // Update Sprites before drawing into `display_surface`, as
     // some sprites open renderes to draw into
     battle_sprites->Update(dt);
@@ -99,6 +100,32 @@ void Battle::CreateMonster(
     new MonsterStatsSprite(
             Vector2Add(GetRectMidBottom(monster_sprite->rect), {0.20}), monster_sprite, {150, 48},
             {battle_sprites}, fonts["small"]);
+}
+
+void Battle::Input()
+{
+    if (selection_mode && current_monster)
+    {
+        int limiter = 0;
+        switch (selection_mode)
+        {
+            case GENERAL:
+            {
+                limiter = BATTLE_CHOICES["full"].size();
+                break;
+            }
+            default:
+                break;
+        }
+        if (IsKeyPressed(KEY_DOWN))
+        {
+            indexes[selection_mode] = ((indexes[GENERAL] + 1) % limiter + limiter) % limiter;
+        }
+        if (IsKeyPressed(KEY_UP))
+        {
+            indexes[selection_mode] = ((indexes[GENERAL] - 1) % limiter + limiter) % limiter;
+        }
+    }
 }
 
 void Battle::CheckActive()

@@ -34,6 +34,7 @@ public:
     void Update(double dt);
     void Setup();
     void CreateMonster(const Monster &monster, int index, int pos_index, const std::string &entity);
+    void Input();
 
     // check what is the first monster to get Initiative = 100
     // it depends on monster speed
