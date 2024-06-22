@@ -234,12 +234,12 @@ void Battle::DrawGeneral()
 void Battle::DrawAttacks()
 {
     // data
-    auto abilities = current_monster->monster.GetAbilities(false);
-    float width = 150;
-    float height = 200;
-    int visible_attacks = 4;
-    int item_height = height / visible_attacks;
-    int v_offset = 0;
+    const auto abilities = current_monster->monster.GetAbilities(false);
+    constexpr float width = 150;
+    constexpr float height = 200;
+    constexpr int visible_attacks = 4;
+    constexpr float item_height = height / visible_attacks;
+    int v_offset;
     if (indexes[ATTACKS] < visible_attacks)
     {
         v_offset = 0;
@@ -256,7 +256,7 @@ void Battle::DrawAttacks()
 
     for (int index = 0; index < abilities.size(); ++index)
     {
-        bool selected = index == indexes[ATTACKS];
+        const bool selected = index == indexes[ATTACKS];
         Color text_color;
         if (selected)
         {
@@ -275,9 +275,8 @@ void Battle::DrawAttacks()
             text_color = COLORS["light"];
         }
         // rect
-        RectangleU text_rect = {
-                bg_rect.x, bg_rect.y + index * item_height + v_offset, bg_rect.width,
-                (float) item_height};
+        const RectangleU text_rect = {
+                bg_rect.x, bg_rect.y + index * item_height + v_offset, bg_rect.width, item_height};
         if (CheckCollisionPointRec(GetRectCenter(text_rect), bg_rect.rectangle))
         {
             if (selected)
@@ -305,4 +304,24 @@ void Battle::DrawAttacks()
 }
 
 void Battle::DrawSwitch()
-{}
+{
+    // data
+    constexpr float width = 300;
+    constexpr float height = 320;
+    constexpr int visible_monsters = 4;
+    constexpr float item_height = height / visible_monsters;
+    int v_offset;
+    if (indexes[SWITCH] < visible_monsters)
+    {
+        v_offset = 0;
+    }
+    else
+    {
+        v_offset = -(indexes[SWITCH] - visible_monsters + 1) * item_height;
+    }
+
+    // bg
+    RectangleU bg_rect = {0, 0, width, height};
+    RectToMidLeft(bg_rect, Vector2Add(GetRectMidRight(current_monster->rect), {20, 0}));
+    DrawRectangleRounded(bg_rect.rectangle, 0.1f, 10, COLORS["white"]);
+}
