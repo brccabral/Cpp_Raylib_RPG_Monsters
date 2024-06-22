@@ -352,21 +352,21 @@ void Battle::DrawSwitch()
     }
     for (int index = 0; index < available_monsters.size(); ++index)
     {
-        Monster *monster = available_monsters[index];
-        bool selected = index == indexes[SWITCH];
+        const Monster *monster = available_monsters[index];
+        const bool selected = index == indexes[SWITCH];
         RectangleU item_bg_rect = {0, 0, width, item_height};
         RectToMidLeft(
                 item_bg_rect,
                 {bg_rect.x, bg_rect.y + item_height / 2 + index * item_height + v_offset});
-        Texture2D icon_texture = monster_icons[monster->name];
-        RectangleU icon_rect = {0, 0, icon_rect.width, icon_rect.height};
+        const Texture2D icon_texture = monster_icons[monster->name];
+        RectangleU icon_rect = {0, 0, (float) icon_texture.width, (float) icon_texture.height};
         RectToMidLeft(
                 icon_rect, Vector2Add(
                                    GetRectTopLeft(bg_rect),
                                    {10, item_height / 2 + index * item_height + v_offset}));
-        Color text_color = selected ? COLORS["red"] : COLORS["black"];
+        const Color text_color = selected ? COLORS["red"] : COLORS["black"];
         DrawTextEx(
-                fonts["regular"], TextFormat("%s(%i)", monster->name.c_str(), monster->level),
+                fonts["regular"], TextFormat("%s (%i)", monster->name.c_str(), monster->level),
                 {bg_rect.x + 90, icon_rect.y}, fonts["regular"].baseSize, 1, text_color);
         DrawTextureV(icon_texture, icon_rect.pos, WHITE);
     }
