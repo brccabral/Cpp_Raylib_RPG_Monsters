@@ -372,14 +372,14 @@ void Battle::DrawSwitch()
                 if (CheckCollisionPointRec(GetRectTopLeft(bg_rect), item_bg_rect.rectangle))
                 {
                     DrawRectangleRoundedCorners(
-                            item_bg_rect, 0.2f, 10, COLORS["dark white"], true, true, false, false);
+                            item_bg_rect, 0.4f, 10, COLORS["dark white"], true, true, false, false);
                 }
                 else if (CheckCollisionPointRec(
                                  Vector2Add(GetRectMidBottom(bg_rect), {0, -1}),
                                  item_bg_rect.rectangle))
                 {
                     DrawRectangleRoundedCorners(
-                            item_bg_rect, 0.2f, 10, COLORS["dark white"], false, false, true, true);
+                            item_bg_rect, 0.4f, 10, COLORS["dark white"], false, false, true, true);
                 }
                 else
                 {
