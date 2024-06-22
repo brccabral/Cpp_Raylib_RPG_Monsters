@@ -4,7 +4,8 @@
 
 
 Battle::Battle(
-        const std::vector<Monster> &player_monsters, const std::vector<Monster> &opponent_monsters,
+        const std::vector<Monster *> &player_monsters,
+        const std::vector<Monster *> &opponent_monsters,
         const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
                 &monsters_frames,
         const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
@@ -62,10 +63,10 @@ void Battle::Setup()
 }
 
 void Battle::CreateMonster(
-        const Monster &monster, const int index, const int pos_index, const std::string &entity)
+        Monster *monster, const int index, const int pos_index, const std::string &entity)
 {
-    const auto frames = monsters_frames[monster.name];
-    const auto outlines = outline_frames[monster.name];
+    const auto frames = monsters_frames[monster->name];
+    const auto outlines = outline_frames[monster->name];
     Vector2 pos;
     std::vector<SpriteGroup *> groups{};
     MonsterSprite *monster_sprite;
@@ -116,7 +117,7 @@ void Battle::Input()
             }
             case ATTACKS:
             {
-                limiter = current_monster->monster.GetAbilities(false).size();
+                limiter = current_monster->monster->GetAbilities(false).size();
                 break;
             }
             default:
@@ -167,10 +168,10 @@ void Battle::CheckActiveGroup(const SpriteGroup *group)
 {
     for (const auto *sprite: group->sprites)
     {
-        if (((MonsterSprite *) sprite)->monster.initiative >= 100)
+        if (((MonsterSprite *) sprite)->monster->initiative >= 100)
         {
             UpdateAllMonsters(true);
-            ((MonsterSprite *) sprite)->monster.initiative = 0;
+            ((MonsterSprite *) sprite)->monster->initiative = 0;
             ((MonsterSprite *) sprite)->SetHighlight(true);
             current_monster = ((MonsterSprite *) sprite);
             selection_mode = GENERAL;
@@ -183,11 +184,11 @@ void Battle::UpdateAllMonsters(const bool do_pause) const
 {
     for (const auto *sprite: player_sprites->sprites)
     {
-        ((MonsterSprite *) sprite)->monster.paused = do_pause;
+        ((MonsterSprite *) sprite)->monster->paused = do_pause;
     }
     for (const auto *sprite: opponent_sprites->sprites)
     {
-        ((MonsterSprite *) sprite)->monster.paused = do_pause;
+        ((MonsterSprite *) sprite)->monster->paused = do_pause;
     }
 }
 
@@ -234,7 +235,7 @@ void Battle::DrawGeneral()
 void Battle::DrawAttacks()
 {
     // data
-    const auto abilities = current_monster->monster.GetAbilities(false);
+    const auto abilities = current_monster->monster->GetAbilities(false);
     constexpr float width = 150;
     constexpr float height = 200;
     constexpr int visible_attacks = 4;

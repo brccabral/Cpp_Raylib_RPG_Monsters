@@ -23,20 +23,20 @@ Game::Game(const int width, const int height)
 
     Setup(tmx_maps["world"], "house");
 
-    player_monsters.emplace_back("Charmadillo", 30);
-    player_monsters.emplace_back("Friolera", 29);
-    player_monsters.emplace_back("Larvea", 3);
-    player_monsters.emplace_back("Atrox", 24);
-    player_monsters.emplace_back("Sparchu", 24);
-    player_monsters.emplace_back("Gulfin", 24);
-    player_monsters.emplace_back("Jacana", 2);
-    player_monsters.emplace_back("Pouch", 3);
+    player_monsters.push_back(new Monster("Charmadillo", 30));
+    player_monsters.push_back(new Monster("Friolera", 29));
+    player_monsters.push_back(new Monster("Larvea", 3));
+    player_monsters.push_back(new Monster("Atrox", 24));
+    player_monsters.push_back(new Monster("Sparchu", 24));
+    player_monsters.push_back(new Monster("Gulfin", 24));
+    player_monsters.push_back(new Monster("Jacana", 2));
+    player_monsters.push_back(new Monster("Pouch", 3));
 
-    dummy_monsters.emplace_back("Atrox", 2);
-    dummy_monsters.emplace_back("Sparchu", 3);
-    dummy_monsters.emplace_back("Gulfin", 5);
-    dummy_monsters.emplace_back("Jacana", 2);
-    dummy_monsters.emplace_back("Pouch", 3);
+    dummy_monsters.push_back(new Monster("Atrox", 2));
+    dummy_monsters.push_back(new Monster("Sparchu", 3));
+    dummy_monsters.push_back(new Monster("Gulfin", 5));
+    dummy_monsters.push_back(new Monster("Jacana", 2));
+    dummy_monsters.push_back(new Monster("Pouch", 3));
 
 
     std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> monsters_frames;
@@ -501,6 +501,15 @@ void Game::UnloadResources()
     delete transition_sprites;
     delete monster_index;
     delete battle;
+
+    for (const auto *monster: player_monsters)
+    {
+        delete monster;
+    }
+    for (const auto *monster: dummy_monsters)
+    {
+        delete monster;
+    }
 }
 
 void Game::CreateDialog(const Character *character)

@@ -128,7 +128,7 @@ public:
 
     MonsterSprite(
             Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
-            const std::vector<SpriteGroup *> &sgs, Monster monster, int index, int pos_index,
+            const std::vector<SpriteGroup *> &sgs, Monster *monster, int index, int pos_index,
             const std::string &entity);
     ~MonsterSprite() override;
     void Animate(double dt);
@@ -136,7 +136,7 @@ public:
     void FlipH() override;
     void SetHighlight(bool value);
 
-    Monster monster;
+    Monster *monster;
     int z = BATTLE_LAYERS["monster"];
     std::string state = "idle";
     std::map<std::string, std::vector<TiledTexture>> state_frames;

@@ -22,8 +22,8 @@ class Battle
 {
 public:
 
-    Battle(const std::vector<Monster> &player_monsters,
-           const std::vector<Monster> &opponent_monsters,
+    Battle(const std::vector<Monster *> &player_monsters,
+           const std::vector<Monster *> &opponent_monsters,
            const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
                    &monsters_frames,
            const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
@@ -33,7 +33,7 @@ public:
     ~Battle();
     void Update(double dt);
     void Setup();
-    void CreateMonster(const Monster &monster, int index, int pos_index, const std::string &entity);
+    void CreateMonster(Monster *monster, int index, int pos_index, const std::string &entity);
     void Input();
 
     // check what is the first monster to get Initiative = 100
@@ -56,7 +56,8 @@ private:
     std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> outline_frames;
     std::map<std::string, Texture2D> ui_frames;
     std::map<std::string, Font> fonts;
-    std::map<std::string, std::vector<Monster>> monster_data;
+    std::map<std::string, std::vector<Monster *>> monster_data;
+    std::vector<Monster> available_monsters;
 
     // gorups
     BattleSprites *battle_sprites = nullptr;

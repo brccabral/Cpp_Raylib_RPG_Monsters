@@ -124,10 +124,10 @@ void AnimatedSprite::FlipH()
 
 MonsterSprite::MonsterSprite(
         const Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
-        const std::vector<SpriteGroup *> &sgs, Monster monster, const int index,
+        const std::vector<SpriteGroup *> &sgs, Monster *monster, const int index,
         const int pos_index, const std::string &entity)
-    : SimpleSprite(sgs), monster(std::move(monster)), index(index), pos_index(pos_index),
-      entity(entity), state_frames(frms)
+    : SimpleSprite(sgs), monster(monster), index(index), pos_index(pos_index), entity(entity),
+      state_frames(frms)
 {
     image = state_frames[state][int(frame_index)];
     rect = image.rect;
@@ -178,7 +178,7 @@ void MonsterSprite::Update(const double dt)
         timer->Update();
     }
     Animate(dt);
-    monster.Update(dt);
+    monster->Update(dt);
 }
 
 void MonsterSprite::FlipH()
@@ -214,7 +214,7 @@ MonsterNameSprite::MonsterNameSprite(
     : SimpleSprite(sgs), monster_sprite(monster_sprite)
 {
     const auto [text_width, text_height] =
-            MeasureTextEx(font, monster_sprite->monster.name.c_str(), font.baseSize, 1);
+            MeasureTextEx(font, monster_sprite->monster->name.c_str(), font.baseSize, 1);
     int padding = 10;
     const Vector2 render_size = {text_width + 2 * padding, text_height + 2 * padding};
     image.rect = {Vector2{0.0f, 0.0f}, render_size};
@@ -224,7 +224,7 @@ MonsterNameSprite::MonsterNameSprite(
     // https://github.com/raysan5/raylib/issues/378
     RenderTexture2D inverted = LoadRenderTextureV(render_size);
     BeginTextureModeC(inverted, WHITE);
-    DrawCenteredTextEx(font, monster_sprite->monster.name.c_str(), image.rect, COLORS["black"]);
+    DrawCenteredTextEx(font, monster_sprite->monster->name.c_str(), image.rect, COLORS["black"]);
     EndTextureModeSafe();
 
     render = LoadRenderTextureV(render_size);
@@ -251,9 +251,10 @@ void MonsterLevelSprite::UpdateTexture() const
 {
     BeginTextureModeC(inverted, WHITE);
     DrawCenteredTextEx(
-            font, TextFormat("Lvl %i", monster_sprite->monster.level), image.rect, COLORS["black"]);
-    DrawBar(xp_rect, monster_sprite->monster.xp, monster_sprite->monster.level_up, COLORS["black"],
-            COLORS["white"]);
+            font, TextFormat("Lvl %i", monster_sprite->monster->level), image.rect,
+            COLORS["black"]);
+    DrawBar(xp_rect, monster_sprite->monster->xp, monster_sprite->monster->level_up,
+            COLORS["black"], COLORS["white"]);
     EndTextureModeSafe();
 
     BeginTextureMode(render);
@@ -327,7 +328,7 @@ void MonsterStatsSprite::Update(double deltaTime)
 {
     BeginTextureModeC(inverted, WHITE);
 
-    const auto info = monster_sprite->monster.GetInfo();
+    const auto info = monster_sprite->monster->GetInfo();
     const std::array<Color, 3> colors = {COLORS["red"], COLORS["blue"], COLORS["gray"]};
     for (int index = 0; index < info.size(); ++index)
     {

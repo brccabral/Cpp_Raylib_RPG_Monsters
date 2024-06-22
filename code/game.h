@@ -64,6 +64,6 @@ private:
     float tint_progress = 255;
     int tint_direction = -1;
     double tint_speed = 600;
-    std::vector<Monster> player_monsters;
-    std::vector<Monster> dummy_monsters;
+    std::vector<Monster *> player_monsters;
+    std::vector<Monster *> dummy_monsters;
 };
