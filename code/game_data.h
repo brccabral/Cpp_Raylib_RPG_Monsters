@@ -299,12 +299,27 @@ inline std::map<std::string, CharacterData> TRAINER_DATA = {
         {"Nurse", Nurse}, //
 };
 
+enum Attack
+{
+    ATTACK_NONE = 0,
+    ATTACK_BURN,
+    ATTACK_HEAL,
+    ATTACK_BATTLECRY,
+    ATTACK_SPARK,
+    ATTACK_SCRATCH,
+    ATTACK_SPLASH,
+    ATTACK_FIRE,
+    ATTACK_EXPLOSTION,
+    ATTACK_ANNIHILATE,
+    ATTACK_ICE
+};
+
 struct MonsterData
 {
     std::string name;
     std::string element;
     std::map<std::string, float> stats;
-    std::vector<std::pair<int, std::string>> abilities;
+    std::vector<std::pair<int, Attack>> abilities;
     std::pair<std::string, int> evolve;
 };
 
@@ -319,8 +334,8 @@ inline MonsterData Plumette = {
                 {"recovery", 1}, //
                 {"speed", 1}, //
         },
-        {{0, "scratch"}, //
-         {5, "spark"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_SPARK}},
         {"Ivieron", 15} //
 };
 inline MonsterData Ivieron = {
@@ -334,8 +349,8 @@ inline MonsterData Ivieron = {
                 {"recovery", 1.2}, //
                 {"speed", 1.2}, //
         },
-        {{0, "scratch"}, //
-         {5, "spark"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_SPARK}},
         {"Pluma", 32} //
 };
 inline MonsterData Pluma = {
@@ -349,8 +364,8 @@ inline MonsterData Pluma = {
                 {"recovery", 1.8}, //
                 {"speed", 1.8}, //
         },
-        {{0, "scratch"}, //
-         {5, "spark"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_SPARK}},
         {} //
 };
 inline MonsterData Sparchu = {
@@ -364,10 +379,10 @@ inline MonsterData Sparchu = {
                 {"recovery", 1.1}, //
                 {"speed", 1}, //
         },
-        {{0, "scratch"}, //
-         {5, "fire"}, //
-         {15, "battlecry"}, //
-         {26, "explosion"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_FIRE}, //
+         {15, ATTACK_BATTLECRY}, //
+         {26, ATTACK_EXPLOSTION}},
         {"Cindrill", 15} //
 };
 inline MonsterData Cindrill = {
@@ -381,10 +396,10 @@ inline MonsterData Cindrill = {
                 {"recovery", 1.2}, //
                 {"speed", 1.1}, //
         },
-        {{0, "scratch"}, //
-         {5, "fire"}, //
-         {15, "battlecry"}, //
-         {26, "explosion"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_FIRE}, //
+         {15, ATTACK_BATTLECRY}, //
+         {26, ATTACK_EXPLOSTION}},
         {"Charmadillo", 33} //
 };
 inline MonsterData Charmadillo = {
@@ -398,11 +413,11 @@ inline MonsterData Charmadillo = {
                 {"recovery", 1.35}, //
                 {"speed", 1.1}, //
         },
-        {{0, "scratch"}, //
-         {5, "fire"}, //
-         {15, "battlecry"}, //
-         {26, "explosion"}, //
-         {45, "annihilate"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_FIRE}, //
+         {15, ATTACK_BATTLECRY}, //
+         {26, ATTACK_EXPLOSTION}, //
+         {45, ATTACK_ANNIHILATE}},
         {} //
 };
 inline MonsterData Finsta = {
@@ -416,11 +431,11 @@ inline MonsterData Finsta = {
                 {"recovery", 1.5}, //
                 {"speed", 1.8}, //
         },
-        {{0, "scratch"}, //
-         {5, "spark"}, //
-         {15, "splash"}, //
-         {20, "ice"}, //
-         {25, "heal"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_SPARK}, //
+         {15, ATTACK_SPLASH}, //
+         {20, ATTACK_ICE}, //
+         {25, ATTACK_HEAL}},
         {"Gulfin", 34} //
 };
 inline MonsterData Gulfin = {
@@ -434,11 +449,11 @@ inline MonsterData Gulfin = {
                 {"recovery", 1.8}, //
                 {"speed", 2}, //
         },
-        {{0, "scratch"}, //
-         {5, "spark"}, //
-         {15, "splash"}, //
-         {20, "ice"}, //
-         {25, "heal"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_SPARK}, //
+         {15, ATTACK_SPLASH}, //
+         {20, ATTACK_ICE}, //
+         {25, ATTACK_HEAL}},
         {"Finiette", 45} //
 };
 inline MonsterData Finiette = {
@@ -452,11 +467,11 @@ inline MonsterData Finiette = {
                 {"recovery", 2}, //
                 {"speed", 2.5}, //
         },
-        {{0, "scratch"}, //
-         {5, "spark"}, //
-         {15, "splash"}, //
-         {20, "ice"}, //
-         {25, "heal"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_SPARK}, //
+         {15, ATTACK_SPLASH}, //
+         {20, ATTACK_ICE}, //
+         {25, ATTACK_HEAL}},
         {} //
 };
 inline MonsterData Atrox = {
@@ -470,9 +485,9 @@ inline MonsterData Atrox = {
                 {"recovery", 1.3}, //
                 {"speed", 1.9}, //
         },
-        {{0, "scratch"}, //
-         {5, "spark"}, //
-         {30, "fire"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_SPARK}, //
+         {30, ATTACK_FIRE}},
         {} //
 };
 inline MonsterData Pouch = {
@@ -486,9 +501,9 @@ inline MonsterData Pouch = {
                 {"recovery", 1}, //
                 {"speed", 1.5}, //
         },
-        {{0, "scratch"}, //
-         {5, "spark"}, //
-         {25, "heal"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_SPARK}, //
+         {25, ATTACK_HEAL}},
         {} //
 };
 inline MonsterData Draem = {
@@ -502,10 +517,10 @@ inline MonsterData Draem = {
                 {"recovery", 1.2}, //
                 {"speed", 1.4}, //
         },
-        {{0, "scratch"}, //
-         {5, "heal"}, //
-         {20, "explosion"}, //
-         {25, "splash"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_HEAL}, //
+         {20, ATTACK_EXPLOSTION}, //
+         {25, ATTACK_SPLASH}},
         {} //
 };
 inline MonsterData Larvea = {
@@ -519,8 +534,8 @@ inline MonsterData Larvea = {
                 {"recovery", 1}, //
                 {"speed", 1}, //
         },
-        {{0, "scratch"}, //
-         {5, "spark"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_SPARK}},
         {"Cleaf", 4} //
 };
 inline MonsterData Cleaf = {
@@ -534,8 +549,8 @@ inline MonsterData Cleaf = {
                 {"recovery", 1.7}, //
                 {"speed", 1.6}, //
         },
-        {{0, "scratch"}, //
-         {5, "heal"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_HEAL}},
         {} //
 };
 inline MonsterData Jacana = {
@@ -549,11 +564,11 @@ inline MonsterData Jacana = {
                 {"recovery", 2.1}, //
                 {"speed", 2.6}, //
         },
-        {{0, "scratch"}, //
-         {5, "spark"}, //
-         {15, "burn"}, //
-         {20, "explosion"}, //
-         {25, "heal"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_SPARK}, //
+         {15, ATTACK_BURN}, //
+         {20, ATTACK_EXPLOSTION}, //
+         {25, ATTACK_HEAL}},
         {} //
 };
 inline MonsterData Friolera = {
@@ -567,11 +582,11 @@ inline MonsterData Friolera = {
                 {"recovery", 1.3}, //
                 {"speed", 2}, //
         },
-        {{0, "scratch"}, //
-         {5, "spark"}, //
-         {15, "splash"}, //
-         {20, "ice"}, //
-         {25, "heal"}},
+        {{0, ATTACK_SCRATCH}, //
+         {5, ATTACK_SPARK}, //
+         {15, ATTACK_SPLASH}, //
+         {20, ATTACK_ICE}, //
+         {25, ATTACK_HEAL}},
         {} //
 };
 
@@ -610,15 +625,15 @@ struct AttackData
     std::string animation;
 };
 
-inline std::map<std::string, AttackData> ATTACK_DATA = {
-        {"burn", {"burn", OPPONENT, 2, 15, "fire", "fire"}}, //
-        {"heal", {"heal", PLAYER, -1.2, 600, "plant", "green"}}, //
-        {"battlecry", {"battlecry", PLAYER, -1.4, 20, "normal", "green"}}, //
-        {"spark", {"spark", OPPONENT, 1.1, 20, "fire", "fire"}}, //
-        {"scratch", {"scratch", OPPONENT, 1.2, 20, "normal", "scratch"}}, //
-        {"splash", {"splash", OPPONENT, 2, 15, "water", "splash"}}, //
-        {"fire", {"fire", OPPONENT, 2, 15, "fire", "fire"}}, //
-        {"explosion", {"explosion", OPPONENT, 2, 90, "fire", "explosion"}}, //
-        {"annihilate", {"annihilate", OPPONENT, 3, 30, "fire", "explosion"}}, //
-        {"ice", {"ice", OPPONENT, 2, 15, "water", "ice"}}, //
+inline std::map<Attack, AttackData> ATTACK_DATA = {
+        {ATTACK_BURN, {"burn", OPPONENT, 2, 15, "fire", "fire"}}, //
+        {ATTACK_HEAL, {"heal", PLAYER, -1.2, 600, "plant", "green"}}, //
+        {ATTACK_BATTLECRY, {"battlecry", PLAYER, -1.4, 20, "normal", "green"}}, //
+        {ATTACK_SPARK, {"spark", OPPONENT, 1.1, 20, "fire", "fire"}}, //
+        {ATTACK_SCRATCH, {"scratch", OPPONENT, 1.2, 20, "normal", "scratch"}}, //
+        {ATTACK_SPLASH, {"splash", OPPONENT, 2, 15, "water", "splash"}}, //
+        {ATTACK_FIRE, {"fire", OPPONENT, 2, 15, "fire", "fire"}}, //
+        {ATTACK_EXPLOSTION, {"explosion", OPPONENT, 2, 90, "fire", "explosion"}}, //
+        {ATTACK_ANNIHILATE, {"annihilate", OPPONENT, 3, 30, "fire", "explosion"}}, //
+        {ATTACK_ICE, {"ice", OPPONENT, 2, 15, "water", "ice"}}, //
 };

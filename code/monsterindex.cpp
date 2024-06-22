@@ -251,14 +251,15 @@ void MonsterIndex::DisplayMain(const double dt)
         float x = abilities_rect.x + a_index % 2 * abilities_rect.width / 2;
         float y = 20.f + abilities_rect.y + int(a_index / 2) * (fonts["regular"].baseSize + 20);
         Vector2 ability_pos = {x, y};
-        Vector2 ability_text_size = MeasureTextF(fonts["regular"], abilities[a_index].c_str(), 1);
+        Vector2 ability_text_size =
+                MeasureTextF(fonts["regular"], ATTACK_DATA[abilities[a_index]].name.c_str(), 1);
         RectangleU ability_rect = {ability_pos, ability_text_size};
         RectInflate(ability_rect, 10, 10);
 
         DrawRectangleRoundedCorners(
                 ability_rect, 0.3f, 10, COLORS[element], true, true, true, true);
         DrawTextEx(
-                fonts["regular"], abilities[a_index].c_str(), ability_pos,
+                fonts["regular"], ATTACK_DATA[abilities[a_index]].name.c_str(), ability_pos,
                 fonts["regular"].baseSize, 1, COLORS["black"]);
     }
 }

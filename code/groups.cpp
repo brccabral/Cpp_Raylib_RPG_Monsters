@@ -109,9 +109,9 @@ void BattleSprites::Draw(
         if (GetYsort(sprite) == BATTLE_LAYERS["outline"])
         {
             if ((((MonsterOutlineSprite *) sprite)->monster_sprite == current_monster_sprite &&
-                 !(mode == TARGET && side == PLAYER)) ||
+                 !(mode == SELECTMODE_TARGET && side == PLAYER)) ||
                 (((MonsterOutlineSprite *) sprite)->monster_sprite == monster_sprite) &&
-                        monster_sprite->entity == side && mode == TARGET)
+                        monster_sprite->entity == side && mode == SELECTMODE_TARGET)
             {
                 ((MonsterOutlineSprite *) sprite)->Draw({0, 0});
             }

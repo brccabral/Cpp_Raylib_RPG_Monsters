@@ -35,9 +35,9 @@ std::vector<std::pair<std::string, float>> Monster::GetStats()
 }
 
 // Get abilities based on level
-std::vector<std::string> Monster::GetAbilities(bool all)
+std::vector<Attack> Monster::GetAbilities(bool all)
 {
-    std::vector<std::string> result;
+    std::vector<Attack> result;
     for (auto &[lvl, ability]: abilities)
     {
         if (level >= lvl)

@@ -56,6 +56,6 @@ private:
     SelectionMode selection_mode{};
     // some attacks like "defense"/"healing" are targeting the player
     SelectionSide selection_side{};
-    std::string selected_attack;
+    Attack selected_attack;
     std::map<SelectionMode, int> indexes;
 };

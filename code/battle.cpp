@@ -22,11 +22,11 @@ Battle::Battle(
     player_sprites = new SpriteGroup();
     opponent_sprites = new SpriteGroup();
 
-    indexes[GENERAL] = 0;
-    indexes[MONSTER] = 0;
-    indexes[ATTACKS] = 0;
-    indexes[SWITCH] = 0;
-    indexes[TARGET] = 0;
+    indexes[SELECTMODE_GENERAL] = 0;
+    indexes[SELECTMODE_MONSTER] = 0;
+    indexes[SELECTMODE_ATTACKS] = 0;
+    indexes[SELECTMODE_SWITCH] = 0;
+    indexes[SELECTMODE_TARGET] = 0;
 
     Setup();
 }
@@ -49,8 +49,8 @@ void Battle::Update(const double dt)
     BeginTextureModeC(display_surface, BLACK);
     DrawTexture(bg_surf, 0, 0, WHITE);
     battle_sprites->Draw(
-            current_monster, selection_side, selection_mode, indexes[TARGET], player_sprites,
-            opponent_sprites);
+            current_monster, selection_side, selection_mode, indexes[SELECTMODE_TARGET],
+            player_sprites, opponent_sprites);
     DrawUi();
     EndTextureModeSafe();
 }
@@ -114,22 +114,22 @@ void Battle::Input()
         int limiter = 0;
         switch (selection_mode)
         {
-            case GENERAL:
+            case SELECTMODE_GENERAL:
             {
                 limiter = BATTLE_CHOICES["full"].size();
                 break;
             }
-            case ATTACKS:
+            case SELECTMODE_ATTACKS:
             {
                 limiter = current_monster->monster->GetAbilities(false).size();
                 break;
             }
-            case SWITCH:
+            case SELECTMODE_SWITCH:
             {
                 limiter = available_monsters.size();
                 break;
             }
-            case TARGET:
+            case SELECTMODE_TARGET:
             {
                 // some attacks like "defense"/"healing" are targeting the player
                 limiter = selection_side == OPPONENT ? opponent_sprites->sprites.size()
@@ -149,7 +149,7 @@ void Battle::Input()
         }
         if (IsKeyPressed(KEY_SPACE))
         {
-            if (selection_mode == TARGET)
+            if (selection_mode == SELECTMODE_TARGET)
             {
                 auto *sprite_group = selection_side == OPPONENT ? opponent_sprites : player_sprites;
                 // when a monster gets defeated, the group may change, but the "pos_index" won't
@@ -160,41 +160,43 @@ void Battle::Input()
                     sprites_indexes.push_back(((MonsterSprite *) sprite)->pos_index);
                 }
                 auto *monster_sprite =
-                        (MonsterSprite *) sprite_group->sprites[sprites_indexes[indexes[TARGET]]];
+                        (MonsterSprite *)
+                                sprite_group->sprites[sprites_indexes[indexes[SELECTMODE_TARGET]]];
             }
-            if (selection_mode == ATTACKS)
+            if (selection_mode == SELECTMODE_ATTACKS)
             {
-                selection_mode = TARGET;
-                selected_attack = current_monster->monster->GetAbilities(false)[indexes[ATTACKS]];
+                selection_mode = SELECTMODE_TARGET;
+                selected_attack =
+                        current_monster->monster->GetAbilities(false)[indexes[SELECTMODE_ATTACKS]];
                 selection_side = ATTACK_DATA[selected_attack].target;
             }
-            if (selection_mode == GENERAL)
+            if (selection_mode == SELECTMODE_GENERAL)
             {
-                if (indexes[GENERAL] == 0)
+                if (indexes[SELECTMODE_GENERAL] == 0)
                 {
-                    selection_mode = ATTACKS;
+                    selection_mode = SELECTMODE_ATTACKS;
                 }
-                else if (indexes[GENERAL] == 1)
+                else if (indexes[SELECTMODE_GENERAL] == 1)
                 {
                     // select defense resumes battle
                     UpdateAllMonsters(false);
                     current_monster = nullptr;
-                    selection_mode = NONE;
-                    indexes[GENERAL] = 0;
+                    selection_mode = SELECTMODE_NONE;
+                    indexes[SELECTMODE_GENERAL] = 0;
                 }
-                else if (indexes[GENERAL] == 2)
+                else if (indexes[SELECTMODE_GENERAL] == 2)
                 {
-                    selection_mode = SWITCH;
+                    selection_mode = SELECTMODE_SWITCH;
                 }
-                else if (indexes[GENERAL] == 3)
+                else if (indexes[SELECTMODE_GENERAL] == 3)
                 {}
             }
         }
         if (IsKeyPressed(KEY_ESCAPE))
         {
-            if (selection_mode >= ATTACKS && selection_mode <= TARGET)
+            if (selection_mode >= SELECTMODE_ATTACKS && selection_mode <= SELECTMODE_TARGET)
             {
-                selection_mode = GENERAL;
+                selection_mode = SELECTMODE_GENERAL;
             }
         }
     }
@@ -216,7 +218,7 @@ void Battle::CheckActiveGroup(const SpriteGroup *group)
             ((MonsterSprite *) sprite)->monster->initiative = 0;
             ((MonsterSprite *) sprite)->SetHighlight(true);
             current_monster = ((MonsterSprite *) sprite);
-            selection_mode = GENERAL;
+            selection_mode = SELECTMODE_GENERAL;
             selection_side = PLAYER;
         }
     }
@@ -238,15 +240,15 @@ void Battle::DrawUi()
 {
     if (current_monster)
     {
-        if (selection_mode == GENERAL)
+        if (selection_mode == SELECTMODE_GENERAL)
         {
             DrawGeneral();
         }
-        else if (selection_mode == ATTACKS)
+        else if (selection_mode == SELECTMODE_ATTACKS)
         {
             DrawAttacks();
         }
-        else if (selection_mode == SWITCH)
+        else if (selection_mode == SELECTMODE_SWITCH)
         {
             DrawSwitch();
         }
@@ -259,7 +261,7 @@ void Battle::DrawGeneral()
     for (auto &[option, battle_choice]: BATTLE_CHOICES["full"])
     {
         Texture2D texture;
-        if (index == indexes[GENERAL])
+        if (index == indexes[SELECTMODE_GENERAL])
         {
             texture = ui_frames[battle_choice.icon + "_highlight"];
         }
@@ -283,13 +285,13 @@ void Battle::DrawAttacks()
     constexpr int visible_attacks = 4;
     constexpr float item_height = height / visible_attacks;
     int v_offset;
-    if (indexes[ATTACKS] < visible_attacks)
+    if (indexes[SELECTMODE_ATTACKS] < visible_attacks)
     {
         v_offset = 0;
     }
     else
     {
-        v_offset = -(indexes[ATTACKS] - visible_attacks + 1) * item_height;
+        v_offset = -(indexes[SELECTMODE_ATTACKS] - visible_attacks + 1) * item_height;
     }
 
     // bg
@@ -299,7 +301,7 @@ void Battle::DrawAttacks()
 
     for (int index = 0; index < abilities.size(); ++index)
     {
-        const bool selected = index == indexes[ATTACKS];
+        const bool selected = index == indexes[SELECTMODE_ATTACKS];
         Color text_color;
         if (selected)
         {
@@ -341,7 +343,9 @@ void Battle::DrawAttacks()
                     DrawRectangleRec(text_rect.rectangle, COLORS["dark white"]);
                 }
             }
-            DrawCenteredTextEx(fonts["regular"], abilities[index].c_str(), text_rect, text_color);
+            DrawCenteredTextEx(
+                    fonts["regular"], ATTACK_DATA[abilities[index]].name.c_str(), text_rect,
+                    text_color);
         }
     }
 }
@@ -354,13 +358,13 @@ void Battle::DrawSwitch()
     constexpr int visible_monsters = 4;
     constexpr float item_height = height / visible_monsters;
     int v_offset;
-    if (indexes[SWITCH] < visible_monsters)
+    if (indexes[SELECTMODE_SWITCH] < visible_monsters)
     {
         v_offset = 0;
     }
     else
     {
-        v_offset = -(indexes[SWITCH] - visible_monsters + 1) * item_height;
+        v_offset = -(indexes[SELECTMODE_SWITCH] - visible_monsters + 1) * item_height;
     }
 
     // bg
@@ -388,7 +392,7 @@ void Battle::DrawSwitch()
     for (int index = 0; index < available_monsters.size(); ++index)
     {
         Monster *monster = available_monsters[index];
-        const bool selected = index == indexes[SWITCH];
+        const bool selected = index == indexes[SELECTMODE_SWITCH];
         RectangleU item_bg_rect = {0, 0, width, item_height};
         RectToMidLeft(
                 item_bg_rect,
