@@ -240,6 +240,14 @@ void Battle::DrawAttacks()
     int visible_attacks = 4;
     int item_height = height / visible_attacks;
     int v_offset = 0;
+    if (indexes[ATTACKS] < visible_attacks)
+    {
+        v_offset = 0;
+    }
+    else
+    {
+        v_offset = -(indexes[ATTACKS] - visible_attacks + 1) * item_height;
+    }
 
     // bg
     RectangleU bg_rect = {0, 0, width, height};
@@ -268,12 +276,16 @@ void Battle::DrawAttacks()
         }
         // rect
         RectangleU text_rect = {
-                bg_rect.x, bg_rect.y + index * item_height, bg_rect.width, (float) item_height};
-        if (selected)
+                bg_rect.x, bg_rect.y + index * item_height + v_offset, bg_rect.width,
+                (float) item_height};
+        if (CheckCollisionPointRec(GetRectCenter(text_rect), bg_rect.rectangle))
         {
-            DrawRectangleRec(text_rect.rectangle, COLORS["dark white"]);
+            if (selected)
+            {
+                DrawRectangleRec(text_rect.rectangle, COLORS["dark white"]);
+            }
+            DrawCenteredTextEx(fonts["regular"], abilities[index].c_str(), text_rect, text_color);
         }
-        DrawCenteredTextEx(fonts["regular"], abilities[index].c_str(), text_rect, text_color);
     }
 }
 
