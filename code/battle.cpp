@@ -162,6 +162,13 @@ void Battle::Input()
                 {}
             }
         }
+        if (IsKeyPressed(KEY_ESCAPE))
+        {
+            if (selection_mode >= ATTACKS && selection_mode <= TARGET)
+            {
+                selection_mode = GENERAL;
+            }
+        }
     }
 }
 

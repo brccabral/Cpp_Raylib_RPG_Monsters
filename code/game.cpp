@@ -13,6 +13,7 @@ Game::Game(const int width, const int height)
     InitWindow(width, height, "RPG Monsters");
     // SetTargetFPS(60);
     SetRandomSeed(std::time(nullptr));
+    SetExitKey(KEY_NULL); // Disable KEY_ESCAPE to close window, X-button still works
 
     display_surface = LoadRenderTexture(width, height);
     while (!IsRenderTextureReady(display_surface))
