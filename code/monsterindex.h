@@ -12,7 +12,7 @@ public:
     MonsterIndex(
             std::vector<Monster *> monsters, const std::map<std::string, Font> &fonts,
             const std::map<std::string, Texture2D> &monster_icons,
-            const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
+            const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                     &monsters_frms,
             const std::map<std::string, Texture2D> &ui_frms);
     ~MonsterIndex();
@@ -34,7 +34,7 @@ private:
     // frames
     std::map<std::string, Texture2D> icon_frames;
     std::map<std::string, Texture2D> ui_frames;
-    std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> monsters_frames;
+    std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> monsters_frames;
     double frame_index{};
 
     // list

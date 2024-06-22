@@ -6,7 +6,7 @@
 MonsterIndex::MonsterIndex(
         std::vector<Monster *> monsters, const std::map<std::string, Font> &fonts,
         const std::map<std::string, Texture2D> &monster_icons,
-        const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
+        const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                 &monsters_frms,
         const std::map<std::string, Texture2D> &ui_frms)
     : fonts(fonts), monsters(monsters), icon_frames(monster_icons), ui_frames(ui_frms),
@@ -137,7 +137,7 @@ void MonsterIndex::DisplayMain(const double dt)
 
     // monster animation
     frame_index += ANIMATION_SPEED * dt;
-    const auto frames = monsters_frames[monster->name]["idle"];
+    const auto frames = monsters_frames[monster->name][ANIMATION_IDLE];
     const auto [surf_texture, surf_ref] = frames[int(frame_index) % frames.size()];
     RectangleU monster_rect = surf_ref;
     RectToCenter(monster_rect, GetRectCenter(top_rect));

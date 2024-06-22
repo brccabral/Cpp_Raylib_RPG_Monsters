@@ -130,7 +130,7 @@ class MonsterSprite : public SimpleSprite
 public:
 
     MonsterSprite(
-            Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
+            Vector2 position, const std::map<AnimationState, std::vector<TiledTexture>> &frms,
             const std::vector<SpriteGroup *> &sgs, Monster *monster, int index, int pos_index,
             SelectionSide entity);
     ~MonsterSprite() override;
@@ -142,9 +142,9 @@ public:
 
     Monster *monster;
     int z = BATTLE_LAYERS["monster"];
-    std::string state = "idle";
-    std::map<std::string, std::vector<TiledTexture>> state_frames;
-    std::map<std::string, std::vector<TiledTexture>> state_frames_highlight;
+    AnimationState state = ANIMATION_IDLE;
+    std::map<AnimationState, std::vector<TiledTexture>> state_frames;
+    std::map<AnimationState, std::vector<TiledTexture>> state_frames_highlight;
     int adjusted_frame_index{};
     int pos_index{};
     SelectionSide entity;
@@ -230,7 +230,7 @@ public:
 
     MonsterOutlineSprite(
             MonsterSprite *monster_sprite, const std::vector<SpriteGroup *> &sgs,
-            const std::map<std::string, std::vector<TiledTexture>> &frms);
+            const std::map<AnimationState, std::vector<TiledTexture>> &frms);
     void Update(double deltaTime) override;
     void FlipH() override;
 
@@ -239,5 +239,5 @@ public:
 
 private:
 
-    std::map<std::string, std::vector<TiledTexture>> state_frames;
+    std::map<AnimationState, std::vector<TiledTexture>> state_frames;
 };

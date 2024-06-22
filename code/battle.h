@@ -9,9 +9,9 @@ public:
 
     Battle(const std::vector<Monster *> &player_monsters,
            const std::vector<Monster *> &opponent_monsters,
-           const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
+           const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                    &monsters_frames,
-           const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
+           const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                    &outline_frames,
            const std::map<std::string, Texture2D> &ui_frms, const Texture2D &bg_surf,
            const std::map<std::string, Texture2D> &monster_icons,
@@ -38,8 +38,8 @@ public:
 private:
 
     Texture2D bg_surf;
-    std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> monsters_frames;
-    std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> outline_frames;
+    std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> monsters_frames;
+    std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> outline_frames;
     std::map<std::string, Texture2D> ui_frames;
     std::map<std::string, Font> fonts;
     std::map<SelectionSide, std::vector<Monster *>> monster_data;

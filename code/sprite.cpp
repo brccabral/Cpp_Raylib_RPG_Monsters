@@ -123,7 +123,7 @@ void AnimatedSprite::FlipH()
 }
 
 MonsterSprite::MonsterSprite(
-        const Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
+        const Vector2 position, const std::map<AnimationState, std::vector<TiledTexture>> &frms,
         const std::vector<SpriteGroup *> &sgs, Monster *monster, const int index,
         const int pos_index, const SelectionSide entity)
     : SimpleSprite(sgs), monster(monster), state_frames(frms), pos_index(pos_index), entity(entity),
@@ -210,7 +210,7 @@ void MonsterSprite::SetHighlight(const bool value)
 
 void MonsterSprite::ActivateAttack(MonsterSprite *monster_sprite, Attack selected_attack)
 {
-    state = "attack";
+    state = ANIMATION_ATTACK;
     frame_index = 0;
     target_sprite = monster_sprite;
     current_attack = selected_attack;
@@ -369,7 +369,7 @@ void MonsterStatsSprite::Update(double deltaTime)
 
 MonsterOutlineSprite::MonsterOutlineSprite(
         MonsterSprite *monster_sprite, const std::vector<SpriteGroup *> &sgs,
-        const std::map<std::string, std::vector<TiledTexture>> &frms)
+        const std::map<AnimationState, std::vector<TiledTexture>> &frms)
     : SimpleSprite(sgs), monster_sprite(monster_sprite), state_frames(frms)
 {
     type = MONSTEROUTLINESPRITE;

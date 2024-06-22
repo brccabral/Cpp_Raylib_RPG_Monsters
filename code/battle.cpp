@@ -6,9 +6,9 @@
 Battle::Battle(
         const std::vector<Monster *> &player_monsters,
         const std::vector<Monster *> &opponent_monsters,
-        const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
+        const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                 &monsters_frames,
-        const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
+        const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                 &outline_frames,
         const std::map<std::string, Texture2D> &ui_frms, const Texture2D &bg_surf,
         const std::map<std::string, Texture2D> &monster_icons,

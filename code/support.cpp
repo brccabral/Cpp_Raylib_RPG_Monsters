@@ -98,17 +98,17 @@ tilerect_face CharacterImporter(const int cols, const int rows, const char *path
     return new_dic;
 }
 
-std::map<std::string, tilerect_name>
+std::map<std::string, animation_rects>
 MonsterImporter(const int cols, const int rows, const char *path)
 {
-    std::map<std::string, tilerect_name> monster_dict;
+    std::map<std::string, animation_rects> monster_dict;
 
     for (const auto &dirEntry: recursive_directory_iterator(path))
     {
         auto filename = dirEntry.path().stem().string();
         auto frames = import_tilemap_rects(cols, rows, dirEntry.path().c_str());
-        monster_dict[filename]["idle"] = frames[0];
-        monster_dict[filename]["attack"] = frames[1];
+        monster_dict[filename][ANIMATION_IDLE] = frames[0];
+        monster_dict[filename][ANIMATION_ATTACK] = frames[1];
     }
 
     return monster_dict;

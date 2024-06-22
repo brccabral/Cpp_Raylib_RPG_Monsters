@@ -144,3 +144,9 @@ enum SelectionMode
     SELECTMODE_SWITCH,
     SELECTMODE_TARGET,
 };
+
+enum AnimationState
+{
+    ANIMATION_IDLE = 0,
+    ANIMATION_ATTACK,
+};

@@ -43,6 +43,7 @@ private:
     std::map<std::string, std::map<std::string, Texture2D>> named_textures;
     std::map<std::string, std::map<std::string, tilerect_name>> named_rect_frames;
     std::map<std::string, std::map<std::string, tilerect_face>> face_rect_frames;
+    std::map<std::string, animation_rects> animation_frames;
     // not *all*, but all that needs drawing or updates
     AllSprites *all_sprites = nullptr;
     SpriteGroup *collition_sprites = nullptr;
