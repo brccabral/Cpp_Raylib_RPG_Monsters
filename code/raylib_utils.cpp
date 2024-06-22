@@ -620,3 +620,12 @@ Image GenImageRandomPixels(const float width, const float height)
 
     return image;
 }
+
+Texture2D TextureColorGrayscale(const Texture2D *texture)
+{
+    Image image = LoadImageFromTexture(*texture);
+    ImageFormat(&image, PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA);
+    const Texture result = LoadTextureFromImage(image);
+    UnloadImage(image);
+    return result;
+}

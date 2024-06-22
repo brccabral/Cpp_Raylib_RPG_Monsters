@@ -158,7 +158,7 @@ void Battle::DrawGeneral()
         }
         else
         {
-            texture = ui_frames[battle_choice.icon];
+            texture = TextureColorGrayscale(&ui_frames[battle_choice.icon]);
         }
         auto rect = current_monster->rect;
         RectToCenter(rect, GetRectMidRight(rect));
