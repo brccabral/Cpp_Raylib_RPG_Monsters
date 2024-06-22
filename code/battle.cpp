@@ -116,7 +116,7 @@ void Battle::Input()
             }
             case ATTACKS:
             {
-                limiter = current_monster->monster.GetAbilities().size();
+                limiter = current_monster->monster.GetAbilities(false).size();
                 break;
             }
             default:
@@ -234,7 +234,7 @@ void Battle::DrawGeneral()
 void Battle::DrawAttacks()
 {
     // data
-    auto abilities = current_monster->monster.GetAbilities();
+    auto abilities = current_monster->monster.GetAbilities(false);
     float width = 150;
     float height = 200;
     int visible_attacks = 4;

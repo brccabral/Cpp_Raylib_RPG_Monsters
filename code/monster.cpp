@@ -35,14 +35,17 @@ std::vector<std::pair<std::string, float>> Monster::GetStats()
 }
 
 // Get abilities based on level
-std::vector<std::string> Monster::GetAbilities()
+std::vector<std::string> Monster::GetAbilities(bool all)
 {
     std::vector<std::string> result;
     for (auto &[lvl, ability]: abilities)
     {
         if (level >= lvl)
         {
-            result.push_back(ability);
+            if (all || ATTACK_DATA[ability].cost < energy)
+            {
+                result.push_back(ability);
+            }
         }
     }
     return result;
