@@ -365,6 +365,25 @@ void Battle::DrawSwitch()
                                    GetRectTopLeft(bg_rect),
                                    {10, item_height / 2 + index * item_height + v_offset}));
         const Color text_color = selected ? COLORS["red"] : COLORS["black"];
+        if (selected)
+        {
+            if (CheckCollisionPointRec(GetRectTopLeft(bg_rect), item_bg_rect.rectangle))
+            {
+                DrawRectangleRoundedCorners(
+                        item_bg_rect, 0.2f, 10, COLORS["dark white"], true, true, false, false);
+            }
+            else if (CheckCollisionPointRec(
+                             Vector2Add(GetRectMidBottom(bg_rect), {0, -1}),
+                             item_bg_rect.rectangle))
+            {
+                DrawRectangleRoundedCorners(
+                        item_bg_rect, 0.2f, 10, COLORS["dark white"], false, false, true, true);
+            }
+            else
+            {
+                DrawRectangleRec(item_bg_rect.rectangle, COLORS["dark white"]);
+            }
+        }
         DrawTextEx(
                 fonts["regular"], TextFormat("%s (%i)", monster->name.c_str(), monster->level),
                 {bg_rect.x + 90, icon_rect.y}, fonts["regular"].baseSize, 1, text_color);
