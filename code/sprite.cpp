@@ -126,8 +126,8 @@ MonsterSprite::MonsterSprite(
         const Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
         const std::vector<SpriteGroup *> &sgs, Monster *monster, const int index,
         const int pos_index, const SelectionSide entity)
-    : SimpleSprite(sgs), monster(monster), state_frames(frms), pos_index(pos_index), index(index),
-      entity(entity)
+    : SimpleSprite(sgs), monster(monster), state_frames(frms), pos_index(pos_index), entity(entity),
+      index(index)
 {
     image = state_frames[state][int(frame_index)];
     rect = image.rect;
@@ -206,6 +206,15 @@ void MonsterSprite::SetHighlight(const bool value)
     {
         timers["remove_highlight"]->Activate();
     }
+}
+
+void MonsterSprite::ActivateAttack(MonsterSprite *monster_sprite, Attack selected_attack)
+{
+    state = "attack";
+    frame_index = 0;
+    target_sprite = monster_sprite;
+    current_attack = selected_attack;
+    monster->ReduceEnergy(selected_attack);
 }
 
 MonsterNameSprite::MonsterNameSprite(

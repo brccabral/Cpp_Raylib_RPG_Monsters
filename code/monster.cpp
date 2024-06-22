@@ -35,7 +35,7 @@ std::vector<std::pair<std::string, float>> Monster::GetStats()
 }
 
 // Get abilities based on level
-std::vector<Attack> Monster::GetAbilities(bool all)
+std::vector<Attack> Monster::GetAbilities(const bool all)
 {
     std::vector<Attack> result;
     for (auto &[lvl, ability]: abilities)
@@ -66,6 +66,11 @@ void Monster::Update(const double dt)
     {
         initiative += GetStat("speed") * dt;
     }
+}
+
+void Monster::ReduceEnergy(const Attack attack)
+{
+    energy -= ATTACK_DATA[attack].cost;
 }
 
 std::ostream &operator<<(std::ostream &os, Monster const &m)

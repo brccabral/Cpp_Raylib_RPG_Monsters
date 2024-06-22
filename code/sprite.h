@@ -138,6 +138,7 @@ public:
     void Update(double dt) override;
     void FlipH() override;
     void SetHighlight(bool value);
+    void ActivateAttack(MonsterSprite *monster_sprite, Attack selected_attack);
 
     Monster *monster;
     int z = BATTLE_LAYERS["monster"];
@@ -157,6 +158,9 @@ private:
 
     bool highlight{};
     std::map<std::string, Timer *> timers;
+
+    MonsterSprite *target_sprite = nullptr;
+    Attack current_attack = ATTACK_NONE;
 };
 
 class MonsterNameSprite : public SimpleSprite

@@ -162,6 +162,13 @@ void Battle::Input()
                 auto *monster_sprite =
                         (MonsterSprite *)
                                 sprite_group->sprites[sprites_indexes[indexes[SELECTMODE_TARGET]]];
+                if (selected_attack)
+                {
+                    current_monster->ActivateAttack(monster_sprite, selected_attack);
+                    selected_attack = ATTACK_NONE;
+                    current_monster = nullptr;
+                    selection_mode = SELECTMODE_NONE;
+                }
             }
             if (selection_mode == SELECTMODE_ATTACKS)
             {

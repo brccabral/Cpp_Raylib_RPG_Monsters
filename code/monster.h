@@ -21,6 +21,7 @@ public:
     std::vector<Attack> GetAbilities(bool all = true);
     std::array<std::pair<float, float>, 3> GetInfo();
     void Update(double dt);
+    void ReduceEnergy(Attack attack);
     friend std::ostream &operator<<(std::ostream &os, Monster const &m);
 
     std::string name;
