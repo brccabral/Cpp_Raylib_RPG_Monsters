@@ -32,9 +32,9 @@ Game::Game(const int width, const int height)
     player_monsters.emplace_back("Jacana", 2);
     player_monsters.emplace_back("Pouch", 3);
 
-    dummy_monsters.emplace_back("Atrox", 12);
-    dummy_monsters.emplace_back("Sparchu", 15);
-    dummy_monsters.emplace_back("Gulfin", 19);
+    dummy_monsters.emplace_back("Atrox", 2);
+    dummy_monsters.emplace_back("Sparchu", 3);
+    dummy_monsters.emplace_back("Gulfin", 5);
     dummy_monsters.emplace_back("Jacana", 2);
     dummy_monsters.emplace_back("Pouch", 3);
 

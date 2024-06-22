@@ -125,6 +125,26 @@ void Battle::Input()
         {
             indexes[selection_mode] = ((indexes[GENERAL] - 1) % limiter + limiter) % limiter;
         }
+        if (IsKeyPressed(KEY_SPACE))
+        {
+            if (selection_mode == GENERAL)
+            {
+                if (indexes[GENERAL] == 0)
+                {}
+                else if (indexes[GENERAL] == 1)
+                {
+                    // select defense resumes battle
+                    UpdateAllMonsters(false);
+                    current_monster = nullptr;
+                    selection_mode = NONE;
+                    indexes[GENERAL] = 0;
+                }
+                else if (indexes[GENERAL] == 2)
+                {}
+                else if (indexes[GENERAL] == 3)
+                {}
+            }
+        }
     }
 }
 
