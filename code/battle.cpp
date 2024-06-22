@@ -282,7 +282,22 @@ void Battle::DrawAttacks()
         {
             if (selected)
             {
-                DrawRectangleRec(text_rect.rectangle, COLORS["dark white"]);
+                if (CheckCollisionPointRec(GetRectTopLeft(bg_rect), text_rect.rectangle))
+                {
+                    DrawRectangleRoundedCorners(
+                            text_rect, 0.1f, 10, COLORS["dark white"], true, true, false, false);
+                }
+                else if (CheckCollisionPointRec(
+                                 Vector2Add(GetRectMidBottom(bg_rect), {0, -1}),
+                                 text_rect.rectangle))
+                {
+                    DrawRectangleRoundedCorners(
+                            text_rect, 0.1f, 10, COLORS["dark white"], false, false, true, true);
+                }
+                else
+                {
+                    DrawRectangleRec(text_rect.rectangle, COLORS["dark white"]);
+                }
             }
             DrawCenteredTextEx(fonts["regular"], abilities[index].c_str(), text_rect, text_color);
         }
