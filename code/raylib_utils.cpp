@@ -1,5 +1,4 @@
 #include <random>
-#include <chrono>
 #include "raylib_utils.h"
 #include "rlgl.h" // OpenGL abstraction layer to OpenGL 1.1, 2.1, 3.3+ or ES2
 #include "settings.h"
@@ -637,8 +636,30 @@ void DrawRectangleRoundedCorners(
             {(float) rec.x + radius, (float) (rec.y + rec.height) - radius} // P10, P11
     };
 
-    const Vector2 centers[4] = {point[8], point[9], point[10], point[11]};
-    const float angles[4] = {180.0f, 270.0f, 0.0f, 90.0f};
+    // const Vector2 centers[4] = {point[8], point[9], point[10], point[11]};
+    // const float angles[4] = {180.0f, 270.0f, 0.0f, 90.0f};
+    std::vector<Vector2> centers;
+    std::vector<float> angles;
+    if (TopLeft)
+    {
+        centers.push_back(point[8]);
+        angles.push_back(180.0f);
+    }
+    if (TopRight)
+    {
+        centers.push_back(point[9]);
+        angles.push_back(270.0f);
+    }
+    if (BottomRight)
+    {
+        centers.push_back(point[10]);
+        angles.push_back(0.0f);
+    }
+    if (BottomLeft)
+    {
+        centers.push_back(point[11]);
+        angles.push_back(90.0f);
+    }
 
 #if defined(SUPPORT_QUADS_DRAW_MODE)
     rlSetTexture(GetShapesTexture().id);
@@ -647,7 +668,8 @@ void DrawRectangleRoundedCorners(
     rlBegin(RL_QUADS);
     // Draw all the 4 corners: [1] Upper Left Corner, [3] Upper Right Corner, [5] Lower Right
     // Corner, [7] Lower Left Corner
-    for (int k = 0; k < 4; ++k) // Hope the compiler is smart enough to unroll this loop
+    for (int k = 0; k < centers.size();
+         ++k) // Hope the compiler is smart enough to unroll this loop
     {
         float angle = angles[k];
         const Vector2 center = centers[k];
@@ -750,7 +772,8 @@ void DrawRectangleRoundedCorners(
 
     // Draw all of the 4 corners: [1] Upper Left Corner, [3] Upper Right Corner, [5] Lower Right
     // Corner, [7] Lower Left Corner
-    for (int k = 0; k < 4; ++k) // Hope the compiler is smart enough to unroll this loop
+    for (int k = 0; k < centers.size();
+         ++k) // Hope the compiler is smart enough to unroll this loop
     {
         float angle = angles[k];
         const Vector2 center = centers[k];
