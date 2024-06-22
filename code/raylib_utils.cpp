@@ -356,7 +356,7 @@ void DrawCenteredTextEx(
         const Font &font, const char *text, const RectangleU rect, const Color color)
 {
     const auto [text_width, text_height] = MeasureTextEx(font, text, font.baseSize, 1);
-    const Vector2 text_pos = {(rect.width - text_width) / 2, (rect.height - text_height) / 2};
+    const Vector2 text_pos = Vector2Add(GetRectCenter(rect), {-text_width / 2, -text_height / 2});
     DrawTextEx(font, text, text_pos, font.baseSize, 1, color);
 }
 

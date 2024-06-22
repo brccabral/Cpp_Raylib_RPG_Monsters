@@ -240,6 +240,11 @@ void Battle::DrawAttacks()
     RectangleU bg_rect = {0, 0, width, height};
     RectToMidLeft(bg_rect, Vector2Add(GetRectMidRight(current_monster->rect), {20, 0}));
     DrawRectangleRounded(bg_rect.rectangle, 0.1f, 10, COLORS["white"]);
+
+    for (int index = 0; index < abilities.size(); ++index)
+    {
+        DrawCenteredTextEx(fonts["regular"], abilities[index].c_str(), bg_rect, COLORS["light"]);
+    }
 }
 
 void Battle::DrawSwitch()
