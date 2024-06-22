@@ -126,8 +126,8 @@ MonsterSprite::MonsterSprite(
         const Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
         const std::vector<SpriteGroup *> &sgs, Monster *monster, const int index,
         const int pos_index, const std::string &entity)
-    : SimpleSprite(sgs), monster(monster), index(index), pos_index(pos_index), entity(entity),
-      state_frames(frms)
+    : SimpleSprite(sgs), monster(monster), state_frames(frms), pos_index(pos_index), index(index),
+      entity(entity)
 {
     image = state_frames[state][int(frame_index)];
     rect = image.rect;

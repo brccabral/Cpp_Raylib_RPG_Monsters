@@ -39,7 +39,6 @@ Game::Game(const int width, const int height)
     dummy_monsters.push_back(new Monster("Jacana", 2));
     dummy_monsters.push_back(new Monster("Pouch", 3));
 
-
     std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> monsters_frames;
     std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> outline_frames;
     for (const auto &[monster_name, animations]: named_rect_frames["monsters"])

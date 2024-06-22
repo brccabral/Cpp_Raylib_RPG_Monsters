@@ -142,11 +142,11 @@ public:
     std::map<std::string, std::vector<TiledTexture>> state_frames;
     std::map<std::string, std::vector<TiledTexture>> state_frames_highlight;
     int adjusted_frame_index{};
+    int pos_index{};
 
 private:
 
     int index;
-    int pos_index;
     std::string entity;
 
     float animation_speed{};

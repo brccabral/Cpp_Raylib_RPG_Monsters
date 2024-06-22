@@ -13,11 +13,6 @@ enum SelectionMode
     TARGET,
 };
 
-enum SelectionSide
-{
-    PLAYER = 0,
-};
-
 class Battle
 {
 public:
@@ -70,5 +65,6 @@ private:
     MonsterSprite *current_monster = nullptr;
     SelectionMode selection_mode{};
     SelectionSide selection_side{};
+    std::string selected_attack;
     std::map<SelectionMode, int> indexes;
 };

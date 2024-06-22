@@ -127,6 +127,12 @@ void Battle::Input()
                 limiter = available_monsters.size();
                 break;
             }
+            case TARGET:
+            {
+                limiter = selection_side == OPPONENT ? opponent_sprites->sprites.size()
+                                                     : player_sprites->sprites.size();
+                break;
+            }
             default:
                 break;
         }
@@ -140,6 +146,26 @@ void Battle::Input()
         }
         if (IsKeyPressed(KEY_SPACE))
         {
+            if (selection_mode == TARGET)
+            {
+                auto *sprite_group = selection_side == OPPONENT ? opponent_sprites : player_sprites;
+                // when a monster gets defeated, the group may change, but the "pos_index" won't
+                // create a list with just the "pos_index"
+                std::vector<int> sprites_indexes;
+                for (auto *sprite: sprite_group->sprites)
+                {
+                    sprites_indexes.push_back(((MonsterSprite *) sprite)->pos_index);
+                }
+                auto *monster_sprite =
+                        (MonsterSprite *) sprite_group->sprites[sprites_indexes[indexes[TARGET]]];
+                std::cout << *monster_sprite->monster;
+            }
+            if (selection_mode == ATTACKS)
+            {
+                selection_mode = TARGET;
+                selected_attack = current_monster->monster->GetAbilities(false)[indexes[ATTACKS]];
+                selection_side = ATTACK_DATA[selected_attack].target;
+            }
             if (selection_mode == GENERAL)
             {
                 if (indexes[GENERAL] == 0)

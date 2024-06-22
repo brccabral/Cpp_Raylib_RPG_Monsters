@@ -594,10 +594,16 @@ inline std::map<std::string, MonsterData> MONSTER_DATA = {
         {"Friolera", Friolera}, //
 };
 
+enum SelectionSide
+{
+    PLAYER = 0,
+    OPPONENT
+};
+
 struct AttackData
 {
     std::string name;
-    std::string target;
+    SelectionSide target;
     float amount;
     int cost;
     std::string element;
@@ -605,14 +611,14 @@ struct AttackData
 };
 
 inline std::map<std::string, AttackData> ATTACK_DATA = {
-        {"burn", {"burn", "opponent", 2, 15, "fire", "fire"}}, //
-        {"heal", {"heal", "player", -1.2, 600, "plant", "green"}}, //
-        {"battlecry", {"battlecry", "player", -1.4, 20, "normal", "green"}}, //
-        {"spark", {"spark", "opponent", 1.1, 20, "fire", "fire"}}, //
-        {"scratch", {"scratch", "opponent", 1.2, 20, "normal", "scratch"}}, //
-        {"splash", {"splash", "opponent", 2, 15, "water", "splash"}}, //
-        {"fire", {"fire", "opponent", 2, 15, "fire", "fire"}}, //
-        {"explosion", {"explosion", "opponent", 2, 90, "fire", "explosion"}}, //
-        {"annihilate", {"annihilate", "opponent", 3, 30, "fire", "explosion"}}, //
-        {"ice", {"ice", "opponent", 2, 15, "water", "ice"}}, //
+        {"burn", {"burn", OPPONENT, 2, 15, "fire", "fire"}}, //
+        {"heal", {"heal", PLAYER, -1.2, 600, "plant", "green"}}, //
+        {"battlecry", {"battlecry", PLAYER, -1.4, 20, "normal", "green"}}, //
+        {"spark", {"spark", OPPONENT, 1.1, 20, "fire", "fire"}}, //
+        {"scratch", {"scratch", OPPONENT, 1.2, 20, "normal", "scratch"}}, //
+        {"splash", {"splash", OPPONENT, 2, 15, "water", "splash"}}, //
+        {"fire", {"fire", OPPONENT, 2, 15, "fire", "fire"}}, //
+        {"explosion", {"explosion", OPPONENT, 2, 90, "fire", "explosion"}}, //
+        {"annihilate", {"annihilate", OPPONENT, 3, 30, "fire", "explosion"}}, //
+        {"ice", {"ice", OPPONENT, 2, 15, "water", "ice"}}, //
 };
