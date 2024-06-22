@@ -11,10 +11,12 @@ Battle::Battle(
         const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
                 &outline_frames,
         const std::map<std::string, Texture2D> &ui_frms, const Texture2D &bg_surf,
+        const std::map<std::string, Texture2D> &monster_icons,
         const std::map<std::string, Font> &fonts)
     : bg_surf(bg_surf), monsters_frames(monsters_frames), outline_frames(outline_frames),
       ui_frames(ui_frms), fonts(fonts),
-      monster_data({{"player", player_monsters}, {"opponent", opponent_monsters}})
+      monster_data({{"player", player_monsters}, {"opponent", opponent_monsters}}),
+      monster_icons(monster_icons)
 {
     battle_sprites = new BattleSprites();
     player_sprites = new SpriteGroup();
@@ -118,6 +120,11 @@ void Battle::Input()
             case ATTACKS:
             {
                 limiter = current_monster->monster->GetAbilities(false).size();
+                break;
+            }
+            case SWITCH:
+            {
+                limiter = available_monsters.size();
                 break;
             }
             default:
@@ -325,4 +332,42 @@ void Battle::DrawSwitch()
     RectangleU bg_rect = {0, 0, width, height};
     RectToMidLeft(bg_rect, Vector2Add(GetRectMidRight(current_monster->rect), {20, 0}));
     DrawRectangleRounded(bg_rect.rectangle, 0.1f, 10, COLORS["white"]);
+
+    // monsters
+    std::vector<Monster *> active_monsters;
+    for (const auto monster_sprite: player_sprites->sprites)
+    {
+        active_monsters.push_back(((MonsterSprite *) monster_sprite)->monster);
+    }
+    available_monsters.clear();
+    for (auto *monster: monster_data["player"])
+    {
+        if (monster->health > 0 &&
+            // if not found in active
+            std::find(active_monsters.begin(), active_monsters.end(), monster) ==
+                    active_monsters.end())
+        {
+            available_monsters.push_back(monster);
+        }
+    }
+    for (int index = 0; index < available_monsters.size(); ++index)
+    {
+        Monster *monster = available_monsters[index];
+        bool selected = index == indexes[SWITCH];
+        RectangleU item_bg_rect = {0, 0, width, item_height};
+        RectToMidLeft(
+                item_bg_rect,
+                {bg_rect.x, bg_rect.y + item_height / 2 + index * item_height + v_offset});
+        Texture2D icon_texture = monster_icons[monster->name];
+        RectangleU icon_rect = {0, 0, icon_rect.width, icon_rect.height};
+        RectToMidLeft(
+                icon_rect, Vector2Add(
+                                   GetRectTopLeft(bg_rect),
+                                   {10, item_height / 2 + index * item_height + v_offset}));
+        Color text_color = selected ? COLORS["red"] : COLORS["black"];
+        DrawTextEx(
+                fonts["regular"], TextFormat("%s(%i)", monster->name.c_str(), monster->level),
+                {bg_rect.x + 90, icon_rect.y}, fonts["regular"].baseSize, 1, text_color);
+        DrawTextureV(icon_texture, icon_rect.pos, WHITE);
+    }
 }

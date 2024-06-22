@@ -60,7 +60,7 @@ Game::Game(const int width, const int height)
 
     battle = new Battle(
             player_monsters, dummy_monsters, monsters_frames, outline_frames, named_textures["ui"],
-            named_textures["bg_frames"]["forest"], fonts);
+            named_textures["bg_frames"]["forest"], named_textures["icons"], fonts);
 }
 
 Game::~Game()

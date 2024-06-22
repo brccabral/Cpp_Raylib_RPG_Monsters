@@ -29,6 +29,7 @@ public:
            const std::map<std::string, std::map<std::string, std::vector<TiledTexture>>>
                    &outline_frames,
            const std::map<std::string, Texture2D> &ui_frms, const Texture2D &bg_surf,
+           const std::map<std::string, Texture2D> &monster_icons,
            const std::map<std::string, Font> &fonts);
     ~Battle();
     void Update(double dt);
@@ -57,7 +58,8 @@ private:
     std::map<std::string, Texture2D> ui_frames;
     std::map<std::string, Font> fonts;
     std::map<std::string, std::vector<Monster *>> monster_data;
-    std::vector<Monster> available_monsters;
+    std::vector<Monster *> available_monsters;
+    std::map<std::string, Texture2D> monster_icons;
 
     // gorups
     BattleSprites *battle_sprites = nullptr;
