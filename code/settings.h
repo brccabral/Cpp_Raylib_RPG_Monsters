@@ -72,7 +72,7 @@ typedef struct BattleChoice
     std::string icon;
 } BattleChoice;
 
-inline std::map<std::string, std::map<std::string, BattleChoice>> BATTLE_CHOICES = {
+inline std::map<std::string, std::vector<std::pair<std::string, BattleChoice>>> BATTLE_CHOICES{
         // numbers adjusted from tutorial
         {
                 "full",

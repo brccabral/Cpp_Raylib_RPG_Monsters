@@ -148,11 +148,21 @@ void Battle::DrawUi()
 
 void Battle::DrawGeneral()
 {
+    int index = 0;
     for (auto &[option, battle_choice]: BATTLE_CHOICES["full"])
     {
-        const auto texture = ui_frames[battle_choice.icon];
+        Texture2D texture;
+        if (index == indexes[GENERAL])
+        {
+            texture = ui_frames[battle_choice.icon + "_highlight"];
+        }
+        else
+        {
+            texture = ui_frames[battle_choice.icon];
+        }
         auto rect = current_monster->rect;
         RectToCenter(rect, GetRectMidRight(rect));
         DrawTextureV(texture, Vector2Add(rect.pos, battle_choice.pos), WHITE);
+        ++index;
     }
 }
