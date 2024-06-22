@@ -24,5 +24,7 @@ class BattleSprites : public SpriteGroup
 public:
 
     BattleSprites() = default;
-    void Draw(const MonsterSprite *current_monster_sprite);
+    void
+    Draw(const MonsterSprite *current_monster_sprite, SelectionSide side, SelectionMode mode,
+         int target_index, SpriteGroup *player_sprites, SpriteGroup *opponent_sprites);
 };

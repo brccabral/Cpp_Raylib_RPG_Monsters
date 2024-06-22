@@ -79,8 +79,22 @@ void AllSprites::Draw(const Player *player)
     }
 }
 
-void BattleSprites::Draw(const MonsterSprite *current_monster_sprite)
+void BattleSprites::Draw(
+        const MonsterSprite *current_monster_sprite, const SelectionSide side,
+        const SelectionMode mode, const int target_index, SpriteGroup *player_sprites,
+        SpriteGroup *opponent_sprites)
 {
+    // get available positions
+    SpriteGroup *sprite_group = side == OPPONENT ? opponent_sprites : player_sprites;
+    // when a monster gets defeated, the group may change, but the "pos_index" won't
+    // create a list with just the "pos_index"
+    std::vector<int> sprites_indexes;
+    for (auto *sprite: sprite_group->sprites)
+    {
+        sprites_indexes.push_back(((MonsterSprite *) sprite)->pos_index);
+    }
+    auto *monster_sprite = (MonsterSprite *) sprite_group->sprites[sprites_indexes[target_index]];
+
     std::sort(
             sprites.begin(), sprites.end(),
             [](const SimpleSprite *l, const SimpleSprite *r)
@@ -94,7 +108,10 @@ void BattleSprites::Draw(const MonsterSprite *current_monster_sprite)
     {
         if (GetYsort(sprite) == BATTLE_LAYERS["outline"])
         {
-            if (((MonsterOutlineSprite *) sprite)->monster_sprite == current_monster_sprite)
+            if ((((MonsterOutlineSprite *) sprite)->monster_sprite == current_monster_sprite &&
+                 !(mode == TARGET && side == PLAYER)) ||
+                (((MonsterOutlineSprite *) sprite)->monster_sprite == monster_sprite) &&
+                        monster_sprite->entity == side && mode == TARGET)
             {
                 ((MonsterOutlineSprite *) sprite)->Draw({0, 0});
             }

@@ -1,4 +1,7 @@
 #pragma once
+#include "game_data.h"
+
+
 #include <array>
 #include <raylib.h>
 #include "raylib_utils.h"
@@ -129,7 +132,7 @@ public:
     MonsterSprite(
             Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
             const std::vector<SpriteGroup *> &sgs, Monster *monster, int index, int pos_index,
-            const std::string &entity);
+            SelectionSide entity);
     ~MonsterSprite() override;
     void Animate(double dt);
     void Update(double dt) override;
@@ -143,11 +146,11 @@ public:
     std::map<std::string, std::vector<TiledTexture>> state_frames_highlight;
     int adjusted_frame_index{};
     int pos_index{};
+    SelectionSide entity;
 
 private:
 
     int index;
-    std::string entity;
 
     float animation_speed{};
     float frame_index{};
@@ -178,7 +181,7 @@ class MonsterLevelSprite : public SimpleSprite
 public:
 
     MonsterLevelSprite(
-            const std::string &entity, Vector2 pos, MonsterSprite *monster_sprite,
+            SelectionSide entity, Vector2 pos, MonsterSprite *monster_sprite,
             const std::vector<SpriteGroup *> &sgs, const Font &font);
     ~MonsterLevelSprite() override;
     void Update(double deltaTime) override;
@@ -191,7 +194,7 @@ private:
 
     RenderTexture2D render{};
     RenderTexture2D inverted{}; // as we update everyframe, inverted is a class member
-    std::string entity;
+    SelectionSide entity;
     MonsterSprite *monster_sprite;
     Font font;
     RectangleU xp_rect{};

@@ -125,7 +125,7 @@ void AnimatedSprite::FlipH()
 MonsterSprite::MonsterSprite(
         const Vector2 position, const std::map<std::string, std::vector<TiledTexture>> &frms,
         const std::vector<SpriteGroup *> &sgs, Monster *monster, const int index,
-        const int pos_index, const std::string &entity)
+        const int pos_index, const SelectionSide entity)
     : SimpleSprite(sgs), monster(monster), state_frames(frms), pos_index(pos_index), index(index),
       entity(entity)
 {
@@ -263,7 +263,7 @@ void MonsterLevelSprite::UpdateTexture() const
 }
 
 MonsterLevelSprite::MonsterLevelSprite(
-        const std::string &entity, const Vector2 pos, MonsterSprite *monster_sprite,
+        const SelectionSide entity, const Vector2 pos, MonsterSprite *monster_sprite,
         const std::vector<SpriteGroup *> &sgs, const Font &font)
     : SimpleSprite(sgs), entity(entity), monster_sprite(monster_sprite), font(font)
 {
@@ -279,7 +279,7 @@ MonsterLevelSprite::MonsterLevelSprite(
     UpdateTexture();
 
     rect = image.rect;
-    if (strcmp(entity.c_str(), "player") == 0)
+    if (entity == PLAYER)
     {
         RectToTopLeft(rect, pos);
     }

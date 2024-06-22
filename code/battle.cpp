@@ -15,7 +15,7 @@ Battle::Battle(
         const std::map<std::string, Font> &fonts)
     : bg_surf(bg_surf), monsters_frames(monsters_frames), outline_frames(outline_frames),
       ui_frames(ui_frms), fonts(fonts),
-      monster_data({{"player", player_monsters}, {"opponent", opponent_monsters}}),
+      monster_data({{PLAYER, player_monsters}, {OPPONENT, opponent_monsters}}),
       monster_icons(monster_icons)
 {
     battle_sprites = new BattleSprites();
@@ -48,7 +48,9 @@ void Battle::Update(const double dt)
 
     BeginTextureModeC(display_surface, BLACK);
     DrawTexture(bg_surf, 0, 0, WHITE);
-    battle_sprites->Draw(current_monster);
+    battle_sprites->Draw(
+            current_monster, selection_side, selection_mode, indexes[TARGET], player_sprites,
+            opponent_sprites);
     DrawUi();
     EndTextureModeSafe();
 }
@@ -65,7 +67,7 @@ void Battle::Setup()
 }
 
 void Battle::CreateMonster(
-        Monster *monster, const int index, const int pos_index, const std::string &entity)
+        Monster *monster, const int index, const int pos_index, const SelectionSide entity)
 {
     const auto frames = monsters_frames[monster->name];
     const auto outlines = outline_frames[monster->name];
@@ -75,7 +77,7 @@ void Battle::CreateMonster(
     MonsterNameSprite *name_sprite;
     Vector2 name_pos;
     Vector2 level_pos;
-    if (std::strcmp(entity.c_str(), "player") == 0)
+    if (entity == PLAYER)
     {
         pos = BATTLE_POSITIONS["left"][pos_index];
         groups = {battle_sprites, player_sprites};
@@ -129,6 +131,7 @@ void Battle::Input()
             }
             case TARGET:
             {
+                // some attacks like "defense"/"healing" are targeting the player
                 limiter = selection_side == OPPONENT ? opponent_sprites->sprites.size()
                                                      : player_sprites->sprites.size();
                 break;
@@ -158,7 +161,6 @@ void Battle::Input()
                 }
                 auto *monster_sprite =
                         (MonsterSprite *) sprite_group->sprites[sprites_indexes[indexes[TARGET]]];
-                std::cout << *monster_sprite->monster;
             }
             if (selection_mode == ATTACKS)
             {
@@ -373,7 +375,7 @@ void Battle::DrawSwitch()
         active_monsters.push_back(((MonsterSprite *) monster_sprite)->monster);
     }
     available_monsters.clear();
-    for (auto *monster: monster_data["player"])
+    for (auto *monster: monster_data[PLAYER])
     {
         if (monster->health > 0 &&
             // if not found in active

@@ -134,3 +134,13 @@ enum TINT_MODE
     UNTINT = 0,
     TINT
 };
+
+enum SelectionMode
+{
+    NONE = 0,
+    GENERAL,
+    MONSTER,
+    ATTACKS,
+    SWITCH,
+    TARGET,
+};

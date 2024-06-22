@@ -3,16 +3,6 @@
 #include "groups.h"
 
 
-enum SelectionMode
-{
-    NONE = 0,
-    GENERAL,
-    MONSTER,
-    ATTACKS,
-    SWITCH,
-    TARGET,
-};
-
 class Battle
 {
 public:
@@ -29,7 +19,7 @@ public:
     ~Battle();
     void Update(double dt);
     void Setup();
-    void CreateMonster(Monster *monster, int index, int pos_index, const std::string &entity);
+    void CreateMonster(Monster *monster, int index, int pos_index, SelectionSide entity);
     void Input();
 
     // check what is the first monster to get Initiative = 100
@@ -52,7 +42,7 @@ private:
     std::map<std::string, std::map<std::string, std::vector<TiledTexture>>> outline_frames;
     std::map<std::string, Texture2D> ui_frames;
     std::map<std::string, Font> fonts;
-    std::map<std::string, std::vector<Monster *>> monster_data;
+    std::map<SelectionSide, std::vector<Monster *>> monster_data;
     std::vector<Monster *> available_monsters;
     std::map<std::string, Texture2D> monster_icons;
 
@@ -64,6 +54,7 @@ private:
     // control
     MonsterSprite *current_monster = nullptr;
     SelectionMode selection_mode{};
+    // some attacks like "defense"/"healing" are targeting the player
     SelectionSide selection_side{};
     std::string selected_attack;
     std::map<SelectionMode, int> indexes;
