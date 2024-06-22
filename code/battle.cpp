@@ -243,7 +243,11 @@ void Battle::DrawAttacks()
 
     for (int index = 0; index < abilities.size(); ++index)
     {
-        DrawCenteredTextEx(fonts["regular"], abilities[index].c_str(), bg_rect, COLORS["light"]);
+        bool selected = index == indexes[ATTACKS];
+        // rect
+        RectangleU text_rect = {
+                bg_rect.x, bg_rect.y + index * item_height, bg_rect.width, (float) item_height};
+        DrawCenteredTextEx(fonts["regular"], abilities[index].c_str(), text_rect, COLORS["light"]);
     }
 }
 
