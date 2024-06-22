@@ -2,6 +2,7 @@
 #include "raylib-tmx.h"
 #include "battle.h"
 #include "dialogtree.h"
+#include "groups.h"
 #include "monsterindex.h"
 #include "support.h"
 

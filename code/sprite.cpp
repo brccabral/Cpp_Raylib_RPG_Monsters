@@ -3,8 +3,7 @@
 #include "sprite.h"
 #include "dialogsprite.h"
 #include "raylib_utils.h"
-
-#include <complex>
+#include "battle.h"
 
 
 SimpleSprite::SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups)
@@ -125,9 +124,9 @@ void AnimatedSprite::FlipH()
 MonsterSprite::MonsterSprite(
         const Vector2 position, const std::map<AnimationState, std::vector<TiledTexture>> &frms,
         const std::vector<SpriteGroup *> &sgs, Monster *monster, const int index,
-        const int pos_index, const SelectionSide entity)
+        const int pos_index, const SelectionSide entity, Battle *battle)
     : SimpleSprite(sgs), monster(monster), state_frames(frms), pos_index(pos_index), entity(entity),
-      index(index)
+      index(index), battle(battle)
 {
     image = state_frames[state][int(frame_index)];
     rect = image.rect;
@@ -162,6 +161,13 @@ MonsterSprite::~MonsterSprite()
 void MonsterSprite::Animate(const double dt)
 {
     frame_index += animation_speed * dt;
+    // attack animation has finished
+    if (state == ANIMATION_ATTACK && frame_index >= state_frames[ANIMATION_ATTACK].size())
+    {
+        // apply attack
+        state = ANIMATION_IDLE;
+        battle->ApplyAttack(target_sprite, current_attack, monster->GetBaseDamage(current_attack));
+    }
     adjusted_frame_index = int(frame_index) % state_frames[state].size();
     image = state_frames[state][adjusted_frame_index];
 
@@ -208,7 +214,7 @@ void MonsterSprite::SetHighlight(const bool value)
     }
 }
 
-void MonsterSprite::ActivateAttack(MonsterSprite *monster_sprite, Attack selected_attack)
+void MonsterSprite::ActivateAttack(MonsterSprite *monster_sprite, const Attack selected_attack)
 {
     state = ANIMATION_ATTACK;
     frame_index = 0;

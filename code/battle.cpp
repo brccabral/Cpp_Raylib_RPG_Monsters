@@ -1,6 +1,7 @@
 #include <cstring>
 #include <iostream>
 #include "battle.h"
+#include "groups.h"
 
 
 Battle::Battle(
@@ -81,7 +82,8 @@ void Battle::CreateMonster(
     {
         pos = BATTLE_POSITIONS["left"][pos_index];
         groups = {battle_sprites, player_sprites};
-        monster_sprite = new MonsterSprite(pos, frames, groups, monster, index, pos_index, entity);
+        monster_sprite =
+                new MonsterSprite(pos, frames, groups, monster, index, pos_index, entity, this);
         monster_sprite->FlipH();
         name_pos = Vector2Add(GetRectMidLeft(monster_sprite->rect), {-40, -70});
         name_sprite =
@@ -94,7 +96,8 @@ void Battle::CreateMonster(
     {
         pos = BATTLE_POSITIONS["right"][pos_index];
         groups = {battle_sprites, opponent_sprites};
-        monster_sprite = new MonsterSprite(pos, frames, groups, monster, index, pos_index, entity);
+        monster_sprite =
+                new MonsterSprite(pos, frames, groups, monster, index, pos_index, entity, this);
         name_pos = Vector2Add(GetRectMidRight(monster_sprite->rect), {-60, -70});
         name_sprite =
                 new MonsterNameSprite(name_pos, monster_sprite, {battle_sprites}, fonts["regular"]);
@@ -241,6 +244,13 @@ void Battle::UpdateAllMonsters(const bool do_pause) const
     {
         ((MonsterSprite *) sprite)->monster->paused = do_pause;
     }
+}
+
+void Battle::ApplyAttack(MonsterSprite *target_sprite, const Attack attack, const float amount)
+{
+    std::cout << *target_sprite->monster << "\n";
+    std::cout << attack << "\n";
+    std::cout << amount << "\n";
 }
 
 void Battle::DrawUi()

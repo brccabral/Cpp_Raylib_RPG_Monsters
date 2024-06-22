@@ -1,7 +1,10 @@
 #pragma once
 #include <vector>
-#include "groups.h"
+#include "monster.h"
+#include "sprite.h"
 
+
+class BattleSprites; // forward declaration
 
 class Battle
 {
@@ -22,12 +25,14 @@ public:
     void CreateMonster(Monster *monster, int index, int pos_index, SelectionSide entity);
     void Input();
 
+    // Battle System
     // check what is the first monster to get Initiative = 100
     // it depends on monster speed
     // when the first monter achieves 100, pause the others
     void CheckActive();
     void CheckActiveGroup(const SpriteGroup *group);
     void UpdateAllMonsters(bool do_pause) const;
+    void ApplyAttack(MonsterSprite *target_sprite, Attack attack, float amount);
 
     // ui
     void DrawUi();

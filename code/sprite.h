@@ -1,10 +1,8 @@
 #pragma once
-#include "game_data.h"
-
-
 #include <array>
 #include <raylib.h>
 #include "raylib_utils.h"
+#include "game_data.h"
 #include "monster.h"
 #include "settings.h"
 #include "timer.h"
@@ -124,6 +122,7 @@ private:
     std::vector<TiledTexture> frames;
 };
 
+class Battle; // forward declaration
 // Battle Sprites
 class MonsterSprite : public SimpleSprite
 {
@@ -132,7 +131,7 @@ public:
     MonsterSprite(
             Vector2 position, const std::map<AnimationState, std::vector<TiledTexture>> &frms,
             const std::vector<SpriteGroup *> &sgs, Monster *monster, int index, int pos_index,
-            SelectionSide entity);
+            SelectionSide entity, Battle *battle);
     ~MonsterSprite() override;
     void Animate(double dt);
     void Update(double dt) override;
@@ -161,6 +160,7 @@ private:
 
     MonsterSprite *target_sprite = nullptr;
     Attack current_attack = ATTACK_NONE;
+    Battle *battle;
 };
 
 class MonsterNameSprite : public SimpleSprite
