@@ -29,6 +29,7 @@ inline std::map<std::string, Color> COLORS = {
         {"red", {0xf0, 0x31, 0x31, 0xff}}, //
         {"blue", {0x66, 0xd7, 0xee, 0xff}}, //
         {"normal", {0xff, 0xff, 0xff, 0xff}}, //
+        {"dark white", {0xf0, 0xf0, 0xf0, 0xff}}, //
 };
 
 inline std::map<std::string, int> WORLD_LAYERS = {

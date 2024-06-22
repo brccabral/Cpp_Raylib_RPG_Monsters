@@ -269,6 +269,10 @@ void Battle::DrawAttacks()
         // rect
         RectangleU text_rect = {
                 bg_rect.x, bg_rect.y + index * item_height, bg_rect.width, (float) item_height};
+        if (selected)
+        {
+            DrawRectangleRec(text_rect.rectangle, COLORS["dark white"]);
+        }
         DrawCenteredTextEx(fonts["regular"], abilities[index].c_str(), text_rect, text_color);
     }
 }
