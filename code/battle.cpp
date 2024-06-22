@@ -130,7 +130,9 @@ void Battle::Input()
             if (selection_mode == GENERAL)
             {
                 if (indexes[GENERAL] == 0)
-                {}
+                {
+                    selection_mode = ATTACKS;
+                }
                 else if (indexes[GENERAL] == 1)
                 {
                     // select defense resumes battle
@@ -140,7 +142,9 @@ void Battle::Input()
                     indexes[GENERAL] = 0;
                 }
                 else if (indexes[GENERAL] == 2)
-                {}
+                {
+                    selection_mode = SWITCH;
+                }
                 else if (indexes[GENERAL] == 3)
                 {}
             }
@@ -190,6 +194,14 @@ void Battle::DrawUi()
         {
             DrawGeneral();
         }
+        else if (selection_mode == ATTACKS)
+        {
+            DrawAttacks();
+        }
+        else if (selection_mode == SWITCH)
+        {
+            DrawSwitch();
+        }
     }
 }
 
@@ -213,3 +225,22 @@ void Battle::DrawGeneral()
         ++index;
     }
 }
+
+void Battle::DrawAttacks()
+{
+    // data
+    auto abilities = current_monster->monster.GetAbilities();
+    float width = 150;
+    float height = 200;
+    int visible_attacks = 4;
+    int item_height = height / visible_attacks;
+    int v_offset = 0;
+
+    // bg
+    RectangleU bg_rect = {0, 0, width, height};
+    RectToMidLeft(bg_rect, Vector2Add(GetRectMidRight(current_monster->rect), {20, 0}));
+    DrawRectangleRounded(bg_rect.rectangle, 0.1f, 10, COLORS["white"]);
+}
+
+void Battle::DrawSwitch()
+{}

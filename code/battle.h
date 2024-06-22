@@ -46,6 +46,8 @@ public:
     // ui
     void DrawUi();
     void DrawGeneral();
+    void DrawAttacks();
+    void DrawSwitch();
 
 private:
 
