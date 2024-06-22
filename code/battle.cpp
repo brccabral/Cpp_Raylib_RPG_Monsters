@@ -285,14 +285,14 @@ void Battle::DrawAttacks()
                 if (CheckCollisionPointRec(GetRectTopLeft(bg_rect), text_rect.rectangle))
                 {
                     DrawRectangleRoundedCorners(
-                            text_rect, 0.1f, 10, COLORS["dark white"], true, true, false, false);
+                            text_rect, 0.2f, 10, COLORS["dark white"], true, true, false, false);
                 }
                 else if (CheckCollisionPointRec(
                                  Vector2Add(GetRectMidBottom(bg_rect), {0, -1}),
                                  text_rect.rectangle))
                 {
                     DrawRectangleRoundedCorners(
-                            text_rect, 0.1f, 10, COLORS["dark white"], false, false, true, true);
+                            text_rect, 0.2f, 10, COLORS["dark white"], false, false, true, true);
                 }
                 else
                 {

@@ -111,6 +111,10 @@ RLAPI bool CheckCollisionRectLine(
         Vector2 *collisionPoint2);
 
 // Draw rectangle with rounded edges
+// RLAPI void DrawRectangleRoundedCorners(
+//         RectangleU rec, float roundness, int segments, Color color, bool TopLeft = true,
+//         bool TopRight = true, bool BottomRight = true, bool BottomLeft = true);
+
 RLAPI void DrawRectangleRoundedCorners(
         RectangleU rec, float roundness, int segments, Color color, bool TopLeft = true,
         bool TopRight = true, bool BottomRight = true, bool BottomLeft = true);

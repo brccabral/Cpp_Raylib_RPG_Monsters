@@ -172,7 +172,7 @@ void MonsterIndex::DisplayMain(const double dt)
 
     const RectangleU health_rectangle = bar_rect;
     DrawBar(health_rectangle, monster.health, monster.GetStat("max_health"), COLORS["red"],
-            COLORS["black"], 0.3f, 10);
+            COLORS["black"], 0.4f, 20);
     DrawTextEx(
             fonts["regular"],
             TextFormat("HP: %.f/%.f", monster.health, monster.GetStat("max_health")),
@@ -181,7 +181,7 @@ void MonsterIndex::DisplayMain(const double dt)
 
     const RectangleU energy_rectangle{bar_rect.x + rect.width / 2.0f, bar_rect.y, bar_rect.size};
     DrawBar(energy_rectangle, monster.energy, monster.GetStat("max_energy"), COLORS["blue"],
-            COLORS["black"], 0.3f, 10);
+            COLORS["black"], 0.4f, 20);
     DrawTextEx(
             fonts["regular"],
             TextFormat("EP: %.f/%.f", monster.energy, monster.GetStat("max_energy")),

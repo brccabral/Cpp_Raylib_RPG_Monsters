@@ -1,6 +1,7 @@
 #include <random>
 #include <chrono>
 #include "raylib_utils.h"
+#include "rlgl.h" // OpenGL abstraction layer to OpenGL 1.1, 2.1, 3.3+ or ES2
 #include "settings.h"
 
 
@@ -209,108 +210,6 @@ bool CheckCollisionRectLine(
     }
 
     return hasCollision;
-}
-
-
-// ************* Adapted from Raylib "rshapes.c" ***************
-
-// Error rate to calculate how many segments we need to draw a smooth circle,
-// taken from https://stackoverflow.com/a/2244088
-#ifndef SMOOTH_CIRCLE_ERROR_RATE
-#define SMOOTH_CIRCLE_ERROR_RATE 0.5f // Circle error rate
-#endif
-
-// Draw rectangle with rounded edges
-RLAPI void DrawRectangleRoundedCorners(
-        const RectangleU rec, float roundness, int segments, const Color color, const bool TopLeft,
-        const bool TopRight, const bool BottomRight, const bool BottomLeft)
-{
-    // Not a rounded rectangle
-    if ((roundness <= 0.0f) || (rec.width < 1) || (rec.height < 1))
-    {
-        DrawRectangleRec(rec.rectangle, color);
-        return;
-    }
-
-    if (roundness >= 1.0f)
-        roundness = 1.0f;
-
-    // Calculate corner radius
-    const float radius = ((rec.width + rec.height) / 2) * roundness / 2;
-    if (radius <= 0.0f)
-        return;
-
-    // Calculate number of segments to use for the corners
-    if (segments < 4)
-    {
-        // Calculate the maximum angle between segments based on the error rate (usually 0.5f)
-        const float th = acosf(2 * powf(1 - SMOOTH_CIRCLE_ERROR_RATE / radius, 2) - 1);
-        segments = (int) (ceilf(2 * PI / th) / 4.0f);
-        if (segments <= 0)
-            segments = 4;
-    }
-
-    // the roundness reduces some dimensions by 1 pixel, we correct it
-    if (TopLeft)
-    {
-        DrawCircleSector({rec.x + radius, rec.y + radius}, radius, 180.0f, 270.0f, segments, color);
-    }
-    else
-    {
-        DrawRectangle(rec.x, rec.y, radius + 1, radius, color);
-    }
-
-    if (TopRight)
-    {
-        DrawCircleSector(
-                {rec.x + rec.width - radius, rec.y + radius}, radius, 270.0f, 360.0f, segments,
-                color);
-    }
-    else
-    {
-        DrawRectangle(rec.x + rec.width - radius, rec.y, radius + 1, radius, color);
-    }
-
-    if (BottomRight)
-    {
-        DrawCircleSector(
-                {rec.x + rec.width - radius, rec.y + rec.height - radius}, radius, 0.0f, 90.0f,
-                segments, color);
-    }
-    else
-    {
-        DrawRectangle(
-                rec.x + rec.width - radius, rec.y + rec.height - radius, radius + 1, radius + 1,
-                color);
-    }
-
-    if (BottomLeft)
-    {
-        DrawCircleSector(
-                {rec.x + radius, rec.y + rec.height - radius}, radius, 90.0f, 180.0f, segments,
-                color);
-    }
-    else
-    {
-        DrawRectangle(rec.x, rec.y + rec.height - radius, radius, radius + 1, color);
-    }
-
-    // Top RectangleU
-    DrawRectangle(rec.x + radius - 1, rec.y, rec.width - 2 * radius + 3, radius, color);
-    // Right RectangleU
-    DrawRectangle(
-            rec.x + rec.width - radius, rec.y + radius - 1, radius + 1, rec.height - 2 * radius + 3,
-            color);
-    // Bottom RectangleU
-    DrawRectangle(
-            rec.x + radius - 1, rec.y + rec.height - radius, rec.width - 2 * radius + 3, radius + 1,
-            color);
-    // Left RectangleU
-    DrawRectangle(rec.x, rec.y + radius - 1, radius, rec.height - 2 * radius + 3, color);
-    // Center RectangleU
-    DrawRectangle(
-            rec.x + radius - 1, rec.y + radius - 1, rec.width - 2 * radius + 2,
-            rec.height - 2 * radius + 2, color);
 }
 
 Vector2 MeasureTextF(const Font &font, const char *text, const int spacing)
@@ -628,4 +527,279 @@ Texture2D TextureColorGrayscale(const Texture2D *texture)
     const Texture result = LoadTextureFromImage(image);
     UnloadImage(image);
     return result;
+}
+
+
+// ************* Adapted from Raylib "rshapes.c" ***************
+
+// Error rate to calculate how many segments we need to draw a smooth circle,
+// taken from https://stackoverflow.com/a/2244088
+#ifndef SMOOTH_CIRCLE_ERROR_RATE
+#define SMOOTH_CIRCLE_ERROR_RATE 0.5f // Circle error rate
+#endif
+
+extern Texture2D texShapes; // Texture used on shapes drawing (white pixel loaded by rlgl)
+extern Rectangle texShapesRec; // Texture source rectangle used on shapes drawing
+
+#if defined(SUPPORT_QUADS_DRAW_MODE)
+void rlRectangle(const Vector2 p1, const Vector2 p2, const Color color)
+{
+    Rectangle shapeRect = GetShapesTextureRectangle();
+    rlColor4ub(color.r, color.g, color.b, color.a);
+    rlTexCoord2f(shapeRect.x / texShapes.width, shapeRect.y / texShapes.height);
+    rlVertex2f(p1.x, p1.y);
+    rlTexCoord2f(
+            shapeRect.x / texShapes.width, (shapeRect.y + shapeRect.height) / texShapes.height);
+    rlVertex2f(p1.x, p2.y);
+    rlTexCoord2f(
+            (shapeRect.x + shapeRect.width) / texShapes.width,
+            (shapeRect.y + shapeRect.height) / texShapes.height);
+    rlVertex2f(p2.x, p2.y);
+    rlTexCoord2f((shapeRect.x + shapeRect.width) / texShapes.width, shapeRect.y / texShapes.height);
+    rlVertex2f(p2.x, p1.y);
+}
+#else
+void rlRectangle(
+        const Vector2 p1, const Vector2 p2, const Vector2 p3, const Vector2 p4, const Color color)
+{
+    rlColor4ub(color.r, color.g, color.b, color.a);
+    rlVertex2f(p1.x, p1.y);
+    rlVertex2f(p2.x, p2.y);
+    rlVertex2f(p3.x, p3.y);
+    rlVertex2f(p4.x, p4.y);
+    rlVertex2f(p1.x, p1.y);
+    rlVertex2f(p3.x, p3.y);
+}
+#endif
+
+// Draw rectangle with rounded edges
+void DrawRectangleRoundedCorners(
+        const RectangleU rec, float roundness, int segments, Color color, const bool TopLeft,
+        const bool TopRight, const bool BottomRight, const bool BottomLeft)
+{
+    // Not a rounded rectangle
+    if ((roundness <= 0.0f) || (rec.width < 1) || (rec.height < 1))
+    {
+        DrawRectangleRec(rec.rectangle, color);
+        return;
+    }
+
+    if (roundness >= 1.0f)
+        roundness = 1.0f;
+
+    // Calculate corner radius
+    float radius =
+            (rec.width > rec.height) ? (rec.height * roundness) / 2 : (rec.width * roundness) / 2;
+    if (radius <= 0.0f)
+        return;
+
+    // Calculate number of segments to use for the corners
+    if (segments < 4)
+    {
+        // Calculate the maximum angle between segments based on the error rate (usually 0.5f)
+        float th = acosf(2 * powf(1 - SMOOTH_CIRCLE_ERROR_RATE / radius, 2) - 1);
+        segments = (int) (ceilf(2 * PI / th) / 4.0f);
+        if (segments <= 0)
+            segments = 4;
+    }
+
+    float stepLength = 90.0f / (float) segments;
+
+    /*
+    Quick sketch to make sense of all of this,
+    there are 9 parts to draw, also mark the 12 points we'll use
+
+          P0____________________P1
+          /|                    |\
+         /1|          2         |3\
+     P7 /__|____________________|__\ P2
+       |   |P8                P9|   |
+       | 8 |          9         | 4 |
+       | __|____________________|__ |
+     P6 \  |P11              P10|  / P3
+         \7|          6         |5/
+          \|____________________|/
+          P5                    P4
+    */
+    // Coordinates of the 12 points that define the rounded rect
+    const Vector2 point[12] = {
+            {(float) rec.x + radius, rec.y},
+            {(float) (rec.x + rec.width) - radius, rec.y},
+            {rec.x + rec.width, (float) rec.y + radius}, // PO, P1, P2
+            {rec.x + rec.width, (float) (rec.y + rec.height) - radius},
+            {(float) (rec.x + rec.width) - radius, rec.y + rec.height}, // P3, P4
+            {(float) rec.x + radius, rec.y + rec.height},
+            {rec.x, (float) (rec.y + rec.height) - radius},
+            {rec.x, (float) rec.y + radius}, // P5, P6, P7
+            {(float) rec.x + radius, (float) rec.y + radius},
+            {(float) (rec.x + rec.width) - radius, (float) rec.y + radius}, // P8, P9
+            {(float) (rec.x + rec.width) - radius, (float) (rec.y + rec.height) - radius},
+            {(float) rec.x + radius, (float) (rec.y + rec.height) - radius} // P10, P11
+    };
+
+    const Vector2 centers[4] = {point[8], point[9], point[10], point[11]};
+    const float angles[4] = {180.0f, 270.0f, 0.0f, 90.0f};
+
+#if defined(SUPPORT_QUADS_DRAW_MODE)
+    rlSetTexture(GetShapesTexture().id);
+    Rectangle shapeRect = GetShapesTextureRectangle();
+
+    rlBegin(RL_QUADS);
+    // Draw all the 4 corners: [1] Upper Left Corner, [3] Upper Right Corner, [5] Lower Right
+    // Corner, [7] Lower Left Corner
+    for (int k = 0; k < 4; ++k) // Hope the compiler is smart enough to unroll this loop
+    {
+        float angle = angles[k];
+        const Vector2 center = centers[k];
+
+        // NOTE: Every QUAD actually represents two segments
+        for (int i = 0; i < segments / 2; i++)
+        {
+            rlColor4ub(color.r, color.g, color.b, color.a);
+            rlTexCoord2f(shapeRect.x / texShapes.width, shapeRect.y / texShapes.height);
+            rlVertex2f(center.x, center.y);
+
+            rlTexCoord2f(
+                    (shapeRect.x + shapeRect.width) / texShapes.width,
+                    shapeRect.y / texShapes.height);
+            rlVertex2f(
+                    center.x + cosf(DEG2RAD * (angle + stepLength * 2)) * radius,
+                    center.y + sinf(DEG2RAD * (angle + stepLength * 2)) * radius);
+
+            rlTexCoord2f(
+                    (shapeRect.x + shapeRect.width) / texShapes.width,
+                    (shapeRect.y + shapeRect.height) / texShapes.height);
+            rlVertex2f(
+                    center.x + cosf(DEG2RAD * (angle + stepLength)) * radius,
+                    center.y + sinf(DEG2RAD * (angle + stepLength)) * radius);
+
+            rlTexCoord2f(
+                    shapeRect.x / texShapes.width,
+                    (shapeRect.y + shapeRect.height) / texShapes.height);
+            rlVertex2f(
+                    center.x + cosf(DEG2RAD * angle) * radius,
+                    center.y + sinf(DEG2RAD * angle) * radius);
+
+            angle += (stepLength * 2);
+        }
+
+        // NOTE: In case number of segments is odd, we add one last piece to the cake
+        if (segments % 2)
+        {
+            rlColor4ub(color.r, color.g, color.b, color.a);
+            rlTexCoord2f(shapeRect.x / texShapes.width, shapeRect.y / texShapes.height);
+            rlVertex2f(center.x, center.y);
+
+            rlTexCoord2f(
+                    (shapeRect.x + shapeRect.width) / texShapes.width,
+                    (shapeRect.y + shapeRect.height) / texShapes.height);
+            rlVertex2f(
+                    center.x + cosf(DEG2RAD * (angle + stepLength)) * radius,
+                    center.y + sinf(DEG2RAD * (angle + stepLength)) * radius);
+
+            rlTexCoord2f(
+                    shapeRect.x / texShapes.width,
+                    (shapeRect.y + shapeRect.height) / texShapes.height);
+            rlVertex2f(
+                    center.x + cosf(DEG2RAD * angle) * radius,
+                    center.y + sinf(DEG2RAD * angle) * radius);
+
+            rlTexCoord2f(
+                    (shapeRect.x + shapeRect.width) / texShapes.width,
+                    shapeRect.y / texShapes.height);
+            rlVertex2f(center.x, center.y);
+        }
+    }
+
+    if (!TopLeft)
+    {
+        rlRectangle({point[7].x, point[0].y}, point[8], color);
+    }
+    if (!TopRight)
+    {
+        rlRectangle(point[1], point[2], color);
+    }
+    if (!BottomLeft)
+    {
+        rlRectangle(point[6], point[5], color);
+    }
+    if (!BottomRight)
+    {
+        rlRectangle(point[10], {point[3].x, point[4].y}, color);
+    }
+
+    // [2] Upper Rectangle
+    rlRectangle(point[0], point[9], color);
+
+    // [4] Right Rectangle
+    rlRectangle(point[9], point[3], color);
+
+    // [6] Bottom Rectangle
+    rlRectangle(point[11], point[4], color);
+
+    // [8] Left Rectangle
+    rlRectangle(point[7], point[11], color);
+
+    // [9] Middle Rectangle
+    rlRectangle(point[8], point[10], color);
+
+    rlEnd();
+    rlSetTexture(0);
+#else
+    rlBegin(RL_TRIANGLES);
+
+    // Draw all of the 4 corners: [1] Upper Left Corner, [3] Upper Right Corner, [5] Lower Right
+    // Corner, [7] Lower Left Corner
+    for (int k = 0; k < 4; ++k) // Hope the compiler is smart enough to unroll this loop
+    {
+        float angle = angles[k];
+        const Vector2 center = centers[k];
+        for (int i = 0; i < segments; i++)
+        {
+            rlColor4ub(color.r, color.g, color.b, color.a);
+            rlVertex2f(center.x, center.y);
+            rlVertex2f(
+                    center.x + cosf(DEG2RAD * (angle + stepLength)) * radius,
+                    center.y + sinf(DEG2RAD * (angle + stepLength)) * radius);
+            rlVertex2f(
+                    center.x + cosf(DEG2RAD * angle) * radius,
+                    center.y + sinf(DEG2RAD * angle) * radius);
+            angle += stepLength;
+        }
+    }
+
+    if (!TopLeft)
+    {
+        rlRectangle({point[7].x, point[0].y}, point[7], point[8], point[0], color);
+    }
+    if (!TopRight)
+    {
+        rlRectangle(point[1], point[9], point[2], {point[2].x, point[1].y}, color);
+    }
+    if (!BottomLeft)
+    {
+        rlRectangle(point[6], {point[6].x, point[5].y}, point[5], point[11], color);
+    }
+    if (!BottomRight)
+    {
+        rlRectangle(point[10], point[4], {point[3].x, point[4].y}, point[3], color);
+    }
+
+    // [2] Upper Rectangle
+    rlRectangle(point[0], point[8], point[9], point[1], color);
+
+    // [4] Right Rectangle
+    rlRectangle(point[9], point[10], point[3], point[2], color);
+
+    // [6] Bottom Rectangle
+    rlRectangle(point[11], point[5], point[4], point[10], color);
+
+    // [8] Left Rectangle
+    rlRectangle(point[7], point[6], point[11], point[8], color);
+
+    // [9] Middle Rectangle
+    rlRectangle(point[8], point[11], point[10], point[9], color);
+
+    rlEnd();
+#endif
 }

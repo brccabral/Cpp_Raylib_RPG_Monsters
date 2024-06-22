@@ -11,6 +11,9 @@ find_package(tmx REQUIRED)
 set(PLATFORM "Desktop" CACHE STRING "Desktop, Android, Web")
 message("PLATFORM ${PLATFORM}")
 
+option(USE_QUADS_DRAW_MODE "Gl draw using QUADS, if not, TRIANGLES" OFF)
+message("USE_QUADS_DRAW_MODE ${USE_QUADS_DRAW_MODE}")
+
 add_executable(${PROJECT_NAME} code/main.cpp
         code/game.cpp
         code/sprite.cpp
@@ -27,6 +30,9 @@ add_executable(${PROJECT_NAME} code/main.cpp
 )
 if (PLATFORM STREQUAL "Desktop")
     target_compile_definitions(${PROJECT_NAME} PRIVATE PLATFORM_DESKTOP)
+endif ()
+if (USE_QUADS_DRAW_MODE)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE SUPPORT_QUADS_DRAW_MODE)
 endif ()
 target_link_libraries(${PROJECT_NAME} raylib tmx m)
 install(TARGETS ${PROJECT_NAME})
