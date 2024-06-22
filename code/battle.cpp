@@ -352,7 +352,7 @@ void Battle::DrawSwitch()
     }
     for (int index = 0; index < available_monsters.size(); ++index)
     {
-        const Monster *monster = available_monsters[index];
+        Monster *monster = available_monsters[index];
         const bool selected = index == indexes[SWITCH];
         RectangleU item_bg_rect = {0, 0, width, item_height};
         RectToMidLeft(
@@ -390,6 +390,15 @@ void Battle::DrawSwitch()
                     fonts["regular"], TextFormat("%s (%i)", monster->name.c_str(), monster->level),
                     {bg_rect.x + 90, icon_rect.y}, fonts["regular"].baseSize, 1, text_color);
             DrawTextureV(icon_texture, icon_rect.pos, WHITE);
+
+            RectangleU health_rectangle = {
+                    bg_rect.x + 90, icon_rect.y + fonts["regular"].baseSize + 4, 100, 4};
+            RectangleU energy_rectangle = {
+                    Vector2Add(GetRectBottomLeft(health_rectangle), {0, 2}), {80, 4}};
+            DrawBar(health_rectangle, monster->health, monster->GetStat("max_health"),
+                    COLORS["red"], COLORS["black"]);
+            DrawBar(energy_rectangle, monster->energy, monster->GetStat("max_energy"),
+                    COLORS["blue"], COLORS["black"]);
         }
     }
 }
