@@ -314,6 +314,22 @@ enum Attack
     ATTACK_ICE
 };
 
+enum AttackAnimation
+{
+    ANIMATION_FIRE = 0,
+    ANIMATION_GREEN,
+    ANIMATION_SCRATCH,
+    ANIMATION_SPLASH,
+    ANIMATION_EXPLOSION,
+    ANIMATION_ICE
+};
+
+static std::map<std::string, AttackAnimation> AttackAnimationNames = {
+        {"fire", ANIMATION_FIRE},           {"green", ANIMATION_GREEN},
+        {"scratch", ANIMATION_SCRATCH},     {"splash", ANIMATION_SPLASH},
+        {"explosion", ANIMATION_EXPLOSION}, {"ice", ANIMATION_ICE},
+};
+
 struct MonsterData
 {
     std::string name;
@@ -622,18 +638,18 @@ struct AttackData
     float amount;
     int cost;
     std::string element;
-    std::string animation;
+    AttackAnimation animation;
 };
 
 inline std::map<Attack, AttackData> ATTACK_DATA = {
-        {ATTACK_BURN, {"burn", OPPONENT, 2, 15, "fire", "fire"}}, //
-        {ATTACK_HEAL, {"heal", PLAYER, -1.2, 600, "plant", "green"}}, //
-        {ATTACK_BATTLECRY, {"battlecry", PLAYER, -1.4, 20, "normal", "green"}}, //
-        {ATTACK_SPARK, {"spark", OPPONENT, 1.1, 20, "fire", "fire"}}, //
-        {ATTACK_SCRATCH, {"scratch", OPPONENT, 1.2, 20, "normal", "scratch"}}, //
-        {ATTACK_SPLASH, {"splash", OPPONENT, 2, 15, "water", "splash"}}, //
-        {ATTACK_FIRE, {"fire", OPPONENT, 2, 15, "fire", "fire"}}, //
-        {ATTACK_EXPLOSTION, {"explosion", OPPONENT, 2, 90, "fire", "explosion"}}, //
-        {ATTACK_ANNIHILATE, {"annihilate", OPPONENT, 3, 30, "fire", "explosion"}}, //
-        {ATTACK_ICE, {"ice", OPPONENT, 2, 15, "water", "ice"}}, //
+        {ATTACK_BURN, {"burn", OPPONENT, 2, 15, "fire", ANIMATION_FIRE}}, //
+        {ATTACK_HEAL, {"heal", PLAYER, -1.2, 600, "plant", ANIMATION_GREEN}}, //
+        {ATTACK_BATTLECRY, {"battlecry", PLAYER, -1.4, 20, "normal", ANIMATION_GREEN}}, //
+        {ATTACK_SPARK, {"spark", OPPONENT, 1.1, 20, "fire", ANIMATION_FIRE}}, //
+        {ATTACK_SCRATCH, {"scratch", OPPONENT, 1.2, 20, "normal", ANIMATION_SCRATCH}}, //
+        {ATTACK_SPLASH, {"splash", OPPONENT, 2, 15, "water", ANIMATION_SPLASH}}, //
+        {ATTACK_FIRE, {"fire", OPPONENT, 2, 15, "fire", ANIMATION_FIRE}}, //
+        {ATTACK_EXPLOSTION, {"explosion", OPPONENT, 2, 90, "fire", ANIMATION_EXPLOSION}}, //
+        {ATTACK_ANNIHILATE, {"annihilate", OPPONENT, 3, 30, "fire", ANIMATION_EXPLOSION}}, //
+        {ATTACK_ICE, {"ice", OPPONENT, 2, 15, "water", ANIMATION_ICE}}, //
 };

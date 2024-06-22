@@ -17,7 +17,10 @@ SimpleSprite::SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups)
 
 // the TMX images are unloaded in ~Game()::UnloadTMX
 // if the sub class has its own render/texture, unload it there
-SimpleSprite::~SimpleSprite() = default;
+SimpleSprite::~SimpleSprite()
+{
+    Kill();
+};
 
 void SimpleSprite::Draw(const Vector2 offset) const
 {
@@ -43,6 +46,16 @@ void SimpleSprite::LeaveOtherGroups(const SpriteGroup *sprite_group)
                     std::remove(group->sprites.begin(), group->sprites.end(), this),
                     group->sprites.end());
         }
+    }
+}
+
+void SimpleSprite::Kill()
+{
+    for (const auto group: groups)
+    {
+        group->sprites.erase(
+                std::remove(group->sprites.begin(), group->sprites.end(), this),
+                group->sprites.end());
     }
 }
 
@@ -397,6 +410,27 @@ void MonsterOutlineSprite::FlipH()
         {
             tile_rect.width = -tile_rect.width;
         }
+    }
+}
+
+AttackSprite::AttackSprite(
+        const Vector2 position, const std::vector<TiledTexture> &frms,
+        const std::vector<SpriteGroup *> &sgs, const int z)
+    : AnimatedSprite(position, frms, sgs, z)
+{
+    RectToCenter(rect, position);
+}
+
+void AttackSprite::Animate(const double deltaTime)
+{
+    frame_index += ANIMATION_SPEED * deltaTime;
+    if (frame_index < frames.size())
+    {
+        image = frames[int(frame_index) % frames.size()];
+    }
+    else
+    {
+        delete this;
     }
 }
 

@@ -47,20 +47,31 @@ Game::Game(const int width, const int height)
         {
             for (const auto frame: frames)
             {
-                TiledTexture tiled_texture = {&named_textures["monsters"][monster_name], frame};
-                monsters_frames[monster_name][key].push_back(tiled_texture);
+                monsters_frames[monster_name][key].push_back(
+                        {&named_textures["monsters"][monster_name], frame});
 
-                TiledTexture outline_texture = {&named_textures["outlines"][monster_name], frame};
-                outline_frames[monster_name][key].push_back(outline_texture);
+                outline_frames[monster_name][key].push_back(
+                        {&named_textures["outlines"][monster_name], frame});
             }
         }
     }
     monster_index = new MonsterIndex(
             player_monsters, fonts, named_textures["icons"], monsters_frames, named_textures["ui"]);
 
+    std::map<AttackAnimation, std::vector<TiledTexture>> attack_animation_frames;
+    for (auto &[attack_name, attack_texture]: named_textures["attacks"])
+    {
+        AttackAnimation animation = AttackAnimationNames[attack_name];
+        for (const auto attack_rect: attack_animation_rects[animation])
+        {
+            attack_animation_frames[animation].push_back({&attack_texture, attack_rect});
+        }
+    }
+
     battle = new Battle(
             player_monsters, dummy_monsters, monsters_frames, outline_frames, named_textures["ui"],
-            named_textures["bg_frames"]["forest"], named_textures["icons"], fonts);
+            named_textures["bg_frames"]["forest"], named_textures["icons"], attack_animation_frames,
+            fonts);
 }
 
 Game::~Game()
@@ -186,9 +197,11 @@ void Game::ImporAssets()
     named_textures["ui"] = ImportNamedFolder("resources/graphics/ui");
     named_textures["bg_frames"] = ImportNamedFolder("resources/graphics/backgrounds");
     named_textures["outlines"] = OutlineCreator(named_textures["monsters"], 4);
+    named_textures["attacks"] = ImportNamedFolder("resources/graphics/attacks");
 
     named_rect_frames["coast"] = coast_rects();
     animation_frames = MonsterImporter(4, 2, "resources/graphics/monsters");
+    attack_animation_rects = AttackImporter(4, 1, "resources/graphics/attacks");
 
     face_rect_frames["characters"] = all_character_import("resources/graphics/characters");
 

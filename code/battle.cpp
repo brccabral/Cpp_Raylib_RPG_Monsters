@@ -1,5 +1,6 @@
 #include <cstring>
 #include <iostream>
+#include <utility>
 #include "battle.h"
 #include "groups.h"
 
@@ -13,11 +14,12 @@ Battle::Battle(
                 &outline_frames,
         const std::map<std::string, Texture2D> &ui_frms, const Texture2D &bg_surf,
         const std::map<std::string, Texture2D> &monster_icons,
+        const std::map<AttackAnimation, std::vector<TiledTexture>> &attack_animation_frms,
         const std::map<std::string, Font> &fonts)
     : bg_surf(bg_surf), monsters_frames(monsters_frames), outline_frames(outline_frames),
       ui_frames(ui_frms), fonts(fonts),
       monster_data({{PLAYER, player_monsters}, {OPPONENT, opponent_monsters}}),
-      monster_icons(monster_icons)
+      monster_icons(monster_icons), attack_animation_frames(attack_animation_frms)
 {
     battle_sprites = new BattleSprites();
     player_sprites = new SpriteGroup();
@@ -248,9 +250,12 @@ void Battle::UpdateAllMonsters(const bool do_pause) const
 
 void Battle::ApplyAttack(MonsterSprite *target_sprite, const Attack attack, const float amount)
 {
-    std::cout << *target_sprite->monster << "\n";
-    std::cout << attack << "\n";
-    std::cout << amount << "\n";
+    new AttackSprite(
+            GetRectCenter(target_sprite->rect), attack_frames[ATTACK_DATA[attack].animation],
+            {battle_sprites});
+    // play an animation
+    // get correct attack damage amount
+    // update monster health
 }
 
 void Battle::DrawUi()

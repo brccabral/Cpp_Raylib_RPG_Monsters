@@ -2,6 +2,7 @@
 #include <vector>
 #include "monster.h"
 #include "sprite.h"
+#include "support.h"
 
 
 class BattleSprites; // forward declaration
@@ -18,6 +19,7 @@ public:
                    &outline_frames,
            const std::map<std::string, Texture2D> &ui_frms, const Texture2D &bg_surf,
            const std::map<std::string, Texture2D> &monster_icons,
+           const std::map<AttackAnimation, std::vector<TiledTexture>> &attack_animation_frms,
            const std::map<std::string, Font> &fonts);
     ~Battle();
     void Update(double dt);
@@ -50,8 +52,10 @@ private:
     std::map<SelectionSide, std::vector<Monster *>> monster_data;
     std::vector<Monster *> available_monsters;
     std::map<std::string, Texture2D> monster_icons;
+    std::map<AttackAnimation, std::vector<TiledTexture>> attack_frames;
+    std::map<AttackAnimation, std::vector<TiledTexture>> attack_animation_frames;
 
-    // gorups
+    // groups
     BattleSprites *battle_sprites = nullptr;
     SpriteGroup *player_sprites = nullptr;
     SpriteGroup *opponent_sprites = nullptr;
@@ -61,6 +65,6 @@ private:
     SelectionMode selection_mode{};
     // some attacks like "defense"/"healing" are targeting the player
     SelectionSide selection_side{};
-    Attack selected_attack;
+    Attack selected_attack = ATTACK_NONE;
     std::map<SelectionMode, int> indexes;
 };

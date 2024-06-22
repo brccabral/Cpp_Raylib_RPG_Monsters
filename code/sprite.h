@@ -37,6 +37,7 @@ public:
     virtual void Draw(Vector2 offset) const;
     virtual void Update(double deltaTime){};
     void LeaveOtherGroups(const SpriteGroup *sprite_group);
+    void Kill();
     virtual void FlipH();
 
     SpriteType type{SIMPLESPRITE};
@@ -112,11 +113,11 @@ public:
     AnimatedSprite(
             Vector2 position, const std::vector<TiledTexture> &frms,
             const std::vector<SpriteGroup *> &sgs, int z = WORLD_LAYERS["main"]);
-    void Animate(double deltaTime);
+    virtual void Animate(double deltaTime);
     void Update(double deltaTime) override;
     void FlipH() override;
 
-private:
+protected:
 
     double frame_index;
     std::vector<TiledTexture> frames;
@@ -240,4 +241,14 @@ public:
 private:
 
     std::map<AnimationState, std::vector<TiledTexture>> state_frames;
+};
+
+class AttackSprite : public AnimatedSprite
+{
+public:
+
+    AttackSprite(
+            Vector2 position, const std::vector<TiledTexture> &frms,
+            const std::vector<SpriteGroup *> &sgs, int z = BATTLE_LAYERS["overlay"]);
+    void Animate(double deltaTime) override;
 };

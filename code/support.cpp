@@ -114,6 +114,20 @@ MonsterImporter(const int cols, const int rows, const char *path)
     return monster_dict;
 }
 
+AttackAnimationRects AttackImporter(const int cols, const int rows, const char *path)
+{
+    AttackAnimationRects result;
+
+    for (const auto &dirEntry: recursive_directory_iterator(path))
+    {
+        auto filename = dirEntry.path().stem().string();
+        auto frames = import_tilemap_rects(cols, rows, dirEntry.path().c_str());
+        result[AttackAnimationNames[filename]] = frames[0];
+    }
+
+    return result;
+}
+
 std::map<std::string, tilerect_face> all_character_import(const char *path)
 {
     std::map<std::string, tilerect_face> new_dict = {};
