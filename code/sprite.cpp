@@ -168,6 +168,15 @@ MonsterSprite::~MonsterSprite()
     {
         delete timer;
     }
+
+    // state_frames_highlight are created with Texture2DToPointer(), which calls MemAlloc
+    for (auto &[anim_state, frames]: state_frames_highlight)
+    {
+        for (const auto [texture, rect]: frames)
+        {
+            MemFree(texture);
+        }
+    }
 }
 
 void MonsterSprite::Animate(const double dt)
