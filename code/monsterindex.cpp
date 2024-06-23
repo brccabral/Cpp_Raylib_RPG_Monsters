@@ -4,7 +4,7 @@
 
 
 MonsterIndex::MonsterIndex(
-        std::vector<Monster *> monsters, const std::map<std::string, Font> &fonts,
+        const std::vector<Monster *> &monsters, const std::map<std::string, Font> &fonts,
         const std::map<std::string, Texture2D> &monster_icons,
         const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                 &monsters_frms,

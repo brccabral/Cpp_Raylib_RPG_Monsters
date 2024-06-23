@@ -251,8 +251,8 @@ void Battle::UpdateAllMonsters(const bool do_pause) const
 void Battle::ApplyAttack(MonsterSprite *target_sprite, const Attack attack, const float amount)
 {
     new AttackSprite(
-            GetRectCenter(target_sprite->rect), attack_frames[ATTACK_DATA[attack].animation],
-            {battle_sprites});
+            GetRectCenter(target_sprite->rect),
+            attack_animation_frames[ATTACK_DATA[attack].animation], {battle_sprites});
     // play an animation
     // get correct attack damage amount
     // update monster health

@@ -16,11 +16,9 @@ SimpleSprite::SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups)
 }
 
 // the TMX images are unloaded in ~Game()::UnloadTMX
-// if the sub class has its own render/texture, unload it there
-SimpleSprite::~SimpleSprite()
-{
-    Kill();
-};
+// if the sub class has its own render/texture, override
+// the sub class destructor and unload it there
+SimpleSprite::~SimpleSprite() = default;
 
 void SimpleSprite::Draw(const Vector2 offset) const
 {
@@ -57,6 +55,7 @@ void SimpleSprite::Kill()
                 std::remove(group->sprites.begin(), group->sprites.end(), this),
                 group->sprites.end());
     }
+    delete this;
 }
 
 void SimpleSprite::FlipH()
@@ -430,7 +429,7 @@ void AttackSprite::Animate(const double deltaTime)
     }
     else
     {
-        delete this;
+        Kill();
     }
 }
 

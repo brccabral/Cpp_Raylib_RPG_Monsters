@@ -43,10 +43,9 @@ public:
     SpriteType type{SIMPLESPRITE};
     RectangleU rect{}; // world position
     TiledTexture image{}; // contains texture atlas, and atlas position
+    std::vector<SpriteGroup *> groups;
 
 protected:
-
-    std::vector<SpriteGroup *> groups;
 };
 
 int GetZ(const SimpleSprite *sprite);
