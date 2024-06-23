@@ -75,41 +75,46 @@ void Battle::CreateMonster(
     const auto frames = monsters_frames[monster->name];
     const auto outlines = outline_frames[monster->name];
     Vector2 pos;
-    std::vector<SpriteGroup *> groups{};
     MonsterSprite *monster_sprite;
     MonsterNameSprite *name_sprite;
+    MonsterOutlineSprite *outline_sprite;
     Vector2 name_pos;
     Vector2 level_pos;
     if (entity == PLAYER)
     {
-        pos = BATTLE_POSITIONS["left"][pos_index];
-        groups = {battle_sprites, player_sprites};
-        monster_sprite =
-                new MonsterSprite(pos, frames, groups, monster, index, pos_index, entity, this);
+        monster_sprite = new MonsterSprite(
+                BATTLE_POSITIONS["left"][pos_index], frames, {battle_sprites, player_sprites},
+                monster, index, pos_index, entity, this);
         monster_sprite->FlipH();
         name_pos = Vector2Add(GetRectMidLeft(monster_sprite->rect), {-40, -70});
         name_sprite =
                 new MonsterNameSprite(name_pos, monster_sprite, {battle_sprites}, fonts["regular"]);
         level_pos = GetRectBottomLeft(name_sprite->rect);
-        auto *outline_sprite = new MonsterOutlineSprite(monster_sprite, {battle_sprites}, outlines);
+        outline_sprite = new MonsterOutlineSprite(monster_sprite, {battle_sprites}, outlines);
         outline_sprite->FlipH();
     }
     else
     {
-        pos = BATTLE_POSITIONS["right"][pos_index];
-        groups = {battle_sprites, opponent_sprites};
-        monster_sprite =
-                new MonsterSprite(pos, frames, groups, monster, index, pos_index, entity, this);
+        monster_sprite = new MonsterSprite(
+                BATTLE_POSITIONS["right"][pos_index], frames, {battle_sprites, opponent_sprites},
+                monster, index, pos_index, entity, this);
         name_pos = Vector2Add(GetRectMidRight(monster_sprite->rect), {-60, -70});
         name_sprite =
                 new MonsterNameSprite(name_pos, monster_sprite, {battle_sprites}, fonts["regular"]);
         level_pos = GetRectBottomRight(name_sprite->rect);
-        new MonsterOutlineSprite(monster_sprite, {battle_sprites}, outlines);
+        outline_sprite = new MonsterOutlineSprite(monster_sprite, {battle_sprites}, outlines);
     }
-    new MonsterLevelSprite(entity, level_pos, monster_sprite, {battle_sprites}, fonts["small"]);
-    new MonsterStatsSprite(
+    auto *level_sprite = new MonsterLevelSprite(
+            entity, level_pos, monster_sprite, {battle_sprites}, fonts["small"]);
+    auto *stats_sprite = new MonsterStatsSprite(
             Vector2Add(GetRectMidBottom(monster_sprite->rect), {0.20}), monster_sprite, {150, 48},
             {battle_sprites}, fonts["small"]);
+
+    //  set the sub sprites to be `Kill()`ed together
+    monster_sprite->SetNameSprite(name_sprite);
+    monster_sprite->SetLevelSprite(level_sprite);
+    monster_sprite->SetStatsSprite(stats_sprite);
+    monster_sprite->SetOutlineSprite(outline_sprite);
 }
 
 void Battle::Input()
@@ -248,7 +253,7 @@ void Battle::UpdateAllMonsters(const bool do_pause) const
     }
 }
 
-void Battle::ApplyAttack(MonsterSprite *target_sprite, const Attack attack, float amount)
+void Battle::ApplyAttack(const MonsterSprite *target_sprite, const Attack attack, float amount)
 {
     // play an animation
     new AttackSprite(
@@ -280,9 +285,34 @@ void Battle::ApplyAttack(MonsterSprite *target_sprite, const Attack attack, floa
 
     // update monster health
     target_sprite->monster->health -= amount * target_defense;
+    CheckDeath();
 
     // resume
     UpdateAllMonsters(false);
+}
+
+void Battle::CheckDeath()
+{
+    CheckDeathGroup(player_sprites, PLAYER);
+    CheckDeathGroup(opponent_sprites, OPPONENT);
+}
+
+void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
+{
+    for (auto *sprite: group->sprites)
+    {
+        if (((MonsterSprite *) sprite)->monster->health <= 0)
+        {
+            if (side == PLAYER)
+            {}
+            else
+            {
+                ((MonsterSprite *) sprite)->Kill();
+                // release new monster if available
+                // increase XP
+            }
+        }
+    }
 }
 
 void Battle::DrawUi()

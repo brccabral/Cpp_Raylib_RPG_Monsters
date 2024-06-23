@@ -25,6 +25,7 @@ public:
     virtual void Draw() const;
     void Update(double deltaTime);
     std::vector<SimpleSprite *> sprites;
+    std::vector<SimpleSprite *> to_delete;
 };
 
 class SimpleSprite
@@ -37,15 +38,14 @@ public:
     virtual void Draw(Vector2 offset) const;
     virtual void Update(double deltaTime){};
     void LeaveOtherGroups(const SpriteGroup *sprite_group);
-    void Kill();
+    virtual void Kill();
     virtual void FlipH();
 
     SpriteType type{SIMPLESPRITE};
     RectangleU rect{}; // world position
     TiledTexture image{}; // contains texture atlas, and atlas position
     std::vector<SpriteGroup *> groups;
-
-protected:
+    bool killed{};
 };
 
 int GetZ(const SimpleSprite *sprite);
@@ -123,6 +123,10 @@ protected:
 };
 
 class Battle; // forward declaration
+class MonsterNameSprite; // forward declaration
+class MonsterLevelSprite; // forward declaration
+class MonsterStatsSprite; // forward declaration
+class MonsterOutlineSprite; // forward declaration
 // Battle Sprites
 class MonsterSprite : public SimpleSprite
 {
@@ -138,6 +142,12 @@ public:
     void FlipH() override;
     void SetHighlight(bool value);
     void ActivateAttack(MonsterSprite *monster_sprite, Attack selected_attack);
+    void Kill() override;
+
+    void SetNameSprite(MonsterNameSprite *name_sprite);
+    void SetLevelSprite(MonsterLevelSprite *level_sprite);
+    void SetStatsSprite(MonsterStatsSprite *stats_sprite);
+    void SetOutlineSprite(MonsterOutlineSprite *outline_sprite);
 
     Monster *monster;
     int z = BATTLE_LAYERS["monster"];
@@ -161,6 +171,11 @@ private:
     MonsterSprite *target_sprite = nullptr;
     Attack current_attack = ATTACK_NONE;
     Battle *battle;
+
+    MonsterNameSprite *name_sprite_ = nullptr;
+    MonsterLevelSprite *level_sprite_ = nullptr;
+    MonsterStatsSprite *stats_sprite_ = nullptr;
+    MonsterOutlineSprite *outline_sprite_ = nullptr;
 };
 
 class MonsterNameSprite : public SimpleSprite

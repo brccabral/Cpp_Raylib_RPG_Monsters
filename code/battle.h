@@ -34,7 +34,9 @@ public:
     void CheckActive();
     void CheckActiveGroup(const SpriteGroup *group);
     void UpdateAllMonsters(bool do_pause) const;
-    void ApplyAttack(MonsterSprite *target_sprite, Attack attack, float amount);
+    void ApplyAttack(const MonsterSprite *target_sprite, Attack attack, float amount);
+    void CheckDeath();
+    void CheckDeathGroup(const SpriteGroup *group, SelectionSide side);
 
     // ui
     void DrawUi();

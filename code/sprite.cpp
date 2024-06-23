@@ -49,13 +49,19 @@ void SimpleSprite::LeaveOtherGroups(const SpriteGroup *sprite_group)
 
 void SimpleSprite::Kill()
 {
+    // we add to another vector `to_delete` to delay the deletition to after
+    // all group sprites Update(dt)
+    if (!groups.empty())
+    {
+        groups[0]->to_delete.push_back(this);
+    }
     for (const auto group: groups)
     {
         group->sprites.erase(
                 std::remove(group->sprites.begin(), group->sprites.end(), this),
                 group->sprites.end());
     }
-    delete this;
+    groups.clear();
 }
 
 void SimpleSprite::FlipH()
@@ -243,6 +249,46 @@ void MonsterSprite::ActivateAttack(MonsterSprite *monster_sprite, const Attack s
     current_attack = selected_attack;
     monster->ReduceEnergy(selected_attack);
 }
+void MonsterSprite::Kill()
+{
+    // the Battle sorts the sprites, the Name and Outline will go behind
+    // this main sprite in the list, so, when we delete this, the others
+    // still exist in the Group vector. Therefore, we make sure to Kill()
+    // all of them here too
+    SimpleSprite::Kill();
+    if (name_sprite_)
+    {
+        name_sprite_->Kill();
+    }
+    if (level_sprite_)
+    {
+        level_sprite_->Kill();
+    }
+    if (stats_sprite_)
+    {
+        stats_sprite_->Kill();
+    }
+    if (outline_sprite_)
+    {
+        outline_sprite_->Kill();
+    }
+}
+void MonsterSprite::SetNameSprite(MonsterNameSprite *name_sprite)
+{
+    name_sprite_ = name_sprite;
+}
+void MonsterSprite::SetLevelSprite(MonsterLevelSprite *level_sprite)
+{
+    level_sprite_ = level_sprite;
+}
+void MonsterSprite::SetStatsSprite(MonsterStatsSprite *stats_sprite)
+{
+    stats_sprite_ = stats_sprite;
+}
+void MonsterSprite::SetOutlineSprite(MonsterOutlineSprite *outline_sprite)
+{
+    outline_sprite_ = outline_sprite;
+}
 
 MonsterNameSprite::MonsterNameSprite(
         const Vector2 pos, MonsterSprite *monster_sprite, const std::vector<SpriteGroup *> &sgs,
@@ -303,7 +349,6 @@ MonsterLevelSprite::MonsterLevelSprite(
         const std::vector<SpriteGroup *> &sgs, const Font &font)
     : SimpleSprite(sgs), entity(entity), monster_sprite(monster_sprite), font(font)
 {
-
     constexpr Vector2 render_size = {60, 26};
     image.rect = {0, 0, render_size};
     xp_rect = {0, image.rect.height - 2, image.rect.width, 2.0f};
@@ -455,6 +500,15 @@ void SpriteGroup::Update(const double deltaTime)
     for (auto *sprite: sprites)
     {
         sprite->Update(deltaTime);
+    }
+    if (!to_delete.empty())
+    {
+        for (const auto *sprite: to_delete)
+        {
+            delete sprite;
+            sprite = nullptr;
+        }
+        to_delete.clear();
     }
 }
 
