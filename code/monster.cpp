@@ -11,9 +11,7 @@ Monster::Monster(std::string name_, const int level) : name(std::move(name_)), l
     level_up = level * 150;
     xp = GetRandomValue(0, level_up);
     health = base_stats["max_health"] * level;
-    health *= GetRandomValue(0, 100) / 100.0f;
     energy = base_stats["max_energy"] * level;
-    energy *= GetRandomValue(0, 100) / 100.0f;
     initiative = 0;
 }
 

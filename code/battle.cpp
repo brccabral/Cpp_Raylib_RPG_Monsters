@@ -280,6 +280,9 @@ void Battle::ApplyAttack(MonsterSprite *target_sprite, const Attack attack, floa
 
     // update monster health
     target_sprite->monster->health -= amount * target_defense;
+
+    // resume
+    UpdateAllMonsters(false);
 }
 
 void Battle::DrawUi()
