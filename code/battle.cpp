@@ -248,14 +248,38 @@ void Battle::UpdateAllMonsters(const bool do_pause) const
     }
 }
 
-void Battle::ApplyAttack(MonsterSprite *target_sprite, const Attack attack, const float amount)
+void Battle::ApplyAttack(MonsterSprite *target_sprite, const Attack attack, float amount)
 {
+    // play an animation
     new AttackSprite(
             GetRectCenter(target_sprite->rect),
             attack_animation_frames[ATTACK_DATA[attack].animation], {battle_sprites});
-    // play an animation
+
     // get correct attack damage amount
+    // double attack if effective
+    const auto attack_element = ATTACK_DATA[attack].element;
+    const auto target_element = target_sprite->monster->element;
+    if ((attack_element == ELEMENT_FIRE && target_element == ELEMENT_FIRE) ||
+        (attack_element == ELEMENT_WATER && target_element == ELEMENT_FIRE) ||
+        (attack_element == ELEMENT_PLANT && target_element == ELEMENT_WATER))
+    {
+        amount *= 2;
+    }
+    // half attack if not effective
+    if ((attack_element == ELEMENT_FIRE && target_element == ELEMENT_WATER) ||
+        (attack_element == ELEMENT_WATER && target_element == ELEMENT_PLANT) ||
+        (attack_element == ELEMENT_PLANT && target_element == ELEMENT_FIRE))
+    {
+        amount *= 0.5f;
+    }
+
+    // update defense based on monster level and base stats
+    // it will lower the amount above
+    auto target_defense = 1 - target_sprite->monster->GetStat("defense") / 2000;
+    target_defense = Clamp(target_defense, 0, 1);
+
     // update monster health
+    target_sprite->monster->health -= amount * target_defense;
 }
 
 void Battle::DrawUi()
@@ -327,14 +351,14 @@ void Battle::DrawAttacks()
         Color text_color;
         if (selected)
         {
-            std::string element = ATTACK_DATA[abilities[index]].element;
-            if (std::strcmp(element.c_str(), "normal") == 0)
+            auto element = ATTACK_DATA[abilities[index]].element;
+            if (element == ELEMENT_NORMAL)
             {
                 text_color = COLORS["black"];
             }
             else
             {
-                text_color = COLORS[element];
+                text_color = COLORS[NAMES_ELEMENT_TYPES[element]];
             }
         }
         else

@@ -61,7 +61,7 @@ Game::Game(const int width, const int height)
     std::map<AttackAnimation, std::vector<TiledTexture>> attack_animation_frames;
     for (auto &[attack_name, attack_texture]: named_textures["attacks"])
     {
-        AttackAnimation animation = AttackAnimationNames[attack_name];
+        AttackAnimation animation = ATTACK_ANIMATION_NAMES[attack_name];
         for (const auto attack_rect: attack_animation_rects[animation])
         {
             attack_animation_frames[animation].push_back({&attack_texture, attack_rect});

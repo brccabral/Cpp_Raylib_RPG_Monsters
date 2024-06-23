@@ -324,7 +324,21 @@ enum AttackAnimation
     ANIMATION_ICE
 };
 
-static std::map<std::string, AttackAnimation> AttackAnimationNames = {
+enum ElementType
+{
+    ELEMENT_FIRE = 0,
+    ELEMENT_PLANT,
+    ELEMENT_WATER,
+    ELEMENT_NORMAL
+};
+
+static std::map<ElementType, std::string> NAMES_ELEMENT_TYPES{
+        {ELEMENT_FIRE, "fire"},
+        {ELEMENT_PLANT, "plant"},
+        {ELEMENT_WATER, "water"},
+        {ELEMENT_NORMAL, "normal"}};
+
+static std::map<std::string, AttackAnimation> ATTACK_ANIMATION_NAMES = {
         {"fire", ANIMATION_FIRE},           {"green", ANIMATION_GREEN},
         {"scratch", ANIMATION_SCRATCH},     {"splash", ANIMATION_SPLASH},
         {"explosion", ANIMATION_EXPLOSION}, {"ice", ANIMATION_ICE},
@@ -333,7 +347,7 @@ static std::map<std::string, AttackAnimation> AttackAnimationNames = {
 struct MonsterData
 {
     std::string name;
-    std::string element;
+    ElementType element;
     std::map<std::string, float> stats;
     std::vector<std::pair<int, Attack>> abilities;
     std::pair<std::string, int> evolve;
@@ -341,7 +355,7 @@ struct MonsterData
 
 inline MonsterData Plumette = {
         "Plumette",
-        "plant",
+        ELEMENT_PLANT,
         {
                 {"max_health", 15}, //
                 {"max_energy", 17}, //
@@ -356,7 +370,7 @@ inline MonsterData Plumette = {
 };
 inline MonsterData Ivieron = {
         "Ivieron",
-        "plant",
+        ELEMENT_PLANT,
         {
                 {"max_health", 18}, //
                 {"max_energy", 20}, //
@@ -371,7 +385,7 @@ inline MonsterData Ivieron = {
 };
 inline MonsterData Pluma = {
         "Pluma",
-        "plant",
+        ELEMENT_PLANT,
         {
                 {"max_health", 23}, //
                 {"max_energy", 26}, //
@@ -386,7 +400,7 @@ inline MonsterData Pluma = {
 };
 inline MonsterData Sparchu = {
         "Sparchu",
-        "fire",
+        ELEMENT_FIRE,
         {
                 {"max_health", 15}, //
                 {"max_energy", 7}, //
@@ -403,7 +417,7 @@ inline MonsterData Sparchu = {
 };
 inline MonsterData Cindrill = {
         "Cindrill",
-        "fire",
+        ELEMENT_FIRE,
         {
                 {"max_health", 18}, //
                 {"max_energy", 10}, //
@@ -420,7 +434,7 @@ inline MonsterData Cindrill = {
 };
 inline MonsterData Charmadillo = {
         "Charmadillo",
-        "fire",
+        ELEMENT_FIRE,
         {
                 {"max_health", 29}, //
                 {"max_energy", 12}, //
@@ -438,7 +452,7 @@ inline MonsterData Charmadillo = {
 };
 inline MonsterData Finsta = {
         "Finsta",
-        "water",
+        ELEMENT_FIRE,
         {
                 {"max_health", 13}, //
                 {"max_energy", 17}, //
@@ -456,7 +470,7 @@ inline MonsterData Finsta = {
 };
 inline MonsterData Gulfin = {
         "Gulfin",
-        "water",
+        ELEMENT_FIRE,
         {
                 {"max_health", 18}, //
                 {"max_energy", 20}, //
@@ -474,7 +488,7 @@ inline MonsterData Gulfin = {
 };
 inline MonsterData Finiette = {
         "Finiette",
-        "water",
+        ELEMENT_FIRE,
         {
                 {"max_health", 27}, //
                 {"max_energy", 23}, //
@@ -492,7 +506,7 @@ inline MonsterData Finiette = {
 };
 inline MonsterData Atrox = {
         "Atrox",
-        "fire",
+        ELEMENT_FIRE,
         {
                 {"max_health", 18}, //
                 {"max_energy", 20}, //
@@ -508,7 +522,7 @@ inline MonsterData Atrox = {
 };
 inline MonsterData Pouch = {
         "Pouch",
-        "plant",
+        ELEMENT_PLANT,
         {
                 {"max_health", 23}, //
                 {"max_energy", 25}, //
@@ -524,7 +538,7 @@ inline MonsterData Pouch = {
 };
 inline MonsterData Draem = {
         "Draem",
-        "plant",
+        ELEMENT_PLANT,
         {
                 {"max_health", 23}, //
                 {"max_energy", 25}, //
@@ -541,7 +555,7 @@ inline MonsterData Draem = {
 };
 inline MonsterData Larvea = {
         "Larvea",
-        "plant",
+        ELEMENT_PLANT,
         {
                 {"max_health", 15}, //
                 {"max_energy", 17}, //
@@ -556,7 +570,7 @@ inline MonsterData Larvea = {
 };
 inline MonsterData Cleaf = {
         "Cleaf",
-        "plant",
+        ELEMENT_PLANT,
         {
                 {"max_health", 18}, //
                 {"max_energy", 20}, //
@@ -571,7 +585,7 @@ inline MonsterData Cleaf = {
 };
 inline MonsterData Jacana = {
         "Jacana",
-        "fire",
+        ELEMENT_FIRE,
         {
                 {"max_health", 12}, //
                 {"max_energy", 19}, //
@@ -589,7 +603,7 @@ inline MonsterData Jacana = {
 };
 inline MonsterData Friolera = {
         "Friolera",
-        "water",
+        ELEMENT_FIRE,
         {
                 {"max_health", 13}, //
                 {"max_energy", 20}, //
@@ -637,19 +651,19 @@ struct AttackData
     SelectionSide target;
     float amount;
     int cost;
-    std::string element;
+    ElementType element;
     AttackAnimation animation;
 };
 
 inline std::map<Attack, AttackData> ATTACK_DATA = {
-        {ATTACK_BURN, {"burn", OPPONENT, 2, 15, "fire", ANIMATION_FIRE}}, //
-        {ATTACK_HEAL, {"heal", PLAYER, -1.2, 600, "plant", ANIMATION_GREEN}}, //
-        {ATTACK_BATTLECRY, {"battlecry", PLAYER, -1.4, 20, "normal", ANIMATION_GREEN}}, //
-        {ATTACK_SPARK, {"spark", OPPONENT, 1.1, 20, "fire", ANIMATION_FIRE}}, //
-        {ATTACK_SCRATCH, {"scratch", OPPONENT, 1.2, 20, "normal", ANIMATION_SCRATCH}}, //
-        {ATTACK_SPLASH, {"splash", OPPONENT, 2, 15, "water", ANIMATION_SPLASH}}, //
-        {ATTACK_FIRE, {"fire", OPPONENT, 2, 15, "fire", ANIMATION_FIRE}}, //
-        {ATTACK_EXPLOSTION, {"explosion", OPPONENT, 2, 90, "fire", ANIMATION_EXPLOSION}}, //
-        {ATTACK_ANNIHILATE, {"annihilate", OPPONENT, 3, 30, "fire", ANIMATION_EXPLOSION}}, //
-        {ATTACK_ICE, {"ice", OPPONENT, 2, 15, "water", ANIMATION_ICE}}, //
+        {ATTACK_BURN, {"burn", OPPONENT, 2, 15, ELEMENT_FIRE, ANIMATION_FIRE}}, //
+        {ATTACK_HEAL, {"heal", PLAYER, -1.2, 600, ELEMENT_PLANT, ANIMATION_GREEN}}, //
+        {ATTACK_BATTLECRY, {"battlecry", PLAYER, -1.4, 20, ELEMENT_NORMAL, ANIMATION_GREEN}}, //
+        {ATTACK_SPARK, {"spark", OPPONENT, 1.1, 20, ELEMENT_FIRE, ANIMATION_FIRE}}, //
+        {ATTACK_SCRATCH, {"scratch", OPPONENT, 1.2, 20, ELEMENT_NORMAL, ANIMATION_SCRATCH}}, //
+        {ATTACK_SPLASH, {"splash", OPPONENT, 2, 15, ELEMENT_FIRE, ANIMATION_SPLASH}}, //
+        {ATTACK_FIRE, {"fire", OPPONENT, 2, 15, ELEMENT_FIRE, ANIMATION_FIRE}}, //
+        {ATTACK_EXPLOSTION, {"explosion", OPPONENT, 2, 90, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
+        {ATTACK_ANNIHILATE, {"annihilate", OPPONENT, 3, 30, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
+        {ATTACK_ICE, {"ice", OPPONENT, 2, 15, ELEMENT_FIRE, ANIMATION_ICE}}, //
 };

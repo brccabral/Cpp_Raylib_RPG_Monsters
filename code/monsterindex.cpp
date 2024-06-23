@@ -133,7 +133,8 @@ void MonsterIndex::DisplayMain(const double dt)
     // monster
     const RectangleU top_rect = {rect.pos, rect.width, rect.height * 0.4f};
     DrawRectangleRoundedCorners(
-            top_rect, 0.1, 10, COLORS[monster->element], false, true, false, false);
+            top_rect, 0.1, 10, COLORS[NAMES_ELEMENT_TYPES[monster->element]], false, true, false,
+            false);
 
     // monster animation
     frame_index += ANIMATION_SPEED * dt;
@@ -158,12 +159,13 @@ void MonsterIndex::DisplayMain(const double dt)
             COLORS["white"], COLORS["dark"]);
 
     // element
-    const Vector2 size_element = MeasureTextF(fonts["regular"], monster->element.c_str(), 1);
+    const Vector2 size_element =
+            MeasureTextF(fonts["regular"], NAMES_ELEMENT_TYPES[monster->element].c_str(), 1);
     const Vector2 pos_element = Vector2Subtract(
             Vector2Add(GetRectBottomRight(top_rect), {-10.0f, -10.0f}), size_element);
     DrawTextEx(
-            fonts["regular"], monster->element.c_str(), pos_element, fonts["regular"].baseSize, 1,
-            COLORS["white"]);
+            fonts["regular"], NAMES_ELEMENT_TYPES[monster->element].c_str(), pos_element,
+            fonts["regular"].baseSize, 1, COLORS["white"]);
 
     // health and energy
     const RectangleU bar_rect{
@@ -257,7 +259,8 @@ void MonsterIndex::DisplayMain(const double dt)
         RectInflate(ability_rect, 10, 10);
 
         DrawRectangleRoundedCorners(
-                ability_rect, 0.3f, 10, COLORS[element], true, true, true, true);
+                ability_rect, 0.3f, 10, COLORS[NAMES_ELEMENT_TYPES[element]], true, true, true,
+                true);
         DrawTextEx(
                 fonts["regular"], ATTACK_DATA[abilities[a_index]].name.c_str(), ability_pos,
                 fonts["regular"].baseSize, 1, COLORS["black"]);

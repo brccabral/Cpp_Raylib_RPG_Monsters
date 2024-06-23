@@ -122,7 +122,7 @@ AttackAnimationRects AttackImporter(const int cols, const int rows, const char *
     {
         auto filename = dirEntry.path().stem().string();
         auto frames = import_tilemap_rects(cols, rows, dirEntry.path().c_str());
-        result[AttackAnimationNames[filename]] = frames[0];
+        result[ATTACK_ANIMATION_NAMES[filename]] = frames[0];
     }
 
     return result;
