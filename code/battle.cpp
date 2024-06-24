@@ -407,14 +407,14 @@ void Battle::DrawAttacks()
             {
                 if (CheckCollisionPointRec(GetRectTopLeft(bg_rect), text_rect.rectangle))
                 {
-                    DrawRectangleRoundedCorners(
+                    DrawRectangleRoundedPro(
                             text_rect, 0.2f, 10, COLORS["dark white"], true, true, false, false);
                 }
                 else if (CheckCollisionPointRec(
                                  Vector2Add(GetRectMidBottom(bg_rect), {0, -1}),
                                  text_rect.rectangle))
                 {
-                    DrawRectangleRoundedCorners(
+                    DrawRectangleRoundedPro(
                             text_rect, 0.2f, 10, COLORS["dark white"], false, false, true, true);
                 }
                 else
@@ -489,14 +489,14 @@ void Battle::DrawSwitch()
             {
                 if (CheckCollisionPointRec(GetRectTopLeft(bg_rect), item_bg_rect.rectangle))
                 {
-                    DrawRectangleRoundedCorners(
+                    DrawRectangleRoundedPro(
                             item_bg_rect, 0.4f, 10, COLORS["dark white"], true, true, false, false);
                 }
                 else if (CheckCollisionPointRec(
                                  Vector2Add(GetRectMidBottom(bg_rect), {0, -1}),
                                  item_bg_rect.rectangle))
                 {
-                    DrawRectangleRoundedCorners(
+                    DrawRectangleRoundedPro(
                             item_bg_rect, 0.4f, 10, COLORS["dark white"], false, false, true, true);
                 }
                 else

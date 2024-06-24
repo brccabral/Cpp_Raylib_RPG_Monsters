@@ -483,7 +483,6 @@ Image ImageMaskFromImage(const Image &image, const Color color, const float thre
     mask.data = new_pixels;
 
     RL_FREE(pixels);
-    pixels = nullptr;
 
     return mask;
 }
@@ -541,21 +540,22 @@ extern Texture2D texShapes; // Texture used on shapes drawing (white pixel loade
 extern Rectangle texShapesRec; // Texture source rectangle used on shapes drawing
 
 #if defined(SUPPORT_QUADS_DRAW_MODE)
-void rlRectangle(const Vector2 p1, const Vector2 p2, const Color color)
+void rlRectangle(
+        const Vector2 p1, const Vector2 p2, const Vector2 p3, const Vector2 p4, const Color color,
+        const Rectangle shapeRect, const Texture2D &texShapes)
 {
-    Rectangle shapeRect = GetShapesTextureRectangle();
     rlColor4ub(color.r, color.g, color.b, color.a);
     rlTexCoord2f(shapeRect.x / texShapes.width, shapeRect.y / texShapes.height);
     rlVertex2f(p1.x, p1.y);
     rlTexCoord2f(
             shapeRect.x / texShapes.width, (shapeRect.y + shapeRect.height) / texShapes.height);
-    rlVertex2f(p1.x, p2.y);
+    rlVertex2f(p2.x, p2.y);
     rlTexCoord2f(
             (shapeRect.x + shapeRect.width) / texShapes.width,
             (shapeRect.y + shapeRect.height) / texShapes.height);
-    rlVertex2f(p2.x, p2.y);
+    rlVertex2f(p3.x, p3.y);
     rlTexCoord2f((shapeRect.x + shapeRect.width) / texShapes.width, shapeRect.y / texShapes.height);
-    rlVertex2f(p2.x, p1.y);
+    rlVertex2f(p4.x, p4.y);
 }
 #else
 void rlRectangle(
@@ -571,13 +571,14 @@ void rlRectangle(
 }
 #endif
 
-// Draw rectangle with rounded edges
-void DrawRectangleRoundedCorners(
-        const RectangleU rec, float roundness, int segments, Color color, const bool TopLeft,
-        const bool TopRight, const bool BottomRight, const bool BottomLeft)
+// Draw rectangle with rounded edges on selected corners
+void DrawRectangleRoundedPro(
+        const RectangleU rec, float roundness, int segments, const Color color, const bool topLeft,
+        const bool topRight, const bool bottomLeft, const bool bottomRight)
 {
     // Not a rounded rectangle
-    if ((roundness <= 0.0f) || (rec.width < 1) || (rec.height < 1))
+    if ((roundness <= 0.0f) || (rec.width < 1) || (rec.height < 1) ||
+        (!topLeft && !topRight && !bottomLeft && !bottomRight))
     {
         DrawRectangleRec(rec.rectangle, color);
         return;
@@ -596,7 +597,7 @@ void DrawRectangleRoundedCorners(
     if (segments < 4)
     {
         // Calculate the maximum angle between segments based on the error rate (usually 0.5f)
-        float th = acosf(2 * powf(1 - SMOOTH_CIRCLE_ERROR_RATE / radius, 2) - 1);
+        const float th = acosf(2 * powf(1 - SMOOTH_CIRCLE_ERROR_RATE / radius, 2) - 1);
         segments = (int) (ceilf(2 * PI / th) / 4.0f);
         if (segments <= 0)
             segments = 4;
@@ -622,54 +623,55 @@ void DrawRectangleRoundedCorners(
     */
     // Coordinates of the 12 points that define the rounded rect
     const Vector2 point[12] = {
-            {(float) rec.x + radius, rec.y},
-            {(float) (rec.x + rec.width) - radius, rec.y},
-            {rec.x + rec.width, (float) rec.y + radius}, // PO, P1, P2
-            {rec.x + rec.width, (float) (rec.y + rec.height) - radius},
-            {(float) (rec.x + rec.width) - radius, rec.y + rec.height}, // P3, P4
-            {(float) rec.x + radius, rec.y + rec.height},
-            {rec.x, (float) (rec.y + rec.height) - radius},
-            {rec.x, (float) rec.y + radius}, // P5, P6, P7
-            {(float) rec.x + radius, (float) rec.y + radius},
-            {(float) (rec.x + rec.width) - radius, (float) rec.y + radius}, // P8, P9
-            {(float) (rec.x + rec.width) - radius, (float) (rec.y + rec.height) - radius},
-            {(float) rec.x + radius, (float) (rec.y + rec.height) - radius} // P10, P11
+            {rec.x + radius, rec.y},
+            {(rec.x + rec.width) - radius, rec.y},
+            {rec.x + rec.width, rec.y + radius}, // PO, P1, P2
+            {rec.x + rec.width, (rec.y + rec.height) - radius},
+            {(rec.x + rec.width) - radius, rec.y + rec.height}, // P3, P4
+            {rec.x + radius, rec.y + rec.height},
+            {rec.x, (rec.y + rec.height) - radius},
+            {rec.x, rec.y + radius}, // P5, P6, P7
+            {rec.x + radius, rec.y + radius},
+            {(rec.x + rec.width) - radius, rec.y + radius}, // P8, P9
+            {(rec.x + rec.width) - radius, (rec.y + rec.height) - radius},
+            {rec.x + radius, (float) (rec.y + rec.height) - radius} // P10, P11
     };
 
-    // const Vector2 centers[4] = {point[8], point[9], point[10], point[11]};
-    // const float angles[4] = {180.0f, 270.0f, 0.0f, 90.0f};
-    std::vector<Vector2> centers;
-    std::vector<float> angles;
-    if (TopLeft)
+    Vector2 centers[4];
+    float angles[4];
+    int countCenters = 0;
+    if (topLeft)
     {
-        centers.push_back(point[8]);
-        angles.push_back(180.0f);
+        centers[countCenters] = point[8];
+        angles[countCenters] = 180.0f;
+        ++countCenters;
     }
-    if (TopRight)
+    if (topRight)
     {
-        centers.push_back(point[9]);
-        angles.push_back(270.0f);
+        centers[countCenters] = point[9];
+        angles[countCenters] = 270.0f;
+        ++countCenters;
     }
-    if (BottomRight)
+    if (bottomRight)
     {
-        centers.push_back(point[10]);
-        angles.push_back(0.0f);
+        centers[countCenters] = point[10];
+        angles[countCenters] = 0.0f;
+        ++countCenters;
     }
-    if (BottomLeft)
+    if (bottomLeft)
     {
-        centers.push_back(point[11]);
-        angles.push_back(90.0f);
+        centers[countCenters] = point[11];
+        angles[countCenters] = 90.0f;
+        ++countCenters;
     }
 
 #if defined(SUPPORT_QUADS_DRAW_MODE)
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    const Rectangle shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
-    // Draw all the 4 corners: [1] Upper Left Corner, [3] Upper Right Corner, [5] Lower Right
-    // Corner, [7] Lower Left Corner
-    for (int k = 0; k < centers.size();
-         ++k) // Hope the compiler is smart enough to unroll this loop
+    // Draw the selected corners
+    for (int k = 0; k < countCenters; ++k) // Hope the compiler is smart enough to unroll this loop
     {
         float angle = angles[k];
         const Vector2 center = centers[k];
@@ -733,47 +735,54 @@ void DrawRectangleRoundedCorners(
         }
     }
 
-    if (!TopLeft)
+    if (!topLeft)
     {
-        rlRectangle({point[7].x, point[0].y}, point[8], color);
+        rlRectangle(
+                (Vector2){point[7].x, point[0].y}, point[7], point[8], point[0], color, shapeRect,
+                texShapes);
     }
-    if (!TopRight)
+    if (!topRight)
     {
-        rlRectangle(point[1], point[2], color);
+        rlRectangle(
+                point[1], point[9], point[2], (Vector2){point[2].x, point[1].y}, color, shapeRect,
+                texShapes);
     }
-    if (!BottomLeft)
+    if (!bottomLeft)
     {
-        rlRectangle(point[6], point[5], color);
+        rlRectangle(
+                point[6], (Vector2){point[6].x, point[5].y}, point[5], point[11], color, shapeRect,
+                texShapes);
     }
-    if (!BottomRight)
+    if (!bottomRight)
     {
-        rlRectangle(point[10], {point[3].x, point[4].y}, color);
+        rlRectangle(
+                point[10], point[4], (Vector2){point[3].x, point[4].y}, point[3], color, shapeRect,
+                texShapes);
     }
 
     // [2] Upper Rectangle
-    rlRectangle(point[0], point[9], color);
+    rlRectangle(point[0], point[8], point[9], point[1], color, shapeRect, texShapes);
 
     // [4] Right Rectangle
-    rlRectangle(point[9], point[3], color);
+    rlRectangle(point[9], point[10], point[3], point[2], color, shapeRect, texShapes);
 
     // [6] Bottom Rectangle
-    rlRectangle(point[11], point[4], color);
+    rlRectangle(point[11], point[5], point[4], point[10], color, shapeRect, texShapes);
 
     // [8] Left Rectangle
-    rlRectangle(point[7], point[11], color);
+    rlRectangle(point[7], point[6], point[11], point[8], color, shapeRect, texShapes);
 
     // [9] Middle Rectangle
-    rlRectangle(point[8], point[10], color);
+    rlRectangle(point[8], point[11], point[10], point[9], color, shapeRect, texShapes);
 
     rlEnd();
     rlSetTexture(0);
+
 #else
     rlBegin(RL_TRIANGLES);
 
-    // Draw all of the 4 corners: [1] Upper Left Corner, [3] Upper Right Corner, [5] Lower Right
-    // Corner, [7] Lower Left Corner
-    for (int k = 0; k < centers.size();
-         ++k) // Hope the compiler is smart enough to unroll this loop
+    // Draw the selected corners
+    for (int k = 0; k < countCenters; ++k) // Hope the compiler is smart enough to unroll this loop
     {
         float angle = angles[k];
         const Vector2 center = centers[k];
@@ -791,21 +800,21 @@ void DrawRectangleRoundedCorners(
         }
     }
 
-    if (!TopLeft)
+    if (!topLeft)
     {
-        rlRectangle({point[7].x, point[0].y}, point[7], point[8], point[0], color);
+        rlRectangle((Vector2){point[7].x, point[0].y}, point[7], point[8], point[0], color);
     }
-    if (!TopRight)
+    if (!topRight)
     {
-        rlRectangle(point[1], point[9], point[2], {point[2].x, point[1].y}, color);
+        rlRectangle(point[1], point[9], point[2], (Vector2){point[2].x, point[1].y}, color);
     }
-    if (!BottomLeft)
+    if (!bottomLeft)
     {
-        rlRectangle(point[6], {point[6].x, point[5].y}, point[5], point[11], color);
+        rlRectangle(point[6], (Vector2){point[6].x, point[5].y}, point[5], point[11], color);
     }
-    if (!BottomRight)
+    if (!bottomRight)
     {
-        rlRectangle(point[10], point[4], {point[3].x, point[4].y}, point[3], color);
+        rlRectangle(point[10], point[4], (Vector2){point[3].x, point[4].y}, point[3], color);
     }
 
     // [2] Upper Rectangle
@@ -824,5 +833,6 @@ void DrawRectangleRoundedCorners(
     rlRectangle(point[8], point[11], point[10], point[9], color);
 
     rlEnd();
+
 #endif
 }
