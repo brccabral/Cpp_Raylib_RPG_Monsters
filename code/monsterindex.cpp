@@ -64,7 +64,7 @@ void MonsterIndex::DisplayList()
 {
     // BeginTextureMode was called in Update()
     const RectangleU bg_rect = {main_rect.pos, {list_width, main_rect.height}};
-    DrawRectangleRoundedPro(bg_rect, 0.1, 10, COLORS["gray"], true, false, false, true);
+    DrawRectangleRoundedEx(bg_rect, 0.1, 10, COLORS["gray"], true, false, true, false);
 
     // vertical offset
     const int v_offset = (index < visible_items) ? 0 : -(index - visible_items + 1) * item_height;
@@ -82,15 +82,13 @@ void MonsterIndex::DisplayList()
         {
             if (CheckCollisionPointRec(GetRectTopLeft(main_rect), item_rect.rectangle))
             {
-                DrawRectangleRoundedPro(
-                        item_rect, 0.3, 10, bg_color, true, false, false, false);
+                DrawRectangleRoundedEx(item_rect, 0.3, 10, bg_color, true, false, false, false);
             }
             else if (CheckCollisionPointRec(
                              Vector2Add(GetRectBottomLeft(main_rect), {1, -1}),
                              item_rect.rectangle))
             {
-                DrawRectangleRoundedPro(
-                        item_rect, 0.3, 10, bg_color, false, false, false, true);
+                DrawRectangleRoundedEx(item_rect, 0.3, 10, bg_color, false, false, true, false);
             }
             else
             {
@@ -128,11 +126,11 @@ void MonsterIndex::DisplayMain(const double dt)
     // bg
     const RectangleU rect = {
             main_rect.x + list_width, main_rect.y, main_rect.width - list_width, main_rect.height};
-    DrawRectangleRoundedPro(rect, 0.1, 10, COLORS["dark"], false, true, true, false);
+    DrawRectangleRoundedEx(rect, 0.1, 10, COLORS["dark"], false, true, false, true);
 
     // monster
     const RectangleU top_rect = {rect.pos, rect.width, rect.height * 0.4f};
-    DrawRectangleRoundedPro(
+    DrawRectangleRoundedEx(
             top_rect, 0.1, 10, COLORS[NAMES_ELEMENT_TYPES[monster->element]], false, true, false,
             false);
 
@@ -258,9 +256,8 @@ void MonsterIndex::DisplayMain(const double dt)
         RectangleU ability_rect = {ability_pos, ability_text_size};
         RectInflate(ability_rect, 10, 10);
 
-        DrawRectangleRoundedPro(
-                ability_rect, 0.3f, 10, COLORS[NAMES_ELEMENT_TYPES[element]], true, true, true,
-                true);
+        DrawRectangleRounded(
+                ability_rect.rectangle, 0.3f, 10, COLORS[NAMES_ELEMENT_TYPES[element]]);
         DrawTextEx(
                 fonts["regular"], ATTACK_DATA[abilities[a_index]].name.c_str(), ability_pos,
                 fonts["regular"].baseSize, 1, COLORS["black"]);

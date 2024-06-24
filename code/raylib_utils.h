@@ -110,15 +110,7 @@ RLAPI bool CheckCollisionRectLine(
         RectangleU rect, Vector2 startPos, Vector2 endPos, Vector2 *collisionPoint1,
         Vector2 *collisionPoint2);
 
-#if defined(SUPPORT_QUADS_DRAW_MODE)
-RLAPI void rlRectangle(
-        Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, Color color, Rectangle shapeRect,
-        const Texture2D &texShapes);
-#else
-RLAPI void rlRectangle(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, Color color);
-#endif
-
-RLAPI void DrawRectangleRoundedPro(
+RLAPI void DrawRectangleRoundedEx(
         RectangleU rec, float roundness, int segments, Color color, bool topLeft = true,
         bool topRight = true, bool bottomLeft = true, bool bottomRight = true);
 
