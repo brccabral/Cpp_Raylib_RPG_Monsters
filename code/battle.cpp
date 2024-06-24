@@ -67,6 +67,10 @@ void Battle::Setup()
             CreateMonster(monsters[index], index, index, entity);
         }
     }
+    // remove opponents monsters that were created from `monster_data` to be used later with less
+    monster_data[OPPONENT].erase(
+            monster_data[OPPONENT].begin(),
+            std::next(monster_data[OPPONENT].begin(), opponent_sprites->sprites.size()));
 }
 
 void Battle::CreateMonster(
