@@ -143,6 +143,8 @@ public:
     void SetHighlight(bool value);
     void ActivateAttack(MonsterSprite *monster_sprite, Attack selected_attack);
     void Kill() override;
+    void DelayedKill(Monster *monster, int index, int pos_index, SelectionSide side);
+    void Destroy();
 
     void SetNameSprite(MonsterNameSprite *name_sprite);
     void SetLevelSprite(MonsterLevelSprite *level_sprite);
@@ -157,10 +159,10 @@ public:
     int adjusted_frame_index{};
     int pos_index{};
     SelectionSide entity;
+    int index;
 
 private:
 
-    int index;
 
     float animation_speed{};
     float frame_index{};
@@ -176,6 +178,11 @@ private:
     MonsterLevelSprite *level_sprite_ = nullptr;
     MonsterStatsSprite *stats_sprite_ = nullptr;
     MonsterOutlineSprite *outline_sprite_ = nullptr;
+
+    Monster *newMonster = nullptr;
+    int newIndex = 0;
+    int newPosIndex = 0;
+    SelectionSide newSide{};
 };
 
 class MonsterNameSprite : public SimpleSprite

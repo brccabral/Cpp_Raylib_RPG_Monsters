@@ -1,5 +1,6 @@
 #include <cstring>
 #include <algorithm>
+#include <functional>
 #include "sprite.h"
 #include "dialogsprite.h"
 #include "raylib_utils.h"
@@ -166,6 +167,7 @@ MonsterSprite::MonsterSprite(
 
     timers["remove_highlight"] =
             new Timer(0.3f, false, false, std::bind(&MonsterSprite::SetHighlight, this, false));
+    timers["kill"] = new Timer(0.6f, false, false, std::bind(&MonsterSprite::Destroy, this));
 }
 
 MonsterSprite::~MonsterSprite()
@@ -273,6 +275,29 @@ void MonsterSprite::Kill()
         outline_sprite_->Kill();
     }
 }
+
+void MonsterSprite::DelayedKill(Monster *monster, int index, int pos_index, SelectionSide side)
+{
+    if (!timers["kill"]->active)
+    {
+        newMonster = monster;
+        newIndex = index;
+        newPosIndex = pos_index;
+        newSide = side;
+        timers["kill"]->Activate();
+    }
+}
+
+void MonsterSprite::Destroy()
+{
+    if (newMonster)
+    {
+        battle->AddNewMonster(newMonster, newIndex, newPosIndex, newSide);
+        newMonster = nullptr;
+    }
+    Kill();
+}
+
 void MonsterSprite::SetNameSprite(MonsterNameSprite *name_sprite)
 {
     name_sprite_ = name_sprite;

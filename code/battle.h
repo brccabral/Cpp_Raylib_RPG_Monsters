@@ -24,6 +24,8 @@ public:
     ~Battle();
     void Update(double dt);
     void Setup();
+    void AddNewMonster(Monster *monster, int index, int pos_index, SelectionSide entity);
+    void CreateNewMonsters();
     void CreateMonster(Monster *monster, int index, int pos_index, SelectionSide entity);
     void Input();
 
@@ -47,6 +49,7 @@ public:
 private:
 
     Texture2D bg_surf;
+    std::vector<std::tuple<Monster *, int, int, SelectionSide>> newMonstersData;
     std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> monsters_frames;
     std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> outline_frames;
     std::map<std::string, Texture2D> ui_frames;

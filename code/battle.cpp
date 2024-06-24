@@ -43,6 +43,7 @@ Battle::~Battle()
 
 void Battle::Update(const double dt)
 {
+    CreateNewMonsters(); // create new monsters outside the Update loop
     Input();
     // Update Sprites before drawing into `display_surface`, as
     // some sprites open renderes to draw into
@@ -64,13 +65,35 @@ void Battle::Setup()
     {
         for (int index = 0; index <= 2; ++index)
         {
-            CreateMonster(monsters[index], index, index, entity);
+            AddNewMonster(monsters[index], index, index, entity);
         }
     }
     // remove opponents monsters that were created from `monster_data` to be used later with less
+    // monster_data[OPPONENT].erase(monster_data[OPPONENT].begin());
+    // monster_data[OPPONENT].erase(monster_data[OPPONENT].begin());
+    // monster_data[OPPONENT].erase(monster_data[OPPONENT].begin());
     monster_data[OPPONENT].erase(
-            monster_data[OPPONENT].begin(),
-            std::next(monster_data[OPPONENT].begin(), opponent_sprites->sprites.size()));
+            monster_data[OPPONENT].begin(), monster_data[OPPONENT].begin() + 3);
+}
+
+void Battle::AddNewMonster(Monster *monster, int index, int pos_index, SelectionSide entity)
+{
+    newMonstersData.emplace_back(monster, index, pos_index, entity);
+}
+
+// create new monsters outside the Update loop
+void Battle::CreateNewMonsters()
+{
+    if (!newMonstersData.empty())
+    {
+        for (auto monsterData: newMonstersData)
+        {
+            CreateMonster(
+                    std::get<0>(monsterData), std::get<1>(monsterData), std::get<2>(monsterData),
+                    std::get<3>(monsterData));
+        }
+        newMonstersData.clear();
+    }
 }
 
 void Battle::CreateMonster(
@@ -307,14 +330,26 @@ void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
     {
         if (((MonsterSprite *) sprite)->monster->health <= 0)
         {
+            Monster *newMonster = nullptr;
+            int index = 0, pos_index = 0; // new monster
             if (side == PLAYER)
             {}
             else
             {
-                ((MonsterSprite *) sprite)->Kill();
+                // check if opponent has more monsters
+                if (!monster_data[OPPONENT].empty())
+                {
+                    newMonster = monster_data[OPPONENT][0];
+                    index = ((MonsterSprite *) sprite)->index;
+                    pos_index = ((MonsterSprite *) sprite)->pos_index;
+                    monster_data[OPPONENT].erase(monster_data[OPPONENT].begin());
+                }
+
+                // ((MonsterSprite *) sprite)->Kill();
                 // release new monster if available
                 // increase XP
             }
+            ((MonsterSprite *) sprite)->DelayedKill(newMonster, index, pos_index, side);
         }
     }
 }
