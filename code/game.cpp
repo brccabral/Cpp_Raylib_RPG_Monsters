@@ -33,7 +33,7 @@ Game::Game(const int width, const int height)
     player_monsters.push_back(new Monster("Jacana", 2));
     player_monsters.push_back(new Monster("Pouch", 3));
 
-    dummy_monsters.push_back(new Monster("Atrox", 2));
+    dummy_monsters.push_back(new Monster("Atrox", 15));
     dummy_monsters.push_back(new Monster("Sparchu", 3));
     dummy_monsters.push_back(new Monster("Gulfin", 5));
     dummy_monsters.push_back(new Monster("Jacana", 2));

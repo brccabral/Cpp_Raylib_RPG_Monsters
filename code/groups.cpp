@@ -93,6 +93,8 @@ void BattleSprites::Draw(
     {
         sprites_indexes.push_back(((MonsterSprite *) sprite)->pos_index);
     }
+
+    // TODO : when we remove monsters from group with Kill, these indexes should change.
     auto *monster_sprite = (MonsterSprite *) sprite_group->sprites[sprites_indexes[target_index]];
 
     std::sort(

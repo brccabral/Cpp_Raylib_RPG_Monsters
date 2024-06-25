@@ -34,7 +34,7 @@ public:
     // it depends on monster speed
     // when the first monter achieves 100, pause the others
     void CheckActive();
-    void CheckActiveGroup(const SpriteGroup *group);
+    void CheckActiveGroup(const SpriteGroup *group, SelectionSide side);
     void UpdateAllMonsters(bool do_pause) const;
     void ApplyAttack(const MonsterSprite *target_sprite, Attack attack, float amount);
     void CheckDeath();
@@ -48,6 +48,9 @@ public:
 
 private:
 
+    void UpdateTimers();
+    void OpponentAttack();
+
     Texture2D bg_surf;
     std::vector<std::tuple<Monster *, int, int, SelectionSide>> newMonstersData;
     std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> monsters_frames;
@@ -58,6 +61,7 @@ private:
     std::vector<Monster *> available_monsters;
     std::map<std::string, Texture2D> monster_icons;
     std::map<AttackAnimation, std::vector<TiledTexture>> attack_animation_frames;
+    std::map<std::string, Timer *> timers{};
 
     // groups
     BattleSprites *battle_sprites = nullptr;

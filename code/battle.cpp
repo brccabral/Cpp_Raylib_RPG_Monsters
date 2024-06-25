@@ -31,6 +31,9 @@ Battle::Battle(
     indexes[SELECTMODE_SWITCH] = 0;
     indexes[SELECTMODE_TARGET] = 0;
 
+    timers["opponent_delay"] =
+            new Timer(0.6f, false, false, std::bind(&Battle::OpponentAttack, this));
+
     Setup();
 }
 
@@ -39,12 +42,17 @@ Battle::~Battle()
     delete battle_sprites;
     delete player_sprites;
     delete opponent_sprites;
+    for (auto &[key, timer]: timers)
+    {
+        delete timer;
+    }
 }
 
 void Battle::Update(const double dt)
 {
     CreateNewMonsters(); // create new monsters outside the Update loop
     Input();
+    UpdateTimers();
     // Update Sprites before drawing into `display_surface`, as
     // some sprites open renderes to draw into
     battle_sprites->Update(dt);
@@ -248,11 +256,11 @@ void Battle::Input()
 
 void Battle::CheckActive()
 {
-    CheckActiveGroup(player_sprites);
-    CheckActiveGroup(opponent_sprites);
+    CheckActiveGroup(player_sprites, PLAYER);
+    CheckActiveGroup(opponent_sprites, OPPONENT);
 }
 
-void Battle::CheckActiveGroup(const SpriteGroup *group)
+void Battle::CheckActiveGroup(const SpriteGroup *group, const SelectionSide side)
 {
     for (const auto *sprite: group->sprites)
     {
@@ -262,8 +270,15 @@ void Battle::CheckActiveGroup(const SpriteGroup *group)
             ((MonsterSprite *) sprite)->monster->initiative = 0;
             ((MonsterSprite *) sprite)->SetHighlight(true);
             current_monster = ((MonsterSprite *) sprite);
-            selection_mode = SELECTMODE_GENERAL;
-            selection_side = PLAYER;
+            if (side == PLAYER)
+            {
+                selection_mode = SELECTMODE_GENERAL;
+                selection_side = PLAYER;
+            }
+            else
+            {
+                timers["opponent_delay"]->Activate();
+            }
         }
     }
 }
@@ -558,4 +573,20 @@ void Battle::DrawSwitch()
                     COLORS["blue"], COLORS["black"]);
         }
     }
+}
+
+void Battle::UpdateTimers()
+{
+    for (auto &[key, timer]: timers)
+    {
+        timer->Update();
+    }
+}
+
+void Battle::OpponentAttack()
+{
+    auto abilities = current_monster->monster->GetAbilities();
+    auto random_index = GetRandomValue(0, abilities.size());
+    auto ability = abilities[random_index];
+    std::cout << ATTACK_DATA[ability].name << "\n";
 }
