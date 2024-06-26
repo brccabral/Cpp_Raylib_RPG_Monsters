@@ -77,7 +77,16 @@ float Monster::GetBaseDamage(const Attack attack)
 
 void Monster::UpdateXP(const int amount)
 {
-    xp += amount;
+    if (level_up - xp > amount)
+    {
+        xp += amount;
+    }
+    else
+    {
+        ++level;
+        xp = amount - (level_up - xp);
+        level_up = level * 150;
+    }
 }
 
 std::ostream &operator<<(std::ostream &os, Monster const &m)
