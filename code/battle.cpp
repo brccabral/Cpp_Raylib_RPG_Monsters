@@ -198,6 +198,12 @@ void Battle::Input()
             default:
                 break;
         }
+        // when a monster is defeated and it is the last in the list, we need to update the index
+        // to avoid selecting out of bounds
+        if (indexes[selection_mode] >= limiter)
+        {
+            indexes[selection_mode] = limiter - 1;
+        }
         if (IsKeyPressed(KEY_DOWN))
         {
             indexes[selection_mode] =
