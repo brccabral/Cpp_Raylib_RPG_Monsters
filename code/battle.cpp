@@ -3,6 +3,8 @@
 #include "groups.h"
 #include "game.h"
 
+#include <iostream>
+
 
 Battle::Battle(
         Game *game,
@@ -471,8 +473,17 @@ void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
     }
 }
 
-void Battle::CheckEndBattle() const
+void Battle::CheckEndBattle()
 {
+    if (opponent_sprites->sprites.empty() && !battle_over)
+    {
+        std::cout << "Battle Won\n";
+        battle_over = true;
+        for (auto &[i, monster]: monster_data[PLAYER])
+        {
+            monster->initiative = 0;
+        }
+    }
     if (player_sprites->sprites.empty())
     {
         game->isRunning = false;

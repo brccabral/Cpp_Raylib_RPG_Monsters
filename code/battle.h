@@ -35,7 +35,7 @@ public:
     void ApplyAttack(const MonsterSprite *target_sprite, Attack attack, float amount);
     void CheckDeath();
     void CheckDeathGroup(const SpriteGroup *group, SelectionSide side);
-    void CheckEndBattle() const;
+    void CheckEndBattle();
 
     // ui
     void DrawUi();
@@ -60,6 +60,7 @@ private:
     std::map<std::string, Texture2D> monster_icons;
     std::map<AttackAnimation, std::vector<TiledTexture>> attack_animation_frames;
     std::map<std::string, Timer *> timers{};
+    bool battle_over{};
 
     // groups
     BattleSprites *battle_sprites = nullptr;
