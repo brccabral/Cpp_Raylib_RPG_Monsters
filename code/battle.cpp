@@ -213,7 +213,20 @@ void Battle::Input()
         }
         if (IsKeyPressed(KEY_SPACE))
         {
-            if (selection_mode == SELECTMODE_TARGET)
+            if (selection_mode == SELECTMODE_SWITCH)
+            {
+                if (!available_monsters.empty())
+                {
+                    const int newIndex = indexes[SELECTMODE_SWITCH];
+                    const int newPosIndex = current_monster->pos_index;
+                    Monster *newMonster = available_monsters[newIndex];
+                    current_monster->Kill();
+                    AddNewMonster(newMonster, newIndex, newPosIndex, PLAYER);
+                    selection_mode = SELECTMODE_NONE;
+                    UpdateAllMonsters(false);
+                }
+            }
+            else if (selection_mode == SELECTMODE_TARGET)
             {
                 auto *sprite_group = selection_side == OPPONENT ? opponent_sprites : player_sprites;
                 // when a monster gets defeated, the group may change, but the "pos_index" won't
@@ -259,14 +272,14 @@ void Battle::Input()
                     }
                 }
             }
-            if (selection_mode == SELECTMODE_ATTACKS)
+            else if (selection_mode == SELECTMODE_ATTACKS)
             {
                 selection_mode = SELECTMODE_TARGET;
                 selected_attack =
                         current_monster->monster->GetAbilities(false)[indexes[SELECTMODE_ATTACKS]];
                 selection_side = ATTACK_DATA[selected_attack].target;
             }
-            if (selection_mode == SELECTMODE_GENERAL)
+            else if (selection_mode == SELECTMODE_GENERAL)
             {
                 if (indexes[SELECTMODE_GENERAL] == 0)
                 {
