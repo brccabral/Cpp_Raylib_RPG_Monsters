@@ -25,6 +25,8 @@ public:
 
     friend class Character; // allows Character to access Game private members
 
+    bool isRunning = true;
+
 private:
 
     void DisplayUpdate() const;
@@ -38,6 +40,7 @@ private:
     void EndDialog(const Character *character);
     void TransitionCheck();
     void TintScreen(double dt);
+
 
     std::map<std::string, tmx_map *> tmx_maps;
     std::map<std::string, std::vector<Texture2D>> overworld_frames;

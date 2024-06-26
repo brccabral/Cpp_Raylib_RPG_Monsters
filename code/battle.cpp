@@ -1,14 +1,11 @@
-#include <cstring>
-#include <iostream>
 #include <utility>
 #include "battle.h"
 #include "groups.h"
-
-#include <list>
+#include "game.h"
 
 
 Battle::Battle(
-        const std::map<int, Monster *> &player_monsters,
+        Game *game, const std::map<int, Monster *> &player_monsters,
         const std::map<int, Monster *> &opponent_monsters,
         const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                 &monsters_frames,
@@ -18,8 +15,8 @@ Battle::Battle(
         const std::map<std::string, Texture2D> &monster_icons,
         const std::map<AttackAnimation, std::vector<TiledTexture>> &attack_animation_frms,
         const std::map<std::string, Font> &fonts)
-    : bg_surf(bg_surf), monsters_frames(monsters_frames), outline_frames(outline_frames),
-      ui_frames(ui_frms), fonts(fonts),
+    : game(game), bg_surf(bg_surf), monsters_frames(monsters_frames),
+      outline_frames(outline_frames), ui_frames(ui_frms), fonts(fonts),
       monster_data({{PLAYER, player_monsters}, {OPPONENT, opponent_monsters}}),
       monster_icons(monster_icons), attack_animation_frames(attack_animation_frms)
 {
@@ -51,6 +48,7 @@ Battle::~Battle()
 
 void Battle::Update(const double dt)
 {
+    CheckEndBattle();
     CreateNewMonsters(); // create new monsters outside the Update loop
     Input();
     UpdateTimers();
@@ -78,7 +76,7 @@ void Battle::Setup()
         {
             if (index <= 2)
             {
-                AddNewMonster(monster, index, index, entity);
+                CreateMonster(monster, index, index, entity);
                 if (entity == OPPONENT)
                 {
                     added_opponents.push_back(index);
@@ -473,6 +471,14 @@ void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
             }
             monster_sprite->DelayedKill(newMonster, newIndex, newPosIndex, side);
         }
+    }
+}
+
+void Battle::CheckEndBattle() const
+{
+    if (player_sprites->sprites.empty())
+    {
+        game->isRunning = false;
     }
 }
 

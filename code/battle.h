@@ -11,7 +11,7 @@ class Battle
 {
 public:
 
-    Battle(const std::map<int, Monster *> &player_monsters,
+    Battle(Game *game, const std::map<int, Monster *> &player_monsters,
            const std::map<int, Monster *> &opponent_monsters,
            const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                    &monsters_frames,
@@ -39,6 +39,7 @@ public:
     void ApplyAttack(const MonsterSprite *target_sprite, Attack attack, float amount);
     void CheckDeath();
     void CheckDeathGroup(const SpriteGroup *group, SelectionSide side);
+    void CheckEndBattle() const;
 
     // ui
     void DrawUi();
@@ -51,6 +52,7 @@ private:
     void UpdateTimers();
     void OpponentAttack();
 
+    Game *game;
     Texture2D bg_surf;
     std::vector<std::tuple<Monster *, int, int, SelectionSide>> newMonstersData;
     std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> monsters_frames;
