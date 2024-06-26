@@ -237,6 +237,23 @@ void Battle::Input()
                     current_monster = nullptr;
                     selection_mode = SELECTMODE_NONE;
                 }
+                else
+                {
+                    if (monster_sprite->monster->health <
+                        monster_sprite->monster->GetStat("max_health") *
+                                0.9f) // TODO 0.9f is for testing, lower it
+                    {
+                        monster_data[PLAYER][monster_data[PLAYER].size()] = monster_sprite->monster;
+                        monster_sprite->DelayedKill(
+                                nullptr, 0, 0,
+                                OPPONENT); // kills the MonsterSprite*, not the Monter*
+                        UpdateAllMonsters(false);
+                    }
+                    else
+                    {
+                        std::cout << "cannot catch monster\n";
+                    }
+                }
             }
             if (selection_mode == SELECTMODE_ATTACKS)
             {
@@ -264,7 +281,10 @@ void Battle::Input()
                     selection_mode = SELECTMODE_SWITCH;
                 }
                 else if (indexes[SELECTMODE_GENERAL] == 3)
-                {}
+                {
+                    selection_mode = SELECTMODE_TARGET;
+                    selection_side = OPPONENT;
+                }
             }
 
             // reset all indexes after an action
