@@ -25,21 +25,21 @@ Game::Game(const int width, const int height)
     Setup(tmx_maps["world"], "house");
 
     int player_index = 0;
-    player_monsters.emplace_back(player_index++, new Monster("Charmadillo", 30));
-    player_monsters.emplace_back(player_index++, new Monster("Friolera", 29));
-    player_monsters.emplace_back(player_index++, new Monster("Larvea", 3));
-    player_monsters.emplace_back(player_index++, new Monster("Atrox", 24));
-    player_monsters.emplace_back(player_index++, new Monster("Sparchu", 24));
-    player_monsters.emplace_back(player_index++, new Monster("Gulfin", 24));
-    player_monsters.emplace_back(player_index++, new Monster("Jacana", 2));
-    player_monsters.emplace_back(player_index++, new Monster("Pouch", 3));
+    player_monsters[player_index++] = new Monster("Charmadillo", 30);
+    player_monsters[player_index++] = new Monster("Friolera", 29);
+    player_monsters[player_index++] = new Monster("Larvea", 3);
+    player_monsters[player_index++] = new Monster("Atrox", 24);
+    player_monsters[player_index++] = new Monster("Sparchu", 24);
+    player_monsters[player_index++] = new Monster("Gulfin", 24);
+    player_monsters[player_index++] = new Monster("Jacana", 2);
+    player_monsters[player_index++] = new Monster("Pouch", 3);
 
     int dummy_index = 0;
-    dummy_monsters.emplace_back(dummy_index++, new Monster("Atrox", 15));
-    dummy_monsters.emplace_back(dummy_index++, new Monster("Sparchu", 3));
-    dummy_monsters.emplace_back(dummy_index++, new Monster("Gulfin", 5));
-    dummy_monsters.emplace_back(dummy_index++, new Monster("Jacana", 2));
-    dummy_monsters.emplace_back(dummy_index++, new Monster("Pouch", 3));
+    dummy_monsters[dummy_index++] = new Monster("Atrox", 15);
+    dummy_monsters[dummy_index++] = new Monster("Sparchu", 3);
+    dummy_monsters[dummy_index++] = new Monster("Gulfin", 5);
+    dummy_monsters[dummy_index++] = new Monster("Jacana", 2);
+    dummy_monsters[dummy_index++] = new Monster("Pouch", 3);
 
     std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> monsters_frames;
     std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> outline_frames;

@@ -4,8 +4,7 @@
 
 
 MonsterIndex::MonsterIndex(
-        const std::vector<std::pair<int, Monster *>> &monsters,
-        const std::map<std::string, Font> &fonts,
+        const std::map<int, Monster *> &monsters, const std::map<std::string, Font> &fonts,
         const std::map<std::string, Texture2D> &monster_icons,
         const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                 &monsters_frms,
@@ -69,9 +68,8 @@ void MonsterIndex::DisplayList()
 
     // vertical offset
     const int v_offset = (index < visible_items) ? 0 : -(index - visible_items + 1) * item_height;
-    for (int i = 0; i < monsters.size(); ++i)
+    for (auto &[i, monster]: monsters)
     {
-        Monster *monster = monsters[i].second;
         const Color bg_color = (i != index) ? COLORS["gray"] : COLORS["light"];
         const Color text_color = (selected_index != i) ? COLORS["white"] : COLORS["gold"];
         const float top = main_rect.y + i * item_height + v_offset;
@@ -122,7 +120,7 @@ void MonsterIndex::DisplayList()
 void MonsterIndex::DisplayMain(const double dt)
 {
     // data
-    Monster *monster = monsters[index].second;
+    Monster *monster = monsters[index];
 
     // BeginTextureMode was called in Update()
     // bg

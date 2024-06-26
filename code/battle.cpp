@@ -6,8 +6,8 @@
 
 
 Battle::Battle(
-        const std::vector<std::pair<int, Monster *>> &player_monsters,
-        const std::vector<std::pair<int, Monster *>> &opponent_monsters,
+        const std::map<int, Monster *> &player_monsters,
+        const std::map<int, Monster *> &opponent_monsters,
         const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                 &monsters_frames,
         const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
@@ -69,19 +69,36 @@ void Battle::Update(const double dt)
 
 void Battle::Setup()
 {
+    std::vector<int> added_opponents;
+
     for (auto &[entity, monsters]: monster_data)
     {
-        for (int index = 0; index <= 2; ++index)
+        for (auto &[index, monster]: monsters)
         {
-            AddNewMonster(monsters[index].second, index, index, entity);
+            if (index <= 2)
+            {
+                AddNewMonster(monster, index, index, entity);
+                if (entity == OPPONENT)
+                {
+                    added_opponents.push_back(index);
+                }
+            }
         }
     }
-    // remove opponents monsters that were created from `monster_data` to be used later with less
-    // monster_data[OPPONENT].erase(monster_data[OPPONENT].begin());
-    // monster_data[OPPONENT].erase(monster_data[OPPONENT].begin());
-    // monster_data[OPPONENT].erase(monster_data[OPPONENT].begin());
-    monster_data[OPPONENT].erase(
-            monster_data[OPPONENT].begin(), monster_data[OPPONENT].begin() + 3);
+    // remove from `monster_data` opponents monsters that were createdas this will serve
+    // as container to add new monsters in battle after a defeat
+    for (auto it = monster_data[OPPONENT].begin(); it != monster_data[OPPONENT].end();)
+    {
+        if (std::find(added_opponents.begin(), added_opponents.end(), it->first) !=
+            added_opponents.end())
+        {
+            it = monster_data[OPPONENT].erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
 }
 
 void Battle::AddNewMonster(Monster *monster, int index, int pos_index, SelectionSide entity)
@@ -198,17 +215,16 @@ void Battle::Input()
                 auto *sprite_group = selection_side == OPPONENT ? opponent_sprites : player_sprites;
                 // when a monster gets defeated, the group may change, but the "pos_index" won't
                 // create a list with just the "pos_index"
-                std::vector<std::pair<int, MonsterSprite *>> sprites_pos_indexes;
+                std::map<int, MonsterSprite *> sprites_pos_indexes;
+                std::vector<int> sprites_pos_indexes_keys;
                 for (auto *sprite: sprite_group->sprites)
                 {
-                    sprites_pos_indexes.emplace_back(
-                            ((MonsterSprite *) sprite)->pos_index, (MonsterSprite *) sprite);
+                    sprites_pos_indexes[((MonsterSprite *) sprite)->pos_index] =
+                            (MonsterSprite *) sprite;
+                    sprites_pos_indexes_keys.push_back(((MonsterSprite *) sprite)->pos_index);
                 }
                 auto *monster_sprite =
-                        (MonsterSprite *)
-                                sprites_pos_indexes[sprites_pos_indexes[indexes[SELECTMODE_TARGET]]
-                                                            .first]
-                                        .second;
+                        sprites_pos_indexes[sprites_pos_indexes_keys[indexes[SELECTMODE_TARGET]]];
                 if (selected_attack)
                 {
                     current_monster->ActivateAttack(monster_sprite, selected_attack);
@@ -244,6 +260,12 @@ void Battle::Input()
                 }
                 else if (indexes[SELECTMODE_GENERAL] == 3)
                 {}
+            }
+
+            // reset all indexes after an action
+            for (auto &[mode, value]: indexes)
+            {
+                indexes[mode] = 0;
             }
         }
         if (IsKeyPressed(KEY_ESCAPE))
@@ -353,7 +375,7 @@ void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
             if (side == PLAYER)
             {
                 // monsters in the battle
-                std::vector<std::pair<int, Monster *>> active_monsters;
+                std::vector<std::pair<const int, Monster *>> active_monsters;
                 for (const auto player_monster_sprite: player_sprites->sprites)
                 {
                     active_monsters.emplace_back(
@@ -362,7 +384,7 @@ void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
                 }
 
                 // monsters with health and not in battle
-                std::vector<std::pair<int, Monster *>> available_monsters;
+                std::vector<std::pair<const int, Monster *>> available_monsters;
                 for (auto &player_pair: monster_data[PLAYER])
                 {
                     if (player_pair.second->health > 0 &&
@@ -387,7 +409,7 @@ void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
                 // check if opponent has more monsters
                 if (!monster_data[OPPONENT].empty())
                 {
-                    newMonster = monster_data[OPPONENT][0].second;
+                    newMonster = monster_data[OPPONENT].begin()->second;
                     newIndex = monster_sprite->index;
                     newPosIndex = monster_sprite->pos_index;
                     monster_data[OPPONENT].erase(monster_data[OPPONENT].begin());

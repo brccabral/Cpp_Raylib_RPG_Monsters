@@ -88,14 +88,19 @@ void BattleSprites::Draw(
     SpriteGroup *sprite_group = side == OPPONENT ? opponent_sprites : player_sprites;
     // when a monster gets defeated, the group may change, but the "pos_index" won't
     // create a list with just the "pos_index"
-    std::vector<int> sprites_indexes;
+    std::map<int, MonsterSprite *> sprites_dict;
+    std::vector<int> sprites_keys;
     for (auto *sprite: sprite_group->sprites)
     {
-        sprites_indexes.push_back(((MonsterSprite *) sprite)->pos_index);
+        sprites_dict[((MonsterSprite *) sprite)->pos_index] = (MonsterSprite *) sprite;
+        sprites_keys.push_back(((MonsterSprite *) sprite)->pos_index);
     }
 
-    // TODO : when we remove monsters from group with Kill, these indexes should change.
-    auto *monster_sprite = (MonsterSprite *) sprite_group->sprites[sprites_indexes[target_index]];
+    MonsterSprite *monster_sprite = nullptr;
+    if (!sprites_dict.empty())
+    {
+        monster_sprite = sprites_dict[sprites_keys[target_index]];
+    }
 
     std::sort(
             sprites.begin(), sprites.end(),
@@ -112,7 +117,8 @@ void BattleSprites::Draw(
         {
             if ((((MonsterOutlineSprite *) sprite)->monster_sprite == current_monster_sprite &&
                  !(mode == SELECTMODE_TARGET && side == PLAYER)) ||
-                (((MonsterOutlineSprite *) sprite)->monster_sprite == monster_sprite) &&
+                (monster_sprite &&
+                 ((MonsterOutlineSprite *) sprite)->monster_sprite == monster_sprite) &&
                         monster_sprite->entity == side && mode == SELECTMODE_TARGET)
             {
                 ((MonsterOutlineSprite *) sprite)->Draw({0, 0});
