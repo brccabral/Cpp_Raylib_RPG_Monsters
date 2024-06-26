@@ -109,7 +109,6 @@ void Battle::CreateMonster(
 {
     const auto frames = monsters_frames[monster->name];
     const auto outlines = outline_frames[monster->name];
-    Vector2 pos;
     MonsterSprite *monster_sprite;
     MonsterNameSprite *name_sprite;
     MonsterOutlineSprite *outline_sprite;
@@ -352,7 +351,37 @@ void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
             Monster *newMonster = nullptr;
             int newIndex = 0, newPosIndex = 0; // new monster
             if (side == PLAYER)
-            {}
+            {
+                // monsters in the battle
+                std::vector<std::pair<int, Monster *>> active_monsters;
+                for (const auto player_monster_sprite: player_sprites->sprites)
+                {
+                    active_monsters.emplace_back(
+                            ((MonsterSprite *) player_monster_sprite)->index,
+                            ((MonsterSprite *) player_monster_sprite)->monster);
+                }
+
+                // monsters with health and not in battle
+                std::vector<std::pair<int, Monster *>> available_monsters;
+                for (auto &player_pair: monster_data[PLAYER])
+                {
+                    if (player_pair.second->health > 0 &&
+                        std::find(active_monsters.begin(), active_monsters.end(), player_pair) ==
+                                active_monsters.end())
+                    {
+                        available_monsters.emplace_back(player_pair);
+                        break;
+                    }
+                }
+
+                // if there are monsters to add to battle
+                if (!available_monsters.empty())
+                {
+                    newMonster = available_monsters[0].second;
+                    newIndex = available_monsters[0].first;
+                    newPosIndex = monster_sprite->pos_index;
+                }
+            }
             else
             {
                 // check if opponent has more monsters
@@ -589,11 +618,11 @@ void Battle::UpdateTimers()
 
 void Battle::OpponentAttack()
 {
-    auto abilities = current_monster->monster->GetAbilities();
-    auto random_index = GetRandomValue(0, abilities.size());
-    auto ability = abilities[random_index];
+    const auto abilities = current_monster->monster->GetAbilities();
+    const auto random_ability_index = GetRandomValue(0, abilities.size());
+    const auto ability = abilities[random_ability_index];
 
-    auto side = ATTACK_DATA[ability].target;
+    const auto side = ATTACK_DATA[ability].target;
     // PLAYER - attack same team (healing/defense) | OPPONENT - attack the other team
     MonsterSprite *random_target;
     if (side == PLAYER)
