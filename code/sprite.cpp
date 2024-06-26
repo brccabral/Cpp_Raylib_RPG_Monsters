@@ -295,6 +295,7 @@ void MonsterSprite::Destroy()
         battle->AddNewMonster(newMonster, newIndex, newPosIndex, newSide);
         newMonster = nullptr;
     }
+    target_sprite = nullptr;
     Kill();
 }
 

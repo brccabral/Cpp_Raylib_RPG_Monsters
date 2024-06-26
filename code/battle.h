@@ -11,8 +11,8 @@ class Battle
 {
 public:
 
-    Battle(const std::vector<Monster *> &player_monsters,
-           const std::vector<Monster *> &opponent_monsters,
+    Battle(const std::vector<std::pair<int, Monster *>> &player_monsters,
+           const std::vector<std::pair<int, Monster *>> &opponent_monsters,
            const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                    &monsters_frames,
            const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
@@ -57,7 +57,7 @@ private:
     std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> outline_frames;
     std::map<std::string, Texture2D> ui_frames;
     std::map<std::string, Font> fonts;
-    std::map<SelectionSide, std::vector<Monster *>> monster_data;
+    std::map<SelectionSide, std::vector<std::pair<int, Monster *>>> monster_data;
     std::vector<Monster *> available_monsters;
     std::map<std::string, Texture2D> monster_icons;
     std::map<AttackAnimation, std::vector<TiledTexture>> attack_animation_frames;

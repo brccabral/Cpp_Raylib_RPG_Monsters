@@ -24,20 +24,22 @@ Game::Game(const int width, const int height)
 
     Setup(tmx_maps["world"], "house");
 
-    player_monsters.push_back(new Monster("Charmadillo", 30));
-    player_monsters.push_back(new Monster("Friolera", 29));
-    player_monsters.push_back(new Monster("Larvea", 3));
-    player_monsters.push_back(new Monster("Atrox", 24));
-    player_monsters.push_back(new Monster("Sparchu", 24));
-    player_monsters.push_back(new Monster("Gulfin", 24));
-    player_monsters.push_back(new Monster("Jacana", 2));
-    player_monsters.push_back(new Monster("Pouch", 3));
+    int player_index = 0;
+    player_monsters.emplace_back(player_index++, new Monster("Charmadillo", 30));
+    player_monsters.emplace_back(player_index++, new Monster("Friolera", 29));
+    player_monsters.emplace_back(player_index++, new Monster("Larvea", 3));
+    player_monsters.emplace_back(player_index++, new Monster("Atrox", 24));
+    player_monsters.emplace_back(player_index++, new Monster("Sparchu", 24));
+    player_monsters.emplace_back(player_index++, new Monster("Gulfin", 24));
+    player_monsters.emplace_back(player_index++, new Monster("Jacana", 2));
+    player_monsters.emplace_back(player_index++, new Monster("Pouch", 3));
 
-    dummy_monsters.push_back(new Monster("Atrox", 15));
-    dummy_monsters.push_back(new Monster("Sparchu", 3));
-    dummy_monsters.push_back(new Monster("Gulfin", 5));
-    dummy_monsters.push_back(new Monster("Jacana", 2));
-    dummy_monsters.push_back(new Monster("Pouch", 3));
+    int dummy_index = 0;
+    dummy_monsters.emplace_back(dummy_index++, new Monster("Atrox", 15));
+    dummy_monsters.emplace_back(dummy_index++, new Monster("Sparchu", 3));
+    dummy_monsters.emplace_back(dummy_index++, new Monster("Gulfin", 5));
+    dummy_monsters.emplace_back(dummy_index++, new Monster("Jacana", 2));
+    dummy_monsters.emplace_back(dummy_index++, new Monster("Pouch", 3));
 
     std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> monsters_frames;
     std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> outline_frames;
@@ -515,11 +517,11 @@ void Game::UnloadResources()
     delete monster_index;
     delete battle;
 
-    for (const auto *monster: player_monsters)
+    for (const auto &[index, monster]: player_monsters)
     {
         delete monster;
     }
-    for (const auto *monster: dummy_monsters)
+    for (const auto &[index, monster]: dummy_monsters)
     {
         delete monster;
     }

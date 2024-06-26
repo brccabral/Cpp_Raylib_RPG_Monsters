@@ -6,8 +6,8 @@
 
 
 Battle::Battle(
-        const std::vector<Monster *> &player_monsters,
-        const std::vector<Monster *> &opponent_monsters,
+        const std::vector<std::pair<int, Monster *>> &player_monsters,
+        const std::vector<std::pair<int, Monster *>> &opponent_monsters,
         const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                 &monsters_frames,
         const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
@@ -73,7 +73,7 @@ void Battle::Setup()
     {
         for (int index = 0; index <= 2; ++index)
         {
-            AddNewMonster(monsters[index], index, index, entity);
+            AddNewMonster(monsters[index].second, index, index, entity);
         }
     }
     // remove opponents monsters that were created from `monster_data` to be used later with less
@@ -199,14 +199,17 @@ void Battle::Input()
                 auto *sprite_group = selection_side == OPPONENT ? opponent_sprites : player_sprites;
                 // when a monster gets defeated, the group may change, but the "pos_index" won't
                 // create a list with just the "pos_index"
-                std::vector<int> sprites_indexes;
+                std::vector<std::pair<int, MonsterSprite *>> sprites_pos_indexes;
                 for (auto *sprite: sprite_group->sprites)
                 {
-                    sprites_indexes.push_back(((MonsterSprite *) sprite)->pos_index);
+                    sprites_pos_indexes.emplace_back(
+                            ((MonsterSprite *) sprite)->pos_index, (MonsterSprite *) sprite);
                 }
                 auto *monster_sprite =
                         (MonsterSprite *)
-                                sprite_group->sprites[sprites_indexes[indexes[SELECTMODE_TARGET]]];
+                                sprites_pos_indexes[sprites_pos_indexes[indexes[SELECTMODE_TARGET]]
+                                                            .first]
+                                        .second;
                 if (selected_attack)
                 {
                     current_monster->ActivateAttack(monster_sprite, selected_attack);
@@ -343,10 +346,11 @@ void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
 {
     for (auto *sprite: group->sprites)
     {
-        if (((MonsterSprite *) sprite)->monster->health <= 0)
+        const auto monster_sprite = (MonsterSprite *) sprite;
+        if (monster_sprite->monster->health <= 0)
         {
             Monster *newMonster = nullptr;
-            int index = 0, pos_index = 0; // new monster
+            int newIndex = 0, newPosIndex = 0; // new monster
             if (side == PLAYER)
             {}
             else
@@ -354,17 +358,17 @@ void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
                 // check if opponent has more monsters
                 if (!monster_data[OPPONENT].empty())
                 {
-                    newMonster = monster_data[OPPONENT][0];
-                    index = ((MonsterSprite *) sprite)->index;
-                    pos_index = ((MonsterSprite *) sprite)->pos_index;
+                    newMonster = monster_data[OPPONENT][0].second;
+                    newIndex = monster_sprite->index;
+                    newPosIndex = monster_sprite->pos_index;
                     monster_data[OPPONENT].erase(monster_data[OPPONENT].begin());
                 }
 
-                // ((MonsterSprite *) sprite)->Kill();
+                // monster_sprite->Kill();
                 // release new monster if available
                 // increase XP
             }
-            ((MonsterSprite *) sprite)->DelayedKill(newMonster, index, pos_index, side);
+            monster_sprite->DelayedKill(newMonster, newIndex, newPosIndex, side);
         }
     }
 }
@@ -512,7 +516,7 @@ void Battle::DrawSwitch()
         active_monsters.push_back(((MonsterSprite *) monster_sprite)->monster);
     }
     available_monsters.clear();
-    for (auto *monster: monster_data[PLAYER])
+    for (auto &[monster_index, monster]: monster_data[PLAYER])
     {
         if (monster->health > 0 &&
             // if not found in active
@@ -594,12 +598,12 @@ void Battle::OpponentAttack()
     MonsterSprite *random_target;
     if (side == PLAYER)
     {
-        const auto random_target_index = GetRandomValue(0, opponent_sprites->sprites.size());
+        const auto random_target_index = GetRandomValue(0, opponent_sprites->sprites.size() - 1);
         random_target = (MonsterSprite *) opponent_sprites->sprites[random_target_index];
     }
     else
     {
-        const auto random_target_index = GetRandomValue(0, player_sprites->sprites.size());
+        const auto random_target_index = GetRandomValue(0, player_sprites->sprites.size() - 1);
         random_target = (MonsterSprite *) player_sprites->sprites[random_target_index];
     }
     current_monster->ActivateAttack(random_target, ability);
