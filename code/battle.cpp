@@ -251,7 +251,12 @@ void Battle::Input()
                     }
                     else
                     {
-                        std::cout << "cannot catch monster\n";
+                        const RectangleU cross_rect = {
+                                0, 0, (float) ui_frames["cross"].width,
+                                (float) ui_frames["cross"].height};
+                        new TimedSprite(
+                                GetRectCenter(monster_sprite->rect),
+                                {&ui_frames["cross"], cross_rect}, {battle_sprites}, 1.0f);
                     }
                 }
             }

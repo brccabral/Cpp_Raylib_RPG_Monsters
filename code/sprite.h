@@ -273,3 +273,17 @@ public:
             const std::vector<SpriteGroup *> &sgs, int z = BATTLE_LAYERS["overlay"]);
     void Animate(double deltaTime) override;
 };
+
+class TimedSprite : public Sprite
+{
+public:
+
+    TimedSprite(
+            Vector2 pos, TiledTexture frame, const std::vector<SpriteGroup *> &sgs, float duration);
+    ~TimedSprite() override;
+    void Update(double deltaTime) override;
+
+private:
+
+    Timer *death_timer = nullptr;
+};

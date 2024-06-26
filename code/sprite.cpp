@@ -513,6 +513,27 @@ void AttackSprite::Animate(const double deltaTime)
     }
 }
 
+TimedSprite::TimedSprite(
+        Vector2 pos, TiledTexture frame, const std::vector<SpriteGroup *> &sgs, float duration)
+    : Sprite(pos, frame, sgs, BATTLE_LAYERS["overlay"])
+{
+    rect = frame.rect;
+    RectToCenter(rect, pos);
+
+    // death_timer = new Timer(duration, false, true, std::bind(&TimedSprite::Kill, this));
+    death_timer = new Timer(duration, false, true, [this] { Kill(); });
+}
+
+TimedSprite::~TimedSprite()
+{
+    delete death_timer;
+}
+
+void TimedSprite::Update(double deltaTime)
+{
+    death_timer->Update();
+}
+
 void SpriteGroup::Draw() const
 {
     for (const auto *sprite: sprites)
