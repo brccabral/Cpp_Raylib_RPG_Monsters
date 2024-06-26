@@ -27,6 +27,11 @@ public:
 
     bool isRunning = true;
 
+    std::map<int, Monster *> player_monsters;
+    std::map<int, Monster *> dummy_monsters;
+    std::map<std::string, std::map<std::string, Texture2D>> named_textures;
+    std::map<std::string, Font> fonts;
+
 private:
 
     void DisplayUpdate() const;
@@ -44,7 +49,6 @@ private:
 
     std::map<std::string, tmx_map *> tmx_maps;
     std::map<std::string, std::vector<Texture2D>> overworld_frames;
-    std::map<std::string, std::map<std::string, Texture2D>> named_textures;
     std::map<std::string, std::map<std::string, tilerect_name>> named_rect_frames;
     std::map<std::string, std::map<std::string, tilerect_face>> face_rect_frames;
     std::map<std::string, animation_rects> animation_frames;
@@ -55,7 +59,6 @@ private:
     SpriteGroup *characters_sprites = nullptr;
     SpriteGroup *transition_sprites = nullptr;
     Player *player{};
-    std::map<std::string, Font> fonts;
 
     // overlays
     DialogTree *dialog_tree = nullptr;
@@ -70,6 +73,4 @@ private:
     float tint_progress = 255;
     int tint_direction = -1;
     double tint_speed = 600;
-    std::map<int, Monster *> player_monsters;
-    std::map<int, Monster *> dummy_monsters;
 };

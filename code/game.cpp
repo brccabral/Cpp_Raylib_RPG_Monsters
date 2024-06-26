@@ -70,10 +70,7 @@ Game::Game(const int width, const int height)
         }
     }
 
-    battle = new Battle(
-            this, player_monsters, dummy_monsters, monsters_frames, outline_frames,
-            named_textures["ui"], named_textures["bg_frames"]["forest"], named_textures["icons"],
-            attack_animation_frames, fonts);
+    battle = new Battle(this, monsters_frames, outline_frames, attack_animation_frames);
 }
 
 Game::~Game()

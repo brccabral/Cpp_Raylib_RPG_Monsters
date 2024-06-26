@@ -5,20 +5,17 @@
 
 
 Battle::Battle(
-        Game *game, const std::map<int, Monster *> &player_monsters,
-        const std::map<int, Monster *> &opponent_monsters,
+        Game *game,
         const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                 &monsters_frames,
         const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                 &outline_frames,
-        const std::map<std::string, Texture2D> &ui_frms, const Texture2D &bg_surf,
-        const std::map<std::string, Texture2D> &monster_icons,
-        const std::map<AttackAnimation, std::vector<TiledTexture>> &attack_animation_frms,
-        const std::map<std::string, Font> &fonts)
-    : game(game), bg_surf(bg_surf), monsters_frames(monsters_frames),
-      outline_frames(outline_frames), ui_frames(ui_frms), fonts(fonts),
-      monster_data({{PLAYER, player_monsters}, {OPPONENT, opponent_monsters}}),
-      monster_icons(monster_icons), attack_animation_frames(attack_animation_frms)
+        const std::map<AttackAnimation, std::vector<TiledTexture>> &attack_animation_frms)
+    : game(game), bg_surf(game->named_textures["bg_frames"]["forest"]),
+      monsters_frames(monsters_frames), outline_frames(outline_frames),
+      ui_frames(game->named_textures["ui"]), fonts(game->fonts),
+      monster_data({{PLAYER, game->player_monsters}, {OPPONENT, game->dummy_monsters}}),
+      monster_icons(game->named_textures["icons"]), attack_animation_frames(attack_animation_frms)
 {
     battle_sprites = new BattleSprites();
     player_sprites = new SpriteGroup();
@@ -696,7 +693,7 @@ void Battle::UpdateTimers()
     }
 }
 
-void Battle::OpponentAttack()
+void Battle::OpponentAttack() const
 {
     const auto abilities = current_monster->monster->GetAbilities();
     const auto random_ability_index = GetRandomValue(0, abilities.size());

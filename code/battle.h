@@ -11,16 +11,12 @@ class Battle
 {
 public:
 
-    Battle(Game *game, const std::map<int, Monster *> &player_monsters,
-           const std::map<int, Monster *> &opponent_monsters,
+    Battle(Game *game,
            const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                    &monsters_frames,
            const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                    &outline_frames,
-           const std::map<std::string, Texture2D> &ui_frms, const Texture2D &bg_surf,
-           const std::map<std::string, Texture2D> &monster_icons,
-           const std::map<AttackAnimation, std::vector<TiledTexture>> &attack_animation_frms,
-           const std::map<std::string, Font> &fonts);
+           const std::map<AttackAnimation, std::vector<TiledTexture>> &attack_animation_frms);
     ~Battle();
     void Update(double dt);
     void Setup();
@@ -50,7 +46,7 @@ public:
 private:
 
     void UpdateTimers();
-    void OpponentAttack();
+    void OpponentAttack() const;
 
     Game *game;
     Texture2D bg_surf;
