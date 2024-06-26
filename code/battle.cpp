@@ -204,11 +204,13 @@ void Battle::Input()
         }
         if (IsKeyPressed(KEY_DOWN))
         {
-            indexes[selection_mode] = ((indexes[selection_mode] + 1) % limiter + limiter) % limiter;
+            indexes[selection_mode] =
+                    limiter ? ((indexes[selection_mode] + 1) % limiter + limiter) % limiter : 0;
         }
         if (IsKeyPressed(KEY_UP))
         {
-            indexes[selection_mode] = ((indexes[selection_mode] - 1) % limiter + limiter) % limiter;
+            indexes[selection_mode] =
+                    limiter ? ((indexes[selection_mode] - 1) % limiter + limiter) % limiter : 0;
         }
         if (IsKeyPressed(KEY_SPACE))
         {
@@ -266,10 +268,10 @@ void Battle::Input()
             }
 
             // reset all indexes after an action
-            for (auto &[mode, value]: indexes)
-            {
-                indexes[mode] = 0;
-            }
+            // for (auto &[mode, value]: indexes)
+            // {
+            //     indexes[mode] = 0;
+            // }
         }
         if (IsKeyPressed(KEY_ESCAPE))
         {
