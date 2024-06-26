@@ -588,5 +588,19 @@ void Battle::OpponentAttack()
     auto abilities = current_monster->monster->GetAbilities();
     auto random_index = GetRandomValue(0, abilities.size());
     auto ability = abilities[random_index];
-    std::cout << ATTACK_DATA[ability].name << "\n";
+
+    auto side = ATTACK_DATA[ability].target;
+    // PLAYER - attack same team (healing/defense) | OPPONENT - attack the other team
+    MonsterSprite *random_target;
+    if (side == PLAYER)
+    {
+        const auto random_target_index = GetRandomValue(0, opponent_sprites->sprites.size());
+        random_target = (MonsterSprite *) opponent_sprites->sprites[random_target_index];
+    }
+    else
+    {
+        const auto random_target_index = GetRandomValue(0, player_sprites->sprites.size());
+        random_target = (MonsterSprite *) player_sprites->sprites[random_target_index];
+    }
+    current_monster->ActivateAttack(random_target, ability);
 }

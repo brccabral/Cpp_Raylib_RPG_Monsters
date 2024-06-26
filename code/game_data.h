@@ -648,7 +648,8 @@ enum SelectionSide
 struct AttackData
 {
     std::string name;
-    SelectionSide target;
+    SelectionSide target; // PLAYER - attack same team (healing/defense) | OPPONENT - attack the
+                          // other team
     float amount;
     int cost;
     ElementType element;
