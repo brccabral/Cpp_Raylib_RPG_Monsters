@@ -165,9 +165,8 @@ MonsterSprite::MonsterSprite(
         state_frames_highlight[state] = highlight_tiles;
     }
 
-    timers["remove_highlight"] =
-            new Timer(0.3f, false, false, std::bind(&MonsterSprite::SetHighlight, this, false));
-    timers["kill"] = new Timer(0.6f, false, false, std::bind(&MonsterSprite::Destroy, this));
+    timers["remove_highlight"] = new Timer(0.3f, false, false, [this] { SetHighlight(false); });
+    timers["kill"] = new Timer(0.6f, false, false, [this] { Destroy(); });
 }
 
 MonsterSprite::~MonsterSprite()
@@ -520,7 +519,6 @@ TimedSprite::TimedSprite(
     rect = frame.rect;
     RectToCenter(rect, pos);
 
-    // death_timer = new Timer(duration, false, true, std::bind(&TimedSprite::Kill, this));
     death_timer = new Timer(duration, false, true, [this] { Kill(); });
 }
 
@@ -553,7 +551,6 @@ void SpriteGroup::Update(const double deltaTime)
         for (const auto *sprite: to_delete)
         {
             delete sprite;
-            sprite = nullptr;
         }
         to_delete.clear();
     }

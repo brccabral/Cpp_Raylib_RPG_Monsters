@@ -116,9 +116,8 @@ Character::Character(
         }
     }
     view_directions = character_data.directions;
-    timers["look around"] =
-            new Timer(1.5, true, true, std::bind(&Character::RandomViewDirection, this));
-    timers["notice"] = new Timer{0.5, false, false, std::bind(&Character::StartMove, this)};
+    timers["look around"] = new Timer(1.5, true, true, [this] { RandomViewDirection(); });
+    timers["notice"] = new Timer{0.5, false, false, [this] { StartMove(); }};
 }
 
 Character::~Character()

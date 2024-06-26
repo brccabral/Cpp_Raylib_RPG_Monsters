@@ -33,8 +33,7 @@ Battle::Battle(
     indexes[SELECTMODE_SWITCH] = 0;
     indexes[SELECTMODE_TARGET] = 0;
 
-    timers["opponent_delay"] =
-            new Timer(0.6f, false, false, std::bind(&Battle::OpponentAttack, this));
+    timers["opponent_delay"] = new Timer(0.6f, false, false, [this] { OpponentAttack(); });
 
     Setup();
 }
