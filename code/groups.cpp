@@ -1,6 +1,8 @@
 #include <algorithm>
 #include "groups.h"
 
+#include <list>
+
 AllSprites::AllSprites()
 {
     shadow = LoadTexture("resources/graphics/other/shadow.png");
@@ -87,19 +89,21 @@ void BattleSprites::Draw(
     // get available positions
     SpriteGroup *sprite_group = side == OPPONENT ? opponent_sprites : player_sprites;
     // when a monster gets defeated, the group may change, but the "pos_index" won't
-    // create a list with just the "pos_index"
-    std::map<int, MonsterSprite *> sprites_dict;
-    std::vector<int> sprites_keys;
+    // create a list ordered by "pos_index"
+    std::vector<MonsterSprite *> ordered_pos;
     for (auto *sprite: sprite_group->sprites)
     {
-        sprites_dict[((MonsterSprite *) sprite)->pos_index] = (MonsterSprite *) sprite;
-        sprites_keys.push_back(((MonsterSprite *) sprite)->pos_index);
+        ordered_pos.push_back((MonsterSprite *) sprite);
     }
+    std::sort(
+            ordered_pos.begin(), ordered_pos.end(),
+            [](const MonsterSprite *a, const MonsterSprite *b)
+            { return a->pos_index < b->pos_index; });
 
-    MonsterSprite *monster_sprite = nullptr;
-    if (!sprites_dict.empty())
+    const MonsterSprite *monster_sprite = nullptr;
+    if (!ordered_pos.empty())
     {
-        monster_sprite = sprites_dict[sprites_keys[target_index]];
+        monster_sprite = ordered_pos[target_index];
     }
 
     std::sort(

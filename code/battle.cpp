@@ -4,6 +4,8 @@
 #include "battle.h"
 #include "groups.h"
 
+#include <list>
+
 
 Battle::Battle(
         const std::map<int, Monster *> &player_monsters,
@@ -214,17 +216,18 @@ void Battle::Input()
             {
                 auto *sprite_group = selection_side == OPPONENT ? opponent_sprites : player_sprites;
                 // when a monster gets defeated, the group may change, but the "pos_index" won't
-                // create a list with just the "pos_index"
-                std::map<int, MonsterSprite *> sprites_pos_indexes;
-                std::vector<int> sprites_pos_indexes_keys;
+                // create a list ordered by "pos_index"
+                std::vector<MonsterSprite *> ordered_pos;
                 for (auto *sprite: sprite_group->sprites)
                 {
-                    sprites_pos_indexes[((MonsterSprite *) sprite)->pos_index] =
-                            (MonsterSprite *) sprite;
-                    sprites_pos_indexes_keys.push_back(((MonsterSprite *) sprite)->pos_index);
+                    ordered_pos.push_back((MonsterSprite *) sprite);
                 }
-                auto *monster_sprite =
-                        sprites_pos_indexes[sprites_pos_indexes_keys[indexes[SELECTMODE_TARGET]]];
+                std::sort(
+                        ordered_pos.begin(), ordered_pos.end(),
+                        [](const MonsterSprite *a, const MonsterSprite *b)
+                        { return a->pos_index < b->pos_index; });
+
+                auto *monster_sprite = ordered_pos[indexes[SELECTMODE_TARGET]];
                 if (selected_attack)
                 {
                     current_monster->ActivateAttack(monster_sprite, selected_attack);
