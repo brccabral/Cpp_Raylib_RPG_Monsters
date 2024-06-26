@@ -196,42 +196,42 @@ OutlineCreator(const std::map<std::string, Texture2D> &texture_dict, const float
     for (auto &[monster, monster_texture]: texture_dict)
     {
         Image image = LoadImageFromTexture(monster_texture);
-        const Image mask = ImageMaskFromImage(image, COLORS["blue"]);
+        const Image mask = ImageFromChannel(image, 4, 0.5f);
 
         Image new_image = GenImageColor(image.width, image.height, {0});
-
+        // copy mask in all 8 directions to create an Outline effect
         // Left
         ImageDraw(
                 &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {-width, 0, (float) image.width, (float) image.height}, WHITE);
+                {-width, 0, (float) image.width, (float) image.height}, COLORS["blue"]);
         // Right
         ImageDraw(
                 &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {width, 0, (float) image.width, (float) image.height}, WHITE);
+                {width, 0, (float) image.width, (float) image.height}, COLORS["blue"]);
         // TopLeft
         ImageDraw(
                 &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {-width, -width, (float) image.width, (float) image.height}, WHITE);
+                {-width, -width, (float) image.width, (float) image.height}, COLORS["blue"]);
         // TopMid
         ImageDraw(
                 &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {0, -width, (float) image.width, (float) image.height}, WHITE);
+                {0, -width, (float) image.width, (float) image.height}, COLORS["blue"]);
         // TopRight
         ImageDraw(
                 &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {width, -width, (float) image.width, (float) image.height}, WHITE);
+                {width, -width, (float) image.width, (float) image.height}, COLORS["blue"]);
         // BottomLeft
         ImageDraw(
                 &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {-width, width, (float) image.width, (float) image.height}, WHITE);
+                {-width, width, (float) image.width, (float) image.height}, COLORS["blue"]);
         // BottomMid
         ImageDraw(
                 &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {0, width, (float) image.width, (float) image.height}, WHITE);
+                {0, width, (float) image.width, (float) image.height}, COLORS["blue"]);
         // BottomRight
         ImageDraw(
                 &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {width, width, (float) image.width, (float) image.height}, WHITE);
+                {width, width, (float) image.width, (float) image.height}, COLORS["blue"]);
 
         outline_texture_dict[monster] = LoadTextureFromImage(new_image);
 
