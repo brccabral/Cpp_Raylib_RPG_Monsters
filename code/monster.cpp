@@ -9,7 +9,6 @@ Monster::Monster(std::string name_, const int level) : name(std::move(name_)), l
     abilities = MONSTER_DATA[name].abilities;
 
     level_up = level * 150;
-    xp = GetRandomValue(0, level_up);
     health = base_stats["max_health"] * level;
     energy = base_stats["max_energy"] * level;
     initiative = 0;
@@ -74,6 +73,11 @@ void Monster::ReduceEnergy(const Attack attack)
 float Monster::GetBaseDamage(const Attack attack)
 {
     return GetStat("attack") * ATTACK_DATA[attack].amount;
+}
+
+void Monster::UpdateXP(const int amount)
+{
+    xp += amount;
 }
 
 std::ostream &operator<<(std::ostream &os, Monster const &m)

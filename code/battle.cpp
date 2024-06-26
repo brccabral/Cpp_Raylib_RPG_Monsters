@@ -392,10 +392,13 @@ void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
                     newPosIndex = monster_sprite->pos_index;
                     monster_data[OPPONENT].erase(monster_data[OPPONENT].begin());
                 }
-
-                // monster_sprite->Kill();
-                // release new monster if available
                 // increase XP
+                const int xp_amount =
+                        monster_sprite->monster->level * 100 / player_sprites->sprites.size();
+                for (auto *player_sprite: player_sprites->sprites)
+                {
+                    ((MonsterSprite *) player_sprite)->monster->UpdateXP(xp_amount);
+                }
             }
             monster_sprite->DelayedKill(newMonster, newIndex, newPosIndex, side);
         }
