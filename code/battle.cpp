@@ -288,6 +288,7 @@ void Battle::Input()
                 else if (indexes[SELECTMODE_GENERAL] == 1)
                 {
                     // select defense resumes battle
+                    current_monster->monster->defending = true;
                     UpdateAllMonsters(false);
                     current_monster = nullptr;
                     selection_mode = SELECTMODE_NONE;
@@ -330,11 +331,13 @@ void Battle::CheckActiveGroup(const SpriteGroup *group, const SelectionSide side
 {
     for (const auto *sprite: group->sprites)
     {
-        if (((MonsterSprite *) sprite)->monster->initiative >= 100)
+        auto *monster_sprite = (MonsterSprite *) sprite;
+        if (monster_sprite->monster->initiative >= 100)
         {
+            monster_sprite->monster->defending = false;
             UpdateAllMonsters(true);
-            ((MonsterSprite *) sprite)->monster->initiative = 0;
-            ((MonsterSprite *) sprite)->SetHighlight(true);
+            monster_sprite->monster->initiative = 0;
+            monster_sprite->SetHighlight(true);
             current_monster = ((MonsterSprite *) sprite);
             if (side == PLAYER)
             {
@@ -389,6 +392,10 @@ void Battle::ApplyAttack(const MonsterSprite *target_sprite, const Attack attack
     // update defense based on monster level and base stats
     // it will lower the amount above
     auto target_defense = 1 - target_sprite->monster->GetStat("defense") / 2000;
+    if (target_sprite->monster->defending)
+    {
+        target_defense -= 0.2;
+    }
     target_defense = Clamp(target_defense, 0, 1);
 
     // update monster health
