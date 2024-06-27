@@ -5,13 +5,15 @@
 #include "game.h"
 
 
-Battle::Battle(Game *game, std::map<int, Monster *> opponent_monsters, Texture2D bg)
+Battle::Battle(
+        Game *game, std::map<int, Monster *> opponent_monsters, const Texture2D &bg,
+        Character *character)
     : game(game), bg_surf(bg), monsters_frames(game->monsters_frames),
       outline_frames(game->outline_frames), ui_frames(game->named_textures["ui"]),
       fonts(game->fonts),
       monster_data({{PLAYER, game->player_monsters}, {OPPONENT, opponent_monsters}}),
       monster_icons(game->named_textures["icons"]),
-      attack_animation_frames(game->attack_animation_frames)
+      attack_animation_frames(game->attack_animation_frames), character(character)
 {
     battle_sprites = new BattleSprites();
     player_sprites = new SpriteGroup();
@@ -477,12 +479,12 @@ void Battle::CheckEndBattle()
 {
     if (opponent_sprites->sprites.empty() && !battle_over)
     {
-        std::cout << "Battle Won\n";
         battle_over = true;
         for (auto &[i, monster]: monster_data[PLAYER])
         {
             monster->initiative = 0;
         }
+        game->EndBattle(character);
     }
     if (player_sprites->sprites.empty())
     {

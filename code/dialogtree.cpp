@@ -2,8 +2,8 @@
 
 
 DialogTree::DialogTree(
-        const Character *character_, Player *player_, const std::vector<SpriteGroup *> &grps,
-        const Font &font_, const std::function<void(const Character *)> &end_dialog)
+        Character *character_, Player *player_, const std::vector<SpriteGroup *> &grps,
+        const Font &font_, const std::function<void(Character *)> &end_dialog)
     : character(character_), player(player_), groups(grps), font(font_), end_dialog(end_dialog)
 {
     dialog = character->GetDialog();

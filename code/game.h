@@ -23,6 +23,7 @@ public:
     void Draw() const;
     void run();
     void ClearSpriteGroups();
+    void EndBattle(Character *character);
 
     friend class Character; // allows Character to access Game private members
 
@@ -44,8 +45,8 @@ private:
     void Setup(const std::string &map_name, const std::string &player_start_position);
     void Input();
     void UnloadResources();
-    void CreateDialog(const Character *character);
-    void EndDialog(const Character *character);
+    void CreateDialog(Character *character);
+    void EndDialog(Character *character);
     void TransitionCheck();
     void TintScreen(double dt);
     void SetupFrames();

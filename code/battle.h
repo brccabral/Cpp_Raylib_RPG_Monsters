@@ -11,7 +11,8 @@ class Battle
 {
 public:
 
-    Battle(Game *game, std::map<int, Monster *> opponent_monsters, Texture2D bg);
+    Battle(Game *game, std::map<int, Monster *> opponent_monsters, const Texture2D &bg,
+           Character *character);
     ~Battle();
     void Update(double dt);
     void Setup();
@@ -56,6 +57,7 @@ private:
     std::map<AttackAnimation, std::vector<TiledTexture>> attack_animation_frames;
     std::map<std::string, Timer *> timers{};
     bool battle_over{};
+    Character *character = nullptr;
 
     // groups
     BattleSprites *battle_sprites = nullptr;

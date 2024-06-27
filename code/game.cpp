@@ -479,18 +479,18 @@ void Game::UnloadResources()
     }
 }
 
-void Game::CreateDialog(const Character *character)
+void Game::CreateDialog(Character *character)
 {
     if (!dialog_tree)
     {
         dialog_tree = new DialogTree(
                 character, player, {all_sprites}, fonts["dialog"],
-                [this](const Character *ch) { EndDialog(ch); });
+                [this](Character *ch) { EndDialog(ch); });
     }
 }
 
 // When there is no more phrases to show, unlock player
-void Game::EndDialog(const Character *character)
+void Game::EndDialog(Character *character)
 {
     delete dialog_tree;
     dialog_tree = nullptr;
@@ -513,8 +513,12 @@ void Game::EndDialog(const Character *character)
             transition_target = nullptr;
         }
         transition_target = new TransitionTarget(TRANSITIONTARGET_LEVEL2BATTLE);
-        transition_target->battle = new Battle(this, character->monsters, bg);
+        transition_target->battle = new Battle(this, character->monsters, bg, character);
         tint_mode = TINT;
+    }
+    else
+    {
+        player->Unblock();
     }
 }
 
@@ -621,5 +625,21 @@ void Game::SetupFrames()
         {
             attack_animation_frames[animation].push_back({&attack_texture, attack_rect});
         }
+    }
+}
+
+void Game::EndBattle(Character *character)
+{
+    if (transition_target)
+    {
+        delete transition_target;
+        transition_target = nullptr;
+    }
+    transition_target = new TransitionTarget(TRANSITIONTARGET_BATTLE2LEVEL);
+    tint_mode = TINT;
+    if (character)
+    {
+        character->character_data.defeated = true;
+        CreateDialog(character);
     }
 }
