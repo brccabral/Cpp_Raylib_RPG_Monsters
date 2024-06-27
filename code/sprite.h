@@ -71,11 +71,10 @@ public:
 
     MonsterPatchSprite(
             Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs,
-            std::string bio);
-
-private:
-
+            std::string bio, const std::string &patch_monsters, int level);
     std::string biome;
+    std::vector<std::string> monsters;
+    int level;
 };
 
 class BorderSprite : public Sprite

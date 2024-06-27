@@ -241,3 +241,17 @@ OutlineCreator(const std::map<std::string, Texture2D> &texture_dict, const float
     }
     return outline_texture_dict;
 }
+
+std::vector<std::string> split(const std::string &s, const char delim)
+{
+    std::vector<std::string> result;
+    std::stringstream ss(s);
+    std::string item;
+
+    while (getline(ss, item, delim))
+    {
+        result.push_back(item);
+    }
+
+    return result;
+}

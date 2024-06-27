@@ -31,3 +31,5 @@ RLAPI std::map<std::string, tmx_map *> tmx_importer(const char *path);
 
 RLAPI std::map<std::string, Texture2D>
 OutlineCreator(const std::map<std::string, Texture2D> &texture_dict, float width);
+
+std::vector<std::string> split(const std::string &s, char delim);

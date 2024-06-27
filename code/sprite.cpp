@@ -92,8 +92,9 @@ Sprite::Sprite(
 
 MonsterPatchSprite::MonsterPatchSprite(
         const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs,
-        std::string bio)
-    : Sprite(pos, img, sgs, WORLD_LAYERS["main"]), biome(std::move(bio))
+        std::string bio, const std::string &patch_monsters, const int level)
+    : Sprite(pos, img, sgs, WORLD_LAYERS["main"]), biome(std::move(bio)),
+     level(level)
 {
     y_sort -= 40;
     // move sand patches to background drawing layer
@@ -101,6 +102,7 @@ MonsterPatchSprite::MonsterPatchSprite(
     {
         z = WORLD_LAYERS["bg"];
     }
+    monsters = split(patch_monsters, ',');
 }
 
 BorderSprite::BorderSprite(

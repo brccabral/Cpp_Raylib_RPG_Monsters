@@ -303,7 +303,10 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             auto [position, image] =
                     GetTileInfo(map->tiles[gid], monster->x, monster->y - monster->height);
             std::string biome = tmx_get_property(monster->properties, "biome")->value.string;
-            new MonsterPatchSprite(position, image, {all_sprites, monster_sprites}, biome);
+            std::string monsters = tmx_get_property(monster->properties, "monsters")->value.string;
+            int level = tmx_get_property(monster->properties, "level")->value.integer;
+            new MonsterPatchSprite(
+                    position, image, {all_sprites, monster_sprites}, biome, monsters, level);
         }
         monster = monster->next;
     }
@@ -656,7 +659,31 @@ void Game::CheckMonster() const
 
 void Game::MonsterEncounter()
 {
-    std::cout << "monster encounter\n";
+    for (const auto sprite: monster_sprites->sprites)
+    {
+        if (player->IsMoving() &&
+            CheckCollisionRecs(sprite->rect.rectangle, player->hitbox.rectangle))
+        {
+            const auto *monster_patch_sprite = (MonsterPatchSprite *) sprite;
+            std::map<int, Monster *> monsters;
+            int count_mounstes = 0;
+            for (const auto &monster_name: monster_patch_sprite->monsters)
+            {
+                const int level = monster_patch_sprite->level + GetRandomValue(-3, 3);
+                monsters[count_mounstes++] = new Monster(monster_name, level);
+            }
+            player->Block();
+            Texture2D bg = named_textures["bg_frames"][monster_patch_sprite->biome];
+            if (transition_target)
+            {
+                delete transition_target;
+                transition_target = nullptr;
+            }
+            transition_target = new TransitionTarget(TRANSITIONTARGET_LEVEL2BATTLE);
+            transition_target->battle = new Battle(this, monsters, bg, nullptr);
+            tint_mode = TINT;
+        }
+    }
 }
 
 void Game::EndBattle(Character *character)
@@ -672,5 +699,9 @@ void Game::EndBattle(Character *character)
     {
         character->character_data.defeated = true;
         CreateDialog(character);
+    }
+    else
+    {
+        player->Unblock();
     }
 }
