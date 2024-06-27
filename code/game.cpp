@@ -665,6 +665,9 @@ void Game::MonsterEncounter()
         if (player->IsMoving() &&
             CheckCollisionRecs(sprite->rect.rectangle, player->hitbox.rectangle))
         {
+            // change encounter timer duration for the next encounter
+            encounter_timer->duration = GetRandomValue(8, 25) / 10.0f;
+
             const auto *monster_patch_sprite = (MonsterPatchSprite *) sprite;
             std::map<int, Monster *> monsters;
             int count_mounstes = 0;

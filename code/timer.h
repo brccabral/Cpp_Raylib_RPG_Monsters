@@ -13,10 +13,10 @@ public:
     void Deactivate();
     void Update();
     bool active{};
+    float duration;
 
 private:
 
-    float duration;
     bool repeat;
     bool autostart;
     std::function<void()> func;
