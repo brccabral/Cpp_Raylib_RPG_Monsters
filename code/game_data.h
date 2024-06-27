@@ -80,7 +80,7 @@ inline CharacterData o6 = {
         {DOWN},
         false,
         false,
-        "ice",
+        "sand",
         0};
 
 inline CharacterData o7 = {
