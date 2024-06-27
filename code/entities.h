@@ -74,6 +74,7 @@ public:
     bool can_rotate = true;
     bool nurse;
     CharacterData character_data;
+    std::map<int, Monster *> monsters;
 
 private:
 

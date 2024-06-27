@@ -105,8 +105,8 @@ Character::Character(
         const Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
         const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir,
         CharacterData char_data, const float radius, Game *g, bool nurse)
-    : Entity(pos, face_frms, sgs, facing_dir), character_data(std::move(char_data)), radius(radius),
-      game(g), nurse(nurse)
+    : Entity(pos, face_frms, sgs, facing_dir), nurse(nurse), character_data(std::move(char_data)),
+      radius(radius), game(g)
 {
     for (const auto sprite: game->collition_sprites->sprites)
     {
@@ -118,6 +118,12 @@ Character::Character(
     view_directions = character_data.directions;
     timers["look around"] = new Timer(1.5, true, true, [this] { RandomViewDirection(); });
     timers["notice"] = new Timer{0.5, false, false, [this] { StartMove(); }};
+
+    for (int i = 0; i < character_data.monsters.size(); ++i)
+    {
+        auto [name, level] = character_data.monsters[i];
+        monsters[i] = new Monster(name, level);
+    }
 }
 
 Character::~Character()
@@ -125,6 +131,11 @@ Character::~Character()
     for (const auto &[key, timer]: timers)
     {
         delete timer;
+    }
+
+    for (auto &[i, monster]: monsters)
+    {
+        delete monster;
     }
 }
 

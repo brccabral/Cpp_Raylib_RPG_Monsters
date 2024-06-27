@@ -28,7 +28,9 @@ public:
     bool isRunning = true;
 
     std::map<int, Monster *> player_monsters;
-    std::map<int, Monster *> dummy_monsters;
+    std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> monsters_frames;
+    std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> outline_frames;
+    std::map<AttackAnimation, std::vector<TiledTexture>> attack_animation_frames;
     std::map<std::string, std::map<std::string, Texture2D>> named_textures;
     std::map<std::string, Font> fonts;
 
@@ -54,9 +56,6 @@ private:
     std::map<std::string, std::map<std::string, tilerect_face>> face_rect_frames;
     std::map<std::string, animation_rects> animation_frames;
     AttackAnimationRects attack_animation_rects;
-    std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> monsters_frames;
-    std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> outline_frames;
-    std::map<AttackAnimation, std::vector<TiledTexture>> attack_animation_frames;
 
     // not *all*, but all that needs drawing or updates
     AllSprites *all_sprites = nullptr;

@@ -472,10 +472,6 @@ void Game::UnloadResources()
     {
         delete monster;
     }
-    for (const auto &[index, monster]: dummy_monsters)
-    {
-        delete monster;
-    }
 }
 
 void Game::CreateDialog(const Character *character)
@@ -505,7 +501,8 @@ void Game::EndDialog(const Character *character)
     }
     else if (!character->character_data.defeated)
     {
-        battle = new Battle(this, monsters_frames, outline_frames, attack_animation_frames);
+        const Texture2D bg = named_textures["bg_frames"][character->character_data.biome];
+        battle = new Battle(this, character->monsters, bg);
     }
 }
 
@@ -568,13 +565,6 @@ void Game::SetupFrames()
     player_monsters[player_index++] = new Monster("Gulfin", 24);
     player_monsters[player_index++] = new Monster("Jacana", 2);
     player_monsters[player_index++] = new Monster("Pouch", 3);
-
-    int dummy_index = 0;
-    dummy_monsters[dummy_index++] = new Monster("Atrox", 15);
-    dummy_monsters[dummy_index++] = new Monster("Sparchu", 3);
-    dummy_monsters[dummy_index++] = new Monster("Gulfin", 5);
-    dummy_monsters[dummy_index++] = new Monster("Jacana", 2);
-    dummy_monsters[dummy_index++] = new Monster("Pouch", 3);
 
     for (const auto &[monster_name, animations]: animation_frames)
     {

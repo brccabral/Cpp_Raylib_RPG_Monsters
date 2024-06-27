@@ -1,23 +1,17 @@
+#include <iostream>
 #include <utility>
 #include "battle.h"
 #include "groups.h"
 #include "game.h"
 
-#include <iostream>
 
-
-Battle::Battle(
-        Game *game,
-        const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
-                &monsters_frames,
-        const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
-                &outline_frames,
-        const std::map<AttackAnimation, std::vector<TiledTexture>> &attack_animation_frms)
-    : game(game), bg_surf(game->named_textures["bg_frames"]["forest"]),
-      monsters_frames(monsters_frames), outline_frames(outline_frames),
-      ui_frames(game->named_textures["ui"]), fonts(game->fonts),
-      monster_data({{PLAYER, game->player_monsters}, {OPPONENT, game->dummy_monsters}}),
-      monster_icons(game->named_textures["icons"]), attack_animation_frames(attack_animation_frms)
+Battle::Battle(Game *game, std::map<int, Monster *> opponent_monsters, Texture2D bg)
+    : game(game), bg_surf(bg), monsters_frames(game->monsters_frames),
+      outline_frames(game->outline_frames), ui_frames(game->named_textures["ui"]),
+      fonts(game->fonts),
+      monster_data({{PLAYER, game->player_monsters}, {OPPONENT, opponent_monsters}}),
+      monster_icons(game->named_textures["icons"]),
+      attack_animation_frames(game->attack_animation_frames)
 {
     battle_sprites = new BattleSprites();
     player_sprites = new SpriteGroup();

@@ -11,12 +11,7 @@ class Battle
 {
 public:
 
-    Battle(Game *game,
-           const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
-                   &monsters_frames,
-           const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
-                   &outline_frames,
-           const std::map<AttackAnimation, std::vector<TiledTexture>> &attack_animation_frms);
+    Battle(Game *game, std::map<int, Monster *> opponent_monsters, Texture2D bg);
     ~Battle();
     void Update(double dt);
     void Setup();
