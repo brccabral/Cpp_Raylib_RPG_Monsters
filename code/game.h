@@ -50,6 +50,9 @@ private:
     void TransitionCheck();
     void TintScreen(double dt);
     void SetupFrames();
+    // monster encounters
+    void CheckMonster() const;
+    void MonsterEncounter();
 
 
     std::map<std::string, tmx_map *> tmx_maps;
@@ -64,6 +67,7 @@ private:
     SpriteGroup *collition_sprites = nullptr;
     SpriteGroup *characters_sprites = nullptr;
     SpriteGroup *transition_sprites = nullptr;
+    SpriteGroup *monster_sprites = nullptr; // monster encounter
     Player *player{};
 
     // overlays
@@ -79,4 +83,6 @@ private:
     float tint_progress = 255;
     int tint_direction = -1;
     double tint_speed = 600;
+
+    Timer *encounter_timer = nullptr;
 };

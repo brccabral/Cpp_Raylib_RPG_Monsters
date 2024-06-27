@@ -66,6 +66,11 @@ void Entity::ChangeFacingDirection(const Vector2 target_pos)
     }
 }
 
+bool Entity::IsMoving() const
+{
+    return direction.x || direction.y;
+}
+
 FacingDirection Entity::GetState()
 {
     if (direction.x || direction.y)
@@ -104,7 +109,7 @@ FacingDirection Entity::GetState()
 Character::Character(
         const Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
         const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir,
-        CharacterData char_data, const float radius, Game *g, bool nurse)
+        CharacterData char_data, const float radius, Game *g, const bool nurse)
     : Entity(pos, face_frms, sgs, facing_dir), nurse(nurse), character_data(std::move(char_data)),
       radius(radius), game(g)
 {

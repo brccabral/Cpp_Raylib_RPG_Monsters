@@ -26,6 +26,8 @@ Game::Game(const int width, const int height)
 
     Setup("world", "house");
     SetupFrames();
+
+    encounter_timer = new Timer(2.0f, false, false, [this] { MonsterEncounter(); });
 }
 
 Game::~Game()
@@ -56,11 +58,17 @@ void Game::ClearSpriteGroups()
         delete transition_sprites;
         transition_sprites = nullptr;
     }
+    if (monster_sprites)
+    {
+        delete monster_sprites;
+        monster_sprites = nullptr;
+    }
     // create all_sprites after InitWindow for it uses LoadTexture
     all_sprites = new AllSprites;
     collition_sprites = new SpriteGroup;
     characters_sprites = new SpriteGroup;
     transition_sprites = new SpriteGroup;
+    monster_sprites = new SpriteGroup;
 }
 
 void Game::Draw() const
@@ -77,6 +85,7 @@ void Game::run()
         const double dt = GetFrameTime();
 
         // update
+        encounter_timer->Update();
         Input();
         TransitionCheck();
         if (!battle)
@@ -86,6 +95,7 @@ void Game::run()
             // drawing
             Draw();
         }
+        CheckMonster();
 
 
         // overlays
@@ -293,7 +303,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             auto [position, image] =
                     GetTileInfo(map->tiles[gid], monster->x, monster->y - monster->height);
             std::string biome = tmx_get_property(monster->properties, "biome")->value.string;
-            new MonsterPatchSprite(position, image, {all_sprites}, biome);
+            new MonsterPatchSprite(position, image, {all_sprites, monster_sprites}, biome);
         }
         monster = monster->next;
     }
@@ -472,6 +482,7 @@ void Game::UnloadResources()
     delete transition_sprites;
     delete monster_index;
     delete battle;
+    delete encounter_timer;
 
     for (const auto &[index, monster]: player_monsters)
     {
@@ -626,6 +637,26 @@ void Game::SetupFrames()
             attack_animation_frames[animation].push_back({&attack_texture, attack_rect});
         }
     }
+}
+
+void Game::CheckMonster() const
+{
+    for (const auto sprite: monster_sprites->sprites)
+    {
+        if (!battle && player->IsMoving() &&
+            CheckCollisionRecs(sprite->rect.rectangle, player->hitbox.rectangle))
+        {
+            if (!encounter_timer->active)
+            {
+                encounter_timer->Activate();
+            }
+        }
+    }
+}
+
+void Game::MonsterEncounter()
+{
+    std::cout << "monster encounter\n";
 }
 
 void Game::EndBattle(Character *character)

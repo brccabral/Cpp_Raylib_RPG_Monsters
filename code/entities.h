@@ -16,6 +16,7 @@ public:
     void Block();
     void Unblock();
     void ChangeFacingDirection(Vector2 target_pos);
+    [[nodiscard]] bool IsMoving() const;
 
     int z = WORLD_LAYERS["main"];
     int y_sort{};
