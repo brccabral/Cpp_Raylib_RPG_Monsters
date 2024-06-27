@@ -104,9 +104,9 @@ FacingDirection Entity::GetState()
 Character::Character(
         const Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
         const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir,
-        CharacterData char_data, const float radius, Game *g)
+        CharacterData char_data, const float radius, Game *g, bool nurse)
     : Entity(pos, face_frms, sgs, facing_dir), character_data(std::move(char_data)), radius(radius),
-      game(g)
+      game(g), nurse(nurse)
 {
     for (const auto sprite: game->collition_sprites->sprites)
     {

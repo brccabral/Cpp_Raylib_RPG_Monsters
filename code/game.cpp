@@ -34,6 +34,11 @@ Game::Game(const int width, const int height)
     player_monsters[player_index++] = new Monster("Jacana", 2);
     player_monsters[player_index++] = new Monster("Pouch", 3);
 
+    for (auto &[i, monster]: player_monsters)
+    {
+        monster->health *= 0.5f;
+    }
+
     int dummy_index = 0;
     dummy_monsters[dummy_index++] = new Monster("Atrox", 15);
     dummy_monsters[dummy_index++] = new Monster("Sparchu", 3);
@@ -70,7 +75,7 @@ Game::Game(const int width, const int height)
         }
     }
 
-    battle = new Battle(this, monsters_frames, outline_frames, attack_animation_frames);
+    // battle = new Battle(this, monsters_frames, outline_frames, attack_animation_frames);
 }
 
 Game::~Game()
@@ -403,10 +408,11 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         std::string character_id =
                 tmx_get_property(entity->properties, "character_id")->value.string;
         int radius = std::stoi(tmx_get_property(entity->properties, "radius")->value.string);
+        bool nurse = std::strcmp(character_id.c_str(), "Nurse") == 0;
         new Character(
                 {float(entity->x), float(entity->y)}, face_frames,
                 {all_sprites, collition_sprites, characters_sprites}, face_direction,
-                TRAINER_DATA[character_id], radius, this);
+                TRAINER_DATA[character_id], radius, this, nurse);
 
         entity = entity->next;
     }
@@ -539,6 +545,16 @@ void Game::EndDialog(const Character *character)
 {
     delete dialog_tree;
     dialog_tree = nullptr;
+
+    if (character->nurse)
+    {
+        for (auto &[i, monster]: player_monsters)
+        {
+            monster->health = monster->GetStat("max_health");
+            monster->energy = monster->GetStat("max_energy");
+        }
+    }
+
     player->Unblock();
 }
 
