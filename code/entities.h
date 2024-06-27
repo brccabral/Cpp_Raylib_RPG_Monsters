@@ -73,13 +73,13 @@ public:
 
     bool can_rotate = true;
     bool nurse;
+    CharacterData character_data;
 
 private:
 
     void Raycast();
     bool HasLineOfSight();
 
-    CharacterData character_data;
     std::vector<RectangleU> collition_rects;
     bool has_moved{};
     bool has_noticed{};

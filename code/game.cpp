@@ -23,59 +23,7 @@ Game::Game(const int width, const int height)
     ClearSpriteGroups();
 
     Setup(tmx_maps["world"], "house");
-
-    int player_index = 0;
-    player_monsters[player_index++] = new Monster("Charmadillo", 30);
-    player_monsters[player_index++] = new Monster("Friolera", 29);
-    player_monsters[player_index++] = new Monster("Larvea", 3);
-    player_monsters[player_index++] = new Monster("Atrox", 24);
-    player_monsters[player_index++] = new Monster("Sparchu", 24);
-    player_monsters[player_index++] = new Monster("Gulfin", 24);
-    player_monsters[player_index++] = new Monster("Jacana", 2);
-    player_monsters[player_index++] = new Monster("Pouch", 3);
-
-    for (auto &[i, monster]: player_monsters)
-    {
-        monster->health *= 0.5f;
-    }
-
-    int dummy_index = 0;
-    dummy_monsters[dummy_index++] = new Monster("Atrox", 15);
-    dummy_monsters[dummy_index++] = new Monster("Sparchu", 3);
-    dummy_monsters[dummy_index++] = new Monster("Gulfin", 5);
-    dummy_monsters[dummy_index++] = new Monster("Jacana", 2);
-    dummy_monsters[dummy_index++] = new Monster("Pouch", 3);
-
-    std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> monsters_frames;
-    std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> outline_frames;
-    for (const auto &[monster_name, animations]: animation_frames)
-    {
-        for (const auto &[key, frames]: animations)
-        {
-            for (const auto frame: frames)
-            {
-                monsters_frames[monster_name][key].push_back(
-                        {&named_textures["monsters"][monster_name], frame});
-
-                outline_frames[monster_name][key].push_back(
-                        {&named_textures["outlines"][monster_name], frame});
-            }
-        }
-    }
-    monster_index = new MonsterIndex(
-            player_monsters, fonts, named_textures["icons"], monsters_frames, named_textures["ui"]);
-
-    std::map<AttackAnimation, std::vector<TiledTexture>> attack_animation_frames;
-    for (auto &[attack_name, attack_texture]: named_textures["attacks"])
-    {
-        AttackAnimation animation = ATTACK_ANIMATION_NAMES[attack_name];
-        for (const auto attack_rect: attack_animation_rects[animation])
-        {
-            attack_animation_frames[animation].push_back({&attack_texture, attack_rect});
-        }
-    }
-
-    // battle = new Battle(this, monsters_frames, outline_frames, attack_animation_frames);
+    SetupFrames();
 }
 
 Game::~Game()
@@ -553,9 +501,12 @@ void Game::EndDialog(const Character *character)
             monster->health = monster->GetStat("max_health");
             monster->energy = monster->GetStat("max_energy");
         }
+        player->Unblock();
     }
-
-    player->Unblock();
+    else if (!character->character_data.defeated)
+    {
+        battle = new Battle(this, monsters_frames, outline_frames, attack_animation_frames);
+    }
 }
 
 void Game::TransitionCheck()
@@ -603,4 +554,51 @@ void Game::TintScreen(const double dt)
         }
     }
     render_tint = {255, 255, 255, (unsigned char) (tint_progress)};
+}
+
+void Game::SetupFrames()
+{
+
+    int player_index = 0;
+    player_monsters[player_index++] = new Monster("Charmadillo", 30);
+    player_monsters[player_index++] = new Monster("Friolera", 29);
+    player_monsters[player_index++] = new Monster("Larvea", 3);
+    player_monsters[player_index++] = new Monster("Atrox", 24);
+    player_monsters[player_index++] = new Monster("Sparchu", 24);
+    player_monsters[player_index++] = new Monster("Gulfin", 24);
+    player_monsters[player_index++] = new Monster("Jacana", 2);
+    player_monsters[player_index++] = new Monster("Pouch", 3);
+
+    int dummy_index = 0;
+    dummy_monsters[dummy_index++] = new Monster("Atrox", 15);
+    dummy_monsters[dummy_index++] = new Monster("Sparchu", 3);
+    dummy_monsters[dummy_index++] = new Monster("Gulfin", 5);
+    dummy_monsters[dummy_index++] = new Monster("Jacana", 2);
+    dummy_monsters[dummy_index++] = new Monster("Pouch", 3);
+
+    for (const auto &[monster_name, animations]: animation_frames)
+    {
+        for (const auto &[key, frames]: animations)
+        {
+            for (const auto frame: frames)
+            {
+                monsters_frames[monster_name][key].push_back(
+                        {&named_textures["monsters"][monster_name], frame});
+
+                outline_frames[monster_name][key].push_back(
+                        {&named_textures["outlines"][monster_name], frame});
+            }
+        }
+    }
+    monster_index = new MonsterIndex(
+            player_monsters, fonts, named_textures["icons"], monsters_frames, named_textures["ui"]);
+
+    for (auto &[attack_name, attack_texture]: named_textures["attacks"])
+    {
+        AttackAnimation animation = ATTACK_ANIMATION_NAMES[attack_name];
+        for (const auto attack_rect: attack_animation_rects[animation])
+        {
+            attack_animation_frames[animation].push_back({&attack_texture, attack_rect});
+        }
+    }
 }
