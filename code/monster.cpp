@@ -1,6 +1,8 @@
 #include "monster.h"
 #include "game_data.h"
 
+#include <raymath.h>
+
 
 Monster::Monster(std::string name_, const int level) : name(std::move(name_)), level(level)
 {
@@ -59,6 +61,7 @@ std::array<std::pair<float, float>, 3> Monster::GetInfo()
 
 void Monster::Update(const double dt)
 {
+    StatLimiter();
     if (!paused)
     {
         initiative += GetStat("speed") * dt;
@@ -87,6 +90,13 @@ void Monster::UpdateXP(const int amount)
         xp = amount - (level_up - xp);
         level_up = level * 150;
     }
+}
+
+// avoids showing negative numbers for health and energy
+void Monster::StatLimiter()
+{
+    health = Clamp(health, 0, GetStat("max_health"));
+    energy = Clamp(energy, 0, GetStat("max_energy"));
 }
 
 std::ostream &operator<<(std::ostream &os, Monster const &m)

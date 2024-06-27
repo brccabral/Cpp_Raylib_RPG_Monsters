@@ -24,6 +24,7 @@ public:
     void ReduceEnergy(Attack attack);
     float GetBaseDamage(Attack attack);
     void UpdateXP(int amount);
+    void StatLimiter();
     friend std::ostream &operator<<(std::ostream &os, Monster const &m);
 
     std::string name;
