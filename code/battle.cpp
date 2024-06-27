@@ -125,6 +125,7 @@ void Battle::CreateNewMonsters()
 void Battle::CreateMonster(
         Monster *monster, const int index, const int pos_index, const SelectionSide entity)
 {
+    monster->paused = false; // make sure all monsters are ready to battle when created
     const auto frames = monsters_frames[monster->name];
     const auto outlines = outline_frames[monster->name];
     MonsterSprite *monster_sprite;
