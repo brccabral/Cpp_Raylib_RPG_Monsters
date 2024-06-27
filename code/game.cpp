@@ -6,6 +6,8 @@
 #include "game.h"
 #include "raylib_utils.h"
 
+#include <iostream>
+
 
 Game::Game(const int width, const int height)
 {
@@ -22,7 +24,7 @@ Game::Game(const int width, const int height)
     ImporAssets();
     ClearSpriteGroups();
 
-    Setup(tmx_maps["world"], "house");
+    Setup("world", "house");
     SetupFrames();
 }
 
@@ -214,9 +216,11 @@ void Game::CreateTileLayer(const tmx_map *map, const tmx_layer *layer, const int
     }
 }
 
-void Game::Setup(const tmx_map *map, const std::string &player_start_position)
+void Game::Setup(const std::string &map_name, const std::string &player_start_position)
 {
     ClearSpriteGroups();
+
+    const tmx_map *map = tmx_maps[map_name];
 
     const tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
     const tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
@@ -265,7 +269,7 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
         std::string pos = tmx_get_property(transition->properties, "pos")->value.string;
         new TransitionSprite(
                 {float(transition->x), float(transition->y)},
-                {float(transition->width), float(transition->height)}, {target, pos},
+                {float(transition->width), float(transition->height)}, target, pos,
                 {transition_sprites});
         transition = transition->next;
     }
@@ -305,10 +309,10 @@ void Game::Setup(const tmx_map *map, const std::string &player_start_position)
     auto entity = entities_layer->content.objgr->head;
     while (entity)
     {
-        if (strcmp(entity->name, "Player") == 0)
+        if (std::strcmp(entity->name, "Player") == 0)
         {
-            if (strcmp(tmx_get_property(entity->properties, "pos")->value.string,
-                       player_start_position.c_str()) == 0)
+            char *entity_pos = tmx_get_property(entity->properties, "pos")->value.string;
+            if (std::strcmp(entity_pos, player_start_position.c_str()) == 0)
             {
                 std::map<FacingDirection, std::vector<TiledTexture>> face_frames;
                 std::string direction =
@@ -461,6 +465,7 @@ void Game::UnloadResources()
     }
 
     delete dialog_tree; // delete dialog_tree before all_sprites, it will remove itself
+    delete transition_target;
     delete all_sprites;
     delete collition_sprites;
     delete characters_sprites;
@@ -502,12 +507,23 @@ void Game::EndDialog(const Character *character)
     else if (!character->character_data.defeated)
     {
         const Texture2D bg = named_textures["bg_frames"][character->character_data.biome];
-        battle = new Battle(this, character->monsters, bg);
+        if (transition_target)
+        {
+            delete transition_target;
+            transition_target = nullptr;
+        }
+        transition_target = new TransitionTarget(TRANSITIONTARGET_LEVEL2BATTLE);
+        transition_target->battle = new Battle(this, character->monsters, bg);
+        tint_mode = TINT;
     }
 }
 
 void Game::TransitionCheck()
 {
+    if (transition_target)
+    {
+        return;
+    }
     std::vector<TransitionSprite *> sprites;
     for (const auto transition: transition_sprites->sprites)
     {
@@ -520,7 +536,9 @@ void Game::TransitionCheck()
     if (!sprites.empty())
     {
         player->Block();
-        transition_target = sprites[0]->target;
+        transition_target = new TransitionTarget(TRANSITIONTARGET_MAP);
+        transition_target->map_name = sprites[0]->map_name;
+        transition_target->start_position = sprites[0]->start_position;
         tint_mode = TINT;
     }
 }
@@ -545,9 +563,22 @@ void Game::TintScreen(const double dt)
         if (tint_progress <= 0)
         {
             tint_progress = 0;
-            Setup(tmx_maps[transition_target[0]], transition_target[1]);
+            if (transition_target->target_type == TRANSITIONTARGET_LEVEL2BATTLE)
+            {
+                battle = transition_target->battle;
+            }
+            else if (transition_target->target_type == TRANSITIONTARGET_BATTLE2LEVEL)
+            {
+                delete battle;
+                battle = nullptr;
+            }
+            else if (transition_target->target_type == TRANSITIONTARGET_MAP)
+            {
+                Setup(transition_target->map_name, transition_target->start_position);
+            }
             tint_mode = UNTINT;
-            transition_target = {};
+            delete transition_target;
+            transition_target = nullptr;
         }
     }
     render_tint = {255, 255, 255, (unsigned char) (tint_progress)};

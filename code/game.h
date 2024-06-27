@@ -5,6 +5,7 @@
 #include "groups.h"
 #include "monsterindex.h"
 #include "support.h"
+#include "transitiontarget.h"
 
 
 struct TileInfo
@@ -40,7 +41,7 @@ private:
     void ImporAssets();
     static TileInfo GetTileInfo(const tmx_tile *tile, int posX, int posY);
     void CreateTileLayer(const tmx_map *map, const tmx_layer *layer, int z = WORLD_LAYERS["main"]);
-    void Setup(const tmx_map *map, const std::string &player_start_position);
+    void Setup(const std::string &map_name, const std::string &player_start_position);
     void Input();
     void UnloadResources();
     void CreateDialog(const Character *character);
@@ -72,7 +73,7 @@ private:
 
     // Transition / tint
     Color render_tint = WHITE;
-    std::array<std::string, 2> transition_target;
+    TransitionTarget *transition_target = nullptr;
     TINT_MODE tint_mode = UNTINT;
     float tint_progress = 255;
     int tint_direction = -1;

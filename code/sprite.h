@@ -1,5 +1,4 @@
 #pragma once
-#include <array>
 #include <raylib.h>
 #include "raylib_utils.h"
 #include "game_data.h"
@@ -86,16 +85,18 @@ public:
     BorderSprite(Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs);
 };
 
+class Battle; // forward declaration
 // Locations that changes the map
 class TransitionSprite : public Sprite
 {
 public:
 
     TransitionSprite(
-            Vector2 pos, Vector2 size, std::array<std::string, 2> target,
+            Vector2 pos, Vector2 size, std::string map_name, std::string start_position,
             const std::vector<SpriteGroup *> &sgs);
 
-    std::array<std::string, 2> target;
+    std::string map_name;
+    std::string start_position;
 };
 
 class CollidableSprite : public Sprite

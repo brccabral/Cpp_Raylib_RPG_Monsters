@@ -6,6 +6,9 @@
 #include "raylib_utils.h"
 #include "battle.h"
 
+#include <iostream>
+#include <utility>
+
 
 SimpleSprite::SimpleSprite(const std::vector<SpriteGroup *> &sprite_groups)
 {
@@ -37,6 +40,10 @@ void SimpleSprite::Draw(const Vector2 offset) const
 
 void SimpleSprite::LeaveOtherGroups(const SpriteGroup *sprite_group)
 {
+    if (groups.empty())
+    {
+        return;
+    }
     for (const auto group: groups)
     {
         if (group != sprite_group)
@@ -102,9 +109,10 @@ BorderSprite::BorderSprite(
 {}
 
 TransitionSprite::TransitionSprite(
-        const Vector2 pos, const Vector2 size, std::array<std::string, 2> target,
+        const Vector2 pos, const Vector2 size, std::string map_name, std::string start_position,
         const std::vector<SpriteGroup *> &sgs)
-    : Sprite(pos, {{}, {0, 0, size.x, size.y}}, sgs), target(std::move(target))
+    : Sprite(pos, {{}, {0, 0, size.x, size.y}}, sgs), map_name(std::move(map_name)),
+      start_position(std::move(start_position))
 {}
 
 CollidableSprite::CollidableSprite(
@@ -637,4 +645,5 @@ SpriteGroup::~SpriteGroup()
         sprite->LeaveOtherGroups(this);
         delete sprite;
     }
+    sprites.clear();
 }
