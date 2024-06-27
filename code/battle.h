@@ -39,6 +39,8 @@ public:
     void DrawAttacks();
     void DrawSwitch();
 
+    Character *character = nullptr;
+
 private:
 
     void UpdateTimers();
@@ -57,7 +59,6 @@ private:
     std::map<AttackAnimation, std::vector<TiledTexture>> attack_animation_frames;
     std::map<std::string, Timer *> timers{};
     bool battle_over{};
-    Character *character = nullptr;
 
     // groups
     BattleSprites *battle_sprites = nullptr;

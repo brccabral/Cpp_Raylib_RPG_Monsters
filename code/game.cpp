@@ -483,6 +483,7 @@ void Game::UnloadResources()
     delete collition_sprites;
     delete characters_sprites;
     delete transition_sprites;
+    delete monster_sprites;
     delete monster_index;
     delete battle;
     delete encounter_timer;

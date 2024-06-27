@@ -39,6 +39,13 @@ Battle::~Battle()
     {
         delete timer;
     }
+    if (!character)
+    {
+        for (auto &[i, monster]: monster_data[OPPONENT])
+        {
+            delete monster;
+        }
+    }
 }
 
 void Battle::Update(const double dt)

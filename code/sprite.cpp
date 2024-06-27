@@ -93,8 +93,7 @@ Sprite::Sprite(
 MonsterPatchSprite::MonsterPatchSprite(
         const Vector2 pos, const TiledTexture &img, const std::vector<SpriteGroup *> &sgs,
         std::string bio, const std::string &patch_monsters, const int level)
-    : Sprite(pos, img, sgs, WORLD_LAYERS["main"]), biome(std::move(bio)),
-     level(level)
+    : Sprite(pos, img, sgs, WORLD_LAYERS["main"]), biome(std::move(bio)), level(level)
 {
     y_sort -= 40;
     // move sand patches to background drawing layer
@@ -193,6 +192,11 @@ MonsterSprite::~MonsterSprite()
         {
             MemFree(texture);
         }
+    }
+
+    if (!battle->character && entity == OPPONENT)
+    {
+        delete monster;
     }
 }
 
