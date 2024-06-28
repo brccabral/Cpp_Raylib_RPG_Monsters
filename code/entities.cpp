@@ -121,8 +121,8 @@ Character::Character(
         }
     }
     view_directions = character_data.directions;
-    timers["look around"] = new Timer(1.5, true, true, [this] { RandomViewDirection(); });
-    timers["notice"] = new Timer{0.5, false, false, [this] { StartMove(); }};
+    timers["look around"] = Timer(1.5f, true, true, [this] { RandomViewDirection(); });
+    timers["notice"] = Timer{0.5f, false, false, [this] { StartMove(); }};
 
     for (int i = 0; i < character_data.monsters.size(); ++i)
     {
@@ -133,11 +133,6 @@ Character::Character(
 
 Character::~Character()
 {
-    for (const auto &[key, timer]: timers)
-    {
-        delete timer;
-    }
-
     for (auto &[i, monster]: monsters)
     {
         delete monster;
@@ -155,9 +150,9 @@ std::vector<std::string> Character::GetDialog() const
 
 void Character::Update(const double dt)
 {
-    for (auto [key, timer]: timers)
+    for (auto &[key, timer]: timers)
     {
-        timer->Update();
+        timer.Update();
     }
 
     Entity::Update(dt);
@@ -215,7 +210,7 @@ void Character::Raycast()
         // character has seen player and moved towards player
         game->player->Block();
         game->player->ChangeFacingDirection(GetRectCenter(rect));
-        timers["notice"]->Activate();
+        timers["notice"].Activate();
         can_rotate = false; // stop look around
         has_noticed = true;
         game->player->noticed = true;

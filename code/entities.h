@@ -88,5 +88,5 @@ private:
     float radius{};
     std::vector<FacingDirection> view_directions = {LEFT, RIGHT};
     Game *game;
-    std::map<std::string, Timer *> timers;
+    std::map<std::string, Timer> timers;
 };

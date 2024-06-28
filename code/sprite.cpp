@@ -174,17 +174,12 @@ MonsterSprite::MonsterSprite(
         state_frames_highlight[state] = highlight_tiles;
     }
 
-    timers["remove_highlight"] = new Timer(0.3f, false, false, [this] { SetHighlight(false); });
-    timers["kill"] = new Timer(0.6f, false, false, [this] { Destroy(); });
+    timers["remove_highlight"] = Timer(0.3f, false, false, [this] { SetHighlight(false); });
+    timers["kill"] = Timer(0.6f, false, false, [this] { Destroy(); });
 }
 
 MonsterSprite::~MonsterSprite()
 {
-    for (const auto &[key, timer]: timers)
-    {
-        delete timer;
-    }
-
     // state_frames_highlight are created with Texture2DToPointer(), which calls MemAlloc
     for (auto &[anim_state, frames]: state_frames_highlight)
     {
@@ -223,7 +218,7 @@ void MonsterSprite::Update(const double dt)
 {
     for (auto &[key, timer]: timers)
     {
-        timer->Update();
+        timer.Update();
     }
     Animate(dt);
     monster->Update(dt);
@@ -252,7 +247,7 @@ void MonsterSprite::SetHighlight(const bool value)
     highlight = value;
     if (highlight)
     {
-        timers["remove_highlight"]->Activate();
+        timers["remove_highlight"].Activate();
     }
 }
 
@@ -292,13 +287,13 @@ void MonsterSprite::Kill()
 void MonsterSprite::DelayedKill(
         Monster *monster, const int index, const int pos_index, const SelectionSide side)
 {
-    if (!timers["kill"]->active)
+    if (!timers["kill"].active)
     {
         newMonster = monster;
         newIndex = index;
         newPosIndex = pos_index;
         newSide = side;
-        timers["kill"]->Activate();
+        timers["kill"].Activate();
     }
 }
 
@@ -534,17 +529,12 @@ TimedSprite::TimedSprite(
     rect = frame.rect;
     RectToCenter(rect, pos);
 
-    death_timer = new Timer(duration, false, true, [this] { Kill(); });
-}
-
-TimedSprite::~TimedSprite()
-{
-    delete death_timer;
+    death_timer = Timer(duration, false, true, [this] { Kill(); });
 }
 
 void TimedSprite::Update(double deltaTime)
 {
-    death_timer->Update();
+    death_timer.Update();
 }
 
 void SpriteGroup::Draw() const

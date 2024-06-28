@@ -14,8 +14,7 @@ public:
     explicit
     Timer(float duration, bool repeat = false, bool autostart = false,
           const std::function<void()> &func = std::function<void()>{});
-    // Timer(const Timer &timer);
-    // Timer(Timer &&timer) noexcept;
+    ~Timer();
     void Activate();
     void Deactivate();
     void Update();

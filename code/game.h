@@ -53,7 +53,7 @@ private:
     void TintScreen(double dt);
     void SetupFrames();
     // monster encounters
-    void CheckMonster() const;
+    void CheckMonster();
     void MonsterEncounter();
     void CheckEvolution();
 
@@ -88,5 +88,5 @@ private:
     int tint_direction = -1;
     double tint_speed = 600;
 
-    Timer *encounter_timer = nullptr;
+    Timer encounter_timer;
 };

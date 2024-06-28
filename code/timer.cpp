@@ -14,15 +14,10 @@ Timer::Timer(
     }
 }
 
-// Timer::Timer(const Timer &timer)
-//     : duration(timer.duration), repeat(timer.repeat), autostart(timer.autostart),
-//     func(timer.func)
-// {}
-//
-// Timer::Timer(Timer &&timer) noexcept
-//     : duration(timer.duration), repeat(timer.repeat), autostart(timer.autostart),
-//       func(std::move(timer.func))
-// {}
+Timer::~Timer()
+{
+    int a = start_time;
+}
 
 void Timer::Activate()
 {
@@ -33,7 +28,7 @@ void Timer::Activate()
 void Timer::Deactivate()
 {
     active = false;
-    start_time = 0;
+    start_time = GetTime();
     if (repeat)
     {
         Activate();

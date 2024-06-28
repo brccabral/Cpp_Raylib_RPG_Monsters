@@ -27,7 +27,7 @@ Game::Game(const int width, const int height)
     Setup("world", "house");
     SetupFrames();
 
-    encounter_timer = new Timer(2.0f, false, false, [this] { MonsterEncounter(); });
+    encounter_timer = Timer(2.0f, false, false, [this] { MonsterEncounter(); });
 }
 
 Game::~Game()
@@ -85,7 +85,7 @@ void Game::run()
         const double dt = GetFrameTime();
 
         // update
-        encounter_timer->Update();
+        encounter_timer.Update();
         Input();
         TransitionCheck();
         if (!battle)
@@ -492,7 +492,6 @@ void Game::UnloadResources()
     delete monster_sprites;
     delete monster_index;
     delete battle;
-    delete encounter_timer;
 
     if (evolution)
     {
@@ -626,7 +625,6 @@ void Game::TintScreen(const double dt)
 
 void Game::SetupFrames()
 {
-
     int player_index = 0;
     player_monsters[player_index++] = new Monster("Charmadillo", 30);
     player_monsters[player_index++] = new Monster("Friolera", 29);
@@ -665,16 +663,16 @@ void Game::SetupFrames()
     }
 }
 
-void Game::CheckMonster() const
+void Game::CheckMonster()
 {
     for (const auto sprite: monster_sprites->sprites)
     {
         if (!battle && player->IsMoving() &&
             CheckCollisionRecs(sprite->rect.rectangle, player->hitbox.rectangle))
         {
-            if (!encounter_timer->active)
+            if (!encounter_timer.active)
             {
-                encounter_timer->Activate();
+                encounter_timer.Activate();
             }
         }
     }
@@ -688,7 +686,7 @@ void Game::MonsterEncounter()
             CheckCollisionRecs(sprite->rect.rectangle, player->hitbox.rectangle))
         {
             // change encounter timer duration for the next encounter
-            encounter_timer->duration = GetRandomValue(8, 25) / 10.0f;
+            encounter_timer.duration = GetRandomValue(8, 25) / 10.0f;
 
             const auto *monster_patch_sprite = (MonsterPatchSprite *) sprite;
             int count_mounstes = 0;

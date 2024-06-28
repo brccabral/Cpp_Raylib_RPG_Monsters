@@ -24,7 +24,7 @@ Battle::Battle(
     indexes[SELECTMODE_SWITCH] = 0;
     indexes[SELECTMODE_TARGET] = 0;
 
-    timers["opponent_delay"] = new Timer(0.6f, false, false, [this] { OpponentAttack(); });
+    timers["opponent_delay"] = Timer(0.6f, false, false, [this] { OpponentAttack(); });
 
     Setup();
 }
@@ -34,10 +34,7 @@ Battle::~Battle()
     delete battle_sprites;
     delete player_sprites;
     delete opponent_sprites;
-    for (auto &[key, timer]: timers)
-    {
-        delete timer;
-    }
+
     // if (!character)
     // {
     //     for (auto &[i, monster]: *monster_data[OPPONENT])
@@ -356,7 +353,7 @@ void Battle::CheckActiveGroup(const SpriteGroup *group, const SelectionSide side
             }
             else
             {
-                timers["opponent_delay"]->Activate();
+                timers["opponent_delay"].Activate();
             }
         }
     }
@@ -714,7 +711,7 @@ void Battle::UpdateTimers()
 {
     for (auto &[key, timer]: timers)
     {
-        timer->Update();
+        timer.Update();
     }
 }
 

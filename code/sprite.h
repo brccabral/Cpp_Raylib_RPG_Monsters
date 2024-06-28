@@ -168,7 +168,7 @@ private:
     float frame_index{};
 
     bool highlight{};
-    std::map<std::string, Timer *> timers;
+    std::map<std::string, Timer> timers;
 
     MonsterSprite *target_sprite = nullptr;
     Attack current_attack = ATTACK_NONE;
@@ -280,10 +280,9 @@ public:
 
     TimedSprite(
             Vector2 pos, TiledTexture frame, const std::vector<SpriteGroup *> &sgs, float duration);
-    ~TimedSprite() override;
     void Update(double deltaTime) override;
 
 private:
 
-    Timer *death_timer = nullptr;
+    Timer death_timer;
 };

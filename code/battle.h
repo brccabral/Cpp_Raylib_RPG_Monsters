@@ -57,7 +57,7 @@ private:
     std::vector<Monster *> available_monsters;
     std::map<std::string, Texture2D> monster_icons;
     std::map<AttackAnimation, std::vector<TiledTexture>> attack_animation_frames;
-    std::map<std::string, Timer *> timers{};
+    std::map<std::string, Timer> timers;
     bool battle_over{};
 
     // groups
