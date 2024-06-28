@@ -196,7 +196,8 @@ OutlineCreator(const std::map<std::string, Texture2D> &texture_dict, const float
     for (auto &[monster, monster_texture]: texture_dict)
     {
         Image image = LoadImageFromTexture(monster_texture);
-        const Image mask = ImageFromChannel(image, 4, 0.5f);
+        Image mask = ImageFromChannel(image, 3);
+        ImageAlphaMask(&mask, mask);
 
         Image new_image = GenImageColor(image.width, image.height, {0});
         // copy mask in all 8 directions to create an Outline effect

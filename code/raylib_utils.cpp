@@ -456,7 +456,7 @@ static Vector4 *LoadImageDataNormalized(const Image &image)
     return pixels;
 }
 
-Image ImageFromChannel(const Image &image, int selected_channel, float threshold)
+Image ImageFromChannel(const Image &image, int selectedChannel)
 {
     Image result = {};
 
@@ -464,35 +464,28 @@ Image ImageFromChannel(const Image &image, int selected_channel, float threshold
     if ((image.data == nullptr) || (image.width == 0) || (image.height == 0))
         return result;
 
-    // Check thresholds limits
-    if (threshold < 0.0f)
-    {
-        TRACELOG(LOG_WARNING, "Threshold is from 0 to 1, changing to 0.");
-        threshold = 0.0f;
-    }
-    if (threshold > 1.0f)
-    {
-        TRACELOG(LOG_WARNING, "Threshold is from 0 to 1, changing to 1.");
-        threshold = 1.0f;
-    }
-
     // Check selected channel
+    if (selectedChannel < 0)
+    {
+        TRACELOG(LOG_WARNING, "Channel cannot be negative. Setting channel to 0.");
+        selectedChannel = 0;
+    }
     if (image.format == PIXELFORMAT_UNCOMPRESSED_GRAYSCALE ||
         image.format == PIXELFORMAT_UNCOMPRESSED_R32 ||
         image.format == PIXELFORMAT_UNCOMPRESSED_R16)
     {
-        if (selected_channel > 0)
+        if (selectedChannel > 0)
         {
             TRACELOG(LOG_WARNING, "This image has only 1 channel. Setting channel to it.");
-            selected_channel = 0;
+            selectedChannel = 0;
         }
     }
     else if (image.format == PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA)
     {
-        if (selected_channel > 1)
+        if (selectedChannel > 1)
         {
             TRACELOG(LOG_WARNING, "This image has only 2 channels. Setting channel to alpha.");
-            selected_channel = 1;
+            selectedChannel = 1;
         }
     }
     else if (
@@ -501,29 +494,29 @@ Image ImageFromChannel(const Image &image, int selected_channel, float threshold
             image.format == PIXELFORMAT_UNCOMPRESSED_R32G32B32 ||
             image.format == PIXELFORMAT_UNCOMPRESSED_R16G16B16)
     {
-        if (selected_channel > 2)
+        if (selectedChannel > 2)
         {
             TRACELOG(LOG_WARNING, "This image has only 3 channels. Setting channel to red.");
-            selected_channel = 0;
+            selectedChannel = 0;
         }
     }
 
     // formats rgba
-    if (selected_channel > 3 || selected_channel < 0)
+    if (selectedChannel > 3)
     {
         TRACELOG(
                 LOG_WARNING,
                 "ImageFromChannel supports channels 0 to 3 (rgba). Setting channel to alpha.");
-        selected_channel = 3;
+        selectedChannel = 3;
     }
 
-    result.format = PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA;
+    result.format = PIXELFORMAT_UNCOMPRESSED_GRAYSCALE;
     result.height = image.height;
     result.width = image.width;
     result.mipmaps = 1;
 
     auto *pixels = (unsigned char *) RL_CALLOC(
-            image.width * 2 * image.height, sizeof(unsigned char)); // values 0 to 255
+            image.width * image.height, sizeof(unsigned char)); // values 0 to 255
 
     if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB)
         TRACELOG(
@@ -531,24 +524,21 @@ Image ImageFromChannel(const Image &image, int selected_channel, float threshold
                 "IMAGE: Pixel data retrieval not supported for compressed image formats");
     else
     {
-        for (int i = 0, k = 0; i < image.width * 2 * image.height; i += 2)
+        for (int i = 0, k = 0; i < image.width * image.height; ++i)
         {
-            float image_value = -1;
-            float image_alpha = 0;
+            float imageValue = -1;
             switch (image.format)
             {
                 case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE:
                 {
-                    image_value =
-                            (float) ((unsigned char *) image.data)[i + selected_channel] / 255.0f;
-                    image_alpha = 1;
+                    imageValue =
+                            (float) ((unsigned char *) image.data)[i + selectedChannel] / 255.0f;
                 }
                 break;
                 case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
                 {
-                    image_value =
-                            (float) ((unsigned char *) image.data)[k + selected_channel] / 255.0f;
-                    image_alpha = (float) ((unsigned char *) image.data)[k + 1] / 255.0f;
+                    imageValue =
+                            (float) ((unsigned char *) image.data)[k + selectedChannel] / 255.0f;
 
                     k += 2;
                 }
@@ -557,131 +547,118 @@ Image ImageFromChannel(const Image &image, int selected_channel, float threshold
                 {
                     unsigned short pixel = ((unsigned short *) image.data)[i];
 
-                    if (selected_channel == 0)
+                    if (selectedChannel == 0)
                     {
-                        image_value = (float) ((pixel & 0b1111100000000000) >> 11) * (1.0f / 31);
+                        imageValue = (float) ((pixel & 0b1111100000000000) >> 11) * (1.0f / 31);
                     }
-                    else if (selected_channel == 1)
+                    else if (selectedChannel == 1)
                     {
-                        image_value = (float) ((pixel & 0b0000011111000000) >> 6) * (1.0f / 31);
+                        imageValue = (float) ((pixel & 0b0000011111000000) >> 6) * (1.0f / 31);
                     }
-                    else if (selected_channel == 2)
+                    else if (selectedChannel == 2)
                     {
-                        image_value = (float) ((pixel & 0b0000000000111110) >> 1) * (1.0f / 31);
+                        imageValue = (float) ((pixel & 0b0000000000111110) >> 1) * (1.0f / 31);
                     }
-                    else if (selected_channel == 3)
+                    else if (selectedChannel == 3)
                     {
-                        image_value = ((pixel & 0b0000000000000001) == 0) ? 0.0f : 1.0f;
+                        imageValue = ((pixel & 0b0000000000000001) == 0) ? 0.0f : 1.0f;
                     }
-                    image_alpha = ((pixel & 0b0000000000000001) == 0) ? 0.0f : 1.0f;
                 }
                 break;
                 case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
                 {
                     unsigned short pixel = ((unsigned short *) image.data)[i];
 
-                    if (selected_channel == 0)
+                    if (selectedChannel == 0)
                     {
-                        image_value = (float) ((pixel & 0b1111100000000000) >> 11) * (1.0f / 31);
+                        imageValue = (float) ((pixel & 0b1111100000000000) >> 11) * (1.0f / 31);
                     }
-                    else if (selected_channel == 1)
+                    else if (selectedChannel == 1)
                     {
-                        image_value = (float) ((pixel & 0b0000011111100000) >> 5) * (1.0f / 63);
+                        imageValue = (float) ((pixel & 0b0000011111100000) >> 5) * (1.0f / 63);
                     }
-                    else if (selected_channel == 2)
+                    else if (selectedChannel == 2)
                     {
-                        image_value = (float) (pixel & 0b0000000000011111) * (1.0f / 31);
+                        imageValue = (float) (pixel & 0b0000000000011111) * (1.0f / 31);
                     }
-                    image_alpha = 1;
                 }
                 break;
                 case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
                 {
                     unsigned short pixel = ((unsigned short *) image.data)[i];
 
-                    if (selected_channel == 0)
+                    if (selectedChannel == 0)
                     {
-                        image_value = (float) ((pixel & 0b1111000000000000) >> 12) * (1.0f / 15);
+                        imageValue = (float) ((pixel & 0b1111000000000000) >> 12) * (1.0f / 15);
                     }
-                    else if (selected_channel == 1)
+                    else if (selectedChannel == 1)
                     {
-                        image_value = (float) ((pixel & 0b0000111100000000) >> 8) * (1.0f / 15);
+                        imageValue = (float) ((pixel & 0b0000111100000000) >> 8) * (1.0f / 15);
                     }
-                    else if (selected_channel == 2)
+                    else if (selectedChannel == 2)
                     {
-                        image_value = (float) ((pixel & 0b0000000011110000) >> 4) * (1.0f / 15);
+                        imageValue = (float) ((pixel & 0b0000000011110000) >> 4) * (1.0f / 15);
                     }
-                    else if (selected_channel == 3)
+                    else if (selectedChannel == 3)
                     {
-                        image_value = (float) (pixel & 0b0000000000001111) * (1.0f / 15);
+                        imageValue = (float) (pixel & 0b0000000000001111) * (1.0f / 15);
                     }
-                    image_alpha = (float) (pixel & 0b0000000000001111) * (1.0f / 15);
                 }
                 break;
                 case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
                 {
-                    image_value =
-                            (float) ((unsigned char *) image.data)[k + selected_channel] / 255.0f;
-                    image_alpha = (float) ((unsigned char *) image.data)[k + 3] / 255.0f;
+                    imageValue =
+                            (float) ((unsigned char *) image.data)[k + selectedChannel] / 255.0f;
 
                     k += 4;
                 }
                 break;
                 case PIXELFORMAT_UNCOMPRESSED_R8G8B8:
                 {
-                    image_value =
-                            (float) ((unsigned char *) image.data)[k + selected_channel] / 255.0f;
-                    image_alpha = 1;
+                    imageValue =
+                            (float) ((unsigned char *) image.data)[k + selectedChannel] / 255.0f;
 
                     k += 3;
                 }
                 break;
                 case PIXELFORMAT_UNCOMPRESSED_R32:
                 {
-                    image_value = ((float *) image.data)[k];
-                    image_alpha = 1;
+                    imageValue = ((float *) image.data)[k];
 
                     k += 1;
                 }
                 break;
                 case PIXELFORMAT_UNCOMPRESSED_R32G32B32:
                 {
-                    image_value = ((float *) image.data)[k + selected_channel];
-                    image_alpha = 1;
+                    imageValue = ((float *) image.data)[k + selectedChannel];
 
                     k += 3;
                 }
                 break;
                 case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32:
                 {
-                    image_value = ((float *) image.data)[k + selected_channel];
-                    image_alpha = ((float *) image.data)[k + 3];
+                    imageValue = ((float *) image.data)[k + selectedChannel];
 
                     k += 4;
                 }
                 break;
                 case PIXELFORMAT_UNCOMPRESSED_R16:
                 {
-                    image_value = HalfToFloat(((unsigned short *) image.data)[k]);
-                    image_alpha = 1;
+                    imageValue = HalfToFloat(((unsigned short *) image.data)[k]);
 
                     k += 1;
                 }
                 break;
                 case PIXELFORMAT_UNCOMPRESSED_R16G16B16:
                 {
-                    image_value =
-                            HalfToFloat(((unsigned short *) image.data)[k + selected_channel]);
-                    image_alpha = 1;
+                    imageValue = HalfToFloat(((unsigned short *) image.data)[k + selectedChannel]);
 
                     k += 3;
                 }
                 break;
                 case PIXELFORMAT_UNCOMPRESSED_R16G16B16A16:
                 {
-                    image_value =
-                            HalfToFloat(((unsigned short *) image.data)[k + selected_channel]);
-                    image_alpha = HalfToFloat(((unsigned short *) image.data)[k + 3]);
+                    imageValue = HalfToFloat(((unsigned short *) image.data)[k + selectedChannel]);
 
                     k += 4;
                 }
@@ -690,20 +667,7 @@ Image ImageFromChannel(const Image &image, int selected_channel, float threshold
                     break;
             }
 
-            // verify threshold
-            unsigned char result_value = 0;
-            unsigned char result_alpha = 0;
-            if (image_value >= threshold)
-            {
-                result_value = image_value * 255;
-                if (image_alpha)
-                {
-                    result_alpha = 255;
-                }
-            }
-
-            pixels[i] = result_value;
-            pixels[i + 1] = result_alpha;
+            pixels[i] = imageValue * 255;
         }
     }
 
@@ -712,10 +676,11 @@ Image ImageFromChannel(const Image &image, int selected_channel, float threshold
     return result;
 }
 
-Texture TextureMaskFromTexture(const Texture2D *texture, const Color color, const float threshold)
+Texture TextureMaskFromTexture(const Texture2D *texture, const Color color)
 {
     const Image image = LoadImageFromTexture(*texture);
-    const Image mask = ImageFromChannel(image, 4, threshold);
+    Image mask = ImageFromChannel(image, 3);
+    ImageAlphaMask(&mask, mask);
     Image new_image = GenImageColor(image.width, image.height, {0});
     // tint mask
     ImageDraw(
