@@ -69,6 +69,7 @@ private:
     SpriteGroup *transition_sprites = nullptr;
     SpriteGroup *monster_sprites = nullptr; // monster encounter
     Player *player{};
+    std::map<int, Monster *> encounter_monsters;
 
     // overlays
     DialogTree *dialog_tree = nullptr;

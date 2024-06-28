@@ -10,7 +10,7 @@ class MonsterIndex
 public:
 
     MonsterIndex(
-            const std::map<int, Monster *> &monsters, const std::map<std::string, Font> &fonts,
+            std::map<int, Monster *> *monsters, const std::map<std::string, Font> &fonts,
             const std::map<std::string, Texture2D> &monster_icons,
             const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                     &monsters_frms,
@@ -28,7 +28,7 @@ private:
     RenderTexture2D tint_surface{};
     std::map<std::string, Font> fonts;
     RectangleU main_rect{0, 0, WINDOW_WIDTH * 0.6, WINDOW_HEIGHT * 0.8};
-    std::map<int, Monster *> monsters;
+    std::map<int, Monster *> *monsters;
     std::map<std::string, float> max_stats = GetMaxStats();
 
     // frames

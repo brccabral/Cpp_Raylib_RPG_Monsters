@@ -289,7 +289,8 @@ void MonsterSprite::Kill()
     }
 }
 
-void MonsterSprite::DelayedKill(Monster *monster, int index, int pos_index, SelectionSide side)
+void MonsterSprite::DelayedKill(
+        Monster *monster, const int index, const int pos_index, const SelectionSide side)
 {
     if (!timers["kill"]->active)
     {

@@ -6,14 +6,13 @@
 
 
 Battle::Battle(
-        Game *game, std::map<int, Monster *> opponent_monsters, const Texture2D &bg,
+        Game *game, std::map<int, Monster *> *opponent_monsters, const Texture2D &bg,
         Character *character)
-    : game(game), bg_surf(bg), monsters_frames(game->monsters_frames),
+    : character(character), game(game), bg_surf(bg), monsters_frames(game->monsters_frames),
       outline_frames(game->outline_frames), ui_frames(game->named_textures["ui"]),
-      fonts(game->fonts),
-      monster_data({{PLAYER, game->player_monsters}, {OPPONENT, opponent_monsters}}),
+      fonts(game->fonts), opponent_monsters(opponent_monsters),
       monster_icons(game->named_textures["icons"]),
-      attack_animation_frames(game->attack_animation_frames), character(character)
+      attack_animation_frames(game->attack_animation_frames)
 {
     battle_sprites = new BattleSprites();
     player_sprites = new SpriteGroup();
@@ -39,13 +38,13 @@ Battle::~Battle()
     {
         delete timer;
     }
-    if (!character)
-    {
-        for (auto &[i, monster]: monster_data[OPPONENT])
-        {
-            delete monster;
-        }
-    }
+    // if (!character)
+    // {
+    //     for (auto &[i, monster]: *monster_data[OPPONENT])
+    //     {
+    //         delete monster;
+    //     }
+    // }
 }
 
 void Battle::Update(const double dt)
@@ -72,28 +71,29 @@ void Battle::Setup()
 {
     std::vector<int> added_opponents;
 
-    for (auto &[entity, monsters]: monster_data)
+    for (auto &[index, monster]: game->player_monsters)
     {
-        for (auto &[index, monster]: monsters)
+        if (index <= 2)
         {
-            if (index <= 2)
-            {
-                CreateMonster(monster, index, index, entity);
-                if (entity == OPPONENT)
-                {
-                    added_opponents.push_back(index);
-                }
-            }
+            CreateMonster(monster, index, index, PLAYER);
+        }
+    }
+    for (auto &[index, monster]: *opponent_monsters)
+    {
+        if (index <= 2)
+        {
+            CreateMonster(monster, index, index, OPPONENT);
+            added_opponents.push_back(index);
         }
     }
     // remove from `monster_data` opponents monsters that were createdas this will serve
     // as container to add new monsters in battle after a defeat
-    for (auto it = monster_data[OPPONENT].begin(); it != monster_data[OPPONENT].end();)
+    for (auto it = opponent_monsters->begin(); it != opponent_monsters->end();)
     {
         if (std::find(added_opponents.begin(), added_opponents.end(), it->first) !=
             added_opponents.end())
         {
-            it = monster_data[OPPONENT].erase(it);
+            it = opponent_monsters->erase(it);
         }
         else
         {
@@ -262,10 +262,13 @@ void Battle::Input()
                         monster_sprite->monster->GetStat("max_health") *
                                 0.9f) // TODO 0.9f is for testing, lower it
                     {
-                        monster_data[PLAYER][monster_data[PLAYER].size()] = monster_sprite->monster;
+                        game->player_monsters[game->player_monsters.size()] =
+                                monster_sprite->monster;
+                        monster_sprite->entity =
+                                PLAYER; // when deleting, set to PLAYER to not delete `Monster *`
                         monster_sprite->DelayedKill(
                                 nullptr, 0, 0,
-                                OPPONENT); // kills the MonsterSprite*, not the Monter*
+                                OPPONENT); // kills the MonsterSprite*, not the Monster*
                         UpdateAllMonsters(false);
                     }
                     else
@@ -441,7 +444,7 @@ void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
 
                 // monsters with health and not in battle
                 std::vector<std::pair<const int, Monster *>> available_monsters;
-                for (auto &player_pair: monster_data[PLAYER])
+                for (auto &player_pair: game->player_monsters)
                 {
                     if (player_pair.second->health > 0 &&
                         std::find(active_monsters.begin(), active_monsters.end(), player_pair) ==
@@ -462,13 +465,14 @@ void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
             }
             else
             {
+                current_monster = nullptr;
                 // check if opponent has more monsters
-                if (!monster_data[OPPONENT].empty())
+                if (!opponent_monsters->empty())
                 {
-                    newMonster = monster_data[OPPONENT].begin()->second;
+                    newMonster = opponent_monsters->begin()->second;
                     newIndex = monster_sprite->index;
                     newPosIndex = monster_sprite->pos_index;
-                    monster_data[OPPONENT].erase(monster_data[OPPONENT].begin());
+                    opponent_monsters->erase(opponent_monsters->begin());
                 }
                 // increase XP
                 const int xp_amount =
@@ -488,7 +492,7 @@ void Battle::CheckEndBattle()
     if (opponent_sprites->sprites.empty() && !battle_over)
     {
         battle_over = true;
-        for (auto &[i, monster]: monster_data[PLAYER])
+        for (auto &[i, monster]: game->player_monsters)
         {
             monster->initiative = 0;
         }
@@ -643,7 +647,7 @@ void Battle::DrawSwitch()
         active_monsters.push_back(((MonsterSprite *) monster_sprite)->monster);
     }
     available_monsters.clear();
-    for (auto &[monster_index, monster]: monster_data[PLAYER])
+    for (auto &[monster_index, monster]: game->player_monsters)
     {
         if (monster->health > 0 &&
             // if not found in active
@@ -716,6 +720,10 @@ void Battle::UpdateTimers()
 
 void Battle::OpponentAttack() const
 {
+    if (!current_monster)
+    {
+        return;
+    }
     const auto abilities = current_monster->monster->GetAbilities();
     const auto random_ability_index = GetRandomValue(0, abilities.size());
     const auto ability = abilities[random_ability_index];

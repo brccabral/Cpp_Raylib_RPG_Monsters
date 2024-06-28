@@ -492,6 +492,15 @@ void Game::UnloadResources()
     {
         delete monster;
     }
+
+    if (!encounter_monsters.empty())
+    {
+        for (auto &[i, monster]: encounter_monsters)
+        {
+            delete monster;
+        }
+        encounter_monsters.clear();
+    }
 }
 
 void Game::CreateDialog(Character *character)
@@ -528,7 +537,7 @@ void Game::EndDialog(Character *character)
             transition_target = nullptr;
         }
         transition_target = new TransitionTarget(TRANSITIONTARGET_LEVEL2BATTLE);
-        transition_target->battle = new Battle(this, character->monsters, bg, character);
+        transition_target->battle = new Battle(this, &character->monsters, bg, character);
         tint_mode = TINT;
     }
     else
@@ -631,7 +640,8 @@ void Game::SetupFrames()
         }
     }
     monster_index = new MonsterIndex(
-            player_monsters, fonts, named_textures["icons"], monsters_frames, named_textures["ui"]);
+            &player_monsters, fonts, named_textures["icons"], monsters_frames,
+            named_textures["ui"]);
 
     for (auto &[attack_name, attack_texture]: named_textures["attacks"])
     {
@@ -669,12 +679,19 @@ void Game::MonsterEncounter()
             encounter_timer->duration = GetRandomValue(8, 25) / 10.0f;
 
             const auto *monster_patch_sprite = (MonsterPatchSprite *) sprite;
-            std::map<int, Monster *> monsters;
             int count_mounstes = 0;
+            if (!encounter_monsters.empty())
+            {
+                for (auto &[i, monster]: encounter_monsters)
+                {
+                    delete monster;
+                }
+                encounter_monsters.clear();
+            }
             for (const auto &monster_name: monster_patch_sprite->monsters)
             {
                 const int level = monster_patch_sprite->level + GetRandomValue(-3, 3);
-                monsters[count_mounstes++] = new Monster(monster_name, level);
+                encounter_monsters[count_mounstes++] = new Monster(monster_name, level);
             }
             player->Block();
             Texture2D bg = named_textures["bg_frames"][monster_patch_sprite->biome];
@@ -684,7 +701,7 @@ void Game::MonsterEncounter()
                 transition_target = nullptr;
             }
             transition_target = new TransitionTarget(TRANSITIONTARGET_LEVEL2BATTLE);
-            transition_target->battle = new Battle(this, monsters, bg, nullptr);
+            transition_target->battle = new Battle(this, &encounter_monsters, bg, nullptr);
             tint_mode = TINT;
         }
     }

@@ -4,7 +4,7 @@
 
 
 MonsterIndex::MonsterIndex(
-        const std::map<int, Monster *> &monsters, const std::map<std::string, Font> &fonts,
+        std::map<int, Monster *> *monsters, const std::map<std::string, Font> &fonts,
         const std::map<std::string, Texture2D> &monster_icons,
         const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                 &monsters_frms,
@@ -68,7 +68,7 @@ void MonsterIndex::DisplayList()
 
     // vertical offset
     const int v_offset = (index < visible_items) ? 0 : -(index - visible_items + 1) * item_height;
-    for (auto &[i, monster]: monsters)
+    for (auto &[i, monster]: *monsters)
     {
         const Color bg_color = (i != index) ? COLORS["gray"] : COLORS["light"];
         const Color text_color = (selected_index != i) ? COLORS["white"] : COLORS["gold"];
@@ -105,7 +105,7 @@ void MonsterIndex::DisplayList()
     }
 
     // lines between monsters
-    for (int i = 1; i < std::min(visible_items, (int) monsters.size()); ++i)
+    for (int i = 1; i < std::min(visible_items, (int) monsters->size()); ++i)
     {
         const float y = main_rect.y + item_height * i;
         DrawLine(main_rect.x, y, main_rect.x + list_width, y, COLORS["light-gray"]);
@@ -120,7 +120,7 @@ void MonsterIndex::DisplayList()
 void MonsterIndex::DisplayMain(const double dt)
 {
     // data
-    Monster *monster = monsters[index];
+    Monster *monster = (*monsters)[index];
 
     // BeginTextureMode was called in Update()
     // bg
@@ -274,6 +274,8 @@ void MonsterIndex::Input()
     {
         ++index;
     }
+    const int size = (int) monsters->size();
+    index = (index % size + size) % size;
     if (IsKeyPressed(KEY_SPACE))
     {
         // one SPACE to select, another to change order
@@ -292,5 +294,4 @@ void MonsterIndex::Input()
             selected_index = index;
         }
     }
-    index %= monsters.size();
 }

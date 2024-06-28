@@ -11,7 +11,7 @@ class Battle
 {
 public:
 
-    Battle(Game *game, std::map<int, Monster *> opponent_monsters, const Texture2D &bg,
+    Battle(Game *game, std::map<int, Monster *> *opponent_monsters, const Texture2D &bg,
            Character *character);
     ~Battle();
     void Update(double dt);
@@ -53,7 +53,7 @@ private:
     std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> outline_frames;
     std::map<std::string, Texture2D> ui_frames;
     std::map<std::string, Font> fonts;
-    std::map<SelectionSide, std::map<int, Monster *>> monster_data;
+    std::map<int, Monster *> *opponent_monsters;
     std::vector<Monster *> available_monsters;
     std::map<std::string, Texture2D> monster_icons;
     std::map<AttackAnimation, std::vector<TiledTexture>> attack_animation_frames;
