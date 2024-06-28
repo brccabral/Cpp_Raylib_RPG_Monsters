@@ -32,8 +32,13 @@ public:
     ElementType element;
     std::map<std::string, float> base_stats;
     std::vector<std::pair<int, Attack>> abilities;
+
+    // evolution
     int level_up{};
     int xp{};
+    std::pair<std::string, int> evolve;
+
+    // stats
     float health{};
     float energy{};
     float initiative{};

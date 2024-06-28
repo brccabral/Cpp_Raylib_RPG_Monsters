@@ -6,9 +6,16 @@ class Timer
 {
 public:
 
-    explicit Timer(
-            float duration, bool repeat = false, bool autostart = false,
-            const std::function<void()> &func = []() {});
+    // Default constructor
+    Timer() : duration(0.0f), repeat(false), autostart(false), func([]() {})
+    {}
+
+    // Parameterized constructor
+    explicit
+    Timer(float duration, bool repeat = false, bool autostart = false,
+          const std::function<void()> &func = std::function<void()>{});
+    // Timer(const Timer &timer);
+    // Timer(Timer &&timer) noexcept;
     void Activate();
     void Deactivate();
     void Update();

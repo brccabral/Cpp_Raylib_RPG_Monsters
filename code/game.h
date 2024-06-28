@@ -2,6 +2,7 @@
 #include "raylib-tmx.h"
 #include "battle.h"
 #include "dialogtree.h"
+#include "evolution.h"
 #include "groups.h"
 #include "monsterindex.h"
 #include "support.h"
@@ -24,6 +25,7 @@ public:
     void run();
     void ClearSpriteGroups();
     void EndBattle(Character *character);
+    void EndEvolution();
 
     friend class Character; // allows Character to access Game private members
 
@@ -53,7 +55,7 @@ private:
     // monster encounters
     void CheckMonster() const;
     void MonsterEncounter();
-
+    void CheckEvolution();
 
     std::map<std::string, tmx_map *> tmx_maps;
     std::map<std::string, std::vector<Texture2D>> overworld_frames;
@@ -70,6 +72,7 @@ private:
     SpriteGroup *monster_sprites = nullptr; // monster encounter
     Player *player{};
     std::map<int, Monster *> encounter_monsters;
+    Evolution *evolution = nullptr;
 
     // overlays
     DialogTree *dialog_tree = nullptr;

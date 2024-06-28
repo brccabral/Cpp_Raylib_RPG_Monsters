@@ -14,6 +14,16 @@ Timer::Timer(
     }
 }
 
+// Timer::Timer(const Timer &timer)
+//     : duration(timer.duration), repeat(timer.repeat), autostart(timer.autostart),
+//     func(timer.func)
+// {}
+//
+// Timer::Timer(Timer &&timer) noexcept
+//     : duration(timer.duration), repeat(timer.repeat), autostart(timer.autostart),
+//       func(std::move(timer.func))
+// {}
+
 void Timer::Activate()
 {
     active = true;

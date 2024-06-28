@@ -9,6 +9,7 @@ Monster::Monster(std::string name_, const int level) : name(std::move(name_)), l
     element = MONSTER_DATA[name].element;
     base_stats = MONSTER_DATA[name].stats;
     abilities = MONSTER_DATA[name].abilities;
+    evolve = MONSTER_DATA[name].evolve;
 
     level_up = level * 150;
     health = base_stats["max_health"] * level;

@@ -97,7 +97,6 @@ void Game::run()
         }
         CheckMonster();
 
-
         // overlays
         // dialog_tree checks for SPACE input, which conflicts
         // with Game input.
@@ -118,6 +117,10 @@ void Game::run()
         if (battle)
         {
             battle->Update(dt);
+        }
+        if (evolution)
+        {
+            evolution->Update(dt);
         }
 
         TintScreen(dt);
@@ -488,6 +491,12 @@ void Game::UnloadResources()
     delete battle;
     delete encounter_timer;
 
+    if (evolution)
+    {
+        delete evolution;
+        evolution = nullptr;
+    }
+
     for (const auto &[index, monster]: player_monsters)
     {
         delete monster;
@@ -707,6 +716,23 @@ void Game::MonsterEncounter()
     }
 }
 
+void Game::CheckEvolution()
+{
+    for (auto [index, monster]: player_monsters)
+    {
+        if (monster->evolve.second)
+        {
+            if (monster->level >= monster->evolve.second)
+            {
+                player->Block();
+                evolution = new Evolution(
+                        &named_textures["monsters"], &animation_frames, monster->name,
+                        monster->evolve.first, fonts["bold"], [this] { EndEvolution(); });
+            }
+        }
+    }
+}
+
 void Game::EndBattle(Character *character)
 {
     if (transition_target)
@@ -721,8 +747,19 @@ void Game::EndBattle(Character *character)
         character->character_data.defeated = true;
         CreateDialog(character);
     }
-    else
+    else if (!evolution)
     {
         player->Unblock();
+        CheckEvolution();
     }
+}
+
+void Game::EndEvolution()
+{
+    if (evolution)
+    {
+        delete evolution;
+        evolution = nullptr;
+    }
+    player->Unblock();
 }
