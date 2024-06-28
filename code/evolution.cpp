@@ -9,21 +9,31 @@ Evolution::Evolution(
     ImageResize(&start_image, start_image.width * 2, start_image.height * 2);
     start_surf.texture = (Texture2D *) MemAlloc(sizeof(Texture2D));
     *(start_surf.texture) = LoadTextureFromImage(start_image);
-    UnloadImage(start_image);
 
     start_surf.rect = (*animation_frames)[start_monster][ANIMATION_IDLE][0];
     start_surf.rect.width *= 2;
     start_surf.rect.height *= 2;
 
+    Image start_image_mask = ImageFromChannel(start_image, 3);
+    ImageAlphaMask(&start_image_mask, start_image_mask);
+    start_mask.texture = (Texture2D *) MemAlloc(sizeof(Texture2D));
+    *(start_mask.texture) = LoadTextureFromImage(start_image_mask);
+
+    start_mask.rect = start_surf.rect;
+
+    UnloadImage(start_image);
+    UnloadImage(start_image_mask);
+
     Image end_image = LoadImageFromTexture((*textures)[end_monster]);
     ImageResize(&end_image, end_image.width * 2, end_image.height * 2);
     end_surf.texture = (Texture2D *) MemAlloc(sizeof(Texture2D));
     *(end_surf.texture) = LoadTextureFromImage(end_image);
-    UnloadImage(end_image);
 
     end_surf.rect = (*animation_frames)[end_monster][ANIMATION_IDLE][0];
     end_surf.rect.width *= 2;
     end_surf.rect.height *= 2;
+
+    UnloadImage(end_image);
 
     timers["start"] = Timer(0.8f, false, true);
     timers["end"] = Timer(1.8f, false, false, end_evolution);
@@ -31,8 +41,9 @@ Evolution::Evolution(
 
 Evolution::~Evolution()
 {
-    MemFree(start_surf.texture);
-    MemFree(end_surf.texture);
+    UnloadTexture(*start_surf.texture);
+    UnloadTexture(*start_mask.texture);
+    UnloadTexture(*end_surf.texture);
 }
 
 void Evolution::Update(double dt)
@@ -50,6 +61,7 @@ void Evolution::Update(double dt)
         RectangleU position_rect = start_surf.rect;
         RectToCenter(position_rect, GetRectCenter(screen_rect));
         DrawTextureRec(*start_surf.texture, start_surf.rect.rectangle, position_rect.pos, WHITE);
+        DrawTextureRec(*start_mask.texture, start_mask.rect.rectangle, position_rect.pos, WHITE);
 
         EndTextureModeSafe();
     }

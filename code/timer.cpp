@@ -14,11 +14,6 @@ Timer::Timer(
     }
 }
 
-Timer::~Timer()
-{
-    int a = start_time;
-}
-
 void Timer::Activate()
 {
     active = true;

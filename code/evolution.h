@@ -24,5 +24,7 @@ private:
     TiledTexture start_surf;
     TiledTexture end_surf;
 
+    TiledTexture start_mask;
+
     std::map<std::string, Timer> timers;
 };
