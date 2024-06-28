@@ -61,7 +61,15 @@ void Evolution::Update(double dt)
         RectangleU position_rect = start_surf.rect;
         RectToCenter(position_rect, GetRectCenter(screen_rect));
         DrawTextureRec(*start_surf.texture, start_surf.rect.rectangle, position_rect.pos, WHITE);
-        DrawTextureRec(*start_mask.texture, start_mask.rect.rectangle, position_rect.pos, WHITE);
+
+        tint_amount += tint_speed * dt;
+        if (tint_amount >= 1.0)
+        {
+            tint_amount = 1.0;
+        }
+        DrawTextureRec(
+                *start_mask.texture, start_mask.rect.rectangle, position_rect.pos,
+                Fade(WHITE, tint_amount));
 
         EndTextureModeSafe();
     }

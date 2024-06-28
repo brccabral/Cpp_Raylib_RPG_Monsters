@@ -25,6 +25,8 @@ private:
     TiledTexture end_surf;
 
     TiledTexture start_mask;
+    float tint_amount = 0.f;
+    float tint_speed = 0.9f;
 
     std::map<std::string, Timer> timers;
 };
