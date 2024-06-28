@@ -122,6 +122,9 @@ void Game::run()
         {
             evolution->Update(dt);
         }
+        // TODO remove this
+        if (!evolution)
+            CheckEvolution();
 
         TintScreen(dt);
 
@@ -627,7 +630,7 @@ void Game::SetupFrames()
     int player_index = 0;
     player_monsters[player_index++] = new Monster("Charmadillo", 30);
     player_monsters[player_index++] = new Monster("Friolera", 29);
-    player_monsters[player_index++] = new Monster("Larvea", 3);
+    player_monsters[player_index++] = new Monster("Larvea", 4);
     player_monsters[player_index++] = new Monster("Atrox", 24);
     player_monsters[player_index++] = new Monster("Sparchu", 24);
     player_monsters[player_index++] = new Monster("Gulfin", 24);
@@ -718,6 +721,10 @@ void Game::MonsterEncounter()
 
 void Game::CheckEvolution()
 {
+    if (evolution)
+    {
+        return;
+    }
     for (auto [index, monster]: player_monsters)
     {
         if (monster->evolve.second)
@@ -728,6 +735,7 @@ void Game::CheckEvolution()
                 evolution = new Evolution(
                         &named_textures["monsters"], &animation_frames, monster->name,
                         monster->evolve.first, fonts["bold"], [this] { EndEvolution(); });
+                break;
             }
         }
     }
