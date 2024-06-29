@@ -121,6 +121,11 @@ void Game::run()
         if (evolution)
         {
             evolution->Update(dt);
+            if (!evolution->IsActive())
+            {
+                delete evolution;
+                evolution = nullptr;
+            }
         }
         // TODO remove this
         if (!evolution)
@@ -628,7 +633,8 @@ void Game::SetupFrames()
     int player_index = 0;
     player_monsters[player_index++] = new Monster("Charmadillo", 30);
     player_monsters[player_index++] = new Monster("Friolera", 29);
-    player_monsters[player_index++] = new Monster("Larvea", 4);
+    player_monsters[player_index++] =
+            new Monster("Larvea", 4); // TODO force Larvea evolution at level 4
     player_monsters[player_index++] = new Monster("Atrox", 24);
     player_monsters[player_index++] = new Monster("Sparchu", 24);
     player_monsters[player_index++] = new Monster("Gulfin", 24);
@@ -719,7 +725,8 @@ void Game::MonsterEncounter()
 
 void Game::CheckEvolution()
 {
-    if (evolution)
+    static int countEv = 0; // TODO remove this
+    if (evolution || countEv)
     {
         return;
     }
@@ -733,6 +740,7 @@ void Game::CheckEvolution()
                 evolution = new Evolution(
                         &named_textures["monsters"], &animation_frames, monster->name,
                         monster->evolve.first, fonts["bold"], [this] { EndEvolution(); });
+                ++countEv;
                 break;
             }
         }
@@ -760,12 +768,7 @@ void Game::EndBattle(Character *character)
     }
 }
 
-void Game::EndEvolution()
+void Game::EndEvolution() const
 {
-    if (evolution)
-    {
-        delete evolution;
-        evolution = nullptr;
-    }
     player->Unblock();
 }

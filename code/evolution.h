@@ -16,6 +16,7 @@ public:
             const std::function<void()> &end_evolution);
     ~Evolution();
     void Update(double dt);
+    bool IsActive();
 
 private:
 
@@ -26,7 +27,7 @@ private:
 
     TiledTexture start_mask;
     float tint_amount = 0.f;
-    float tint_speed = 0.9f;
+    float tint_speed = 0.4f;
 
     std::map<std::string, Timer> timers;
 };

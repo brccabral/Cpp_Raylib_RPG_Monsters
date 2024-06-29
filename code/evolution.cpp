@@ -35,7 +35,8 @@ Evolution::Evolution(
 
     UnloadImage(end_image);
 
-    timers["start"] = Timer(0.8f, false, true);
+    // start will run until `tint_amount` gets to 1.0f (tint_speed)
+    timers["start"] = Timer(200.0f, false, true);
     timers["end"] = Timer(1.8f, false, false, end_evolution);
 }
 
@@ -46,31 +47,54 @@ Evolution::~Evolution()
     UnloadTexture(*end_surf.texture);
 }
 
-void Evolution::Update(double dt)
+void Evolution::Update(const double dt)
 {
     for (auto &[key, timer]: timers)
     {
         timer.Update();
     }
-    if (!timers["start"].active)
+
+    BeginTextureModeSafe(display_surface); // we don't want to clear background
+    const RectangleU screen_rect = {0, 0, (float) GetScreenWidth(), (float) GetScreenHeight()};
+    DrawRectangleRec(screen_rect.rectangle, Fade(BLACK, 200.0f / 255.0f));
+
+    RectangleU position_rect = start_surf.rect;
+    RectToCenter(position_rect, GetRectCenter(screen_rect));
+
+    if (timers["start"].active)
     {
-        const RectangleU screen_rect = {0, 0, (float) GetScreenWidth(), (float) GetScreenHeight()};
-        BeginTextureModeSafe(display_surface);
-        DrawRectangleRec(screen_rect.rectangle, Fade(BLACK, 200.0f / 255.0f));
-
-        RectangleU position_rect = start_surf.rect;
-        RectToCenter(position_rect, GetRectCenter(screen_rect));
-        DrawTextureRec(*start_surf.texture, start_surf.rect.rectangle, position_rect.pos, WHITE);
-
-        tint_amount += tint_speed * dt;
-        if (tint_amount >= 1.0)
+        if (tint_amount < 1.0f)
         {
-            tint_amount = 1.0;
-        }
-        DrawTextureRec(
-                *start_mask.texture, start_mask.rect.rectangle, position_rect.pos,
-                Fade(WHITE, tint_amount));
+            DrawTextureRec(
+                    *start_surf.texture, start_surf.rect.rectangle, position_rect.pos, WHITE);
 
-        EndTextureModeSafe();
+            tint_amount += tint_speed * dt;
+            if (tint_amount >= 1.0f)
+            {
+                tint_amount = 1.0f;
+            }
+            DrawTextureRec(
+                    *start_mask.texture, start_mask.rect.rectangle, position_rect.pos,
+                    Fade(WHITE, tint_amount));
+        }
+        else
+        {
+            // force start deactivation
+            timers["start"].Deactivate();
+            if (!timers["end"].active)
+            {
+                timers["end"].Activate();
+            }
+        }
     }
+    else if (timers["end"].active)
+    {
+        DrawTextureRec(*end_surf.texture, end_surf.rect.rectangle, position_rect.pos, WHITE);
+    }
+    EndTextureModeSafe();
+}
+
+bool Evolution::IsActive()
+{
+    return timers["start"].active || timers["end"].active;
 }
