@@ -282,10 +282,10 @@ void MonsterIndex::Input()
         if (selected_index != -1)
         {
             // second SPACE is to change the order
-            const auto selected_monster = monsters[selected_index];
-            const auto current_monster = monsters[index];
-            monsters[index] = selected_monster;
-            monsters[selected_index] = current_monster;
+            const auto selected_monster = (*monsters)[selected_index];
+            const auto current_monster = (*monsters)[index];
+            (*monsters)[index] = selected_monster;
+            (*monsters)[selected_index] = current_monster;
             selected_index = -1;
         }
         else
