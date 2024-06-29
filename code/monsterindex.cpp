@@ -4,7 +4,7 @@
 
 
 MonsterIndex::MonsterIndex(
-        std::map<int, Monster *> *monsters, const std::map<std::string, Font> &fonts,
+        std::map<int, Monster> *monsters, const std::map<std::string, Font> &fonts,
         const std::map<std::string, Texture2D> &monster_icons,
         const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
                 &monsters_frms,
@@ -76,7 +76,7 @@ void MonsterIndex::DisplayList()
         const RectangleU item_rect = {main_rect.x, top, list_width, item_height};
         const auto [x, y] = GetRectMidLeft(item_rect);
 
-        const Texture2D icon_texture = icon_frames[monster->name];
+        const Texture2D icon_texture = icon_frames[monster.name];
 
         if (CheckCollisionRecs(item_rect.rectangle, main_rect.rectangle))
         {
@@ -98,7 +98,7 @@ void MonsterIndex::DisplayList()
                     icon_texture, x + 45 - icon_texture.width / 2.0f,
                     y - icon_texture.height / 2.0f, WHITE);
             DrawTextEx(
-                    fonts["regular"], monster->name.c_str(),
+                    fonts["regular"], monster.name.c_str(),
                     {x + 90, y - fonts["regular"].baseSize / 2.0f}, fonts["regular"].baseSize, 2,
                     text_color);
         }
@@ -120,7 +120,7 @@ void MonsterIndex::DisplayList()
 void MonsterIndex::DisplayMain(const double dt)
 {
     // data
-    Monster *monster = (*monsters)[index];
+    auto monster = &(*monsters)[index];
 
     // BeginTextureMode was called in Update()
     // bg

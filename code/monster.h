@@ -15,6 +15,7 @@ class Monster
 {
 public:
 
+    Monster() = default;
     Monster(std::string name_, int level);
     float GetStat(const std::string &stat);
     std::vector<std::pair<std::string, float>> GetStats();

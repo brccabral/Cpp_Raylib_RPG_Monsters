@@ -31,7 +31,7 @@ public:
 
     bool isRunning = true;
 
-    std::map<int, Monster *> player_monsters;
+    std::map<int, Monster> player_monsters;
     std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> monsters_frames;
     std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>> outline_frames;
     std::map<AttackAnimation, std::vector<TiledTexture>> attack_animation_frames;

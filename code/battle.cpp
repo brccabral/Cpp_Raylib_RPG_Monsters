@@ -72,7 +72,7 @@ void Battle::Setup()
     {
         if (index <= 2)
         {
-            CreateMonster(monster, index, index, PLAYER);
+            CreateMonster(&monster, index, index, PLAYER);
         }
     }
     for (auto &[index, monster]: *opponent_monsters)
@@ -259,10 +259,10 @@ void Battle::Input()
                         monster_sprite->monster->GetStat("max_health") *
                                 0.9f) // TODO 0.9f is for testing, lower it
                     {
-                        game->player_monsters[game->player_monsters.size()] =
-                                monster_sprite->monster;
                         monster_sprite->entity =
                                 PLAYER; // when deleting, set to PLAYER to not delete `Monster *`
+                        game->player_monsters[game->player_monsters.size()] =
+                                *monster_sprite->monster;
                         monster_sprite->DelayedKill(
                                 nullptr, 0, 0,
                                 OPPONENT); // kills the MonsterSprite*, not the Monster*
@@ -336,6 +336,10 @@ void Battle::CheckActive()
 
 void Battle::CheckActiveGroup(const SpriteGroup *group, const SelectionSide side)
 {
+    if (group->sprites.empty())
+    {
+        return;
+    }
     for (const auto *sprite: group->sprites)
     {
         auto *monster_sprite = (MonsterSprite *) sprite;
@@ -441,13 +445,14 @@ void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
 
                 // monsters with health and not in battle
                 std::vector<std::pair<const int, Monster *>> available_monsters;
-                for (auto &player_pair: game->player_monsters)
+                for (auto &[i, monster]: game->player_monsters)
                 {
-                    if (player_pair.second->health > 0 &&
-                        std::find(active_monsters.begin(), active_monsters.end(), player_pair) ==
+                    std::pair<const int, Monster *> pair_monster = {i, &monster};
+                    if (monster.health > 0 &&
+                        std::find(active_monsters.begin(), active_monsters.end(), pair_monster) ==
                                 active_monsters.end())
                     {
-                        available_monsters.emplace_back(player_pair);
+                        available_monsters.emplace_back(i, &monster);
                         break;
                     }
                 }
@@ -491,7 +496,7 @@ void Battle::CheckEndBattle()
         battle_over = true;
         for (auto &[i, monster]: game->player_monsters)
         {
-            monster->initiative = 0;
+            monster.initiative = 0;
         }
         game->EndBattle(character);
     }
@@ -646,12 +651,12 @@ void Battle::DrawSwitch()
     available_monsters.clear();
     for (auto &[monster_index, monster]: game->player_monsters)
     {
-        if (monster->health > 0 &&
+        if (monster.health > 0 &&
             // if not found in active
-            std::find(active_monsters.begin(), active_monsters.end(), monster) ==
+            std::find(active_monsters.begin(), active_monsters.end(), &monster) ==
                     active_monsters.end())
         {
-            available_monsters.push_back(monster);
+            available_monsters.push_back(&monster);
         }
     }
     for (int index = 0; index < available_monsters.size(); ++index)

@@ -127,9 +127,9 @@ void Game::run()
                 evolution = nullptr;
             }
         }
-        // TODO remove this
-        if (!evolution)
-            CheckEvolution();
+        // // TODO remove this
+        // if (!evolution)
+        //     CheckEvolution();
 
         TintScreen(dt);
 
@@ -511,11 +511,6 @@ void Game::UnloadResources()
         evolution = nullptr;
     }
 
-    for (const auto &[index, monster]: player_monsters)
-    {
-        delete monster;
-    }
-
     if (!encounter_monsters.empty())
     {
         for (auto &[i, monster]: encounter_monsters)
@@ -546,8 +541,8 @@ void Game::EndDialog(Character *character)
     {
         for (auto &[i, monster]: player_monsters)
         {
-            monster->health = monster->GetStat("max_health");
-            monster->energy = monster->GetStat("max_energy");
+            monster.health = monster.GetStat("max_health");
+            monster.energy = monster.GetStat("max_energy");
         }
         player->Unblock();
     }
@@ -638,15 +633,15 @@ void Game::TintScreen(const double dt)
 void Game::SetupFrames()
 {
     int player_index = 0;
-    player_monsters[player_index++] = new Monster("Charmadillo", 30);
-    player_monsters[player_index++] = new Monster("Friolera", 29);
+    player_monsters[player_index++] = Monster("Charmadillo", 30);
+    player_monsters[player_index++] = Monster("Friolera", 29);
     player_monsters[player_index++] =
-            new Monster("Larvea", 4); // TODO force Larvea evolution at level 4
-    player_monsters[player_index++] = new Monster("Atrox", 24);
-    player_monsters[player_index++] = new Monster("Sparchu", 24);
-    player_monsters[player_index++] = new Monster("Gulfin", 24);
-    player_monsters[player_index++] = new Monster("Jacana", 2);
-    player_monsters[player_index++] = new Monster("Pouch", 3);
+            Monster("Larvea", 4); // TODO force Larvea evolution at level 4
+    player_monsters[player_index++] = Monster("Atrox", 24);
+    player_monsters[player_index++] = Monster("Sparchu", 24);
+    player_monsters[player_index++] = Monster("Gulfin", 24);
+    player_monsters[player_index++] = Monster("Jacana", 2);
+    player_monsters[player_index++] = Monster("Pouch", 3);
 
     for (const auto &[monster_name, animations]: animation_frames)
     {
@@ -737,18 +732,18 @@ void Game::CheckEvolution()
     {
         return;
     }
-    for (auto [index, monster]: player_monsters)
+    for (auto &[index, monster]: player_monsters)
     {
-        if (monster->evolve.second)
+        if (monster.evolve.second)
         {
-            if (monster->level >= monster->evolve.second)
+            if (monster.level >= monster.evolve.second)
             {
                 player->Block();
                 evolution = new Evolution(
-                        &named_textures["monsters"], &animation_frames, monster->name,
-                        monster->evolve.first, fonts["bold"], [this] { EndEvolution(); },
+                        &named_textures["monsters"], &animation_frames, monster.name,
+                        monster.evolve.first, fonts["bold"], [this] { EndEvolution(); },
                         star_animation_textures);
-                ++countEv;
+                // ++countEv;
                 break;
             }
         }
