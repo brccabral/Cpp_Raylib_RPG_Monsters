@@ -127,9 +127,8 @@ void Game::run()
                 evolution = nullptr;
             }
         }
-        // // TODO remove this
-        // if (!evolution)
-        //     CheckEvolution();
+        if (!evolution)
+            CheckEvolution();
 
         TintScreen(dt);
 
@@ -727,8 +726,7 @@ void Game::MonsterEncounter()
 
 void Game::CheckEvolution()
 {
-    static int countEv = 0; // TODO remove this
-    if (evolution || countEv)
+    if (evolution)
     {
         return;
     }
@@ -739,11 +737,12 @@ void Game::CheckEvolution()
             if (monster.level >= monster.evolve.second)
             {
                 player->Block();
+                const char *oldName = monster.name.c_str();
+                const char *newName = monster.evolve.first.c_str();
                 evolution = new Evolution(
-                        &named_textures["monsters"], &animation_frames, monster.name,
-                        monster.evolve.first, fonts["bold"], [this] { EndEvolution(); },
-                        star_animation_textures);
-                // ++countEv;
+                        &named_textures["monsters"], &animation_frames, oldName, newName,
+                        fonts["bold"], [this] { EndEvolution(); }, star_animation_textures,
+                        monster.evolve.second, index);
                 break;
             }
         }
@@ -771,7 +770,8 @@ void Game::EndBattle(Character *character)
     }
 }
 
-void Game::EndEvolution() const
+void Game::EndEvolution()
 {
+    player_monsters[evolution->index] = Monster(evolution->end_monster, evolution->level);
     player->Unblock();
 }

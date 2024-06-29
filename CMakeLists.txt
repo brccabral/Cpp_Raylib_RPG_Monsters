@@ -29,7 +29,6 @@ add_executable(${PROJECT_NAME} code/main.cpp
         code/support.cpp
         code/transitiontarget.cpp
         code/evolution.cpp
-        code/tiledfont.cpp
 )
 if (PLATFORM STREQUAL "Desktop")
     target_compile_definitions(${PROJECT_NAME} PRIVATE PLATFORM_DESKTOP)

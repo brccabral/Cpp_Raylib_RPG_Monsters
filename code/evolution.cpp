@@ -2,11 +2,11 @@
 
 Evolution::Evolution(
         std::map<std::string, Texture2D> *textures,
-        std::map<std::string, animation_rects> *animation_frames, const std::string &start_monster,
-        const std::string &end_monster, const Font &font,
-        const std::function<void()> &end_evolution,
-        const std::vector<Texture2D> &star_animation_textures)
-    : font(font), star_textures(star_animation_textures)
+        std::map<std::string, animation_rects> *animation_frames, const char *start_monster_name,
+        const char *end_monster_name, const Font &font, const std::function<void()> &end_evolution,
+        const std::vector<Texture2D> &star_animation_textures, const int level, const int index)
+    : end_monster(end_monster_name), level(level), index(index), font(font),
+      start_monster(start_monster_name), star_textures(star_animation_textures)
 {
     Image start_image = LoadImageFromTexture((*textures)[start_monster]);
     ImageResize(&start_image, start_image.width * 2, start_image.height * 2);
@@ -44,21 +44,9 @@ Evolution::Evolution(
 
     const RectangleU screen_rect = {0, 0, (float) GetScreenWidth(), (float) GetScreenHeight()};
 
-    start_text = TiledFont(
-            TextFormat("%s is evolving", start_monster.c_str()), font, 1, COLORS["black"], {},
-            COLORS["white"], {10, 10}, 0.3f);
-    start_text.rect.pos = Vector2Add(
-            GetRectCenter(screen_rect), {-start_text.rect.width / 2, start_surf.rect.height / 2});
-
-    end_text = TiledFont(
-            TextFormat("%s has evolved into %s", start_monster.c_str(), end_monster.c_str()), font,
-            1, COLORS["black"], {}, COLORS["white"], {10, 10}, 0.3f);
-    end_text.rect.pos = Vector2Add(
-            GetRectCenter(screen_rect), {-end_text.rect.width / 2, end_surf.rect.height / 2});
-
     star_pos = Vector2Add(
             GetRectCenter(screen_rect),
-            {(float) -star_textures[0].width / 2, (float) -star_textures[0].height / 2});
+            {-star_textures[0].width / 2.0f, -star_textures[0].height / 2.0f});
 }
 
 Evolution::~Evolution()
@@ -98,7 +86,7 @@ void Evolution::Update(const double dt)
                     *start_mask.texture, start_mask.rect.rectangle, position_rect.pos,
                     Fade(WHITE, tint_amount));
 
-            start_text.Draw();
+            Draw(TextFormat("%s is evolving", start_monster));
         }
         else
         {
@@ -113,7 +101,7 @@ void Evolution::Update(const double dt)
     else if (timers["end"].active)
     {
         DrawTextureRec(*end_surf.texture, end_surf.rect.rectangle, position_rect.pos, WHITE);
-        end_text.Draw();
+        Draw(TextFormat("%s has evolved into %s", start_monster, end_monster));
     }
     DisplayStars(dt);
     EndTextureModeSafe();
@@ -122,6 +110,21 @@ void Evolution::Update(const double dt)
 bool Evolution::IsActive()
 {
     return timers["start"].active || timers["end"].active;
+}
+
+void Evolution::Draw(const char *text) const
+{
+    const Vector2 text_size = MeasureTextEx(font, text, font.baseSize, 1);
+    const RectangleU screen_rect = {0, 0, (float) GetScreenWidth(), (float) GetScreenHeight()};
+
+    const Vector2 pos =
+            Vector2Add(GetRectCenter(screen_rect), {-text_size.x / 2, start_surf.rect.height / 2});
+
+    RectangleU rect = {pos, text_size};
+    RectInflate(rect, 20, 20);
+
+    DrawRectangleRounded(rect.rectangle, 0.3f, 10, WHITE);
+    DrawTextEx(font, text, pos, font.baseSize, 1, BLACK);
 }
 
 void Evolution::DisplayStars(const double dt)
