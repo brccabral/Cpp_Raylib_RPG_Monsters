@@ -3,6 +3,7 @@
 #include <string>
 #include "sprite.h"
 #include "support.h"
+#include "tiledfont.h"
 
 
 class Evolution
@@ -18,7 +19,6 @@ public:
     ~Evolution();
     void Update(double dt);
     bool IsActive();
-    void Draw(const char *text) const;
 
     const char *end_monster;
     int level;
@@ -38,6 +38,8 @@ private:
     float tint_speed = 0.4f;
 
     const char *start_monster;
+    TiledFont *start_font = nullptr;
+    TiledFont *end_font = nullptr;
 
     std::map<std::string, Timer> timers;
 

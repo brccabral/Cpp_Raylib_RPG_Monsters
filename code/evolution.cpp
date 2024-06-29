@@ -47,10 +47,25 @@ Evolution::Evolution(
     star_pos = Vector2Add(
             GetRectCenter(screen_rect),
             {-star_textures[0].width / 2.0f, -star_textures[0].height / 2.0f});
+
+
+    const char *start_text = TextFormat("%s is evolving", start_monster);
+    const Vector2 start_text_size = MeasureTextEx(font, start_text, font.baseSize, 1);
+    const Vector2 start_pos = Vector2Add(
+            GetRectCenter(screen_rect), {-start_text_size.x / 2, start_surf.rect.height / 2});
+    start_font = new TiledFont(start_text, font, start_pos, {10, 10}, 0.3f);
+
+    const char *end_text = TextFormat("%s has evolved into %s", start_monster, end_monster);
+    const Vector2 end_text_size = MeasureTextEx(font, end_text, font.baseSize, 1);
+    const Vector2 end_pos = Vector2Add(
+            GetRectCenter(screen_rect), {-end_text_size.x / 2, end_surf.rect.height / 2});
+    end_font = new TiledFont(end_text, font, end_pos, {10, 10}, 0.3f);
 }
 
 Evolution::~Evolution()
 {
+    delete start_font;
+    delete end_font;
     UnloadTexture(*start_surf.texture);
     UnloadTexture(*start_mask.texture);
     UnloadTexture(*end_surf.texture);
@@ -86,7 +101,7 @@ void Evolution::Update(const double dt)
                     *start_mask.texture, start_mask.rect.rectangle, position_rect.pos,
                     Fade(WHITE, tint_amount));
 
-            Draw(TextFormat("%s is evolving", start_monster));
+            start_font->Draw();
         }
         else
         {
@@ -101,7 +116,7 @@ void Evolution::Update(const double dt)
     else if (timers["end"].active)
     {
         DrawTextureRec(*end_surf.texture, end_surf.rect.rectangle, position_rect.pos, WHITE);
-        Draw(TextFormat("%s has evolved into %s", start_monster, end_monster));
+        end_font->Draw();
     }
     DisplayStars(dt);
     EndTextureModeSafe();
@@ -110,21 +125,6 @@ void Evolution::Update(const double dt)
 bool Evolution::IsActive()
 {
     return timers["start"].active || timers["end"].active;
-}
-
-void Evolution::Draw(const char *text) const
-{
-    const Vector2 text_size = MeasureTextEx(font, text, font.baseSize, 1);
-    const RectangleU screen_rect = {0, 0, (float) GetScreenWidth(), (float) GetScreenHeight()};
-
-    const Vector2 pos =
-            Vector2Add(GetRectCenter(screen_rect), {-text_size.x / 2, start_surf.rect.height / 2});
-
-    RectangleU rect = {pos, text_size};
-    RectInflate(rect, 20, 20);
-
-    DrawRectangleRounded(rect.rectangle, 0.3f, 10, WHITE);
-    DrawTextEx(font, text, pos, font.baseSize, 1, BLACK);
 }
 
 void Evolution::DisplayStars(const double dt)
