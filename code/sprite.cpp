@@ -242,6 +242,7 @@ void MonsterSprite::FlipH()
     }
 }
 
+// blink monster with a white mask
 void MonsterSprite::SetHighlight(const bool value)
 {
     highlight = value;
@@ -259,6 +260,7 @@ void MonsterSprite::ActivateAttack(MonsterSprite *monster_sprite, const Attack s
     current_attack = selected_attack;
     monster->ReduceEnergy(selected_attack);
 }
+
 void MonsterSprite::Kill()
 {
     // the Battle sorts the sprites, the Name and Outline will go behind
@@ -367,9 +369,9 @@ MonsterNameSprite::~MonsterNameSprite()
 void MonsterLevelSprite::UpdateTexture() const
 {
     BeginTextureModeC(inverted, WHITE);
-    DrawCenteredTextEx(
-            font, TextFormat("Lvl %i", monster_sprite->monster->level), image.rect,
-            COLORS["black"]);
+    char text[MAX_TEXT_BUFFER_LENGTH];
+    TextFormatSafe(text, "Lvl %i", monster_sprite->monster->level);
+    DrawCenteredTextEx(font, text, image.rect, COLORS["black"]);
     DrawBar(xp_rect, monster_sprite->monster->xp, monster_sprite->monster->level_up,
             COLORS["black"], COLORS["white"]);
     EndTextureModeSafe();
@@ -453,9 +455,9 @@ void MonsterStatsSprite::Update(double deltaTime)
         if (index < 2)
         {
             const Vector2 pos = {rect.width * 0.05f, index * rect.height / 2.0f};
-            DrawTextEx(
-                    font, TextFormat("%i/%i", int(value), int(max_value)), pos, font.baseSize, 1,
-                    COLORS["black"]);
+            char text_info[MAX_TEXT_BUFFER_LENGTH];
+            TextFormatSafe(text_info, "%i/%i", int(value), int(max_value));
+            DrawTextEx(font, text_info, pos, font.baseSize, 1, COLORS["black"]);
             // height less than 6 there is no roundness
             const RectangleU bar_rect = {pos.x, pos.y + font.baseSize - 2, rect.width * 0.9f, 6};
             DrawBar(bar_rect, value, max_value, color, COLORS["black"], 0.9f, 10);

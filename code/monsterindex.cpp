@@ -150,9 +150,9 @@ void MonsterIndex::DisplayMain(const double dt)
     // level
     const Vector2 pos =
             Vector2Add(GetRectBottomLeft(top_rect), {10.0f, -16.0f - fonts["regular"].baseSize});
-    DrawTextEx(
-            fonts["regular"], TextFormat("Lvl: %i", monster->level), pos, fonts["regular"].baseSize,
-            1, COLORS["white"]);
+    char text_level[MAX_TEXT_BUFFER_LENGTH];
+    TextFormatSafe(text_level, "Lvl: %i", monster->level);
+    DrawTextEx(fonts["regular"], text_level, pos, fonts["regular"].baseSize, 1, COLORS["white"]);
     DrawBar({pos.x, pos.y + fonts["regular"].baseSize, 100, 4}, monster->xp, monster->level_up,
             COLORS["white"], COLORS["dark"]);
 
@@ -173,18 +173,20 @@ void MonsterIndex::DisplayMain(const double dt)
     const RectangleU health_rectangle = bar_rect;
     DrawBar(health_rectangle, monster->health, monster->GetStat("max_health"), COLORS["red"],
             COLORS["black"], 0.4f, 20);
+    char text_hp[MAX_TEXT_BUFFER_LENGTH];
+    TextFormatSafe(text_hp, "HP: %.f/%.f", monster->health, monster->GetStat("max_health"));
     DrawTextEx(
-            fonts["regular"],
-            TextFormat("HP: %.f/%.f", monster->health, monster->GetStat("max_health")),
+            fonts["regular"], text_hp,
             Vector2Add(GetRectMidLeft(health_rectangle), {10, -fonts["regular"].baseSize / 2.0f}),
             fonts["regular"].baseSize, 1, COLORS["white"]);
 
     const RectangleU energy_rectangle{bar_rect.x + rect.width / 2.0f, bar_rect.y, bar_rect.size};
     DrawBar(energy_rectangle, monster->energy, monster->GetStat("max_energy"), COLORS["blue"],
             COLORS["black"], 0.4f, 20);
+    char text_energy[MAX_TEXT_BUFFER_LENGTH];
+    TextFormatSafe(text_energy, "EP: %.f/%.f", monster->energy, monster->GetStat("max_energy"));
     DrawTextEx(
-            fonts["regular"],
-            TextFormat("EP: %.f/%.f", monster->energy, monster->GetStat("max_energy")),
+            fonts["regular"], text_energy,
             Vector2Add(GetRectMidLeft(energy_rectangle), {10, -fonts["regular"].baseSize / 2.0f}),
             fonts["regular"].baseSize, 1, COLORS["white"]);
 

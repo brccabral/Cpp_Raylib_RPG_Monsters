@@ -38,7 +38,9 @@ private:
     float tint_speed = 0.4f;
 
     const char *start_monster;
+    char start_text[MAX_TEXT_BUFFER_LENGTH];
     TiledFont *start_font = nullptr;
+    char end_text[MAX_TEXT_BUFFER_LENGTH];
     TiledFont *end_font = nullptr;
 
     std::map<std::string, Timer> timers;

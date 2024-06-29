@@ -259,6 +259,7 @@ void Battle::Input()
                         monster_sprite->monster->GetStat("max_health") *
                                 0.9f) // TODO 0.9f is for testing, lower it
                     {
+                        // catching monster
                         monster_sprite->entity =
                                 PLAYER; // when deleting, set to PLAYER to not delete `Monster *`
                         game->player_monsters[game->player_monsters.size()] =
@@ -270,6 +271,7 @@ void Battle::Input()
                     }
                     else
                     {
+                        // can't catch monster, show a red X
                         const RectangleU cross_rect = {
                                 0, 0, (float) ui_frames["cross"].width,
                                 (float) ui_frames["cross"].height};
@@ -342,11 +344,12 @@ void Battle::CheckActiveGroup(const SpriteGroup *group, const SelectionSide side
     }
     for (const auto *sprite: group->sprites)
     {
+        // if a monster has initiative >= 100, it is its time to action
         auto *monster_sprite = (MonsterSprite *) sprite;
         if (monster_sprite->monster->initiative >= 100)
         {
             monster_sprite->monster->defending = false;
-            UpdateAllMonsters(true);
+            UpdateAllMonsters(true); // pause all monsters
             monster_sprite->monster->initiative = 0;
             monster_sprite->SetHighlight(true);
             current_monster = ((MonsterSprite *) sprite);
@@ -695,9 +698,11 @@ void Battle::DrawSwitch()
                     DrawRectangleRec(item_bg_rect.rectangle, COLORS["dark white"]);
                 }
             }
+            char text_name_level[MAX_TEXT_BUFFER_LENGTH];
+            TextFormatSafe(text_name_level, "%s (%i)", monster->name.c_str(), monster->level);
             DrawTextEx(
-                    fonts["regular"], TextFormat("%s (%i)", monster->name.c_str(), monster->level),
-                    {bg_rect.x + 90, icon_rect.y}, fonts["regular"].baseSize, 1, text_color);
+                    fonts["regular"], text_name_level, {bg_rect.x + 90, icon_rect.y},
+                    fonts["regular"].baseSize, 1, text_color);
             DrawTextureV(icon_texture, icon_rect.pos, WHITE);
 
             RectangleU health_rectangle = {

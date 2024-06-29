@@ -3,6 +3,10 @@
 #include <raymath.h>
 #include <random>
 
+#ifndef MAX_TEXT_BUFFER_LENGTH
+#define MAX_TEXT_BUFFER_LENGTH 1024
+#endif
+
 typedef union RectangleU
 {
     struct
@@ -145,3 +149,8 @@ RLAPI Texture2D TextureMaskFromTexture(const Texture2D *texture, Color color);
 RLAPI Image GenImageRandomPixels(float width, float height);
 
 RLAPI Texture2D TextureColorGrayscale(const Texture2D *texture);
+
+// raylib has 4 buffers by default in TextFormat() - to add more, need to recompile raylib.
+// This function receives a buffer created by the application.
+// buffer max size is defined by MAX_TEXT_BUFFER_LENGTH
+RLAPI void TextFormatSafe(char *buffer, const char *format, ...);

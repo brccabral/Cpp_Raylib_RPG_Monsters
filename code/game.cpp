@@ -127,8 +127,9 @@ void Game::run()
                 evolution = nullptr;
             }
         }
-        if (!evolution)
-            CheckEvolution();
+        // TODO do not evolve during battle
+        // if (!evolution)
+        //     CheckEvolution();
 
         TintScreen(dt);
 
@@ -150,7 +151,8 @@ void Game::DisplayUpdate() const
 
 #if 0
     const auto [mouse_x, mouse_y] = GetMousePosition();
-    const char *mouse_text = TextFormat("%.f / %.f", mouse_x, mouse_y);
+    char mouse_text[MAX_TEXT_BUFFER_LENGTH];
+    TextFormatSafe(mouse_text, "%.f / %.f", mouse_x, mouse_y);
     DrawCircle((int) mouse_x, (int) mouse_y, 4.0f, BLACK);
     DrawRectangle(mouse_x, mouse_y, 60, 15, WHITE);
     DrawText(mouse_text, (int) mouse_x + 5, (int) mouse_y + 5, 10, BLACK);
@@ -634,13 +636,15 @@ void Game::SetupFrames()
     int player_index = 0;
     player_monsters[player_index++] = Monster("Charmadillo", 30);
     player_monsters[player_index++] = Monster("Friolera", 29);
-    player_monsters[player_index++] =
-            Monster("Larvea", 4); // TODO force Larvea evolution at level 4
-    player_monsters[player_index++] = Monster("Atrox", 24);
-    player_monsters[player_index++] = Monster("Sparchu", 24);
-    player_monsters[player_index++] = Monster("Gulfin", 24);
-    player_monsters[player_index++] = Monster("Jacana", 2);
-    player_monsters[player_index++] = Monster("Pouch", 3);
+    player_monsters[player_index++] = Monster("Larvea", 3);
+    player_monsters[player_index++] = Monster("Sparchu", 14);
+    // player_monsters[player_index++] =
+    //         Monster("Larvea", 4); // TODO force Larvea evolution at level 4
+    // player_monsters[player_index++] = Monster("Atrox", 24);
+    // player_monsters[player_index++] = Monster("Sparchu", 24);
+    // player_monsters[player_index++] = Monster("Gulfin", 24);
+    // player_monsters[player_index++] = Monster("Jacana", 2);
+    // player_monsters[player_index++] = Monster("Pouch", 3);
 
     for (const auto &[monster_name, animations]: animation_frames)
     {

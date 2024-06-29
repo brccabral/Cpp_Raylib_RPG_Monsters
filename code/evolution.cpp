@@ -48,14 +48,13 @@ Evolution::Evolution(
             GetRectCenter(screen_rect),
             {-star_textures[0].width / 2.0f, -star_textures[0].height / 2.0f});
 
-
-    const char *start_text = TextFormat("%s is evolving", start_monster);
+    TextFormatSafe(start_text, "%s is evolving", start_monster);
     const Vector2 start_text_size = MeasureTextEx(font, start_text, font.baseSize, 1);
     const Vector2 start_pos = Vector2Add(
             GetRectCenter(screen_rect), {-start_text_size.x / 2, start_surf.rect.height / 2});
     start_font = new TiledFont(start_text, font, start_pos, {10, 10}, 0.3f);
 
-    const char *end_text = TextFormat("%s has evolved into %s", start_monster, end_monster);
+    TextFormatSafe(end_text, "%s has evolved into %s", start_monster, end_monster);
     const Vector2 end_text_size = MeasureTextEx(font, end_text, font.baseSize, 1);
     const Vector2 end_pos = Vector2Add(
             GetRectCenter(screen_rect), {-end_text_size.x / 2, end_surf.rect.height / 2});
