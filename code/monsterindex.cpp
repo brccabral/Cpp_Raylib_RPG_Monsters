@@ -137,7 +137,7 @@ void MonsterIndex::DisplayMain(const double dt)
     // monster animation
     frame_index += ANIMATION_SPEED * dt;
     const auto frames = monsters_frames[monster->name][ANIMATION_IDLE];
-    const auto [surf_texture, surf_ref] = frames[int(frame_index) % frames.size()];
+    const auto [surf_texture, surf_ref] = frames[int(frame_index) % (int) frames.size()];
     RectangleU monster_rect = surf_ref;
     RectToCenter(monster_rect, GetRectCenter(top_rect));
     DrawTextureRec(*surf_texture, surf_ref.rectangle, monster_rect.pos, WHITE);

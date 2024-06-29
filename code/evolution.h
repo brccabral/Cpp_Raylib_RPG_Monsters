@@ -14,7 +14,8 @@ public:
             std::map<std::string, Texture2D> *textures,
             std::map<std::string, animation_rects> *animation_frames,
             const std::string &start_monster, const std::string &end_monster, const Font &font,
-            const std::function<void()> &end_evolution);
+            const std::function<void()> &end_evolution,
+            const std::vector<Texture2D> &star_animation_textures);
     ~Evolution();
     void Update(double dt);
     bool IsActive();
@@ -22,6 +23,7 @@ public:
 private:
 
     void EndEvolution();
+    void DisplayStars(double dt);
 
     Font font;
 
@@ -35,4 +37,8 @@ private:
     TiledFont end_text;
 
     std::map<std::string, Timer> timers;
+
+    std::vector<Texture2D> star_textures;
+    Vector2 star_pos;
+    float frame_index{};
 };

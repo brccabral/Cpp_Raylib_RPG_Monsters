@@ -20,7 +20,7 @@ Entity::Entity(
 void Entity::Animate(const double dt)
 {
     frame_index += ANIMATION_SPEED * dt;
-    image = face_frames[GetState()][int(frame_index) % face_frames[GetState()].size()];
+    image = face_frames[GetState()][int(frame_index) % (int) face_frames[GetState()].size()];
 }
 
 void Entity::Update(const double dt)

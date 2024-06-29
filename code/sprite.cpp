@@ -133,7 +133,7 @@ AnimatedSprite::AnimatedSprite(
 void AnimatedSprite::Animate(const double deltaTime)
 {
     frame_index += ANIMATION_SPEED * deltaTime;
-    image = frames[int(frame_index) % frames.size()];
+    image = frames[int(frame_index) % (int) frames.size()];
 }
 
 void AnimatedSprite::Update(const double deltaTime)
@@ -205,7 +205,7 @@ void MonsterSprite::Animate(const double dt)
         state = ANIMATION_IDLE;
         battle->ApplyAttack(target_sprite, current_attack, monster->GetBaseDamage(current_attack));
     }
-    adjusted_frame_index = int(frame_index) % state_frames[state].size();
+    adjusted_frame_index = int(frame_index) % (int) state_frames[state].size();
     image = state_frames[state][adjusted_frame_index];
 
     if (highlight)
@@ -514,7 +514,7 @@ void AttackSprite::Animate(const double deltaTime)
     frame_index += ANIMATION_SPEED * deltaTime;
     if (frame_index < frames.size())
     {
-        image = frames[int(frame_index) % frames.size()];
+        image = frames[int(frame_index) % (int) frames.size()];
     }
     else
     {

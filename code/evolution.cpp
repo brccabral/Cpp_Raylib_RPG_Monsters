@@ -4,8 +4,9 @@ Evolution::Evolution(
         std::map<std::string, Texture2D> *textures,
         std::map<std::string, animation_rects> *animation_frames, const std::string &start_monster,
         const std::string &end_monster, const Font &font,
-        const std::function<void()> &end_evolution)
-    : font(font)
+        const std::function<void()> &end_evolution,
+        const std::vector<Texture2D> &star_animation_textures)
+    : font(font), star_textures(star_animation_textures)
 {
     Image start_image = LoadImageFromTexture((*textures)[start_monster]);
     ImageResize(&start_image, start_image.width * 2, start_image.height * 2);
@@ -54,6 +55,10 @@ Evolution::Evolution(
             1, COLORS["black"], {}, COLORS["white"], {10, 10}, 0.3f);
     end_text.rect.pos = Vector2Add(
             GetRectCenter(screen_rect), {-end_text.rect.width / 2, end_surf.rect.height / 2});
+
+    star_pos = Vector2Add(
+            GetRectCenter(screen_rect),
+            {(float) -star_textures[0].width / 2, (float) -star_textures[0].height / 2});
 }
 
 Evolution::~Evolution()
@@ -110,10 +115,18 @@ void Evolution::Update(const double dt)
         DrawTextureRec(*end_surf.texture, end_surf.rect.rectangle, position_rect.pos, WHITE);
         end_text.Draw();
     }
+    DisplayStars(dt);
     EndTextureModeSafe();
 }
 
 bool Evolution::IsActive()
 {
     return timers["start"].active || timers["end"].active;
+}
+
+void Evolution::DisplayStars(const double dt)
+{
+    frame_index += 50 * dt;
+    const Texture2D star = star_textures[int(frame_index) % star_textures.size()];
+    DrawTextureV(star, star_pos, WHITE);
 }

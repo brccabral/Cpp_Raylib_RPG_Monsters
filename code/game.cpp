@@ -178,6 +178,8 @@ void Game::ImporAssets()
     animation_frames = MonsterImporter(4, 2, "resources/graphics/monsters");
     attack_animation_rects = AttackImporter(4, 1, "resources/graphics/attacks");
 
+    star_animation_textures = ImportFolder("resources/graphics/other/star animation");
+
     face_rect_frames["characters"] = all_character_import("resources/graphics/characters");
 
     fonts["dialog"] =
@@ -483,9 +485,14 @@ void Game::UnloadResources()
         }
     }
 
-    for (auto &[key, font]: fonts)
+    for (const auto &[key, font]: fonts)
     {
         UnloadFont(font);
+    }
+
+    for (const auto &star: star_animation_textures)
+    {
+        UnloadTexture(star);
     }
 
     delete dialog_tree; // delete dialog_tree before all_sprites, it will remove itself
@@ -739,7 +746,8 @@ void Game::CheckEvolution()
                 player->Block();
                 evolution = new Evolution(
                         &named_textures["monsters"], &animation_frames, monster->name,
-                        monster->evolve.first, fonts["bold"], [this] { EndEvolution(); });
+                        monster->evolve.first, fonts["bold"], [this] { EndEvolution(); },
+                        star_animation_textures);
                 ++countEv;
                 break;
             }

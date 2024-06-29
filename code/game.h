@@ -63,6 +63,7 @@ private:
     std::map<std::string, std::map<std::string, tilerect_face>> face_rect_frames;
     std::map<std::string, animation_rects> animation_frames;
     AttackAnimationRects attack_animation_rects;
+    std::vector<Texture2D> star_animation_textures;
 
     // not *all*, but all that needs drawing or updates
     AllSprites *all_sprites = nullptr;
