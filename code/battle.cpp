@@ -384,6 +384,7 @@ void Battle::ApplyAttack(const MonsterSprite *target_sprite, const Attack attack
     new AttackSprite(
             GetRectCenter(target_sprite->rect),
             attack_animation_frames[ATTACK_DATA[attack].animation], {battle_sprites});
+    PlaySound(game->sounds[NAMES_ATTACK_ANIMATION[ATTACK_DATA[attack].animation]]);
 
     // get correct attack damage amount
     // double attack if effective

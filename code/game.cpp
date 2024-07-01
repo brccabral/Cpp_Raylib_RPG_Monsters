@@ -648,9 +648,10 @@ void Game::SetupFrames()
 {
     int player_index = 0;
     player_monsters[player_index++] = Monster("Charmadillo", 40);
+    player_monsters[player_index++] = Monster("Finsta", 30);
+    player_monsters[player_index++] = Monster("Friolera", 29);
     player_monsters[player_index++] = Monster("Sparchu", 3);
     player_monsters[player_index++] = Monster("Larvea", 3);
-    player_monsters[player_index++] = Monster("Friolera", 29);
     // player_monsters[player_index++] =
     //         Monster("Larvea", 4); // TODO force Larvea evolution at level 4
     // player_monsters[player_index++] = Monster("Atrox", 24);

@@ -344,6 +344,12 @@ static std::map<std::string, AttackAnimation> ATTACK_ANIMATION_NAMES = {
         {"explosion", ANIMATION_EXPLOSION}, {"ice", ANIMATION_ICE},
 };
 
+static std::map<AttackAnimation, std::string> NAMES_ATTACK_ANIMATION = {
+        {ANIMATION_FIRE, "fire"},           {ANIMATION_GREEN, "green"},
+        {ANIMATION_SCRATCH, "scratch"},     {ANIMATION_SPLASH, "splash"},
+        {ANIMATION_EXPLOSION, "explosion"}, {ANIMATION_ICE, "ice"},
+};
+
 struct MonsterData
 {
     std::string name;

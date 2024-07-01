@@ -26,8 +26,7 @@ public:
     void ClearSpriteGroups();
     void EndBattle(Character *character);
     void EndEvolution() const;
-
-    friend class Character; // allows Character to access Game private members
+    void CreateDialog(Character *character);
 
     bool isRunning = true;
 
@@ -37,6 +36,12 @@ public:
     std::map<AttackAnimation, std::vector<TiledTexture>> attack_animation_frames;
     std::map<std::string, std::map<std::string, Texture2D>> named_textures;
     std::map<std::string, Font> fonts;
+    Player *player{};
+    SpriteGroup *collition_sprites = nullptr;
+
+    // audio
+    std::map<std::string, Music> musics;
+    std::map<std::string, Sound> sounds;
 
 private:
 
@@ -47,7 +52,6 @@ private:
     void Setup(const std::string &map_name, const std::string &player_start_position);
     void Input();
     void UnloadResources();
-    void CreateDialog(Character *character);
     void EndDialog(Character *character);
     void TransitionCheck();
     void TintScreen(double dt);
@@ -67,11 +71,9 @@ private:
 
     // not *all*, but all that needs drawing or updates
     AllSprites *all_sprites = nullptr;
-    SpriteGroup *collition_sprites = nullptr;
     SpriteGroup *characters_sprites = nullptr;
     SpriteGroup *transition_sprites = nullptr;
     SpriteGroup *monster_sprites = nullptr; // monster encounter
-    Player *player{};
     std::map<int, Monster *> encounter_monsters;
     Evolution *evolution = nullptr;
 
@@ -90,8 +92,4 @@ private:
     double tint_speed = 600;
 
     Timer encounter_timer;
-
-    // audio
-    std::map<std::string, Music> musics;
-    std::map<std::string, Sound> sounds;
 };
