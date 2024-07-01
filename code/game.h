@@ -25,7 +25,7 @@ public:
     void run();
     void ClearSpriteGroups();
     void EndBattle(Character *character);
-    void EndEvolution();
+    void EndEvolution() const;
 
     friend class Character; // allows Character to access Game private members
 

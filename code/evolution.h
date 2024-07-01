@@ -20,16 +20,16 @@ public:
     void Update(double dt);
     bool IsActive();
 
-    const char *end_monster;
-    int level;
-    int index;
+    const char *end_monster = nullptr;
+    int level{};
+    int index{};
 
 private:
 
     void EndEvolution();
     void DisplayStars(double dt);
 
-    Font font;
+    Font font{};
 
     TiledTexture start_surf{};
     TiledTexture end_surf{};
@@ -37,10 +37,10 @@ private:
     float tint_amount = 0.f;
     float tint_speed = 0.4f;
 
-    const char *start_monster;
-    char start_text[MAX_TEXT_BUFFER_LENGTH];
+    const char *start_monster = nullptr;
+    char start_text[MAX_TEXT_BUFFER_LENGTH] = {};
     TiledFont *start_font = nullptr;
-    char end_text[MAX_TEXT_BUFFER_LENGTH];
+    char end_text[MAX_TEXT_BUFFER_LENGTH] = {};
     TiledFont *end_font = nullptr;
 
     std::map<std::string, Timer> timers;

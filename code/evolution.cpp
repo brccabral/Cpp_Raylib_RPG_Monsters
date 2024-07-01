@@ -63,11 +63,24 @@ Evolution::Evolution(
 
 Evolution::~Evolution()
 {
+    for (auto &[key, timer]: timers)
+    {
+        timer.Deactivate();
+    }
     delete start_font;
     delete end_font;
-    UnloadTexture(*start_surf.texture);
-    UnloadTexture(*start_mask.texture);
-    UnloadTexture(*end_surf.texture);
+    if (start_surf.texture)
+    {
+        UnloadTexture(*start_surf.texture);
+    }
+    if (start_mask.texture)
+    {
+        UnloadTexture(*start_mask.texture);
+    }
+    if (end_surf.texture)
+    {
+        UnloadTexture(*end_surf.texture);
+    }
 }
 
 void Evolution::Update(const double dt)
@@ -117,6 +130,8 @@ void Evolution::Update(const double dt)
         DrawTextureRec(*end_surf.texture, end_surf.rect.rectangle, position_rect.pos, WHITE);
         end_font->Draw();
     }
+    // the tutorial show stars only at the end monster, I deliberately want to show stars
+    // during the whole evolution
     DisplayStars(dt);
     EndTextureModeSafe();
 }

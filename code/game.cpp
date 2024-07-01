@@ -125,11 +125,9 @@ void Game::run()
             {
                 delete evolution;
                 evolution = nullptr;
+                CheckEvolution(); // check if there are more evolutions
             }
         }
-        // TODO do not evolve during battle
-        // if (!evolution)
-        //     CheckEvolution();
 
         TintScreen(dt);
 
@@ -561,6 +559,7 @@ void Game::EndDialog(Character *character)
     }
     else
     {
+        CheckEvolution();
         player->Unblock();
     }
 }
@@ -634,10 +633,10 @@ void Game::TintScreen(const double dt)
 void Game::SetupFrames()
 {
     int player_index = 0;
-    player_monsters[player_index++] = Monster("Charmadillo", 30);
-    player_monsters[player_index++] = Monster("Friolera", 29);
+    player_monsters[player_index++] = Monster("Charmadillo", 40);
+    player_monsters[player_index++] = Monster("Sparchu", 3);
     player_monsters[player_index++] = Monster("Larvea", 3);
-    player_monsters[player_index++] = Monster("Sparchu", 14);
+    player_monsters[player_index++] = Monster("Friolera", 29);
     // player_monsters[player_index++] =
     //         Monster("Larvea", 4); // TODO force Larvea evolution at level 4
     // player_monsters[player_index++] = Monster("Atrox", 24);
@@ -730,10 +729,6 @@ void Game::MonsterEncounter()
 
 void Game::CheckEvolution()
 {
-    if (evolution)
-    {
-        return;
-    }
     for (auto &[index, monster]: player_monsters)
     {
         if (monster.evolve.second)
@@ -743,11 +738,17 @@ void Game::CheckEvolution()
                 player->Block();
                 const char *oldName = monster.name.c_str();
                 const char *newName = monster.evolve.first.c_str();
+                if (evolution) // clear existing data
+                {
+                    delete evolution;
+                    evolution = nullptr;
+                }
                 evolution = new Evolution(
                         &named_textures["monsters"], &animation_frames, oldName, newName,
                         fonts["bold"], [this] { EndEvolution(); }, star_animation_textures,
                         monster.evolve.second, index);
-                break;
+                player_monsters[index] = Monster(newName, monster.level);
+                break; // run the first evolution-> At EndEvolution, we check if there are more
             }
         }
     }
@@ -774,8 +775,7 @@ void Game::EndBattle(Character *character)
     }
 }
 
-void Game::EndEvolution()
+void Game::EndEvolution() const
 {
-    player_monsters[evolution->index] = Monster(evolution->end_monster, evolution->level);
     player->Unblock();
 }
