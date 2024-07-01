@@ -256,3 +256,25 @@ std::vector<std::string> split(const std::string &s, const char delim)
 
     return result;
 }
+
+std::map<std::string, Music> MusicsImporter(const char *path)
+{
+    std::map<std::string, Music> musics;
+    for (const auto &dirEntry: recursive_directory_iterator(path))
+    {
+        auto filename = dirEntry.path().stem().string();
+        musics[filename] = LoadMusicStream(dirEntry.path().c_str());
+    }
+    return musics;
+}
+
+std::map<std::string, Sound> SoundsImporter(const char *path)
+{
+    std::map<std::string, Sound> sounds;
+    for (const auto &dirEntry: recursive_directory_iterator(path))
+    {
+        auto filename = dirEntry.path().stem().string();
+        sounds[filename] = LoadSound(dirEntry.path().c_str());
+    }
+    return sounds;
+}

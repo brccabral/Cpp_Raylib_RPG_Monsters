@@ -90,4 +90,8 @@ private:
     double tint_speed = 600;
 
     Timer encounter_timer;
+
+    // audio
+    std::map<std::string, Music> musics;
+    std::map<std::string, Sound> sounds;
 };

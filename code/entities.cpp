@@ -107,9 +107,10 @@ FacingDirection Entity::GetState()
 }
 
 Character::Character(
-        const Vector2 pos, const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
+        Game *g, const Vector2 pos,
+        const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
         const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir,
-        CharacterData char_data, const float radius, Game *g, const bool nurse)
+        CharacterData char_data, const float radius, const bool nurse)
     : Entity(pos, face_frms, sgs, facing_dir), nurse(nurse), character_data(std::move(char_data)),
       radius(radius), game(g)
 {
@@ -214,6 +215,7 @@ void Character::Raycast()
         can_rotate = false; // stop look around
         has_noticed = true;
         game->player->noticed = true;
+        PlaySound(game->sounds["notice"]);
     }
 }
 

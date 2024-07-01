@@ -16,6 +16,7 @@ Game::Game(const int width, const int height)
     // SetTargetFPS(60);
     SetRandomSeed(std::time(nullptr));
     SetExitKey(KEY_NULL); // Disable KEY_ESCAPE to close window, X-button still works
+    InitAudioDevice();
 
     display_surface = LoadRenderTexture(width, height);
     while (!IsRenderTextureReady(display_surface))
@@ -186,6 +187,9 @@ void Game::ImporAssets()
     fonts["regular"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 18, nullptr, 0);
     fonts["small"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 14, nullptr, 0);
     fonts["bold"] = LoadFontEx("resources/graphics/fonts/dogicapixelbold.otf", 20, nullptr, 0);
+
+    musics = MusicsImporter("resources/audio/musics");
+    sounds = SoundsImporter("resources/audio/sounds");
 }
 
 TileInfo Game::GetTileInfo(const tmx_tile *tile, const int posX, const int posY)
@@ -387,9 +391,9 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         int radius = std::stoi(tmx_get_property(entity->properties, "radius")->value.string);
         bool nurse = std::strcmp(character_id.c_str(), "Nurse") == 0;
         new Character(
-                {float(entity->x), float(entity->y)}, face_frames,
+                this, {float(entity->x), float(entity->y)}, face_frames,
                 {all_sprites, collition_sprites, characters_sprites}, face_direction,
-                TRAINER_DATA[character_id], radius, this, nurse);
+                TRAINER_DATA[character_id], radius, nurse);
 
         entity = entity->next;
     }
@@ -517,6 +521,16 @@ void Game::UnloadResources()
             delete monster;
         }
         encounter_monsters.clear();
+    }
+
+    for (auto &[key, music]: musics)
+    {
+        UnloadMusicStream(music);
+    }
+
+    for (auto &[key, sound]: sounds)
+    {
+        UnloadSound(sound);
     }
 }
 
