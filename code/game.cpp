@@ -13,7 +13,7 @@ Game::Game(const int width, const int height)
 {
     SetTraceLogLevel(LOG_WARNING);
     InitWindow(width, height, "RPG Monsters");
-    // SetTargetFPS(60);
+    SetTargetFPS(60);
     SetRandomSeed(std::time(nullptr));
     SetExitKey(KEY_NULL); // Disable KEY_ESCAPE to close window, X-button still works
     InitAudioDevice();
@@ -29,6 +29,8 @@ Game::Game(const int width, const int height)
     SetupFrames();
 
     encounter_timer = Timer(2.0f, false, false, [this] { MonsterEncounter(); });
+
+    SetCurrentBackgroundMusic(musics["overworld"]);
 }
 
 Game::~Game()
@@ -86,6 +88,7 @@ void Game::run()
         const double dt = GetFrameTime();
 
         // update
+        UpdateMusicStream(current_music);
         encounter_timer.Update();
         Input();
         TransitionCheck();
@@ -544,6 +547,16 @@ void Game::CreateDialog(Character *character)
     }
 }
 
+void Game::SetCurrentBackgroundMusic(const Music &newMusic)
+{
+    if (IsMusicStreamPlaying(current_music))
+    {
+        StopMusicStream(current_music);
+    }
+    current_music = newMusic;
+    PlayMusicStream(current_music);
+}
+
 // When there is no more phrases to show, unlock player
 void Game::EndDialog(Character *character)
 {
@@ -561,6 +574,8 @@ void Game::EndDialog(Character *character)
     }
     else if (!character->character_data.defeated)
     {
+        SetCurrentBackgroundMusic(musics["battle"]);
+
         const Texture2D bg = named_textures["bg_frames"][character->character_data.biome];
         if (transition_target)
         {
@@ -648,10 +663,10 @@ void Game::SetupFrames()
 {
     int player_index = 0;
     player_monsters[player_index++] = Monster("Charmadillo", 40);
-    player_monsters[player_index++] = Monster("Finsta", 30);
-    player_monsters[player_index++] = Monster("Friolera", 29);
-    player_monsters[player_index++] = Monster("Sparchu", 3);
     player_monsters[player_index++] = Monster("Larvea", 3);
+    player_monsters[player_index++] = Monster("Friolera", 29);
+    player_monsters[player_index++] = Monster("Finsta", 30);
+    player_monsters[player_index++] = Monster("Sparchu", 3);
     // player_monsters[player_index++] =
     //         Monster("Larvea", 4); // TODO force Larvea evolution at level 4
     // player_monsters[player_index++] = Monster("Atrox", 24);
@@ -710,6 +725,8 @@ void Game::MonsterEncounter()
         if (player->IsMoving() &&
             CheckCollisionRecs(sprite->rect.rectangle, player->hitbox.rectangle))
         {
+            SetCurrentBackgroundMusic(musics["battle"]);
+
             // change encounter timer duration for the next encounter
             encounter_timer.duration = GetRandomValue(8, 25) / 10.0f;
 
@@ -750,6 +767,8 @@ void Game::CheckEvolution()
         {
             if (monster.level >= monster.evolve.second)
             {
+                SetCurrentBackgroundMusic(musics["evolution"]);
+
                 player->Block();
                 const char *oldName = monster.name.c_str();
                 const char *newName = monster.evolve.first.c_str();
@@ -766,6 +785,11 @@ void Game::CheckEvolution()
                 break; // run the first evolution-> At EndEvolution, we check if there are more
             }
         }
+    }
+
+    if (!evolution)
+    {
+        SetCurrentBackgroundMusic(musics["overworld"]);
     }
 }
 
@@ -790,7 +814,8 @@ void Game::EndBattle(Character *character)
     }
 }
 
-void Game::EndEvolution() const
+void Game::EndEvolution()
 {
     player->Unblock();
+    SetCurrentBackgroundMusic(musics["overworld"]);
 }

@@ -25,8 +25,9 @@ public:
     void run();
     void ClearSpriteGroups();
     void EndBattle(Character *character);
-    void EndEvolution() const;
+    void EndEvolution();
     void CreateDialog(Character *character);
+    void SetCurrentBackgroundMusic(const Music &newMusic);
 
     bool isRunning = true;
 
@@ -92,4 +93,7 @@ private:
     double tint_speed = 600;
 
     Timer encounter_timer;
+
+    // audio
+    Music current_music{};
 };
