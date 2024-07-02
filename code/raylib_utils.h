@@ -142,8 +142,6 @@ DrawBar(RectangleU rect, float value, float max_value, Color color, Color bg_col
 
 RLAPI Texture2D *Texture2DToPointer(const Texture2D &texture);
 
-RLAPI Image ImageFromChannel(const Image &image, int selectedChannel);
-
 RLAPI Texture2D TextureMaskFromTexture(const Texture2D *texture, Color color);
 
 RLAPI Image GenImageRandomPixels(float width, float height);

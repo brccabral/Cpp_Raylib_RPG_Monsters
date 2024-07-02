@@ -363,12 +363,12 @@ inline MonsterData Plumette = {
         "Plumette",
         ELEMENT_PLANT,
         {
-                {"max_health", 15}, //
-                {"max_energy", 17}, //
-                {"attack", 4}, //
-                {"defense", 8}, //
-                {"recovery", 1}, //
-                {"speed", 1}, //
+                {"max_health", 15.0f}, //
+                {"max_energy", 17.0f}, //
+                {"attack", 4.0f}, //
+                {"defense", 8.0f}, //
+                {"recovery", 1.0f}, //
+                {"speed", 1.0f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_SPARK}},
@@ -378,12 +378,12 @@ inline MonsterData Ivieron = {
         "Ivieron",
         ELEMENT_PLANT,
         {
-                {"max_health", 18}, //
-                {"max_energy", 20}, //
-                {"attack", 5}, //
-                {"defense", 10}, //
-                {"recovery", 1.2}, //
-                {"speed", 1.2}, //
+                {"max_health", 18.0f}, //
+                {"max_energy", 20.0f}, //
+                {"attack", 5.0f}, //
+                {"defense", 10.0f}, //
+                {"recovery", 1.2f}, //
+                {"speed", 1.2f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_SPARK}},
@@ -393,12 +393,12 @@ inline MonsterData Pluma = {
         "Pluma",
         ELEMENT_PLANT,
         {
-                {"max_health", 23}, //
-                {"max_energy", 26}, //
-                {"attack", 6}, //
-                {"defense", 12}, //
-                {"recovery", 1.8}, //
-                {"speed", 1.8}, //
+                {"max_health", 23.0f}, //
+                {"max_energy", 26.0f}, //
+                {"attack", 6.0f}, //
+                {"defense", 12.0f}, //
+                {"recovery", 1.8f}, //
+                {"speed", 1.8f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_SPARK}},
@@ -408,12 +408,12 @@ inline MonsterData Sparchu = {
         "Sparchu",
         ELEMENT_FIRE,
         {
-                {"max_health", 15}, //
-                {"max_energy", 7}, //
-                {"attack", 3}, //
-                {"defense", 8}, //
-                {"recovery", 1.1}, //
-                {"speed", 1}, //
+                {"max_health", 15.0f}, //
+                {"max_energy", 7.0f}, //
+                {"attack", 3.0f}, //
+                {"defense", 8.0f}, //
+                {"recovery", 1.1f}, //
+                {"speed", 1.0f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_FIRE}, //
@@ -425,12 +425,12 @@ inline MonsterData Cindrill = {
         "Cindrill",
         ELEMENT_FIRE,
         {
-                {"max_health", 18}, //
-                {"max_energy", 10}, //
-                {"attack", 3.5}, //
-                {"defense", 10}, //
-                {"recovery", 1.2}, //
-                {"speed", 1.1}, //
+                {"max_health", 18.0f}, //
+                {"max_energy", 10.0f}, //
+                {"attack", 3.5f}, //
+                {"defense", 10.0f}, //
+                {"recovery", 1.2f}, //
+                {"speed", 1.1f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_FIRE}, //
@@ -442,12 +442,12 @@ inline MonsterData Charmadillo = {
         "Charmadillo",
         ELEMENT_FIRE,
         {
-                {"max_health", 29}, //
-                {"max_energy", 12}, //
-                {"attack", 4}, //
-                {"defense", 17}, //
-                {"recovery", 1.35}, //
-                {"speed", 1.1}, //
+                {"max_health", 29.0f}, //
+                {"max_energy", 12.0f}, //
+                {"attack", 4.0f}, //
+                {"defense", 17.0f}, //
+                {"recovery", 1.35f}, //
+                {"speed", 1.1f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_FIRE}, //
@@ -460,12 +460,12 @@ inline MonsterData Finsta = {
         "Finsta",
         ELEMENT_FIRE,
         {
-                {"max_health", 13}, //
-                {"max_energy", 17}, //
-                {"attack", 2}, //
-                {"defense", 8}, //
-                {"recovery", 1.5}, //
-                {"speed", 1.8}, //
+                {"max_health", 13.0f}, //
+                {"max_energy", 17.0f}, //
+                {"attack", 2.0f}, //
+                {"defense", 8.0f}, //
+                {"recovery", 1.5f}, //
+                {"speed", 1.8f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_SPARK}, //
@@ -478,12 +478,12 @@ inline MonsterData Gulfin = {
         "Gulfin",
         ELEMENT_FIRE,
         {
-                {"max_health", 18}, //
-                {"max_energy", 20}, //
-                {"attack", 3}, //
-                {"defense", 10}, //
-                {"recovery", 1.8}, //
-                {"speed", 2}, //
+                {"max_health", 18.0f}, //
+                {"max_energy", 20.0f}, //
+                {"attack", 3.0f}, //
+                {"defense", 10.0f}, //
+                {"recovery", 1.8f}, //
+                {"speed", 2.0f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_SPARK}, //
@@ -496,12 +496,12 @@ inline MonsterData Finiette = {
         "Finiette",
         ELEMENT_FIRE,
         {
-                {"max_health", 27}, //
-                {"max_energy", 23}, //
-                {"attack", 4}, //
-                {"defense", 17}, //
-                {"recovery", 2}, //
-                {"speed", 2.5}, //
+                {"max_health", 27.0f}, //
+                {"max_energy", 23.0f}, //
+                {"attack", 4.0f}, //
+                {"defense", 17.0f}, //
+                {"recovery", 2.0f}, //
+                {"speed", 2.5f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_SPARK}, //
@@ -514,12 +514,12 @@ inline MonsterData Atrox = {
         "Atrox",
         ELEMENT_FIRE,
         {
-                {"max_health", 18}, //
-                {"max_energy", 20}, //
-                {"attack", 3}, //
-                {"defense", 10}, //
-                {"recovery", 1.3}, //
-                {"speed", 1.9}, //
+                {"max_health", 18.0f}, //
+                {"max_energy", 20.0f}, //
+                {"attack", 3.0f}, //
+                {"defense", 10.0f}, //
+                {"recovery", 1.3f}, //
+                {"speed", 1.9f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_SPARK}, //
@@ -530,12 +530,12 @@ inline MonsterData Pouch = {
         "Pouch",
         ELEMENT_PLANT,
         {
-                {"max_health", 23}, //
-                {"max_energy", 25}, //
-                {"attack", 4}, //
-                {"defense", 12}, //
-                {"recovery", 1}, //
-                {"speed", 1.5}, //
+                {"max_health", 23.0f}, //
+                {"max_energy", 25.0f}, //
+                {"attack", 4.0f}, //
+                {"defense", 12.0f}, //
+                {"recovery", 1.0f}, //
+                {"speed", 1.5f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_SPARK}, //
@@ -546,12 +546,12 @@ inline MonsterData Draem = {
         "Draem",
         ELEMENT_PLANT,
         {
-                {"max_health", 23}, //
-                {"max_energy", 25}, //
-                {"attack", 4}, //
-                {"defense", 12}, //
-                {"recovery", 1.2}, //
-                {"speed", 1.4}, //
+                {"max_health", 23.0f}, //
+                {"max_energy", 25.0f}, //
+                {"attack", 4.0f}, //
+                {"defense", 12.0f}, //
+                {"recovery", 1.2f}, //
+                {"speed", 1.4f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_HEAL}, //
@@ -563,12 +563,12 @@ inline MonsterData Larvea = {
         "Larvea",
         ELEMENT_PLANT,
         {
-                {"max_health", 15}, //
-                {"max_energy", 17}, //
-                {"attack", 1}, //
-                {"defense", 8}, //
-                {"recovery", 1}, //
-                {"speed", 1}, //
+                {"max_health", 15.0f}, //
+                {"max_energy", 17.0f}, //
+                {"attack", 1.0f}, //
+                {"defense", 8.0f}, //
+                {"recovery", 1.0f}, //
+                {"speed", 1.0f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_SPARK}},
@@ -578,12 +578,12 @@ inline MonsterData Cleaf = {
         "Cleaf",
         ELEMENT_PLANT,
         {
-                {"max_health", 18}, //
-                {"max_energy", 20}, //
-                {"attack", 3}, //
-                {"defense", 10}, //
-                {"recovery", 1.7}, //
-                {"speed", 1.6}, //
+                {"max_health", 18.0f}, //
+                {"max_energy", 20.0f}, //
+                {"attack", 3.0f}, //
+                {"defense", 10.0f}, //
+                {"recovery", 1.7f}, //
+                {"speed", 1.6f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_HEAL}},
@@ -593,12 +593,12 @@ inline MonsterData Jacana = {
         "Jacana",
         ELEMENT_FIRE,
         {
-                {"max_health", 12}, //
-                {"max_energy", 19}, //
-                {"attack", 3}, //
-                {"defense", 10}, //
-                {"recovery", 2.1}, //
-                {"speed", 2.6}, //
+                {"max_health", 12.0f}, //
+                {"max_energy", 19.0f}, //
+                {"attack", 3.0f}, //
+                {"defense", 10.0f}, //
+                {"recovery", 2.1f}, //
+                {"speed", 2.6f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_SPARK}, //
@@ -611,12 +611,12 @@ inline MonsterData Friolera = {
         "Friolera",
         ELEMENT_FIRE,
         {
-                {"max_health", 13}, //
-                {"max_energy", 20}, //
-                {"attack", 4}, //
-                {"defense", 6}, //
-                {"recovery", 1.3}, //
-                {"speed", 2}, //
+                {"max_health", 13.0f}, //
+                {"max_energy", 20.0f}, //
+                {"attack", 4.0f}, //
+                {"defense", 6.0f}, //
+                {"recovery", 1.3f}, //
+                {"speed", 2.0f}, //
         },
         {{0, ATTACK_SCRATCH}, //
          {5, ATTACK_SPARK}, //
@@ -663,14 +663,14 @@ struct AttackData
 };
 
 inline std::map<Attack, AttackData> ATTACK_DATA = {
-        {ATTACK_BURN, {"burn", OPPONENT, 2, 15, ELEMENT_FIRE, ANIMATION_FIRE}}, //
-        {ATTACK_HEAL, {"heal", PLAYER, -1.2, 600, ELEMENT_PLANT, ANIMATION_GREEN}}, //
-        {ATTACK_BATTLECRY, {"battlecry", PLAYER, -1.4, 20, ELEMENT_NORMAL, ANIMATION_GREEN}}, //
-        {ATTACK_SPARK, {"spark", OPPONENT, 1.1, 20, ELEMENT_FIRE, ANIMATION_FIRE}}, //
-        {ATTACK_SCRATCH, {"scratch", OPPONENT, 1.2, 20, ELEMENT_NORMAL, ANIMATION_SCRATCH}}, //
-        {ATTACK_SPLASH, {"splash", OPPONENT, 2, 15, ELEMENT_FIRE, ANIMATION_SPLASH}}, //
-        {ATTACK_FIRE, {"fire", OPPONENT, 2, 15, ELEMENT_FIRE, ANIMATION_FIRE}}, //
-        {ATTACK_EXPLOSTION, {"explosion", OPPONENT, 2, 90, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
-        {ATTACK_ANNIHILATE, {"annihilate", OPPONENT, 3, 30, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
-        {ATTACK_ICE, {"ice", OPPONENT, 2, 15, ELEMENT_FIRE, ANIMATION_ICE}}, //
+        {ATTACK_BURN, {"burn", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ANIMATION_FIRE}}, //
+        {ATTACK_HEAL, {"heal", PLAYER, -1.2f, 600, ELEMENT_PLANT, ANIMATION_GREEN}}, //
+        {ATTACK_BATTLECRY, {"battlecry", PLAYER, -1.4f, 20, ELEMENT_NORMAL, ANIMATION_GREEN}}, //
+        {ATTACK_SPARK, {"spark", OPPONENT, 1.1f, 20, ELEMENT_FIRE, ANIMATION_FIRE}}, //
+        {ATTACK_SCRATCH, {"scratch", OPPONENT, 1.2f, 20, ELEMENT_NORMAL, ANIMATION_SCRATCH}}, //
+        {ATTACK_SPLASH, {"splash", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ANIMATION_SPLASH}}, //
+        {ATTACK_FIRE, {"fire", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ANIMATION_FIRE}}, //
+        {ATTACK_EXPLOSTION, {"explosion", OPPONENT, 2.0f, 90, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
+        {ATTACK_ANNIHILATE, {"annihilate", OPPONENT, 3.0f, 30, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
+        {ATTACK_ICE, {"ice", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ANIMATION_ICE}}, //
 };

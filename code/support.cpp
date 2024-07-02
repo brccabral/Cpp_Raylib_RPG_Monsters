@@ -1,3 +1,4 @@
+#include <sstream>
 #include <filesystem>
 #include "support.h"
 
@@ -8,7 +9,8 @@ std::vector<Texture2D> ImportFolder(const char *path)
     std::vector<Texture2D> frames;
     for (const auto &dirEntry: recursive_directory_iterator(path))
     {
-        frames.push_back(LoadTexture(dirEntry.path().c_str()));
+        auto entryPath = dirEntry.path().string();
+        frames.push_back(LoadTexture(entryPath.c_str()));
     }
     return frames;
 }
@@ -19,7 +21,8 @@ std::map<std::string, Texture2D> ImportNamedFolder(const char *path)
     for (const auto &dirEntry: recursive_directory_iterator(path))
     {
         auto filename = dirEntry.path().stem().string();
-        textures[filename] = LoadTexture(dirEntry.path().c_str());
+        auto entryPath = dirEntry.path().string();
+        textures[filename] = LoadTexture(entryPath.c_str());
     }
     return textures;
 }
@@ -106,7 +109,8 @@ MonsterImporter(const int cols, const int rows, const char *path)
     for (const auto &dirEntry: recursive_directory_iterator(path))
     {
         auto filename = dirEntry.path().stem().string();
-        auto frames = import_tilemap_rects(cols, rows, dirEntry.path().c_str());
+        auto entryPath = dirEntry.path().string();
+        auto frames = import_tilemap_rects(cols, rows, entryPath.c_str());
         monster_dict[filename][ANIMATION_IDLE] = frames[0];
         monster_dict[filename][ANIMATION_ATTACK] = frames[1];
     }
@@ -121,7 +125,8 @@ AttackAnimationRects AttackImporter(const int cols, const int rows, const char *
     for (const auto &dirEntry: recursive_directory_iterator(path))
     {
         auto filename = dirEntry.path().stem().string();
-        auto frames = import_tilemap_rects(cols, rows, dirEntry.path().c_str());
+        auto entryPath = dirEntry.path().string();
+        auto frames = import_tilemap_rects(cols, rows, entryPath.c_str());
         result[ATTACK_ANIMATION_NAMES[filename]] = frames[0];
     }
 
@@ -137,7 +142,8 @@ std::map<std::string, tilerect_face> all_character_import(const char *path)
         if (dirEntry.is_regular_file())
         {
             auto filename = dirEntry.path().stem().string();
-            new_dict[filename] = CharacterImporter(4, 4, dirEntry.path().c_str());
+        auto entryPath = dirEntry.path().string();
+            new_dict[filename] = CharacterImporter(4, 4, entryPath.c_str());
         }
     }
 
@@ -184,7 +190,8 @@ std::map<std::string, tmx_map *> tmx_importer(const char *path)
     for (const auto &dirEntry: recursive_directory_iterator(path))
     {
         auto filename = dirEntry.path().stem().string();
-        maps[filename] = LoadTMX(dirEntry.path().c_str());
+        auto entryPath = dirEntry.path().string();
+        maps[filename] = LoadTMX(entryPath.c_str());
     }
     return maps;
 }
@@ -263,7 +270,8 @@ std::map<std::string, Music> MusicsImporter(const char *path)
     for (const auto &dirEntry: recursive_directory_iterator(path))
     {
         auto filename = dirEntry.path().stem().string();
-        musics[filename] = LoadMusicStream(dirEntry.path().c_str());
+        auto entryPath = dirEntry.path().string();
+        musics[filename] = LoadMusicStream(entryPath.c_str());
     }
     return musics;
 }
@@ -274,7 +282,8 @@ std::map<std::string, Sound> SoundsImporter(const char *path)
     for (const auto &dirEntry: recursive_directory_iterator(path))
     {
         auto filename = dirEntry.path().stem().string();
-        sounds[filename] = LoadSound(dirEntry.path().c_str());
+        auto entryPath = dirEntry.path().string();
+        sounds[filename] = LoadSound(entryPath.c_str());
     }
     return sounds;
 }

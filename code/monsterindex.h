@@ -27,7 +27,7 @@ private:
 
     RenderTexture2D tint_surface{};
     std::map<std::string, Font> fonts;
-    RectangleU main_rect{0, 0, WINDOW_WIDTH * 0.6, WINDOW_HEIGHT * 0.8};
+    RectangleU main_rect{0, 0, WINDOW_WIDTH * 0.6f, WINDOW_HEIGHT * 0.8f};
     std::map<int, Monster> *monsters;
     std::map<std::string, float> max_stats = GetMaxStats();
 
@@ -39,7 +39,7 @@ private:
 
     // list
     int visible_items = 6;
-    float list_width = main_rect.width * 0.3;
+    float list_width = main_rect.width * 0.3f;
     float item_height = main_rect.height / visible_items;
     int index = 0;
     int selected_index = -1;

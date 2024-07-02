@@ -64,7 +64,7 @@ void MonsterIndex::DisplayList()
 {
     // BeginTextureMode was called in Update()
     const RectangleU bg_rect = {main_rect.pos, {list_width, main_rect.height}};
-    DrawRectangleRoundedEx(bg_rect, 0.1, 10, COLORS["gray"], true, false, true, false);
+    DrawRectangleRoundedEx(bg_rect, 0.1f, 10, COLORS["gray"], true, false, true, false);
 
     // vertical offset
     const int v_offset = (index < visible_items) ? 0 : -(index - visible_items + 1) * item_height;
@@ -82,13 +82,13 @@ void MonsterIndex::DisplayList()
         {
             if (CheckCollisionPointRec(GetRectTopLeft(main_rect), item_rect.rectangle))
             {
-                DrawRectangleRoundedEx(item_rect, 0.3, 10, bg_color, true, false, false, false);
+                DrawRectangleRoundedEx(item_rect, 0.3f, 10, bg_color, true, false, false, false);
             }
             else if (CheckCollisionPointRec(
                              Vector2Add(GetRectBottomLeft(main_rect), {1, -1}),
                              item_rect.rectangle))
             {
-                DrawRectangleRoundedEx(item_rect, 0.3, 10, bg_color, false, false, true, false);
+                DrawRectangleRoundedEx(item_rect, 0.3f, 10, bg_color, false, false, true, false);
             }
             else
             {
@@ -126,12 +126,12 @@ void MonsterIndex::DisplayMain(const double dt)
     // bg
     const RectangleU rect = {
             main_rect.x + list_width, main_rect.y, main_rect.width - list_width, main_rect.height};
-    DrawRectangleRoundedEx(rect, 0.1, 10, COLORS["dark"], false, true, false, true);
+    DrawRectangleRoundedEx(rect, 0.1f, 10, COLORS["dark"], false, true, false, true);
 
     // monster
     const RectangleU top_rect = {rect.pos, rect.width, rect.height * 0.4f};
     DrawRectangleRoundedEx(
-            top_rect, 0.1, 10, COLORS[NAMES_ELEMENT_TYPES[monster->element]], false, true, false,
+            top_rect, 0.1f, 10, COLORS[NAMES_ELEMENT_TYPES[monster->element]], false, true, false,
             false);
 
     // monster animation
@@ -251,7 +251,7 @@ void MonsterIndex::DisplayMain(const double dt)
     {
         auto element = ATTACK_DATA[abilities[a_index]].element;
         float x = abilities_rect.x + a_index % 2 * abilities_rect.width / 2;
-        float y = 20.f + abilities_rect.y + int(a_index / 2) * (fonts["regular"].baseSize + 20);
+        float y = 20.0f + abilities_rect.y + int(a_index / 2) * (fonts["regular"].baseSize + 20);
         Vector2 ability_pos = {x, y};
         Vector2 ability_text_size =
                 MeasureTextF(fonts["regular"], ATTACK_DATA[abilities[a_index]].name.c_str(), 1);

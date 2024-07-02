@@ -195,10 +195,10 @@ extern "C"
         for (int i = 1; i < points_count; i++)
         {
             DrawLineEx(
-                    (Vector2){
+                    CLITERAL(Vector2){
                             (float) (offset_x + points[i - 1][0]),
                             (float) (offset_y + points[i - 1][1])},
-                    (Vector2){(float) (offset_x + points[i][0]), (float) (offset_y + points[i][1])},
+                    CLITERAL(Vector2){(float) (offset_x + points[i][0]), (float) (offset_y + points[i][1])},
                     RAYLIB_TMX_LINE_THICKNESS, color);
         }
     }
@@ -213,8 +213,8 @@ extern "C"
         if (points_count > 2)
         {
             DrawLineEx(
-                    (Vector2){(float) (offset_x + points[0][0]), (float) (offset_y + points[0][1])},
-                    (Vector2){
+                    CLITERAL(Vector2){(float) (offset_x + points[0][0]), (float) (offset_y + points[0][1])},
+                    CLITERAL(Vector2){
                             (float) (offset_x + points[points_count - 1][0]),
                             (float) (offset_y + points[points_count - 1][1])},
                     RAYLIB_TMX_LINE_THICKNESS, color);
@@ -274,7 +274,7 @@ extern "C"
         {
             if (head->visible)
             {
-                Rectangle dest = (Rectangle){
+                Rectangle dest = CLITERAL(Rectangle){
                         (float) posX + (float) head->x, (float) posY + (float) head->y,
                         (float) head->width, (float) head->height};
                 switch (head->obj_type)
@@ -294,7 +294,7 @@ extern "C"
                         break;
                     case OT_ELLIPSE:
                         DrawEllipseLines(
-                                dest.x + head->width / 2.0, dest.y + head->height / 2.0,
+                                dest.x + head->width / 2.0f, dest.y + head->height / 2.0f,
                                 head->width / 2.0f, head->height / 2.0f, color);
                         break;
                     case OT_TILE:
@@ -317,7 +317,7 @@ extern "C"
                     break;
                     case OT_POINT:
                         DrawCircle(
-                                dest.x + head->width / 2.0, dest.y + head->height / 2.0, 5, color);
+                                dest.x + head->width / 2.0f, dest.y + head->height / 2.0f, 5, color);
                         break;
                 }
             }
@@ -347,7 +347,7 @@ extern "C"
      */
     void DrawTMXTile(tmx_tile *tile, int posX, int posY, Color tint)
     {
-        Texture *image;
+        Texture *image = NULL;
         Rectangle srcRect;
         Vector2 position;
         position.x = (float) posX;

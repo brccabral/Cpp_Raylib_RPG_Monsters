@@ -22,6 +22,6 @@ private:
     int dialog_num{};
     int dialog_index{};
     DialogSprite *currentDialog = nullptr;
-    Timer dialog_timer{0.5, false, true};
+    Timer dialog_timer{0.5f, false, true};
     std::function<void(Character *)> end_dialog;
 };
