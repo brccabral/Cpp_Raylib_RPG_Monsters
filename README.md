@@ -15,5 +15,5 @@ Tutorial https://www.youtube.com/watch?v=fo4e3njyGy0
 
 ### Resources
 
-- Get game assets from tutorial project code https://github.com/clear-code-projects/Python-Monsters
-- Get shaders from raylib examples https://github.com/raysan5/raylib  
+- Get game assets from tutorial project code https://github.com/clear-code-projects/Python-Monsters  
+
