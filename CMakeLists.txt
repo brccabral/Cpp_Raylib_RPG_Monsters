@@ -34,9 +34,6 @@ if (PLATFORM STREQUAL "Desktop")
     target_compile_definitions(${PROJECT_NAME} PRIVATE PLATFORM_DESKTOP)
 endif ()
 
-target_link_libraries(${PROJECT_NAME} raylib tmx)
-install(TARGETS ${PROJECT_NAME})
-
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} gdi32 winmm)
     set(COMPILE_FLAGS "/NODEFAULTLIB:libcmt")
@@ -44,12 +41,12 @@ else ()
     target_link_libraries(${PROJECT_NAME} m)
 endif ()
 
-install(TARGETS ${PROJECT_NAME})
-
 # copy resources to Build folder for debugging
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/resources $<TARGET_FILE_DIR:${PROJECT_NAME}>/resources
 )
+
+install(TARGETS ${PROJECT_NAME})
 
 # copy resources to Install location
 install(DIRECTORY
