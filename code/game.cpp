@@ -21,6 +21,8 @@ void Game::run()
 {
     while (!rl::WindowShouldClose())
     {
+        const float dt = rg::time::Clock::tick();
+        all_sprites.Update(dt);
         all_sprites.Draw(display_surface);
         rg::display::Update();
     }
