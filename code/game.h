@@ -1,5 +1,7 @@
 #pragma once
 #include <rygame.h>
+#include "sprite.h"
+#include "entities.h"
 
 
 class Game
@@ -9,6 +11,8 @@ public:
     Game();
     ~Game();
     void run();
+
+    Player *player{};
 
 private:
 
