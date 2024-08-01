@@ -1,5 +1,4 @@
 #include "game.h"
-#include "game.h"
 #include "settings.h"
 
 
@@ -11,7 +10,8 @@ Game::Game()
 
     all_sprites = AllSprites();
     ImportAssets();
-    Setup("world", "house");
+    // Setup("world", "house");
+    Setup("hospital", "world");
 }
 
 Game::~Game()
@@ -34,6 +34,7 @@ void Game::run()
 void Game::ImportAssets()
 {
     tmx_maps["world"] = rl::LoadTMX("resources/data/maps/world.tmx");
+    tmx_maps["hospital"] = rl::LoadTMX("resources/data/maps/hospital.tmx");
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)
