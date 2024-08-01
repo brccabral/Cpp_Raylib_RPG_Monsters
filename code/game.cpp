@@ -44,9 +44,13 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     const rl::tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
     const rl::tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
     const rl::tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
+    const rl::tmx_layer *terrain_top_layer = tmx_find_layer_by_name(map, "Terrain Top");
 
     auto *terrain_surface = rg::tmx::GetTMXLayerSurface(map, terrain_layer);
     new Sprite({}, terrain_surface, {&all_sprites});
+
+    auto *terrain_top_surface = rg::tmx::GetTMXLayerSurface(map, terrain_top_layer);
+    new Sprite({}, terrain_top_surface, {&all_sprites});
 
     // objects
     auto object = objects_layer->content.objgr->head;
