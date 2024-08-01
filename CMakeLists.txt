@@ -14,6 +14,7 @@ find_package(raylib-tmx REQUIRED)
 add_executable(${PROJECT_NAME} code/main.cpp
         code/game.cpp
         code/game.h
+        code/sprite.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} raylib rygame tmx raylib-tmx)

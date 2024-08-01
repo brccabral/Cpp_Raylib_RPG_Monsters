@@ -1,5 +1,6 @@
 #include "game.h"
 #include "settings.h"
+#include "sprite.h"
 
 
 Game::Game()
@@ -14,13 +15,14 @@ Game::Game()
 
 Game::~Game()
 {
-    rg::Quit();
+    UnloadResources();
 }
 
 void Game::run()
 {
     while (!rl::WindowShouldClose())
     {
+        all_sprites.Draw(display_surface);
         rg::display::Update();
     }
 }
@@ -30,11 +32,11 @@ void Game::ImportAssets()
     tmx_maps["world"] = rl::LoadTMX("resources/data/maps/world.tmx");
 }
 
-void Game::Setup(const rl::tmx_map *tmx_map, std::string player_start_pos)
+void Game::Setup(const rl::tmx_map *tmx_map, const std::string &player_start_pos)
 {
     const auto *terrain_layer = tmx_find_layer_by_name(tmx_map, "Terrain");
-    const auto terrain_surface = rg::tmx::GetTMXLayerSurface(tmx_map, terrain_layer);
-    display_surface->Blit(terrain_surface);
+    auto *terrain_surface = rg::tmx::GetTMXLayerSurface(tmx_map, terrain_layer);
+    new Sprite({}, terrain_surface, {&all_sprites});
 }
 
 void Game::UnloadResources()
