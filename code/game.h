@@ -18,7 +18,7 @@ public:
 private:
 
     void ImportAssets();
-    void Setup(const rl::tmx_map *tmx_map, const std::string &player_start_pos);
+    void Setup(const std::string &map_name, const std::string &player_start_position);
     void UnloadResources();
 
     rg::Surface *display_surface = nullptr;

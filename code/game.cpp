@@ -1,4 +1,5 @@
 #include "game.h"
+#include "game.h"
 #include "settings.h"
 
 
@@ -10,7 +11,7 @@ Game::Game()
 
     all_sprites = AllSprites();
     ImportAssets();
-    Setup(tmx_maps["world"], "house");
+    Setup("world", "house");
 }
 
 Game::~Game()
@@ -35,13 +36,35 @@ void Game::ImportAssets()
     tmx_maps["world"] = rl::LoadTMX("resources/data/maps/world.tmx");
 }
 
-void Game::Setup(const rl::tmx_map *tmx_map, const std::string &player_start_position)
+void Game::Setup(const std::string &map_name, const std::string &player_start_position)
 {
-    const rl::tmx_layer *terrain_layer = tmx_find_layer_by_name(tmx_map, "Terrain");
-    const rl::tmx_layer *entities_layer = tmx_find_layer_by_name(tmx_map, "Entities");
+    const rl::tmx_map *map = tmx_maps[map_name];
 
-    auto *terrain_surface = rg::tmx::GetTMXLayerSurface(tmx_map, terrain_layer);
+    const rl::tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
+    const rl::tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
+    const rl::tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
+
+    auto *terrain_surface = rg::tmx::GetTMXLayerSurface(map, terrain_layer);
     new Sprite({}, terrain_surface, {&all_sprites});
+
+    // objects
+    auto object = objects_layer->content.objgr->head;
+    while (object)
+    {
+        const int gid = object->content.gid;
+        if (map->tiles[gid])
+        {
+            auto *objSurf = new rg::Surface(object->width, object->height);
+            rg::Rect atlas_rect;
+            const auto *tileTexture = rg::tmx::GetTMXTileTexture(map->tiles[gid], &atlas_rect);
+            objSurf->Blit(tileTexture, {}, atlas_rect);
+            new Sprite(
+                    {(float) object->x, (float) (object->y - object->height)}, objSurf,
+                    {&all_sprites});
+        }
+        object = object->next;
+    }
+
 
     // we need to find the player first, so it can be passed to all characters in the next look
     auto entity = entities_layer->content.objgr->head;
