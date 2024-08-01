@@ -10,8 +10,8 @@ Game::Game()
 
     all_sprites = AllSprites();
     ImportAssets();
-    // Setup("world", "house");
-    Setup("hospital", "world");
+    Setup("world", "house");
+    // Setup("hospital", "world");
 }
 
 Game::~Game()
@@ -35,6 +35,13 @@ void Game::ImportAssets()
 {
     tmx_maps["world"] = rl::LoadTMX("resources/data/maps/world.tmx");
     tmx_maps["hospital"] = rl::LoadTMX("resources/data/maps/hospital.tmx");
+
+    const auto waterList = rg::Surface::LoadFolderList("resources/graphics/tilesets/water");
+    waterFrames = rg::Frames::Merge(waterList, 2, 2);
+    for (const auto *water_list: waterList)
+    {
+        delete water_list;
+    }
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)
@@ -93,4 +100,5 @@ void Game::UnloadResources()
     {
         UnloadTMX(tmx_map);
     }
+    delete waterFrames;
 }
