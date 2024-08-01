@@ -8,6 +8,7 @@ Game::Game()
     display_surface = rg::display::SetMode(WINDOW_WIDTH, WINDOW_HEIGHT);
     rg::display::SetCaption("RPG Monsters");
 
+    all_sprites = AllSprites();
     ImportAssets();
     Setup(tmx_maps["world"], "house");
 }
@@ -23,7 +24,7 @@ void Game::run()
     {
         const float dt = rg::time::Clock::tick();
         all_sprites.Update(dt);
-        all_sprites.Draw(display_surface);
+        all_sprites.Draw(player);
         rg::display::Update();
     }
 }

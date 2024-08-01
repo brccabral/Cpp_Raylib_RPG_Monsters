@@ -16,6 +16,8 @@ add_executable(${PROJECT_NAME} code/main.cpp
         code/game.h
         code/sprite.cpp
         code/entities.cpp
+        code/groups.cpp
+        code/groups.h
 )
 
 target_link_libraries(${PROJECT_NAME} raylib rygame tmx raylib-tmx)

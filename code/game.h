@@ -2,6 +2,7 @@
 #include <rygame.h>
 #include "sprite.h"
 #include "entities.h"
+#include "groups.h"
 
 
 class Game
@@ -24,5 +25,5 @@ private:
     std::map<std::string, rl::tmx_map *> tmx_maps;
 
     // Groups
-    rg::sprite::Group all_sprites{};
+    AllSprites all_sprites;
 };
