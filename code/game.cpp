@@ -52,6 +52,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     const rl::tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
     const rl::tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
     const rl::tmx_layer *terrain_top_layer = tmx_find_layer_by_name(map, "Terrain Top");
+    const rl::tmx_layer *water_layer = tmx_find_layer_by_name(map, "Water");
 
     auto *terrain_surface = rg::tmx::GetTMXLayerSurface(map, terrain_layer);
     new Sprite({}, terrain_surface, {&all_sprites});
@@ -91,6 +92,21 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             }
         }
         entity = entity->next;
+    }
+
+    // water
+    auto water = water_layer->content.objgr->head;
+    while (water)
+    {
+        for (int y = 0; y < water->height; y += TILE_SIZE)
+        {
+            for (int x = 0; x < water->width; x += TILE_SIZE)
+            {
+                new AnimatedSprite(
+                        {float(x + water->x), float(y + water->y)}, waterFrames, {&all_sprites});
+            }
+        }
+        water = water->next;
     }
 }
 

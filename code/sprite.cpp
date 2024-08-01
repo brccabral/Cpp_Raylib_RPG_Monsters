@@ -9,3 +9,15 @@ Sprite::Sprite(
     rect = image->GetRect();
     rect.topleft(pos);
 }
+
+AnimatedSprite::AnimatedSprite(
+        const rg::math::Vector2 pos, rg::Frames *frames,
+        const std::vector<rg::sprite::Group *> &groups)
+    : Sprite(pos, frames, groups)
+{}
+
+AnimatedSprite::~AnimatedSprite()
+{
+    // the image is deleted in the caller class
+    image = nullptr;
+}
