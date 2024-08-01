@@ -24,6 +24,7 @@ void Game::run()
     {
         const float dt = rg::time::Clock::tick();
         all_sprites.Update(dt);
+        display_surface->Fill(rl::BLACK);
         all_sprites.Draw(player);
         rg::display::Update();
     }
@@ -52,7 +53,6 @@ void Game::Setup(const rl::tmx_map *tmx_map, const std::string &player_start_pos
             if (std::strcmp(entity_pos, player_start_position.c_str()) == 0)
             {
                 player = new Player({float(entity->x), float(entity->y)}, {&all_sprites});
-                player->rect.topleft({10, 10});
             }
         }
         entity = entity->next;
