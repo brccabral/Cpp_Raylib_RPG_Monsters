@@ -17,16 +17,15 @@ add_executable(${PROJECT_NAME} code/main.cpp
         code/sprite.cpp
         code/entities.cpp
         code/groups.cpp
-        code/groups.h
 )
 
-target_link_libraries(${PROJECT_NAME} raylib rygame tmx raylib-tmx)
+target_link_libraries(${PROJECT_NAME} PRIVATE raylib rygame tmx raylib-tmx)
 
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} gdi32 winmm)
+    target_link_libraries(${PROJECT_NAME} PRIVATE gdi32 winmm)
     set(COMPILE_FLAGS "/NODEFAULTLIB:libcmt")
 else ()
-    target_link_libraries(${PROJECT_NAME} m)
+    target_link_libraries(${PROJECT_NAME} PRIVATE m)
 endif ()
 
 # copy resources to Build folder for debugging
