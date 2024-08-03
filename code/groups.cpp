@@ -14,7 +14,7 @@ void AllSprites::Draw(const Player *player)
     display_surface->StartRender(true);
     for (const auto *sprite: Sprites())
     {
-        display_surface->Blit(sprite->image, sprite->rect.topleft() + offset, rl::BLEND_ALPHA);
+        display_surface->Blit(sprite->image, sprite->rect.topleft() + offset);
     }
     display_surface->EndRender(true);
 }
