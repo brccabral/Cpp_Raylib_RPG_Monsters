@@ -54,11 +54,27 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     const rl::tmx_layer *terrain_top_layer = tmx_find_layer_by_name(map, "Terrain Top");
     const rl::tmx_layer *water_layer = tmx_find_layer_by_name(map, "Water");
 
+#if 1
+    auto terrain_tiles = rg::tmx::GetTMXTiles(map, terrain_layer);
+    for (auto &[position, texture, atlas_rect]: terrain_tiles)
+    {
+        auto *surface = new rg::Surface(*texture, atlas_rect);
+        new Sprite(position, surface, {&all_sprites});
+    }
+
+    auto terrain_top_tiles = rg::tmx::GetTMXTiles(map, terrain_top_layer);
+    for (auto &[position, texture, atlas_rect]: terrain_top_tiles)
+    {
+        auto *surface = new rg::Surface(*texture, atlas_rect);
+        new Sprite(position, surface, {&all_sprites});
+    }
+#else
     auto *terrain_surface = rg::tmx::GetTMXLayerSurface(map, terrain_layer);
     new Sprite({}, terrain_surface, {&all_sprites});
 
     auto *terrain_top_surface = rg::tmx::GetTMXLayerSurface(map, terrain_top_layer);
     new Sprite({}, terrain_top_surface, {&all_sprites});
+#endif
 
     // objects
     auto object = objects_layer->content.objgr->head;
