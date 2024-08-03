@@ -83,10 +83,9 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         const int gid = object->content.gid;
         if (map->tiles[gid])
         {
-            auto *objSurf = new rg::Surface(object->width, object->height);
             rg::Rect atlas_rect;
             const auto *tileTexture = rg::tmx::GetTMXTileTexture(map->tiles[gid], &atlas_rect);
-            objSurf->Blit(tileTexture, {}, atlas_rect);
+            auto *objSurf = new rg::Surface(*tileTexture, atlas_rect);
             new Sprite(
                     {(float) object->x, (float) (object->y - object->height)}, objSurf,
                     {&all_sprites});
