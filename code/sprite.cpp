@@ -16,4 +16,8 @@ AnimatedSprite::AnimatedSprite(
     : Sprite(pos, surf, groups)
 {}
 
-AnimatedSprite::~AnimatedSprite() = default;
+AnimatedSprite::~AnimatedSprite()
+{
+    // image is deleted in ~Game()
+    image = nullptr;
+};

@@ -37,7 +37,8 @@ void Game::ImportAssets()
     tmx_maps["hospital"] = rl::LoadTMX("resources/data/maps/hospital.tmx");
 
     const auto waterList = rg::image::LoadFolderList("resources/graphics/tilesets/water");
-    waterFrames = rg::Frames::Merge(waterList, 2, 2);
+    waterFrames = rg::Frames::Merge(waterList, 1, waterList.size());
+    rg::image::DeleteAllVector(waterList);
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)
@@ -127,4 +128,6 @@ void Game::UnloadResources()
     {
         UnloadTMX(tmx_map);
     }
+    delete waterFrames;
+    delete player;
 }
