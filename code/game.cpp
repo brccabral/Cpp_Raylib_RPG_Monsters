@@ -36,7 +36,7 @@ void Game::ImportAssets()
     tmx_maps["world"] = rl::LoadTMX("resources/data/maps/world.tmx");
     tmx_maps["hospital"] = rl::LoadTMX("resources/data/maps/hospital.tmx");
 
-    const auto waterList = rg::Surface::LoadFolderList("resources/graphics/tilesets/water");
+    const auto waterList = rg::image::LoadFolderList("resources/graphics/tilesets/water");
     waterFrames = rg::Frames::Merge(waterList, 2, 2);
 }
 
@@ -50,30 +50,26 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     const rl::tmx_layer *terrain_top_layer = tmx_find_layer_by_name(map, "Terrain Top");
     const rl::tmx_layer *water_layer = tmx_find_layer_by_name(map, "Water");
 
-#if 0
+#if 1
     auto terrain_tiles = rg::tmx::GetTMXTiles(map, terrain_layer);
     for (auto &[position, texture, atlas_rect]: terrain_tiles)
     {
-        rg::Surface surface{*texture, atlas_rect};
+        const auto surface = rg::Surface::Create(texture, atlas_rect);
         new Sprite(position, surface, {&all_sprites});
     }
 
     auto terrain_top_tiles = rg::tmx::GetTMXTiles(map, terrain_top_layer);
     for (auto &[position, texture, atlas_rect]: terrain_top_tiles)
     {
-        rg::Surface surface{*texture, atlas_rect};
+        const auto surface = rg::Surface::Create(texture, atlas_rect);
         new Sprite(position, surface, {&all_sprites});
     }
 #else
-    auto terrain_sprite = new Sprite(
-            {}, {(int) (map->width * map->tile_width), (int) (map->height * map->tile_height)},
-            {&all_sprites});
-    rg::tmx::GetTMXLayerSurface(terrain_sprite->image, map, terrain_layer);
+    const auto terrain_surf = rg::tmx::GetTMXLayerSurface(map, terrain_layer);
+    new Sprite({}, terrain_surf, {&all_sprites});
 
-    auto terrain_top_sprite = new Sprite(
-            {}, {(int) (map->width * map->tile_width), (int) (map->height * map->tile_height)},
-            {&all_sprites});
-    rg::tmx::GetTMXLayerSurface(terrain_top_sprite->image, map, terrain_top_layer);
+    const auto terrain_top_surf = rg::tmx::GetTMXLayerSurface(map, terrain_top_layer);
+    new Sprite({}, terrain_top_surf, {&all_sprites});
 #endif
 
     // objects
@@ -84,8 +80,8 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         if (map->tiles[gid])
         {
             rg::Rect atlas_rect;
-            const auto *tileTexture = rg::tmx::GetTMXTileTexture(map->tiles[gid], &atlas_rect);
-            rg::Surface objSurf{*tileTexture, atlas_rect};
+            auto *tileTexture = rg::tmx::GetTMXTileTexture(map->tiles[gid], &atlas_rect);
+            const auto objSurf = rg::Surface::Create(tileTexture, atlas_rect);
             new Sprite(
                     {(float) object->x, (float) (object->y - object->height)}, objSurf,
                     {&all_sprites});

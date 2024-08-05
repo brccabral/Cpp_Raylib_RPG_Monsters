@@ -25,7 +25,7 @@ private:
     std::map<std::string, rl::tmx_map *> tmx_maps;
 
     // overworld frames
-    rg::Frames waterFrames;
+    rg::Frames *waterFrames = nullptr;
 
     // Groups
     AllSprites all_sprites;

@@ -1,19 +1,19 @@
 #include "sprite.h"
 
 Sprite::Sprite(
-        const rg::math::Vector2 pos, rg::Surface surf,
+        const rg::math::Vector2 pos, rg::Surface *surf,
         const std::vector<rg::sprite::Group *> &groups)
     : rg::sprite::Sprite(groups)
 {
     image = surf;
-    rect = image.GetRect();
+    rect = image->GetRect();
     rect.topleft(pos);
 }
 
 AnimatedSprite::AnimatedSprite(
-        const rg::math::Vector2 pos, rg::Frames frames,
+        const rg::math::Vector2 pos, rg::Frames *surf,
         const std::vector<rg::sprite::Group *> &groups)
-    : Sprite(pos, frames, groups)
+    : Sprite(pos, surf, groups)
 {}
 
 AnimatedSprite::~AnimatedSprite() = default;
