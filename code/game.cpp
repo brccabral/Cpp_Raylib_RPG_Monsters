@@ -56,14 +56,14 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     for (auto &[position, texture, atlas_rect]: terrain_tiles)
     {
         const auto surface = rg::Surface::Create(texture, atlas_rect);
-        new Sprite(position, surface, {&all_sprites});
+        new Sprite(position, surface, {&all_sprites}, this);
     }
 
     auto terrain_top_tiles = rg::tmx::GetTMXTiles(map, terrain_top_layer);
     for (auto &[position, texture, atlas_rect]: terrain_top_tiles)
     {
         const auto surface = rg::Surface::Create(texture, atlas_rect);
-        new Sprite(position, surface, {&all_sprites});
+        new Sprite(position, surface, {&all_sprites}, this);
     }
 #else
     const auto terrain_surf = rg::tmx::GetTMXLayerSurface(map, terrain_layer);
@@ -85,7 +85,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             const auto objSurf = rg::Surface::Create(tileTexture, atlas_rect);
             new Sprite(
                     {(float) object->x, (float) (object->y - object->height)}, objSurf,
-                    {&all_sprites});
+                    {&all_sprites}, this);
         }
         object = object->next;
     }
@@ -100,7 +100,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             const char *entity_pos = rl::tmx_get_property(entity->properties, "pos")->value.string;
             if (std::strcmp(entity_pos, player_start_position.c_str()) == 0)
             {
-                player = new Player({float(entity->x), float(entity->y)}, {&all_sprites});
+                player = new Player({float(entity->x), float(entity->y)}, {&all_sprites}, this);
             }
         }
         entity = entity->next;
@@ -115,7 +115,8 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             for (int x = 0; x < water->width; x += TILE_SIZE)
             {
                 new AnimatedSprite(
-                        {float(x + water->x), float(y + water->y)}, waterFrames, {&all_sprites});
+                        {float(x + water->x), float(y + water->y)}, waterFrames, {&all_sprites},
+                        this);
             }
         }
         water = water->next;
@@ -129,5 +130,4 @@ void Game::UnloadResources()
         UnloadTMX(tmx_map);
     }
     delete waterFrames;
-    delete player;
 }

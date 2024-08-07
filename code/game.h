@@ -5,7 +5,7 @@
 #include "groups.h"
 
 
-class Game
+class Game : public rg::sprite::SpriteOwner
 {
 public:
 

@@ -1,7 +1,9 @@
 #include "entities.h"
 
-Player::Player(const rg::math::Vector2 pos, const std::vector<rg::sprite::Group *> &groups)
-    : Sprite(groups)
+Player::Player(
+        const rg::math::Vector2 pos, const std::vector<rg::sprite::Group *> &groups,
+        rg::sprite::SpriteOwner *owner)
+    : Sprite(groups, owner)
 {
     image = rg::Surface::Create(100, 100);
     image->Fill(rl::RED);

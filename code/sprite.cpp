@@ -2,8 +2,8 @@
 
 Sprite::Sprite(
         const rg::math::Vector2 pos, rg::Surface *surf,
-        const std::vector<rg::sprite::Group *> &groups)
-    : rg::sprite::Sprite(groups)
+        const std::vector<rg::sprite::Group *> &groups, rg::sprite::SpriteOwner *owner)
+    : rg::sprite::Sprite(groups, owner)
 {
     image = surf;
     rect = image->GetRect();
@@ -12,8 +12,8 @@ Sprite::Sprite(
 
 AnimatedSprite::AnimatedSprite(
         const rg::math::Vector2 pos, rg::Frames *surf,
-        const std::vector<rg::sprite::Group *> &groups)
-    : Sprite(pos, surf, groups)
+        const std::vector<rg::sprite::Group *> &groups, rg::sprite::SpriteOwner *owner)
+    : Sprite(pos, surf, groups, owner)
 {}
 
 AnimatedSprite::~AnimatedSprite()
