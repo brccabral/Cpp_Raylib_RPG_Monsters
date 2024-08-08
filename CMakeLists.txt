@@ -4,12 +4,13 @@ project(RPG_Monsters)
 include(GNUInstallDirs)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(raylib REQUIRED)
 find_package(rygame REQUIRED)
 find_package(tmx REQUIRED)
 find_package(raylib-tmx REQUIRED)
-
 
 add_executable(${PROJECT_NAME} code/main.cpp
         code/game.cpp
@@ -18,6 +19,13 @@ add_executable(${PROJECT_NAME} code/main.cpp
         code/entities.cpp
         code/groups.cpp
 )
+
+if (MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE "/WX")
+else ()
+    set(CMAKE_CXX_COMPILER "clang++") # Sprite::Kill() has [[nodiscard]]
+    target_compile_options(${PROJECT_NAME} PRIVATE "-Werror")
+endif ()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib rygame tmx raylib-tmx)
 
