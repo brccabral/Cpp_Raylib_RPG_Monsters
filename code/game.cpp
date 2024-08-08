@@ -2,6 +2,8 @@
 #include "settings.h"
 #include "sprite.h"
 
+#include <memory>
+
 
 Game::Game()
 {
@@ -51,7 +53,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     const rl::tmx_layer *terrain_top_layer = tmx_find_layer_by_name(map, "Terrain Top");
     const rl::tmx_layer *water_layer = tmx_find_layer_by_name(map, "Water");
 
-#if 1
+#if 0
     auto terrain_tiles = rg::tmx::GetTMXTiles(map, terrain_layer);
     for (auto &[position, texture, atlas_rect]: terrain_tiles)
     {
@@ -67,10 +69,10 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     }
 #else
     const auto terrain_surf = rg::tmx::GetTMXLayerSurface(map, terrain_layer);
-    new Sprite({}, terrain_surf, {&all_sprites});
+    std::make_shared<Sprite>(rg::math::Vector2{}, terrain_surf)->add(&all_sprites);
 
     const auto terrain_top_surf = rg::tmx::GetTMXLayerSurface(map, terrain_top_layer);
-    new Sprite({}, terrain_top_surf, {&all_sprites});
+    std::make_shared<Sprite>(rg::math::Vector2{}, terrain_top_surf)->add(&all_sprites);
 #endif
 
     // objects
