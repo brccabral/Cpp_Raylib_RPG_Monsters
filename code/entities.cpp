@@ -1,11 +1,8 @@
 #include "entities.h"
 
-Player::Player(
-        const rg::math::Vector2 pos, const std::vector<rg::sprite::Group *> &groups,
-        rg::sprite::SpriteOwner *owner)
-    : Sprite(groups, owner)
+Player::Player(const rg::math::Vector2 pos)
 {
-    image = rg::Surface::Create(100, 100);
+    image = std::make_shared<rg::Surface>(100, 100);
     image->Fill(rl::RED);
     rect = image->GetRect();
     rect.center(pos);

@@ -1,11 +1,10 @@
 #pragma once
 #include <rygame.h>
-#include "sprite.h"
 #include "entities.h"
 #include "groups.h"
 
 
-class Game : public rg::sprite::SpriteOwner
+class Game
 {
 public:
 
@@ -13,7 +12,7 @@ public:
     ~Game();
     void run();
 
-    Player *player{};
+    std::shared_ptr<Player> player = nullptr;
 
 private:
 
@@ -21,11 +20,11 @@ private:
     void Setup(const std::string &map_name, const std::string &player_start_position);
     void UnloadResources();
 
-    rg::Surface *display_surface = nullptr;
+    std::shared_ptr<rg::Surface> display_surface = nullptr;
     std::map<std::string, rl::tmx_map *> tmx_maps;
 
     // overworld frames
-    rg::Frames *waterFrames = nullptr;
+    std::shared_ptr<rg::Frames> waterFrames = nullptr;
 
     // Groups
     AllSprites all_sprites;

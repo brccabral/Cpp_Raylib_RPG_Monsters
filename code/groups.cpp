@@ -6,17 +6,17 @@
 AllSprites::AllSprites() : Group()
 {}
 
-void AllSprites::Draw(rg::Surface &surface)
+void AllSprites::Draw(const std::shared_ptr<rg::Surface> &surface)
 {
     Group::Draw(surface);
 }
 
-void AllSprites::Draw(const Player *player)
+void AllSprites::Draw(const std::shared_ptr<Player> &player)
 {
     offset = player->rect.center() - rg::math::Vector2{WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f};
     offset *= -1.0f;
 
-    for (const auto *sprite: Sprites())
+    for (const auto &sprite: Sprites())
     {
         display_surface->Blit(sprite->image, sprite->rect.topleft() + offset);
     }

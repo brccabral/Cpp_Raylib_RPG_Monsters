@@ -6,8 +6,7 @@ class Player : public rg::sprite::Sprite
 {
 public:
 
-    Player(rg::math::Vector2 pos, const std::vector<rg::sprite::Group *> &groups,
-           rg::sprite::SpriteOwner *owner);
+    explicit Player(rg::math::Vector2 pos);
     void Update(float dt) override;
 
 protected:

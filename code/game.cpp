@@ -1,5 +1,6 @@
 #include "game.h"
 #include "settings.h"
+#include "sprite.h"
 
 
 Game::Game()
@@ -38,7 +39,6 @@ void Game::ImportAssets()
 
     const auto waterList = rg::image::LoadFolderList("resources/graphics/tilesets/water");
     waterFrames = rg::Frames::Merge(waterList, 1, waterList.size());
-    rg::image::DeleteAllVector(waterList);
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)
@@ -55,15 +55,15 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     auto terrain_tiles = rg::tmx::GetTMXTiles(map, terrain_layer);
     for (auto &[position, texture, atlas_rect]: terrain_tiles)
     {
-        const auto surface = rg::Surface::Create(texture, atlas_rect);
-        new Sprite(position, surface, {&all_sprites}, this);
+        auto surface = std::make_shared<rg::Surface>(texture, atlas_rect);
+        std::make_shared<Sprite>(position, surface)->add(&all_sprites);
     }
 
     auto terrain_top_tiles = rg::tmx::GetTMXTiles(map, terrain_top_layer);
     for (auto &[position, texture, atlas_rect]: terrain_top_tiles)
     {
-        const auto surface = rg::Surface::Create(texture, atlas_rect);
-        new Sprite(position, surface, {&all_sprites}, this);
+        auto surface = std::make_shared<rg::Surface>(texture, atlas_rect);
+        std::make_shared<Sprite>(position, surface)->add(&all_sprites);
     }
 #else
     const auto terrain_surf = rg::tmx::GetTMXLayerSurface(map, terrain_layer);
@@ -82,10 +82,10 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         {
             rg::Rect atlas_rect;
             auto *tileTexture = rg::tmx::GetTMXTileTexture(map->tiles[gid], &atlas_rect);
-            const auto objSurf = rg::Surface::Create(tileTexture, atlas_rect);
-            new Sprite(
-                    {(float) object->x, (float) (object->y - object->height)}, objSurf,
-                    {&all_sprites}, this);
+            auto objSurf = std::make_shared<rg::Surface>(tileTexture, atlas_rect);
+            auto position =
+                    rg::math::Vector2{(float) object->x, (float) (object->y - object->height)};
+            std::make_shared<Sprite>(position, objSurf)->add(&all_sprites);
         }
         object = object->next;
     }
@@ -98,9 +98,11 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         if (std::strcmp(entity->name, "Player") == 0)
         {
             const char *entity_pos = rl::tmx_get_property(entity->properties, "pos")->value.string;
+            auto position = rg::math::Vector2{float(entity->x), float(entity->y)};
             if (std::strcmp(entity_pos, player_start_position.c_str()) == 0)
             {
-                player = new Player({float(entity->x), float(entity->y)}, {&all_sprites}, this);
+                player = std::make_shared<Player>(position);
+                player->add(&all_sprites);
             }
         }
         entity = entity->next;
@@ -114,9 +116,8 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         {
             for (int x = 0; x < water->width; x += TILE_SIZE)
             {
-                new AnimatedSprite(
-                        {float(x + water->x), float(y + water->y)}, waterFrames, {&all_sprites},
-                        this);
+                auto position = rg::math::Vector2{float(x + water->x), float(y + water->y)};
+                std::make_shared<AnimatedSprite>(position, waterFrames)->add(&all_sprites);
             }
         }
         water = water->next;
@@ -129,5 +130,4 @@ void Game::UnloadResources()
     {
         UnloadTMX(tmx_map);
     }
-    delete waterFrames;
 }
