@@ -6,6 +6,11 @@
 AllSprites::AllSprites() : Group()
 {}
 
+void AllSprites::Draw(rg::Surface &surface)
+{
+    Group::Draw(surface);
+}
+
 void AllSprites::Draw(const Player *player)
 {
     offset = player->rect.center() - rg::math::Vector2{WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f};

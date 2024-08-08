@@ -8,6 +8,7 @@ class AllSprites : public rg::sprite::Group
 public:
 
     AllSprites();
+    void Draw(rg::Surface &surface) override;
     void Draw(const Player *player);
 
 private:
