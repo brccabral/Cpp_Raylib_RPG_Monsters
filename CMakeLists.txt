@@ -20,19 +20,15 @@ add_executable(${PROJECT_NAME} code/main.cpp
         code/groups.cpp
 )
 
-if (MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE "/WX")
-else ()
-    set(CMAKE_CXX_COMPILER "clang++") # Sprite::Kill() has [[nodiscard]]
-    target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Werror" "-Wno-missing-braces")
-endif ()
-
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib rygame tmx raylib-tmx)
 
 if (WIN32)
+    target_compile_options(${PROJECT_NAME} PRIVATE "/WX")
     target_link_libraries(${PROJECT_NAME} PRIVATE gdi32 winmm)
     set(COMPILE_FLAGS "/NODEFAULTLIB:libcmt")
 else ()
+    set(CMAKE_CXX_COMPILER "clang++") # Sprite::Kill() has [[nodiscard]]
+    target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Werror" "-Wpedantic" "-Wno-missing-braces" "-Wno-gnu-anonymous-struct" "-Wno-nested-anon-types")
     target_link_libraries(${PROJECT_NAME} PRIVATE m)
 endif ()
 
