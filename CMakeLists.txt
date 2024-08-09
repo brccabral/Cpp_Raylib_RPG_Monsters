@@ -7,10 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(raylib REQUIRED)
 find_package(rygame REQUIRED)
-find_package(tmx REQUIRED)
-find_package(raylib-tmx REQUIRED)
 
 add_executable(${PROJECT_NAME} code/main.cpp
         code/game.cpp
@@ -20,16 +17,12 @@ add_executable(${PROJECT_NAME} code/main.cpp
         code/groups.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE raylib rygame tmx raylib-tmx)
+target_link_libraries(${PROJECT_NAME} PRIVATE rygame)
 
 if (WIN32)
-    target_compile_options(${PROJECT_NAME} PRIVATE "/WX")
-    target_link_libraries(${PROJECT_NAME} PRIVATE gdi32 winmm)
-    set(COMPILE_FLAGS "/NODEFAULTLIB:libcmt")
 else ()
     set(CMAKE_CXX_COMPILER "clang++") # Sprite::Kill() has [[nodiscard]]
     target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Werror" "-Wpedantic" "-Wno-missing-braces" "-Wno-gnu-anonymous-struct" "-Wno-nested-anon-types")
-    target_link_libraries(${PROJECT_NAME} PRIVATE m)
 endif ()
 
 # copy resources to Build folder for debugging
