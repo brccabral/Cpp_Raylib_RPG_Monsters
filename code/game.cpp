@@ -44,6 +44,7 @@ void Game::ImportAssets()
     waterFrames = rg::Frames::Merge(waterList, 1, waterList.size());
 
     cost_dict = CoastImporter("resources/graphics/tilesets/coast.png", 12, 24);
+    characters_dict = AllCharacterImport("resources/graphics/characters");
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)

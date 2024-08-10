@@ -44,3 +44,38 @@ CoastImporter(const char *file, const int rows, const int cols)
     rg::UnloadTextureSafe(frame);
     return result;
 }
+
+std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
+AllCharacterImport(const char *path)
+{
+    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> result{};
+
+    for (const auto &dirEntry: std::filesystem::recursive_directory_iterator(path))
+    {
+        auto filename = dirEntry.path().stem().string();
+        auto entryPath = dirEntry.path().string();
+        result[filename] = CharacterImporter(4, 4, entryPath.c_str());
+    }
+    return result;
+}
+
+std::map<std::string, std::shared_ptr<rg::Frames>>
+CharacterImporter(const int rows, const int cols, const char *file)
+{
+    std::map<std::string, std::shared_ptr<rg::Frames>> result{};
+    const auto frame_dict = rg::Frames::Load(file, rows, cols);
+    const float width = frame_dict->GetRect().width;
+    const float height = frame_dict->GetRect().height;
+    const std::vector<std::string> directions = {"down", "left", "right", "up"};
+    for (int i = 0; i < directions.size(); ++i)
+    {
+        // result[directions[i]] =
+        //         frame_dict->SubSurface({0, i * height, width * cols, height}, 1, cols);
+        // std::string idle = directions[i] + "_idle";
+        // result[idle] = frame_dict->SubSurface({0, i * height, width, height}, 1, 1);
+        result[directions[i]] = frame_dict->SubFrames({0, i * height, width * cols, height});
+        std::string idle = directions[i] + "_idle";
+        result[idle] = frame_dict->SubFrames({0, i * height, width, height});
+    }
+    return result;
+}

@@ -26,6 +26,7 @@ private:
     // overworld frames
     std::shared_ptr<rg::Frames> waterFrames = nullptr;
     std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> cost_dict;
+    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> characters_dict;
 
     // Groups
     AllSprites all_sprites;
