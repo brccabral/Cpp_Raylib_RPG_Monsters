@@ -10,9 +10,18 @@ public:
            std::map<std::string, std::shared_ptr<rg::Frames>> &frames);
     void Update(float deltaTime) override;
 
+protected:
+
+    rg::math::Vector2 direction{};
+    float speed = 250;
+    std::string facing_direction = "down_idle";
+
 private:
 
+    // update state and change animation image
     void Animate(float dt);
+    // update and return state
+    std::string GetState();
 
     std::map<std::string, std::shared_ptr<rg::Frames>> frames_direction;
     float frame_index{};
@@ -25,11 +34,6 @@ public:
     Player(const rg::math::Vector2 &pos,
            std::map<std::string, std::shared_ptr<rg::Frames>> &frames);
     void Update(float dt) override;
-
-protected:
-
-    rg::math::Vector2 direction{};
-    float speed = 250;
 
 private:
 

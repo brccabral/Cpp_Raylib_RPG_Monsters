@@ -6,8 +6,8 @@ Entity::Entity(
         const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames)
     : frames_direction(frames)
 {
-    image = frames["down"];
-    image->atlas_rect = frames["down"]->frames[0];
+    image = frames[facing_direction];
+    image->atlas_rect = frames[facing_direction]->frames[0];
     rect = image->GetRect();
     rect.center(pos);
 }
@@ -20,12 +20,50 @@ void Entity::Update(const float deltaTime)
 
 void Entity::Animate(const float dt)
 {
+    GetState();
+    image = frames_direction[facing_direction];
+
     frame_index += ANIMATION_SPEED * dt;
     if (frame_index > std::dynamic_pointer_cast<rg::Frames>(image)->frames.size())
     {
         frame_index = 0;
     }
     image->atlas_rect = std::dynamic_pointer_cast<rg::Frames>(image)->frames[int(frame_index)];
+}
+
+std::string Entity::GetState()
+{
+    if (direction.x || direction.y)
+    {
+        if (direction.x)
+        {
+            facing_direction = direction.x > 0 ? "right" : "left";
+        }
+        if (direction.y)
+        {
+            facing_direction = direction.y > 0 ? "down" : "up";
+        }
+    }
+    else
+    {
+        if (facing_direction == "down")
+        {
+            facing_direction = "down_idle";
+        }
+        if (facing_direction == "up")
+        {
+            facing_direction = "up_idle";
+        }
+        if (facing_direction == "left")
+        {
+            facing_direction = "left_idle";
+        }
+        if (facing_direction == "right")
+        {
+            facing_direction = "right_idle";
+        }
+    }
+    return facing_direction;
 }
 
 Player::Player(
