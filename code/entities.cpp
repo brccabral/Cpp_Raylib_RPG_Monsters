@@ -3,8 +3,9 @@
 
 
 Entity::Entity(
-        const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames)
-    : frames_direction(frames)
+        const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
+        const std::string &facing_direction)
+    : facing_direction(facing_direction), frames_direction(frames)
 {
     image = frames[facing_direction];
     image->atlas_rect = frames[facing_direction]->frames[0];
@@ -67,8 +68,9 @@ std::string Entity::GetState()
 }
 
 Player::Player(
-        const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames)
-    : Entity(pos, frames)
+        const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
+        const std::string &facing_direction)
+    : Entity(pos, frames, facing_direction)
 {}
 
 void Player::Input()
@@ -108,6 +110,7 @@ void Player::Move(const float dt)
 }
 
 Character::Character(
-        const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames)
-    : Entity(pos, frames)
+        const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
+        const std::string &facing_direction)
+    : Entity(pos, frames, facing_direction)
 {}

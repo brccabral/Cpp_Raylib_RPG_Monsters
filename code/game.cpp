@@ -103,19 +103,20 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     while (entity)
     {
         auto position = rg::math::Vector2{float(entity->x), float(entity->y)};
+        const char *direction = rl::tmx_get_property(entity->properties, "direction")->value.string;
         if (std::strcmp(entity->name, "Player") == 0)
         {
             const char *entity_pos = rl::tmx_get_property(entity->properties, "pos")->value.string;
             if (std::strcmp(entity_pos, player_start_position.c_str()) == 0)
             {
-                player = std::make_shared<Player>(position, characters_dict["player"]);
+                player = std::make_shared<Player>(position, characters_dict["player"], direction);
                 player->add(&all_sprites);
             }
         }
         if (std::strcmp(entity->name, "Character") == 0)
         {
             const char *graphic = rl::tmx_get_property(entity->properties, "graphic")->value.string;
-            std::make_shared<Character>(position, characters_dict[std::string(graphic)])
+            std::make_shared<Character>(position, characters_dict[graphic], direction)
                     ->add(&all_sprites);
         }
         entity = entity->next;

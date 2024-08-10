@@ -6,15 +6,15 @@ class Entity : public rg::sprite::Sprite
 {
 public:
 
-    Entity(const rg::math::Vector2 &pos,
-           std::map<std::string, std::shared_ptr<rg::Frames>> &frames);
+    Entity(const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
+           const std::string &facing_direction);
     void Update(float deltaTime) override;
 
 protected:
 
     rg::math::Vector2 direction{};
     float speed = 250;
-    std::string facing_direction = "down_idle";
+    std::string facing_direction;
 
 private:
 
@@ -31,8 +31,8 @@ class Player : public Entity
 {
 public:
 
-    Player(const rg::math::Vector2 &pos,
-           std::map<std::string, std::shared_ptr<rg::Frames>> &frames);
+    Player(const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
+           const std::string &facing_direction);
     void Update(float dt) override;
 
 private:
@@ -47,5 +47,6 @@ public:
 
     Character(
             const rg::math::Vector2 &pos,
-            std::map<std::string, std::shared_ptr<rg::Frames>> &frames);
+            std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
+            const std::string &facing_direction);
 };
