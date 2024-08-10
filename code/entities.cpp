@@ -1,13 +1,31 @@
 #include "entities.h"
+#include "settings.h"
+
 
 Entity::Entity(
         const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames)
     : frames_direction(frames)
 {
-    image = frames["down_idle"];
-    image->atlas_rect = frames["down_idle"]->frames[0];
+    image = frames["down"];
+    image->atlas_rect = frames["down"]->frames[0];
     rect = image->GetRect();
     rect.center(pos);
+}
+
+void Entity::Update(const float deltaTime)
+{
+    Sprite::Update(deltaTime);
+    Animate(deltaTime);
+}
+
+void Entity::Animate(const float dt)
+{
+    frame_index += ANIMATION_SPEED * dt;
+    if (frame_index > std::dynamic_pointer_cast<rg::Frames>(image)->frames.size())
+    {
+        frame_index = 0;
+    }
+    image->atlas_rect = std::dynamic_pointer_cast<rg::Frames>(image)->frames[int(frame_index)];
 }
 
 Player::Player(
@@ -39,6 +57,7 @@ void Player::Input()
 
 void Player::Update(const float dt)
 {
+    Entity::Update(dt);
     Input();
     Move(dt);
 }

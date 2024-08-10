@@ -8,10 +8,14 @@ public:
 
     Entity(const rg::math::Vector2 &pos,
            std::map<std::string, std::shared_ptr<rg::Frames>> &frames);
+    void Update(float deltaTime) override;
 
 private:
 
+    void Animate(float dt);
+
     std::map<std::string, std::shared_ptr<rg::Frames>> frames_direction;
+    float frame_index{};
 };
 
 class Player : public Entity
