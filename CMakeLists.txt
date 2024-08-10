@@ -15,6 +15,7 @@ add_executable(${PROJECT_NAME} code/main.cpp
         code/sprite.cpp
         code/entities.cpp
         code/groups.cpp
+        code/support.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE rygame)

@@ -1,6 +1,7 @@
 #include "game.h"
 #include "settings.h"
 #include "sprite.h"
+#include "support.h"
 
 #include <memory>
 
@@ -41,6 +42,8 @@ void Game::ImportAssets()
 
     const auto waterList = rg::image::LoadFolderList("resources/graphics/tilesets/water");
     waterFrames = rg::Frames::Merge(waterList, 1, waterList.size());
+
+    cost_dict = CoastImporter("resources/graphics/tilesets/coast.png", 12, 24);
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)
@@ -52,6 +55,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     const rl::tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
     const rl::tmx_layer *terrain_top_layer = tmx_find_layer_by_name(map, "Terrain Top");
     const rl::tmx_layer *water_layer = tmx_find_layer_by_name(map, "Water");
+    const rl::tmx_layer *coast_layer = tmx_find_layer_by_name(map, "Coast");
 
 #if 0
     auto terrain_tiles = rg::tmx::GetTMXTiles(map, terrain_layer);
@@ -123,6 +127,20 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             }
         }
         water = water->next;
+    }
+    // coast
+    auto coast = coast_layer->content.objgr->head;
+    while (coast)
+    {
+        const char *terrain = rl::tmx_get_property(coast->properties, "terrain")->value.string;
+        const char *side = rl::tmx_get_property(coast->properties, "side")->value.string;
+
+        auto position = rg::math::Vector2{float(coast->x), float(coast->y)};
+        auto t = cost_dict[terrain];
+        auto s = t[side];
+        std::make_shared<AnimatedSprite>(position, s)->add(&all_sprites);
+
+        coast = coast->next;
     }
 }
 

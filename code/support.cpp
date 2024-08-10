@@ -1,0 +1,46 @@
+#include "support.h"
+
+
+std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
+CoastImporter(const char *file, const int rows, const int cols)
+{
+    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> result;
+    const auto frame = rg::LoadTextureSafe(file);
+    // const auto frame = rg::Frames::Load(file, rows, cols);
+    const std::vector<std::string> terrains = {"grass", "grass_i", "sand_i", "sand",
+                                               "rock",  "rock_i",  "ice",    "ice_i"};
+    std::vector<std::pair<std::string, rg::math::Vector2>> sides = {
+            {"topleft", {0, 0}}, //
+            {"top", {1, 0}}, //
+            {"topright", {2, 0}}, //
+            {"left", {0, 1}}, //
+            {"middle", {1, 1}}, //
+            {"right", {2, 1}}, //
+            {"bottomleft", {0, 2}}, //
+            {"bottom", {1, 2}}, //
+            {"bottomright", {2, 2}}, //
+    };
+    const auto width = frame.width / cols;
+    const auto height = frame.height / rows;
+    // const auto width = frame->GetRect().width;
+    // const auto height = frame->GetRect().height;
+    for (int index = 0; index < terrains.size(); ++index)
+    {
+        const auto &terrain = terrains[index];
+        result[terrain] = {};
+        for (const auto &[key, pos]: sides)
+        {
+            result[terrain][key] = std::make_shared<rg::Frames>(width * 4, height, 1, 4);
+            for (int row = 0; row < rows; row += 3)
+            {
+                const auto x = (pos.x + index * 3);
+                const auto y = (pos.y + row);
+                result[terrain][key]->Blit(
+                        frame, {row / 3.0f * width, 0},
+                        {(float) x * width, (float) y * height, (float) width, (float) height});
+            }
+        }
+    }
+    rg::UnloadTextureSafe(frame);
+    return result;
+}
