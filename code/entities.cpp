@@ -106,3 +106,8 @@ void Player::Move(const float dt)
     rect.x += direction.x * speed * dt;
     rect.y += direction.y * speed * dt;
 }
+
+Character::Character(
+        const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames)
+    : Entity(pos, frames)
+{}

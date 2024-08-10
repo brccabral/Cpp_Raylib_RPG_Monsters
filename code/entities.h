@@ -40,3 +40,12 @@ private:
     void Input();
     void Move(float dt);
 };
+
+class Character : public Entity
+{
+public:
+
+    Character(
+            const rg::math::Vector2 &pos,
+            std::map<std::string, std::shared_ptr<rg::Frames>> &frames);
+};

@@ -102,15 +102,21 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     auto entity = entities_layer->content.objgr->head;
     while (entity)
     {
+        auto position = rg::math::Vector2{float(entity->x), float(entity->y)};
         if (std::strcmp(entity->name, "Player") == 0)
         {
             const char *entity_pos = rl::tmx_get_property(entity->properties, "pos")->value.string;
-            auto position = rg::math::Vector2{float(entity->x), float(entity->y)};
             if (std::strcmp(entity_pos, player_start_position.c_str()) == 0)
             {
                 player = std::make_shared<Player>(position, characters_dict["player"]);
                 player->add(&all_sprites);
             }
+        }
+        if (std::strcmp(entity->name, "Character") == 0)
+        {
+            const char *graphic = rl::tmx_get_property(entity->properties, "graphic")->value.string;
+            std::make_shared<Character>(position, characters_dict[std::string(graphic)])
+                    ->add(&all_sprites);
         }
         entity = entity->next;
     }
