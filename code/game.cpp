@@ -108,7 +108,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             auto position = rg::math::Vector2{float(entity->x), float(entity->y)};
             if (std::strcmp(entity_pos, player_start_position.c_str()) == 0)
             {
-                player = std::make_shared<Player>(position);
+                player = std::make_shared<Player>(position, characters_dict["player"]);
                 player->add(&all_sprites);
             }
         }

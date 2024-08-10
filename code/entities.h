@@ -2,11 +2,24 @@
 #include <rygame.h>
 
 
-class Player : public rg::sprite::Sprite
+class Entity : public rg::sprite::Sprite
 {
 public:
 
-    explicit Player(rg::math::Vector2 pos);
+    Entity(const rg::math::Vector2 &pos,
+           std::map<std::string, std::shared_ptr<rg::Frames>> &frames);
+
+private:
+
+    std::map<std::string, std::shared_ptr<rg::Frames>> frames_direction;
+};
+
+class Player : public Entity
+{
+public:
+
+    Player(const rg::math::Vector2 &pos,
+           std::map<std::string, std::shared_ptr<rg::Frames>> &frames);
     void Update(float dt) override;
 
 protected:

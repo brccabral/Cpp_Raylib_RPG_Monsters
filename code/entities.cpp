@@ -1,12 +1,19 @@
 #include "entities.h"
 
-Player::Player(const rg::math::Vector2 pos)
+Entity::Entity(
+        const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames)
+    : frames_direction(frames)
 {
-    image = std::make_shared<rg::Surface>(100, 100);
-    image->Fill(rl::RED);
+    image = frames["down_idle"];
+    image->atlas_rect = frames["down_idle"]->frames[0];
     rect = image->GetRect();
     rect.center(pos);
 }
+
+Player::Player(
+        const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames)
+    : Entity(pos, frames)
+{}
 
 void Player::Input()
 {
