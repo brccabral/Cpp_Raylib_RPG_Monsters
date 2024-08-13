@@ -33,5 +33,11 @@ class MonsterPatchSprite : public Sprite
 {
 public:
 
-    MonsterPatchSprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf);
+    MonsterPatchSprite(
+            rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf,
+            const std::string &biome);
+
+private:
+
+    std::string biome;
 };

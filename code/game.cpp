@@ -153,11 +153,12 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         const int gid = monster->content.gid;
         if (map->tiles[gid])
         {
+            std::string biome = rl::tmx_get_property(monster->properties, "biome")->value.string;
             rg::Rect atlas;
             auto monster_texture = rg::tmx::GetTMXTileTexture(map->tiles[gid], &atlas);
             auto position = rg::tmx::GetTMXObjPosition(monster);
             auto monster_surf = std::make_shared<rg::Surface>(monster_texture, atlas);
-            std::make_shared<MonsterPatchSprite>(position, monster_surf)->add(&all_sprites);
+            std::make_shared<MonsterPatchSprite>(position, monster_surf, biome)->add(&all_sprites);
         }
         monster = monster->next;
     }
