@@ -52,13 +52,14 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     const rl::tmx_map *map = tmx_maps[map_name];
 
     const rl::tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
-    const rl::tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
-    const rl::tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
     const rl::tmx_layer *terrain_top_layer = tmx_find_layer_by_name(map, "Terrain Top");
     const rl::tmx_layer *water_layer = tmx_find_layer_by_name(map, "Water");
     const rl::tmx_layer *coast_layer = tmx_find_layer_by_name(map, "Coast");
+    const rl::tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
     const rl::tmx_layer *monster_layer = tmx_find_layer_by_name(map, "Monsters");
+    const rl::tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
 
+    // terrain
 #if 0
     auto terrain_tiles = rg::tmx::GetTMXTiles(map, terrain_layer);
     for (auto &[position, texture, atlas_rect]: terrain_tiles)
@@ -82,61 +83,6 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     std::make_shared<Sprite>(rg::math::Vector2{}, terrain_top_surf, WORLD_LAYERS["bg"])
             ->add(&all_sprites);
 #endif
-
-    // objects
-    auto object = objects_layer->content.objgr->head;
-    while (object)
-    {
-        const int gid = object->content.gid;
-        if (map->tiles[gid])
-        {
-            rg::Rect atlas_rect;
-            auto *tileTexture = rg::tmx::GetTMXTileTexture(map->tiles[gid], &atlas_rect);
-            auto objSurf = std::make_shared<rg::Surface>(tileTexture, atlas_rect);
-            auto position = rg::tmx::GetTMXObjPosition(object);
-
-            std::string name{};
-            if (object->name)
-            {
-                name = object->name;
-            }
-
-            if (!strcmp(name.c_str(), "top"))
-            {
-                std::make_shared<Sprite>(position, objSurf, WORLD_LAYERS["top"])->add(&all_sprites);
-            }
-            else
-            {
-                std::make_shared<Sprite>(position, objSurf)->add(&all_sprites);
-            }
-        }
-        object = object->next;
-    }
-
-
-    // we need to find the player first, so it can be passed to all characters in the next look
-    auto entity = entities_layer->content.objgr->head;
-    while (entity)
-    {
-        auto position = rg::tmx::GetTMXObjPosition(entity);
-        const char *direction = rl::tmx_get_property(entity->properties, "direction")->value.string;
-        if (std::strcmp(entity->name, "Player") == 0)
-        {
-            const char *entity_pos = rl::tmx_get_property(entity->properties, "pos")->value.string;
-            if (std::strcmp(entity_pos, player_start_position.c_str()) == 0)
-            {
-                player = std::make_shared<Player>(position, characters_dict["player"], direction);
-                player->add(&all_sprites);
-            }
-        }
-        if (std::strcmp(entity->name, "Character") == 0)
-        {
-            const char *graphic = rl::tmx_get_property(entity->properties, "graphic")->value.string;
-            std::make_shared<Character>(position, characters_dict[graphic], direction)
-                    ->add(&all_sprites);
-        }
-        entity = entity->next;
-    }
 
     // water
     auto water = water_layer->content.objgr->head;
@@ -170,7 +116,37 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         coast = coast->next;
     }
 
-    // monster
+    // objects
+    auto object = objects_layer->content.objgr->head;
+    while (object)
+    {
+        const int gid = object->content.gid;
+        if (map->tiles[gid])
+        {
+            rg::Rect atlas_rect;
+            auto *tileTexture = rg::tmx::GetTMXTileTexture(map->tiles[gid], &atlas_rect);
+            auto objSurf = std::make_shared<rg::Surface>(tileTexture, atlas_rect);
+            auto position = rg::tmx::GetTMXObjPosition(object);
+
+            std::string name{};
+            if (object->name)
+            {
+                name = object->name;
+            }
+
+            if (!strcmp(name.c_str(), "top"))
+            {
+                std::make_shared<Sprite>(position, objSurf, WORLD_LAYERS["top"])->add(&all_sprites);
+            }
+            else
+            {
+                std::make_shared<Sprite>(position, objSurf)->add(&all_sprites);
+            }
+        }
+        object = object->next;
+    }
+
+    // monster patches
     auto monster = monster_layer->content.objgr->head;
     while (monster)
     {
@@ -184,6 +160,30 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             std::make_shared<Sprite>(position, monster_surf)->add(&all_sprites);
         }
         monster = monster->next;
+    }
+
+    // we need to find the player first, so it can be passed to all characters in the next look
+    auto entity = entities_layer->content.objgr->head;
+    while (entity)
+    {
+        auto position = rg::tmx::GetTMXObjPosition(entity);
+        const char *direction = rl::tmx_get_property(entity->properties, "direction")->value.string;
+        if (std::strcmp(entity->name, "Player") == 0)
+        {
+            const char *entity_pos = rl::tmx_get_property(entity->properties, "pos")->value.string;
+            if (std::strcmp(entity_pos, player_start_position.c_str()) == 0)
+            {
+                player = std::make_shared<Player>(position, characters_dict["player"], direction);
+                player->add(&all_sprites);
+            }
+        }
+        if (std::strcmp(entity->name, "Character") == 0)
+        {
+            const char *graphic = rl::tmx_get_property(entity->properties, "graphic")->value.string;
+            std::make_shared<Character>(position, characters_dict[graphic], direction)
+                    ->add(&all_sprites);
+        }
+        entity = entity->next;
     }
 }
 
