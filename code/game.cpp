@@ -64,21 +64,23 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     for (auto &[position, texture, atlas_rect]: terrain_tiles)
     {
         auto surface = std::make_shared<rg::Surface>(texture, atlas_rect);
-        std::make_shared<Sprite>(position, surface)->add(&all_sprites);
+        std::make_shared<Sprite>(position, surface, WORLD_LAYERS["bg"])->add(&all_sprites);
     }
 
     auto terrain_top_tiles = rg::tmx::GetTMXTiles(map, terrain_top_layer);
     for (auto &[position, texture, atlas_rect]: terrain_top_tiles)
     {
         auto surface = std::make_shared<rg::Surface>(texture, atlas_rect);
-        std::make_shared<Sprite>(position, surface)->add(&all_sprites);
+        std::make_shared<Sprite>(position, surface, WORLD_LAYERS["bg"])->add(&all_sprites);
     }
 #else
     const auto terrain_surf = rg::tmx::GetTMXLayerSurface(map, terrain_layer);
-    std::make_shared<Sprite>(rg::math::Vector2{}, terrain_surf)->add(&all_sprites);
+    std::make_shared<Sprite>(rg::math::Vector2{}, terrain_surf, WORLD_LAYERS["bg"])
+            ->add(&all_sprites);
 
     const auto terrain_top_surf = rg::tmx::GetTMXLayerSurface(map, terrain_top_layer);
-    std::make_shared<Sprite>(rg::math::Vector2{}, terrain_top_surf)->add(&all_sprites);
+    std::make_shared<Sprite>(rg::math::Vector2{}, terrain_top_surf, WORLD_LAYERS["bg"])
+            ->add(&all_sprites);
 #endif
 
     // objects
@@ -92,7 +94,21 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             auto *tileTexture = rg::tmx::GetTMXTileTexture(map->tiles[gid], &atlas_rect);
             auto objSurf = std::make_shared<rg::Surface>(tileTexture, atlas_rect);
             auto position = rg::tmx::GetTMXObjPosition(object);
-            std::make_shared<Sprite>(position, objSurf)->add(&all_sprites);
+
+            std::string name{};
+            if (object->name)
+            {
+                name = object->name;
+            }
+
+            if (!strcmp(name.c_str(), "top"))
+            {
+                std::make_shared<Sprite>(position, objSurf, WORLD_LAYERS["top"])->add(&all_sprites);
+            }
+            else
+            {
+                std::make_shared<Sprite>(position, objSurf)->add(&all_sprites);
+            }
         }
         object = object->next;
     }
@@ -132,7 +148,8 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             for (int x = 0; x < water->width; x += TILE_SIZE)
             {
                 auto position = area_position + rg::math::Vector2{(float) x, (float) y};
-                std::make_shared<AnimatedSprite>(position, waterFrames)->add(&all_sprites);
+                std::make_shared<AnimatedSprite>(position, waterFrames, WORLD_LAYERS["water"])
+                        ->add(&all_sprites);
             }
         }
         water = water->next;
@@ -148,7 +165,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         auto position = rg::tmx::GetTMXObjPosition(coast);
         auto t = cost_dict[terrain];
         auto s = t[side];
-        std::make_shared<AnimatedSprite>(position, s)->add(&all_sprites);
+        std::make_shared<AnimatedSprite>(position, s, WORLD_LAYERS["bg"])->add(&all_sprites);
 
         coast = coast->next;
     }

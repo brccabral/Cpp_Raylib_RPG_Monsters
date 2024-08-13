@@ -11,6 +11,7 @@ Entity::Entity(
     image->atlas_rect = frames[facing_direction]->frames[0];
     rect = image->GetRect();
     rect.center(pos);
+    z = WORLD_LAYERS["main"];
 }
 
 void Entity::Update(const float deltaTime)

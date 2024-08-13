@@ -2,15 +2,17 @@
 
 #include "settings.h"
 
-Sprite::Sprite(const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf)
+Sprite::Sprite(const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf, const int z)
 {
     image = surf;
     rect = image->GetRect();
     rect.topleft(pos);
+    this->z = z;
 }
 
-AnimatedSprite::AnimatedSprite(const rg::math::Vector2 pos, const std::shared_ptr<rg::Frames> &surf)
-    : Sprite(pos, surf), image(surf)
+AnimatedSprite::AnimatedSprite(
+        const rg::math::Vector2 pos, const std::shared_ptr<rg::Frames> &surf, const int z)
+    : Sprite(pos, surf, z), image(surf)
 {}
 
 void AnimatedSprite::Update(const float deltaTime)

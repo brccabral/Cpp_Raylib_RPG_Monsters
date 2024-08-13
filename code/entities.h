@@ -1,5 +1,6 @@
 #pragma once
 #include <rygame.h>
+#include "settings.h"
 
 
 class Entity : public rg::sprite::Sprite
