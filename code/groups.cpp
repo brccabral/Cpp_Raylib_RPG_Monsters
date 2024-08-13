@@ -1,6 +1,9 @@
 #include <algorithm>
 #include "groups.h"
 #include "settings.h"
+#include "sprite.h"
+
+#include <variant>
 
 
 AllSprites::AllSprites() : Group()
@@ -40,13 +43,39 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
         }
     }
 
+    // sort main sprites based on `y_sort`
     std::sort(
             main_sprites.begin(), main_sprites.end(),
             [](const std::shared_ptr<rg::sprite::Sprite> &l,
                const std::shared_ptr<rg::sprite::Sprite> &r)
             {
-                const int yl = l->rect.centery();
-                const int yr = r->rect.centery();
+                float yl;
+                float yr;
+                if (const auto lSprite = std::dynamic_pointer_cast<Sprite>(l))
+                {
+                    yl = lSprite->y_sort;
+                }
+                else if (const auto lEntity = std::dynamic_pointer_cast<Entity>(l))
+                {
+                    yl = lEntity->y_sort;
+                }
+                else
+                {
+                    throw;
+                }
+
+                if (const auto rSprite = std::dynamic_pointer_cast<Sprite>(r))
+                {
+                    yr = rSprite->y_sort;
+                }
+                else if (const auto rEntity = std::dynamic_pointer_cast<Entity>(r))
+                {
+                    yr = rEntity->y_sort;
+                }
+                else
+                {
+                    throw;
+                }
 
                 return yl < yr;
             });

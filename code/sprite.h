@@ -8,6 +8,7 @@ public:
 
     Sprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf,
            int z = WORLD_LAYERS["main"]);
+    float y_sort;
 };
 
 class AnimatedSprite : public Sprite
@@ -26,4 +27,11 @@ public:
 private:
 
     float frame_index{};
+};
+
+class MonsterPatchSprite : public Sprite
+{
+public:
+
+    MonsterPatchSprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf);
 };

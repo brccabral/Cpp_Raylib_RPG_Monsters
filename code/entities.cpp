@@ -12,6 +12,7 @@ Entity::Entity(
     rect = image->GetRect();
     rect.center(pos);
     z = WORLD_LAYERS["main"];
+    y_sort = rect.centery();
 }
 
 void Entity::Update(const float deltaTime)
@@ -101,6 +102,7 @@ void Player::Update(const float dt)
     Entity::Update(dt);
     Input();
     Move(dt);
+    y_sort = rect.centery();
 }
 
 void Player::Move(const float dt)

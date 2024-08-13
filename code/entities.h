@@ -1,6 +1,5 @@
 #pragma once
 #include <rygame.h>
-#include "settings.h"
 
 
 class Entity : public rg::sprite::Sprite
@@ -10,6 +9,8 @@ public:
     Entity(const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
            const std::string &facing_direction);
     void Update(float deltaTime) override;
+
+    float y_sort;
 
 protected:
 
