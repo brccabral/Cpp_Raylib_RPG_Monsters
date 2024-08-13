@@ -15,4 +15,6 @@ private:
 
     std::shared_ptr<rg::Surface> display_surface = rg::display::GetSurface();
     rg::math::Vector2 offset{};
+
+    std::shared_ptr<rg::Surface> shadow_surf;
 };

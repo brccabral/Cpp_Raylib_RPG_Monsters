@@ -3,11 +3,11 @@
 #include "settings.h"
 #include "sprite.h"
 
-#include <variant>
-
 
 AllSprites::AllSprites() : Group()
-{}
+{
+    shadow_surf = rg::image::Load("resources/graphics/other/shadow.png");
+}
 
 void AllSprites::Draw(const std::shared_ptr<rg::Surface> &surface)
 {
@@ -86,6 +86,18 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
     }
     for (const auto &sprite: main_sprites)
     {
+        // show shadow below entities
+        if (const auto entity = std::dynamic_pointer_cast<Entity>(sprite))
+        {
+            display_surface->Blit(
+                    shadow_surf,
+                    sprite->rect.topleft() + offset +
+                            rg::math::Vector2{
+                                    entity->rect.width / 2.0f -
+                                            shadow_surf->GetTexture().width / 2.0f,
+                                    entity->rect.height - shadow_surf->GetTexture().height,
+                            });
+        }
         display_surface->Blit(sprite->image, sprite->rect.topleft() + offset);
     }
     for (const auto &sprite: top_sprites)

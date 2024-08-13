@@ -1,6 +1,6 @@
 #include "sprite.h"
-
 #include "settings.h"
+
 
 Sprite::Sprite(const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf, const int z)
 {

@@ -29,5 +29,5 @@ private:
     std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> characters_dict;
 
     // Groups
-    AllSprites all_sprites;
+    std::shared_ptr<AllSprites> all_sprites;
 };
