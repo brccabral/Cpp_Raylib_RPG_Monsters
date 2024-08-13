@@ -1,5 +1,5 @@
+#include <algorithm>
 #include "groups.h"
-
 #include "settings.h"
 
 
@@ -39,6 +39,17 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
             top_sprites.push_back(sprite);
         }
     }
+
+    std::sort(
+            main_sprites.begin(), main_sprites.end(),
+            [](const std::shared_ptr<rg::sprite::Sprite> &l,
+               const std::shared_ptr<rg::sprite::Sprite> &r)
+            {
+                const int yl = l->rect.centery();
+                const int yr = r->rect.centery();
+
+                return yl < yr;
+            });
 
     for (const auto &sprite: bg_sprites)
     {
