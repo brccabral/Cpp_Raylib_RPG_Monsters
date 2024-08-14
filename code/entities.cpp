@@ -3,6 +3,7 @@
 #include <utility>
 #include "settings.h"
 #include "sprite.h"
+#include "support.h"
 
 
 Entity::Entity(
@@ -197,13 +198,27 @@ void Player::Collisions(const std::string &axis)
 
 Character::Character(
         const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
-        const std::string &facing_direction, CharacterData *char_data)
-    : Entity(pos, frames, facing_direction), character_data(char_data)
-{}
+        const std::string &facing_direction, CharacterData *char_data,
+        const std::shared_ptr<Player> &player,
+        const std::function<void(const std::shared_ptr<Character> &character)> &create_dialog,
+        const std::shared_ptr<rg::sprite::Group> &collision_sprites, const float radius)
+    : Entity(pos, frames, facing_direction), character_data(char_data), player(player),
+      create_dialog(create_dialog), radius(radius)
+{
+    for (const auto &sprite: collision_sprites->Sprites())
+    {
+        if (sprite.get() != this)
+        {
+            collision_rects.push_back(sprite->rect);
+        }
+    }
+    view_directions = character_data->directions;
+}
 
 void Character::Update(const float deltaTime)
 {
     Entity::Update(deltaTime);
+    Raycast();
 }
 
 std::vector<std::string> Character::GetDialog() const
@@ -213,4 +228,13 @@ std::vector<std::string> Character::GetDialog() const
         return character_data->dialog.defeated;
     }
     return character_data->dialog.default_;
+}
+
+void Character::Raycast()
+{
+    auto s = std::dynamic_pointer_cast<Character>(shared_from_this());
+    if (!has_moved && !has_noticed && CheckConnections(radius, s, player))
+    {
+        player->Block();
+    }
 }

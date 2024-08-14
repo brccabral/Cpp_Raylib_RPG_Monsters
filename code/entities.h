@@ -62,9 +62,26 @@ public:
     Character(
             const rg::math::Vector2 &pos,
             std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
-            const std::string &facing_direction, CharacterData *char_data);
+            const std::string &facing_direction, CharacterData *char_data,
+            const std::shared_ptr<Player> &player,
+            const std::function<void(const std::shared_ptr<Character> &character)> &create_dialog,
+            const std::shared_ptr<rg::sprite::Group> &collision_sprites, float radius);
     void Update(float deltaTime) override;
     [[nodiscard]] std::vector<std::string> GetDialog() const;
 
     CharacterData *character_data;
+    bool can_rotate = true;
+
+private:
+
+    void Raycast();
+
+    std::shared_ptr<Player> player;
+    std::function<void(const std::shared_ptr<Character> &character)> create_dialog;
+    std::shared_ptr<rg::sprite::Group> collision_sprites;
+    std::vector<rg::Rect> collision_rects;
+    bool has_moved{};
+    bool has_noticed{};
+    float radius{};
+    std::vector<std::string> view_directions = {"left", "right"};
 };

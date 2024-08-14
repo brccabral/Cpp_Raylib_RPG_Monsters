@@ -209,13 +209,26 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
                 player->add(all_sprites.get());
             }
         }
+        entity = entity->next;
+    }
+
+    // we can only create Characters after we have Player
+    entity = entities_layer->content.objgr->head;
+    while (entity)
+    {
+        auto position = rg::tmx::GetTMXObjPosition(entity);
+        const char *direction = rl::tmx_get_property(entity->properties, "direction")->value.string;
         if (std::strcmp(entity->name, "Character") == 0)
         {
             std::string character_id =
                     rl::tmx_get_property(entity->properties, "character_id")->value.string;
             const char *graphic = rl::tmx_get_property(entity->properties, "graphic")->value.string;
+            int radius =
+                    std::stoi(rl::tmx_get_property(entity->properties, "radius")->value.string);
             std::make_shared<Character>(
-                    position, characters_dict[graphic], direction, &TRAINER_DATA[character_id])
+                    position, characters_dict[graphic], direction, &TRAINER_DATA[character_id],
+                    player, [this](const std::shared_ptr<Character> &char_)
+                    { CreateDialog(char_); }, collision_sprites, radius)
                     ->add({all_sprites.get(), collision_sprites.get(), character_sprites.get()});
         }
         entity = entity->next;
