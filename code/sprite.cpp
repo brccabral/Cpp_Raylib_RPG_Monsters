@@ -55,3 +55,16 @@ CollidableSprite::CollidableSprite(
 {
     hitbox = rect.inflate(0, -rect.height * 0.6f);
 }
+
+DialogSprite::DialogSprite(
+        const std::string &message, const std::shared_ptr<Character> &character,
+        const std::shared_ptr<rg::font::Font> &font)
+    : message(message), character(character), font(font)
+{
+    z = WORLD_LAYERS["top"];
+
+    // text
+    auto text_surf = this->font->render(message.c_str(), COLORS["black"]);
+    image = text_surf;
+    rect = image->GetRect().midbottom(character->rect.midtop() + rg::math::Vector2{0, -10});
+}

@@ -1,8 +1,10 @@
 #include <memory>
 #include "game.h"
+#include "DialogTree.h"
 #include "settings.h"
 #include "sprite.h"
 #include "support.h"
+#include "game_data.h"
 
 
 Game::Game()
@@ -47,6 +49,9 @@ void Game::ImportAssets()
 
     cost_dict = CoastImporter("resources/graphics/tilesets/coast.png", 12, 24);
     characters_dict = AllCharacterImport("resources/graphics/characters");
+
+    fonts["dialog"] =
+            std::make_shared<rg::font::Font>("resources/graphics/fonts/PixeloidSans.ttf", 30);
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)
@@ -198,8 +203,11 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         }
         if (std::strcmp(entity->name, "Character") == 0)
         {
+            std::string character_id =
+                    rl::tmx_get_property(entity->properties, "character_id")->value.string;
             const char *graphic = rl::tmx_get_property(entity->properties, "graphic")->value.string;
-            std::make_shared<Character>(position, characters_dict[graphic], direction)
+            std::make_shared<Character>(
+                    position, characters_dict[graphic], direction, &TRAINER_DATA[character_id])
                     ->add({all_sprites.get(), collision_sprites.get(), character_sprites.get()});
         }
         entity = entity->next;
@@ -225,7 +233,13 @@ void Game::Input()
             {
                 player->Block();
                 character->ChangeFacingDirection(player->rect.center());
+                CreateDialog(character);
             }
         }
     }
+}
+
+void Game::CreateDialog(const std::shared_ptr<Character> &character)
+{
+    DialogTree(character, player, all_sprites, fonts["dialog"]);
 }

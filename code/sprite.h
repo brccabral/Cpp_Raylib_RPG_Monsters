@@ -1,4 +1,7 @@
 #pragma once
+#include "entities.h"
+
+
 #include <rygame.h>
 #include "settings.h"
 
@@ -55,4 +58,19 @@ class CollidableSprite : public Sprite
 public:
 
     CollidableSprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf);
+};
+
+class DialogSprite : public rg::sprite::Sprite
+{
+public:
+
+    DialogSprite(
+            const std::string &message, const std::shared_ptr<Character> &character,
+            const std::shared_ptr<rg::font::Font> &font);
+
+private:
+
+    std::string message;
+    std::shared_ptr<Character> character;
+    std::shared_ptr<rg::font::Font> font;
 };

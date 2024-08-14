@@ -11,11 +11,11 @@ find_package(rygame REQUIRED)
 
 add_executable(${PROJECT_NAME} code/main.cpp
         code/game.cpp
-        code/game.h
         code/sprite.cpp
         code/entities.cpp
         code/groups.cpp
         code/support.cpp
+        code/DialogTree.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE rygame)

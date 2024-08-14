@@ -1,4 +1,6 @@
 #include "entities.h"
+
+#include <utility>
 #include "settings.h"
 #include "sprite.h"
 
@@ -195,11 +197,20 @@ void Player::Collisions(const std::string &axis)
 
 Character::Character(
         const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
-        const std::string &facing_direction)
-    : Entity(pos, frames, facing_direction)
+        const std::string &facing_direction, CharacterData *char_data)
+    : Entity(pos, frames, facing_direction), character_data(char_data)
 {}
 
 void Character::Update(const float deltaTime)
 {
     Entity::Update(deltaTime);
+}
+
+std::vector<std::string> Character::GetDialog() const
+{
+    if (character_data->defeated)
+    {
+        return character_data->dialog.defeated;
+    }
+    return character_data->dialog.default_;
 }

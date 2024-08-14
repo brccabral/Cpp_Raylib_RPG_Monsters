@@ -20,6 +20,7 @@ private:
     void Setup(const std::string &map_name, const std::string &player_start_position);
     void UnloadResources();
     void Input();
+    void CreateDialog(const std::shared_ptr<Character> &character);
 
     std::shared_ptr<rg::Surface> display_surface = nullptr;
     std::map<std::string, rl::tmx_map *> tmx_maps;
@@ -33,4 +34,6 @@ private:
     std::shared_ptr<AllSprites> all_sprites;
     std::shared_ptr<rg::sprite::Group> collision_sprites;
     std::shared_ptr<rg::sprite::Group> character_sprites;
+
+    std::map<std::string, std::shared_ptr<rg::font::Font>> fonts;
 };

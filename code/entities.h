@@ -1,4 +1,7 @@
 #pragma once
+#include "game_data.h"
+
+
 #include <rygame.h>
 
 
@@ -59,6 +62,9 @@ public:
     Character(
             const rg::math::Vector2 &pos,
             std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
-            const std::string &facing_direction);
+            const std::string &facing_direction, CharacterData *char_data);
     void Update(float deltaTime) override;
+    [[nodiscard]] std::vector<std::string> GetDialog() const;
+
+    CharacterData *character_data;
 };
