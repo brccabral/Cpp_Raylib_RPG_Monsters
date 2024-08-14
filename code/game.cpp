@@ -13,15 +13,14 @@ Game::Game(const int width, const int height)
 {
     SetTraceLogLevel(LOG_WARNING);
     InitWindow(width, height, "RPG Monsters");
-    SetTargetFPS(60);
+    // SetTargetFPS(60);
     SetRandomSeed(std::time(nullptr));
     SetExitKey(KEY_NULL); // Disable KEY_ESCAPE to close window, X-button still works
     InitAudioDevice();
 
     display_surface = LoadRenderTexture(width, height);
     while (!IsRenderTextureReady(display_surface))
-    {
-    }
+    {}
 
     ImporAssets();
     ClearSpriteGroups();
@@ -29,11 +28,7 @@ Game::Game(const int width, const int height)
     Setup("world", "house");
     SetupFrames();
 
-    encounter_timer = Timer(
-            2.0f, false, false, [this]
-            {
-                MonsterEncounter();
-            });
+    encounter_timer = Timer(2.0f, false, false, [this] { MonsterEncounter(); });
 
     SetCurrentBackgroundMusic(musics["overworld"]);
 }
@@ -155,7 +150,7 @@ void Game::DisplayUpdate() const
             display_surface.texture,
             {0, 0, (float) display_surface.texture.width, (float) -display_surface.texture.height},
             {0, 0}, render_tint);
-
+    DrawFPS(20, 20);
 #if 0
     const auto [mouse_x, mouse_y] = GetMousePosition();
     char mouse_text[MAX_TEXT_BUFFER_LENGTH];
@@ -238,7 +233,7 @@ void Game::CreateTileLayer(const tmx_map *map, const tmx_layer *layer, const int
         for (int x = 0; x < map->width; x++)
         {
             const unsigned int baseGid = layer->content.gids[(y * map->width) + x];
-            const unsigned int gid = (baseGid) & TMX_FLIP_BITS_REMOVAL;
+            const unsigned int gid = (baseGid) &TMX_FLIP_BITS_REMOVAL;
             if (map->tiles[gid])
             {
                 const tmx_tileset *ts = map->tiles[gid]->tileset;
@@ -401,7 +396,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         new Character(
                 this, {float(entity->x), float(entity->y)}, face_frames,
                 {all_sprites, collition_sprites, characters_sprites}, face_direction,
-                TRAINER_DATA[character_id], radius, nurse);
+                &TRAINER_DATA[character_id], radius, nurse);
 
         entity = entity->next;
     }
@@ -550,10 +545,7 @@ void Game::CreateDialog(Character *character)
     {
         dialog_tree = new DialogTree(
                 character, player, {all_sprites}, fonts["dialog"],
-                [this](Character *ch)
-                {
-                    EndDialog(ch);
-                });
+                [this](Character *ch) { EndDialog(ch); });
     }
 }
 
@@ -582,11 +574,11 @@ void Game::EndDialog(Character *character)
         }
         player->Unblock();
     }
-    else if (!character->character_data.defeated)
+    else if (!character->character_data->defeated)
     {
         SetCurrentBackgroundMusic(musics["battle"]);
 
-        const Texture2D bg = named_textures["bg_frames"][character->character_data.biome];
+        const Texture2D bg = named_textures["bg_frames"][character->character_data->biome];
         if (transition_target)
         {
             delete transition_target;
@@ -789,10 +781,7 @@ void Game::CheckEvolution()
                 }
                 evolution = new Evolution(
                         &named_textures["monsters"], &animation_frames, oldName, newName,
-                        fonts["bold"], [this]
-                        {
-                            EndEvolution();
-                        }, star_animation_textures,
+                        fonts["bold"], [this] { EndEvolution(); }, star_animation_textures,
                         monster.evolve.second, index);
                 player_monsters[index] = Monster(newName, monster.level);
                 break; // run the first evolution-> At EndEvolution, we check if there are more
@@ -817,7 +806,7 @@ void Game::EndBattle(Character *character)
     tint_mode = TINT;
     if (character)
     {
-        character->character_data.defeated = true;
+        character->character_data->defeated = true;
         CreateDialog(character);
     }
     else if (!evolution)

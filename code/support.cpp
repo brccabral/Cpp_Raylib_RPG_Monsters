@@ -142,7 +142,7 @@ std::map<std::string, tilerect_face> all_character_import(const char *path)
         if (dirEntry.is_regular_file())
         {
             auto filename = dirEntry.path().stem().string();
-        auto entryPath = dirEntry.path().string();
+            auto entryPath = dirEntry.path().string();
             new_dict[filename] = CharacterImporter(4, 4, entryPath.c_str());
         }
     }

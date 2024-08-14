@@ -270,7 +270,7 @@ inline CharacterData Nurse = {
         0};
 
 
-inline std::map<std::string, CharacterData> TRAINER_DATA = {
+static std::map<std::string, CharacterData> TRAINER_DATA = {
         {"o1", o1}, //
         {"o2", o2}, //
         {"o3", o3}, //
@@ -655,7 +655,7 @@ struct AttackData
 {
     std::string name;
     SelectionSide target; // PLAYER - attack same team (healing/defense) | OPPONENT - attack the
-                          // other team
+    // other team
     float amount;
     int cost;
     ElementType element;
@@ -670,7 +670,9 @@ inline std::map<Attack, AttackData> ATTACK_DATA = {
         {ATTACK_SCRATCH, {"scratch", OPPONENT, 1.2f, 20, ELEMENT_NORMAL, ANIMATION_SCRATCH}}, //
         {ATTACK_SPLASH, {"splash", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ANIMATION_SPLASH}}, //
         {ATTACK_FIRE, {"fire", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ANIMATION_FIRE}}, //
-        {ATTACK_EXPLOSTION, {"explosion", OPPONENT, 2.0f, 90, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
-        {ATTACK_ANNIHILATE, {"annihilate", OPPONENT, 3.0f, 30, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
+        {ATTACK_EXPLOSTION,
+         {"explosion", OPPONENT, 2.0f, 90, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
+        {ATTACK_ANNIHILATE,
+         {"annihilate", OPPONENT, 3.0f, 30, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
         {ATTACK_ICE, {"ice", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ANIMATION_ICE}}, //
 };

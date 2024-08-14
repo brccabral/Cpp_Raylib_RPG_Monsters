@@ -110,8 +110,8 @@ Character::Character(
         Game *g, const Vector2 pos,
         const std::map<FacingDirection, std::vector<TiledTexture>> &face_frms,
         const std::vector<SpriteGroup *> &sgs, const FacingDirection facing_dir,
-        CharacterData char_data, const float radius, const bool nurse)
-    : Entity(pos, face_frms, sgs, facing_dir), nurse(nurse), character_data(std::move(char_data)),
+        CharacterData *char_data, const float radius, const bool nurse)
+    : Entity(pos, face_frms, sgs, facing_dir), nurse(nurse), character_data(char_data),
       radius(radius), game(g)
 {
     for (const auto sprite: game->collition_sprites->sprites)
@@ -121,13 +121,13 @@ Character::Character(
             collition_rects.push_back(sprite->rect);
         }
     }
-    view_directions = character_data.directions;
+    view_directions = character_data->directions;
     timers["look around"] = Timer(1.5f, true, true, [this] { RandomViewDirection(); });
     timers["notice"] = Timer{0.5f, false, false, [this] { StartMove(); }};
 
-    for (int i = 0; i < character_data.monsters.size(); ++i)
+    for (int i = 0; i < character_data->monsters.size(); ++i)
     {
-        auto [name, level] = character_data.monsters[i];
+        auto [name, level] = character_data->monsters[i];
         monsters[i] = new Monster(name, level);
     }
 }
@@ -142,11 +142,11 @@ Character::~Character()
 
 std::vector<std::string> Character::GetDialog() const
 {
-    if (character_data.defeated)
+    if (character_data->defeated)
     {
-        return character_data.dialog.defeated;
+        return character_data->dialog.defeated;
     }
-    return character_data.dialog.default_;
+    return character_data->dialog.default_;
 }
 
 void Character::Update(const double dt)
@@ -157,7 +157,7 @@ void Character::Update(const double dt)
     }
 
     Entity::Update(dt);
-    if (character_data.look_around)
+    if (character_data->look_around)
     {
         Raycast();
         Move(dt);
