@@ -64,7 +64,17 @@ DialogSprite::DialogSprite(
     z = WORLD_LAYERS["top"];
 
     // text
-    auto text_surf = this->font->render(message.c_str(), COLORS["black"]);
-    image = text_surf;
+    const auto text_surf = this->font->render(message.c_str(), COLORS["black"]);
+    constexpr int padding = 5;
+    float width = std::max(30.0f, text_surf->GetRect().width + padding * 2);
+    float height = text_surf->GetRect().height + padding * 2;
+
+    // background
+    const auto surf = std::make_shared<rg::Surface>(width, height);
+    surf->Fill(COLORS["pure white"]);
+    surf->Blit(
+            text_surf, text_surf->GetRect().center(rg::math::Vector2{width / 2, height / 2}).pos);
+
+    image = surf;
     rect = image->GetRect().midbottom(character->rect.midtop() + rg::math::Vector2{0, -10});
 }
