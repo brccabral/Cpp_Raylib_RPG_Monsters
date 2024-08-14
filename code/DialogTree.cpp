@@ -4,8 +4,10 @@
 
 DialogTree::DialogTree(
         const std::shared_ptr<Character> &character, const std::shared_ptr<Player> &player,
-        const std::shared_ptr<AllSprites> &all_sprites, const std::shared_ptr<rg::font::Font> &font)
-    : character(character), player(player), all_sprites(all_sprites), font(font)
+        const std::shared_ptr<AllSprites> &all_sprites, const std::shared_ptr<rg::font::Font> &font,
+        const std::function<void(const std::shared_ptr<Character> &char_)> &end_dialog)
+    : character(character), player(player), all_sprites(all_sprites), font(font),
+      end_dialog(end_dialog)
 {
     dialog = character->GetDialog();
     dialog_num = dialog.size();
@@ -34,6 +36,8 @@ void DialogTree::Input()
             dialog_timer.Activate();
         }
         else
-        {}
+        {
+            end_dialog(character);
+        }
     }
 }

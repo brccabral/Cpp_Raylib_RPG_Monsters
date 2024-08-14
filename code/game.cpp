@@ -255,6 +255,14 @@ void Game::CreateDialog(const std::shared_ptr<Character> &character)
 {
     if (!dialog_tree)
     {
-        dialog_tree = std::make_shared<DialogTree>(character, player, all_sprites, fonts["dialog"]);
+        dialog_tree = std::make_shared<DialogTree>(
+                character, player, all_sprites, fonts["dialog"],
+                [this](const std::shared_ptr<Character> &char_) { EndDialog(char_); });
     }
+}
+
+void Game::EndDialog(const std::shared_ptr<Character> &character)
+{
+    dialog_tree = nullptr;
+    player->Unblock();
 }
