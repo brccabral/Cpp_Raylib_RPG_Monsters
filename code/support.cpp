@@ -87,7 +87,19 @@ bool CheckConnections(
     const auto relation = target->rect.center() - entity->rect.center();
     if (relation.magnitude() < radius)
     {
-        return true;
+        // if player is facing left, player is on the right side of target,
+        // and in same horizontal plane (not above or below target.y)
+        if ((!strcmp(entity->facing_direction.c_str(), "left") && relation.x < 0 &&
+             std::abs(relation.y) < tolerance) ||
+            (!strcmp(entity->facing_direction.c_str(), "right") && relation.x > 0 &&
+             std::abs(relation.y) < tolerance) ||
+            (!strcmp(entity->facing_direction.c_str(), "up") && relation.y < 0 &&
+             std::abs(relation.x) < tolerance) ||
+            (!strcmp(entity->facing_direction.c_str(), "down") && relation.y > 0 &&
+             std::abs(relation.x) < tolerance))
+        {
+            return true;
+        };
     }
     return false;
 }

@@ -25,8 +25,7 @@ void Entity::Update(const float deltaTime)
 
 void Entity::Animate(const float dt)
 {
-    GetState();
-    image = frames_direction[facing_direction];
+    image = frames_direction[GetState()];
 
     frame_index += ANIMATION_SPEED * dt;
     if (frame_index > std::dynamic_pointer_cast<rg::Frames>(image)->frames.size())
@@ -38,7 +37,8 @@ void Entity::Animate(const float dt)
 
 std::string Entity::GetState()
 {
-    if (direction.x || direction.y)
+    const bool moving = direction.x || direction.y;
+    if (moving)
     {
         if (direction.x)
         {
@@ -49,26 +49,12 @@ std::string Entity::GetState()
             facing_direction = direction.y > 0 ? "down" : "up";
         }
     }
-    else
+    std::string result = facing_direction;
+    if (!moving)
     {
-        if (facing_direction == "down")
-        {
-            facing_direction = "down_idle";
-        }
-        if (facing_direction == "up")
-        {
-            facing_direction = "up_idle";
-        }
-        if (facing_direction == "left")
-        {
-            facing_direction = "left_idle";
-        }
-        if (facing_direction == "right")
-        {
-            facing_direction = "right_idle";
-        }
+        result += "_idle";
     }
-    return facing_direction;
+    return result;
 }
 
 Player::Player(

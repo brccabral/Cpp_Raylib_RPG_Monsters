@@ -12,12 +12,12 @@ public:
 
     float y_sort;
     rg::Rect hitbox;
+    std::string facing_direction;
 
 protected:
 
     rg::math::Vector2 direction{};
     float speed = 250;
-    std::string facing_direction;
 
 private:
 
