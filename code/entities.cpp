@@ -34,6 +34,14 @@ void Entity::Unblock()
     blocked = false;
 }
 
+void Entity::ChangeFacingDirection(const rg::math::Vector2 target_pos)
+{
+    const auto relation = target_pos - rect.center();
+    if (std::abs(relation.y) < 30)
+    {
+        facing_direction = "right";
+    }
+}
 
 void Entity::Animate(const float dt)
 {
@@ -172,3 +180,8 @@ Character::Character(
         const std::string &facing_direction)
     : Entity(pos, frames, facing_direction)
 {}
+
+void Character::Update(const float deltaTime)
+{
+    Entity::Update(deltaTime);
+}

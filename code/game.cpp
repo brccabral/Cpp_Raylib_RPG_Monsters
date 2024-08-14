@@ -223,8 +223,8 @@ void Game::Input()
             auto character = std::dynamic_pointer_cast<Character>(character_sprite);
             if (CheckConnections(100, player, character))
             {
-                player->rect.pos.x += 0;
                 player->Block();
+                character->ChangeFacingDirection(player->rect.center());
             }
         }
     }

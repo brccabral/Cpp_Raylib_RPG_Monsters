@@ -11,9 +11,10 @@ public:
     void Update(float deltaTime) override;
     void Block();
     void Unblock();
+    void ChangeFacingDirection(rg::math::Vector2 target_pos);
 
     float y_sort;
-    rg::Rect hitbox;
+    rg::Rect hitbox{};
     std::string facing_direction;
 
 protected:
@@ -59,4 +60,5 @@ public:
             const rg::math::Vector2 &pos,
             std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
             const std::string &facing_direction);
+    void Update(float deltaTime) override;
 };
