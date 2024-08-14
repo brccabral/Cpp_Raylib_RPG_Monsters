@@ -12,6 +12,7 @@ Game::Game()
     rg::display::SetCaption("RPG Monsters");
 
     all_sprites = std::make_shared<AllSprites>();
+    collision_sprites = std::make_shared<rg::sprite::Group>();
     ImportAssets();
     Setup("world", "house");
     // Setup("hospital", "world");

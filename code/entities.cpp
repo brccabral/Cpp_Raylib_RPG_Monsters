@@ -1,5 +1,6 @@
 #include "entities.h"
 #include "settings.h"
+#include "sprite.h"
 
 
 Entity::Entity(
@@ -111,9 +112,54 @@ void Player::Move(const float dt)
 {
     // we split x and y to calculate collisions independently
     rect.x += direction.x * speed * dt;
-    hitbox.center(rect.center());
+    hitbox.centerx(rect.centerx());
+    Collisions("horizontal");
     rect.y += direction.y * speed * dt;
-    hitbox.center(rect.center());
+    hitbox.centery(rect.centery());
+    Collisions("vertical");
+}
+
+void Player::Collisions(const std::string &axis)
+{
+    for (const auto &collision_sprite: collision_sprites->Sprites())
+    {
+        rg::Rect sprite_hitbox;
+        if (const auto entity = std::dynamic_pointer_cast<Entity>(collision_sprite))
+        {
+            sprite_hitbox = entity->hitbox;
+        }
+        else if (const auto sprite = std::dynamic_pointer_cast<::Sprite>(collision_sprite))
+        {
+            sprite_hitbox = sprite->hitbox;
+        }
+        if (hitbox.colliderect(sprite_hitbox))
+        {
+            if (!strcmp(axis.c_str(), "horizontal"))
+            {
+                if (direction.x > 0)
+                {
+                    hitbox.right(sprite_hitbox.left());
+                }
+                else if (direction.x < 0)
+                {
+                    hitbox.left(sprite_hitbox.right());
+                }
+                rect.centerx(hitbox.centerx());
+            }
+            else // vertical
+            {
+                if (direction.y > 0)
+                {
+                    hitbox.bottom(sprite_hitbox.top());
+                }
+                else if (direction.y < 0)
+                {
+                    hitbox.top(sprite_hitbox.bottom());
+                }
+                rect.centery(hitbox.centery());
+            }
+        }
+    }
 }
 
 Character::Character(

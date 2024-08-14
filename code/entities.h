@@ -43,6 +43,7 @@ private:
 
     void Input();
     void Move(float dt);
+    void Collisions(const std::string &axis);
 
     std::shared_ptr<rg::sprite::Group> collision_sprites;
 };
