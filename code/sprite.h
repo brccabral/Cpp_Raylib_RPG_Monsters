@@ -9,7 +9,7 @@ public:
     Sprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf,
            int z = WORLD_LAYERS["main"]);
     float y_sort;
-    rg::Rect hitbox;
+    rg::Rect hitbox{};
 };
 
 class AnimatedSprite : public Sprite
@@ -48,4 +48,11 @@ class BorderSprite : public Sprite
 public:
 
     BorderSprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf);
+};
+
+class CollidableSprite : public Sprite
+{
+public:
+
+    CollidableSprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf);
 };

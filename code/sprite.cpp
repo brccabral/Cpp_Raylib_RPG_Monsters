@@ -45,6 +45,13 @@ MonsterPatchSprite::MonsterPatchSprite(
     }
 }
 
-BorderSprite::BorderSprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf)
+BorderSprite::BorderSprite(const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf)
     : Sprite(pos, surf)
 {}
+
+CollidableSprite::CollidableSprite(
+        const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf)
+    : Sprite(pos, surf)
+{
+    hitbox = rect.inflate(0, -rect.height * 0.6f);
+}

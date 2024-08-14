@@ -142,7 +142,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             }
             else
             {
-                std::make_shared<Sprite>(position, objSurf)
+                std::make_shared<CollidableSprite>(position, objSurf)
                         ->add({all_sprites.get(), collision_sprites.get()});
             }
         }
