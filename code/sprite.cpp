@@ -71,7 +71,8 @@ DialogSprite::DialogSprite(
 
     // background
     const auto surf = std::make_shared<rg::Surface>(width, height);
-    surf->Fill(COLORS["pure white"]);
+    surf->Fill(rl::BLANK);
+    rg::draw::rect(surf, COLORS["pure white"], surf->GetRect(), 0, 4);
     surf->Blit(
             text_surf, text_surf->GetRect().center(rg::math::Vector2{width / 2, height / 2}).pos);
 
