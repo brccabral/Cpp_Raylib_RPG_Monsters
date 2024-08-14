@@ -39,7 +39,25 @@ void Entity::ChangeFacingDirection(const rg::math::Vector2 target_pos)
     const auto relation = target_pos - rect.center();
     if (std::abs(relation.y) < 30)
     {
-        facing_direction = "right";
+        if (relation.x > 0)
+        {
+            facing_direction = "right";
+        }
+        else
+        {
+            facing_direction = "left";
+        }
+    }
+    else
+    {
+        if (relation.y > 0)
+        {
+            facing_direction = "down";
+        }
+        else
+        {
+            facing_direction = "up";
+        }
     }
 }
 
