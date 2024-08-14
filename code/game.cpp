@@ -224,6 +224,7 @@ void Game::Input()
             if (CheckConnections(100, player, character))
             {
                 player->rect.pos.x += 0;
+                player->Block();
             }
         }
     }

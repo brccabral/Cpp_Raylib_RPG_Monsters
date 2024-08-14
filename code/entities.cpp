@@ -23,6 +23,18 @@ void Entity::Update(const float deltaTime)
     Animate(deltaTime);
 }
 
+void Entity::Block()
+{
+    blocked = true;
+    direction = {};
+}
+
+void Entity::Unblock()
+{
+    blocked = false;
+}
+
+
 void Entity::Animate(const float dt)
 {
     image = frames_direction[GetState()];
@@ -66,6 +78,10 @@ Player::Player(
 
 void Player::Input()
 {
+    if (blocked)
+    {
+        return;
+    }
     rg::math::Vector2 input_vector{};
     if (IsKeyDown(rl::KEY_UP))
     {
@@ -89,8 +105,11 @@ void Player::Input()
 void Player::Update(const float dt)
 {
     Entity::Update(dt);
-    Input();
-    Move(dt);
+    if (!blocked)
+    {
+        Input();
+        Move(dt);
+    }
     y_sort = rect.centery();
 }
 

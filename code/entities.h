@@ -9,6 +9,8 @@ public:
     Entity(const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
            const std::string &facing_direction);
     void Update(float deltaTime) override;
+    void Block();
+    void Unblock();
 
     float y_sort;
     rg::Rect hitbox;
@@ -18,6 +20,7 @@ protected:
 
     rg::math::Vector2 direction{};
     float speed = 250;
+    bool blocked = false;
 
 private:
 
