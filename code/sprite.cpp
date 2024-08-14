@@ -9,6 +9,7 @@ Sprite::Sprite(const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &
     rect.topleft(pos);
     this->z = z;
     y_sort = rect.centery();
+    hitbox = rect;
 }
 
 AnimatedSprite::AnimatedSprite(
@@ -43,3 +44,7 @@ MonsterPatchSprite::MonsterPatchSprite(
         z = WORLD_LAYERS["bg"];
     }
 }
+
+BorderSprite::BorderSprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf)
+    : Sprite(pos, surf)
+{}

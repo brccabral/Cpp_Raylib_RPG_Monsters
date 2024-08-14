@@ -30,4 +30,5 @@ private:
 
     // Groups
     std::shared_ptr<AllSprites> all_sprites;
+    std::shared_ptr<rg::sprite::Group> collision_sprites;
 };

@@ -55,6 +55,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     const rl::tmx_layer *water_layer = tmx_find_layer_by_name(map, "Water");
     const rl::tmx_layer *coast_layer = tmx_find_layer_by_name(map, "Coast");
     const rl::tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
+    const rl::tmx_layer *collision_layer = tmx_find_layer_by_name(map, "Collisions");
     const rl::tmx_layer *monster_layer = tmx_find_layer_by_name(map, "Monsters");
     const rl::tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
 
@@ -140,10 +141,22 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             }
             else
             {
-                std::make_shared<Sprite>(position, objSurf)->add(all_sprites.get());
+                std::make_shared<Sprite>(position, objSurf)
+                        ->add({all_sprites.get(), collision_sprites.get()});
             }
         }
         object = object->next;
+    }
+
+    // collision objects
+    auto collision = collision_layer->content.objgr->head;
+    while (collision)
+    {
+        auto position = rg::tmx::GetTMXObjPosition(collision);
+        std::make_shared<BorderSprite>(
+                position, std::make_shared<rg::Surface>(collision->width, collision->height))
+                ->add(collision_sprites.get());
+        collision = collision->next;
     }
 
     // monster patches
@@ -175,7 +188,8 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             const char *entity_pos = rl::tmx_get_property(entity->properties, "pos")->value.string;
             if (std::strcmp(entity_pos, player_start_position.c_str()) == 0)
             {
-                player = std::make_shared<Player>(position, characters_dict["player"], direction);
+                player = std::make_shared<Player>(
+                        position, characters_dict["player"], direction, collision_sprites);
                 player->add(all_sprites.get());
             }
         }
@@ -183,7 +197,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         {
             const char *graphic = rl::tmx_get_property(entity->properties, "graphic")->value.string;
             std::make_shared<Character>(position, characters_dict[graphic], direction)
-                    ->add(all_sprites.get());
+                    ->add({all_sprites.get(), collision_sprites.get()});
         }
         entity = entity->next;
     }

@@ -11,6 +11,7 @@ public:
     void Update(float deltaTime) override;
 
     float y_sort;
+    rg::Rect hitbox;
 
 protected:
 
@@ -34,13 +35,16 @@ class Player : public Entity
 public:
 
     Player(const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
-           const std::string &facing_direction);
+           const std::string &facing_direction,
+           const std::shared_ptr<rg::sprite::Group> &collision_sprites);
     void Update(float dt) override;
 
 private:
 
     void Input();
     void Move(float dt);
+
+    std::shared_ptr<rg::sprite::Group> collision_sprites;
 };
 
 class Character : public Entity

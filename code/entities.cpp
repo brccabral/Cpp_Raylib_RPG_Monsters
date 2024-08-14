@@ -13,6 +13,7 @@ Entity::Entity(
     rect.center(pos);
     z = WORLD_LAYERS["main"];
     y_sort = rect.centery();
+    hitbox = rect.inflate(-rect.width / 2, -60);
 }
 
 void Entity::Update(const float deltaTime)
@@ -71,8 +72,9 @@ std::string Entity::GetState()
 
 Player::Player(
         const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
-        const std::string &facing_direction)
-    : Entity(pos, frames, facing_direction)
+        const std::string &facing_direction,
+        const std::shared_ptr<rg::sprite::Group> &collision_sprites)
+    : Entity(pos, frames, facing_direction), collision_sprites(collision_sprites)
 {}
 
 void Player::Input()
@@ -109,7 +111,9 @@ void Player::Move(const float dt)
 {
     // we split x and y to calculate collisions independently
     rect.x += direction.x * speed * dt;
+    hitbox.center(rect.center());
     rect.y += direction.y * speed * dt;
+    hitbox.center(rect.center());
 }
 
 Character::Character(

@@ -9,6 +9,7 @@ public:
     Sprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf,
            int z = WORLD_LAYERS["main"]);
     float y_sort;
+    rg::Rect hitbox;
 };
 
 class AnimatedSprite : public Sprite
@@ -40,4 +41,11 @@ public:
 private:
 
     std::string biome;
+};
+
+class BorderSprite : public Sprite
+{
+public:
+
+    BorderSprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf);
 };
