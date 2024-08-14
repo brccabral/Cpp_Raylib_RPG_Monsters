@@ -19,6 +19,7 @@ private:
     void ImportAssets();
     void Setup(const std::string &map_name, const std::string &player_start_position);
     void UnloadResources();
+    void Input();
 
     std::shared_ptr<rg::Surface> display_surface = nullptr;
     std::map<std::string, rl::tmx_map *> tmx_maps;
@@ -31,4 +32,5 @@ private:
     // Groups
     std::shared_ptr<AllSprites> all_sprites;
     std::shared_ptr<rg::sprite::Group> collision_sprites;
+    std::shared_ptr<rg::sprite::Group> character_sprites;
 };

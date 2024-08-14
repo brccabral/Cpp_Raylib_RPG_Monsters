@@ -13,6 +13,7 @@ Game::Game()
 
     all_sprites = std::make_shared<AllSprites>();
     collision_sprites = std::make_shared<rg::sprite::Group>();
+    character_sprites = std::make_shared<rg::sprite::Group>();
     ImportAssets();
     Setup("world", "house");
     // Setup("hospital", "world");
@@ -28,6 +29,7 @@ void Game::run()
     while (!rl::WindowShouldClose())
     {
         const float dt = rg::time::Clock::tick();
+        Input();
         all_sprites->Update(dt);
         display_surface->Fill(rl::BLACK);
         all_sprites->Draw(player);
@@ -198,7 +200,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         {
             const char *graphic = rl::tmx_get_property(entity->properties, "graphic")->value.string;
             std::make_shared<Character>(position, characters_dict[graphic], direction)
-                    ->add({all_sprites.get(), collision_sprites.get()});
+                    ->add({all_sprites.get(), collision_sprites.get(), character_sprites.get()});
         }
         entity = entity->next;
     }
@@ -209,5 +211,20 @@ void Game::UnloadResources()
     for (auto &[key, tmx_map]: tmx_maps)
     {
         UnloadTMX(tmx_map);
+    }
+}
+
+void Game::Input()
+{
+    if (IsKeyPressed(rl::KEY_SPACE))
+    {
+        for (const auto &character_sprite: character_sprites->Sprites())
+        {
+            auto character = std::dynamic_pointer_cast<Character>(character_sprite);
+            if (CheckConnections(100, player, character))
+            {
+                player->rect.pos.x += 0;
+            }
+        }
     }
 }

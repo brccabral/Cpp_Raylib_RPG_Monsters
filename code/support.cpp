@@ -79,3 +79,15 @@ CharacterImporter(const int rows, const int cols, const char *file)
     }
     return result;
 }
+
+bool CheckConnections(
+        const float radius, const std::shared_ptr<Entity> &entity,
+        const std::shared_ptr<Entity> &target, const float tolerance)
+{
+    const auto relation = target->rect.center() - entity->rect.center();
+    if (relation.magnitude() < radius)
+    {
+        return true;
+    }
+    return false;
+}
