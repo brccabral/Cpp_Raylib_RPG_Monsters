@@ -1,4 +1,7 @@
 #pragma once
+#include "DialogTree.h"
+
+
 #include <rygame.h>
 #include "entities.h"
 #include "groups.h"
@@ -36,4 +39,5 @@ private:
     std::shared_ptr<rg::sprite::Group> character_sprites;
 
     std::map<std::string, std::shared_ptr<rg::font::Font>> fonts;
+    std::shared_ptr<DialogTree> dialog_tree = nullptr;
 };

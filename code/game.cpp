@@ -1,6 +1,5 @@
 #include <memory>
 #include "game.h"
-#include "DialogTree.h"
 #include "settings.h"
 #include "sprite.h"
 #include "support.h"
@@ -31,10 +30,19 @@ void Game::run()
     while (!rl::WindowShouldClose())
     {
         const float dt = rg::time::Clock::tick();
+
+        // game logic
         Input();
         all_sprites->Update(dt);
         display_surface->Fill(rl::BLACK);
         all_sprites->Draw(player);
+
+        // overlays
+        if (dialog_tree)
+        {
+            dialog_tree->Update();
+        }
+
         rg::display::Update();
     }
 }
@@ -224,6 +232,10 @@ void Game::UnloadResources()
 
 void Game::Input()
 {
+    if (dialog_tree)
+    {
+        return;
+    }
     if (IsKeyPressed(rl::KEY_SPACE))
     {
         for (const auto &character_sprite: character_sprites->Sprites())
@@ -241,5 +253,8 @@ void Game::Input()
 
 void Game::CreateDialog(const std::shared_ptr<Character> &character)
 {
-    DialogTree(character, player, all_sprites, fonts["dialog"]);
+    if (!dialog_tree)
+    {
+        dialog_tree = std::make_shared<DialogTree>(character, player, all_sprites, fonts["dialog"]);
+    }
 }
