@@ -224,8 +224,12 @@ void Character::Update(const float deltaTime)
     }
 
     Entity::Update(deltaTime);
-    Raycast();
-    Move(deltaTime);
+    // character changes direction, but does not move towards player
+    if (character_data->look_around)
+    {
+        Raycast();
+        Move(deltaTime);
+    }
 }
 
 std::vector<std::string> Character::GetDialog() const

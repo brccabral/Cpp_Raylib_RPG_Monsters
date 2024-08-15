@@ -259,6 +259,7 @@ void Game::Input()
                 player->Block();
                 character->ChangeFacingDirection(player->rect.center());
                 CreateDialog(character);
+                character->can_rotate = false;
             }
         }
     }
