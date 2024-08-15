@@ -458,7 +458,7 @@ inline MonsterData Charmadillo = {
 };
 inline MonsterData Finsta = {
         "Finsta",
-        ELEMENT_FIRE,
+        ELEMENT_WATER,
         {
                 {"max_health", 13.0f}, //
                 {"max_energy", 17.0f}, //
@@ -476,7 +476,7 @@ inline MonsterData Finsta = {
 };
 inline MonsterData Gulfin = {
         "Gulfin",
-        ELEMENT_FIRE,
+        ELEMENT_WATER,
         {
                 {"max_health", 18.0f}, //
                 {"max_energy", 20.0f}, //
@@ -494,7 +494,7 @@ inline MonsterData Gulfin = {
 };
 inline MonsterData Finiette = {
         "Finiette",
-        ELEMENT_FIRE,
+        ELEMENT_WATER,
         {
                 {"max_health", 27.0f}, //
                 {"max_energy", 23.0f}, //
@@ -609,7 +609,7 @@ inline MonsterData Jacana = {
 };
 inline MonsterData Friolera = {
         "Friolera",
-        ELEMENT_FIRE,
+        ELEMENT_WATER,
         {
                 {"max_health", 13.0f}, //
                 {"max_energy", 20.0f}, //
@@ -668,11 +668,11 @@ inline std::map<Attack, AttackData> ATTACK_DATA = {
         {ATTACK_BATTLECRY, {"battlecry", PLAYER, -1.4f, 20, ELEMENT_NORMAL, ANIMATION_GREEN}}, //
         {ATTACK_SPARK, {"spark", OPPONENT, 1.1f, 20, ELEMENT_FIRE, ANIMATION_FIRE}}, //
         {ATTACK_SCRATCH, {"scratch", OPPONENT, 1.2f, 20, ELEMENT_NORMAL, ANIMATION_SCRATCH}}, //
-        {ATTACK_SPLASH, {"splash", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ANIMATION_SPLASH}}, //
+        {ATTACK_SPLASH, {"splash", OPPONENT, 2.0f, 15, ELEMENT_WATER, ANIMATION_SPLASH}}, //
         {ATTACK_FIRE, {"fire", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ANIMATION_FIRE}}, //
         {ATTACK_EXPLOSTION,
          {"explosion", OPPONENT, 2.0f, 90, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
         {ATTACK_ANNIHILATE,
          {"annihilate", OPPONENT, 3.0f, 30, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
-        {ATTACK_ICE, {"ice", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ANIMATION_ICE}}, //
+        {ATTACK_ICE, {"ice", OPPONENT, 2.0f, 15, ELEMENT_WATER, ANIMATION_ICE}}, //
 };
