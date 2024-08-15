@@ -118,6 +118,10 @@ void MonsterIndex::DisplayList()
 
 void MonsterIndex::DisplayMain(const double dt)
 {
+    // data
+    const auto monster = (*monsters)[index];
+    const auto element = NAMES_ELEMENT_TYPES[monster.element];
+
     // main bg
     const auto rect = rg::Rect{
             main_rect.left() + list_width, main_rect.top(), main_rect.width - list_width,
@@ -127,5 +131,5 @@ void MonsterIndex::DisplayMain(const double dt)
     // monster display
     const auto top_rect =
             rg::Rect{rect.topleft(), rg::math::Vector2{rect.width, rect.height * 0.4f}};
-    rg::draw::rect(display_surface, rl::RED, top_rect, 0, 12, false, true, false, false);
+    rg::draw::rect(display_surface, COLORS[element], top_rect, 0, 12, false, true, false, false);
 }
