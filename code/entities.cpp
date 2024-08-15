@@ -219,6 +219,7 @@ void Character::Update(const float deltaTime)
 {
     Entity::Update(deltaTime);
     Raycast();
+    Move(deltaTime);
 }
 
 std::vector<std::string> Character::GetDialog() const
@@ -237,6 +238,7 @@ void Character::Raycast()
     {
         player->Block();
         player->ChangeFacingDirection(rect.center());
+        StartMove();
     }
 }
 
@@ -254,4 +256,27 @@ bool Character::HasLineOfSight() const
         return true;
     }
     return false;
+}
+
+void Character::StartMove()
+{
+    const auto relation = (player->rect.center() - rect.center()).normalize();
+    direction = rg::math::Vector2{std::round(relation.x), std::round(relation.y)};
+}
+
+void Character::Move(const float dt)
+{
+    if (!has_moved && direction)
+    {
+        if (!hitbox.inflate(10, 10).colliderect(player->hitbox))
+        {
+            rect.center(rect.center() + direction * speed * dt);
+            hitbox.center(rect.center());
+        }
+        else
+        {
+            direction = {};
+            has_moved = true;
+        }
+    }
 }

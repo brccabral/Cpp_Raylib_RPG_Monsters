@@ -76,6 +76,8 @@ private:
 
     void Raycast();
     bool HasLineOfSight() const;
+    void StartMove();
+    void Move(float dt);
 
     std::shared_ptr<Player> player;
     std::function<void(const std::shared_ptr<Character> &character)> create_dialog;
