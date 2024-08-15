@@ -14,7 +14,7 @@ MonsterIndex::MonsterIndex(
     main_rect.center(rg::math::Vector2{WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
 }
 
-void MonsterIndex::Update(float dt)
+void MonsterIndex::Update(const float dt)
 {
     // input
     Input();
@@ -23,6 +23,7 @@ void MonsterIndex::Update(float dt)
     // display the list
     DisplayList();
     // display the main section
+    DisplayMain(dt);
 }
 
 void MonsterIndex::Input()
@@ -113,4 +114,18 @@ void MonsterIndex::DisplayList()
     auto shadow_surf = std::make_shared<rg::Surface>(4, main_rect.height);
     shadow_surf->SetAlpha(100);
     display_surface->Blit(shadow_surf, {main_rect.left() + list_width - 4, main_rect.top()});
+}
+
+void MonsterIndex::DisplayMain(const double dt)
+{
+    // main bg
+    const auto rect = rg::Rect{
+            main_rect.left() + list_width, main_rect.top(), main_rect.width - list_width,
+            main_rect.height};
+    rg::draw::rect(display_surface, COLORS["dark"], rect, 0, 12, false, true, false, true);
+
+    // monster display
+    const auto top_rect =
+            rg::Rect{rect.topleft(), rg::math::Vector2{rect.width, rect.height * 0.4f}};
+    rg::draw::rect(display_surface, rl::RED, top_rect, 0, 12, false, true, false, false);
 }

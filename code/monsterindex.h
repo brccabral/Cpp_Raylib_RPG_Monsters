@@ -17,6 +17,7 @@ public:
 private:
 
     void DisplayList();
+    void DisplayMain(double dt);
 
     std::shared_ptr<rg::Surface> display_surface = rg::display::GetSurface();
     std::map<int, Monster> *monsters;
