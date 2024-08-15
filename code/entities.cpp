@@ -214,6 +214,7 @@ Character::Character(
     }
     view_directions = character_data->directions;
     timers["look around"] = rg::Timer(1.5f, true, true, [this] { RandomViewDirection(); });
+    timers["notice"] = rg::Timer{0.5f, false, false, [this] { StartMove(); }};
 }
 
 void Character::Update(const float deltaTime)
@@ -248,7 +249,7 @@ void Character::Raycast()
     {
         player->Block();
         player->ChangeFacingDirection(rect.center());
-        StartMove();
+        timers["notice"].Activate(); // delay character start move
         can_rotate = false; // stop look around
         has_noticed = true;
         player->noticed = true;
