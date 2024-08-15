@@ -99,4 +99,9 @@ void MonsterIndex::DisplayList()
             display_surface->Blit(icon_surf, icon_rect.pos);
         }
     }
+
+    // shadow
+    auto shadow_surf = std::make_shared<rg::Surface>(4, main_rect.height);
+    shadow_surf->SetAlpha(100);
+    display_surface->Blit(shadow_surf, {main_rect.left() + list_width - 4, main_rect.top()});
 }
