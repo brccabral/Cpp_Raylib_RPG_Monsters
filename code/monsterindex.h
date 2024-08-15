@@ -12,6 +12,7 @@ public:
             const std::map<std::string, std::shared_ptr<rg::font::Font>> &fonts,
             std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons);
     void Update(float dt);
+    void Input();
 
 private:
 
@@ -28,4 +29,5 @@ private:
     float item_height = main_rect.height / visible_items;
 
     std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons;
+    int index{};
 };

@@ -15,6 +15,7 @@ MonsterIndex::MonsterIndex(
 void MonsterIndex::Update(float dt)
 {
     // input
+    Input();
     // tint main game
     display_surface->Blit(tint_surf, {0, 0});
     rg::draw::rect(display_surface, rl::BLACK, main_rect);
@@ -23,14 +24,31 @@ void MonsterIndex::Update(float dt)
     // display the main section
 }
 
+void MonsterIndex::Input()
+{
+    if (IsKeyPressed(rl::KEY_UP))
+    {
+        index -= 1;
+    }
+    if (IsKeyPressed(rl::KEY_DOWN))
+    {
+        index += 1;
+    }
+    index = (index % monsters->size() + monsters->size()) % monsters->size();
+}
+
 void MonsterIndex::DisplayList()
 {
-    for (const auto &[index, monster]: *monsters)
+    for (const auto &[list_index, monster]: *monsters)
     {
-        const float top = main_rect.top() + index * item_height;
+        // colors
+        auto bg_color = (index != list_index) ? COLORS["gray"] : COLORS["light"];
+        auto text_color = COLORS["white"];
+
+        const float top = main_rect.top() + list_index * item_height;
         const rg::Rect item_rect = {main_rect.x, top, list_width, item_height};
 
-        auto text_surf = fonts["regular"]->render(monster.name.c_str(), COLORS["white"]);
+        auto text_surf = fonts["regular"]->render(monster.name.c_str(), text_color);
         auto text_rect =
                 text_surf->GetRect().midleft(item_rect.midleft() + rg::math::Vector2{90, 0});
 
@@ -38,8 +56,11 @@ void MonsterIndex::DisplayList()
         auto icon_rect =
                 icon_surf->GetRect().center(item_rect.midleft() + rg::math::Vector2{45, 0});
 
-        rg::draw::rect(display_surface, COLORS["gray"], item_rect);
-        display_surface->Blit(text_surf, text_rect.pos);
-        display_surface->Blit(icon_surf, icon_rect.pos);
+        if (item_rect.colliderect(main_rect))
+        {
+            rg::draw::rect(display_surface, bg_color, item_rect);
+            display_surface->Blit(text_surf, text_rect.pos);
+            display_surface->Blit(icon_surf, icon_rect.pos);
+        }
     }
 }
