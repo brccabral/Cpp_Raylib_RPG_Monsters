@@ -34,18 +34,20 @@ void MonsterIndex::Input()
     {
         index += 1;
     }
-    index = (index % monsters->size() + monsters->size()) % monsters->size();
+    const int size = (int) monsters->size();
+    index = (index % size + size) % size;
 }
 
 void MonsterIndex::DisplayList()
 {
+    float v_offset = (index < visible_items) ? 0 : -(index - visible_items + 1) * item_height;
     for (const auto &[list_index, monster]: *monsters)
     {
         // colors
         auto bg_color = (index != list_index) ? COLORS["gray"] : COLORS["light"];
         auto text_color = COLORS["white"];
 
-        const float top = main_rect.top() + list_index * item_height;
+        const float top = main_rect.top() + list_index * item_height + v_offset;
         const rg::Rect item_rect = {main_rect.x, top, list_width, item_height};
 
         auto text_surf = fonts["regular"]->render(monster.name.c_str(), text_color);
