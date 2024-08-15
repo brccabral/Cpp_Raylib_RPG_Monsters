@@ -58,8 +58,7 @@ void Game::run()
 
 void Game::ImportAssets()
 {
-    tmx_maps["world"] = rl::LoadTMX("resources/data/maps/world.tmx");
-    tmx_maps["hospital"] = rl::LoadTMX("resources/data/maps/hospital.tmx");
+    tmx_maps = rg::tmx::LoadTMXMaps("resources/data/maps");
 
     const auto waterList = rg::image::LoadFolderList("resources/graphics/tilesets/water");
     waterFrames = rg::Frames::Merge(waterList, 1, waterList.size());
