@@ -7,6 +7,7 @@
 AllSprites::AllSprites() : Group()
 {
     shadow_surf = rg::image::Load("resources/graphics/other/shadow.png");
+    notice_surf = rg::image::Load("resources/graphics/ui/notice.png");
 }
 
 void AllSprites::Draw(const std::shared_ptr<rg::Surface> &surface)
@@ -99,6 +100,11 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
                             });
         }
         display_surface->Blit(sprite->image, sprite->rect.topleft() + offset);
+        if (sprite == player && player->noticed)
+        {
+            auto rect = notice_surf->GetRect().midbottom(sprite->rect.midtop());
+            display_surface->Blit(notice_surf, rect.topleft() + offset);
+        }
     }
     for (const auto &sprite: top_sprites)
     {

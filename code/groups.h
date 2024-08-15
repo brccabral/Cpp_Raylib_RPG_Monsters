@@ -17,4 +17,5 @@ private:
     rg::math::Vector2 offset{};
 
     std::shared_ptr<rg::Surface> shadow_surf;
+    std::shared_ptr<rg::Surface> notice_surf;
 };

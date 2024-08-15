@@ -251,6 +251,7 @@ void Character::Raycast()
         StartMove();
         can_rotate = false; // stop look around
         has_noticed = true;
+        player->noticed = true;
     }
 }
 
@@ -290,6 +291,7 @@ void Character::Move(const float dt)
             direction = {};
             has_moved = true;
             create_dialog(std::dynamic_pointer_cast<Character>(shared_from_this()));
+            player->noticed = false;
         }
     }
 }

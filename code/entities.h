@@ -46,6 +46,8 @@ public:
            const std::shared_ptr<rg::sprite::Group> &collision_sprites);
     void Update(float dt) override;
 
+    bool noticed = false;
+
 private:
 
     void Input();
