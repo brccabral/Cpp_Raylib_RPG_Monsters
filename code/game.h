@@ -57,4 +57,5 @@ private:
     std::map<int, Monster> player_monsters;
     std::shared_ptr<MonsterIndex> monster_index;
     bool index_open{};
+    std::map<std::string, std::shared_ptr<rg::Surface>> monster_icons;
 };

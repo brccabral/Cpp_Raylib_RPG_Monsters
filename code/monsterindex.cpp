@@ -3,8 +3,9 @@
 
 MonsterIndex::MonsterIndex(
         std::map<int, Monster> *monsters,
-        const std::map<std::string, std::shared_ptr<rg::font::Font>> &fonts)
-    : monsters(monsters), fonts(fonts)
+        const std::map<std::string, std::shared_ptr<rg::font::Font>> &fonts,
+        std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons)
+    : monsters(monsters), fonts(fonts), monster_icons(monster_icons)
 {
     tint_surf = std::make_shared<rg::Surface>(WINDOW_WIDTH, WINDOW_HEIGHT);
     tint_surf->SetAlpha(200);
@@ -33,7 +34,12 @@ void MonsterIndex::DisplayList()
         auto text_rect =
                 text_surf->GetRect().midleft(item_rect.midleft() + rg::math::Vector2{90, 0});
 
-        rg::draw::rect(display_surface, rl::RED, item_rect);
+        auto icon_surf = (*monster_icons)[monster.name];
+        auto icon_rect =
+                icon_surf->GetRect().center(item_rect.midleft() + rg::math::Vector2{45, 0});
+
+        rg::draw::rect(display_surface, COLORS["gray"], item_rect);
         display_surface->Blit(text_surf, text_rect.pos);
+        display_surface->Blit(icon_surf, icon_rect.pos);
     }
 }

@@ -9,7 +9,8 @@ public:
 
     MonsterIndex(
             std::map<int, Monster> *monsters,
-            const std::map<std::string, std::shared_ptr<rg::font::Font>> &fonts);
+            const std::map<std::string, std::shared_ptr<rg::font::Font>> &fonts,
+            std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons);
     void Update(float dt);
 
 private:
@@ -25,4 +26,6 @@ private:
     int visible_items = 6;
     float list_width = main_rect.width * 0.3;
     float item_height = main_rect.height / visible_items;
+
+    std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons;
 };
