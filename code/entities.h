@@ -70,7 +70,6 @@ public:
     [[nodiscard]] std::vector<std::string> GetDialog() const;
 
     CharacterData *character_data;
-    bool can_rotate = true;
 
 private:
 
@@ -78,13 +77,17 @@ private:
     bool HasLineOfSight() const;
     void StartMove();
     void Move(float dt);
+    void RandomViewDirection();
 
     std::shared_ptr<Player> player;
     std::function<void(const std::shared_ptr<Character> &character)> create_dialog;
     std::shared_ptr<rg::sprite::Group> collision_sprites;
     std::vector<rg::Rect> collision_rects;
+    bool can_rotate = true;
     bool has_moved{};
     bool has_noticed{};
     float radius{};
     std::vector<std::string> view_directions = {"left", "right"};
+
+    std::map<std::string, rg::Timer> timers;
 };

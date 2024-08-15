@@ -213,10 +213,16 @@ Character::Character(
         }
     }
     view_directions = character_data->directions;
+    timers["look around"] = rg::Timer(1.5f, true, true, [this] { RandomViewDirection(); });
 }
 
 void Character::Update(const float deltaTime)
 {
+    for (auto &[key, timer]: timers)
+    {
+        timer.Update();
+    }
+
     Entity::Update(deltaTime);
     Raycast();
     Move(deltaTime);
@@ -239,6 +245,8 @@ void Character::Raycast()
         player->Block();
         player->ChangeFacingDirection(rect.center());
         StartMove();
+        can_rotate = false; // stop look around
+        has_noticed = true;
     }
 }
 
@@ -279,5 +287,14 @@ void Character::Move(const float dt)
             has_moved = true;
             create_dialog(std::dynamic_pointer_cast<Character>(shared_from_this()));
         }
+    }
+}
+
+void Character::RandomViewDirection()
+{
+    if (can_rotate && view_directions.size() > 1)
+    {
+        const int randDirection = rl::GetRandomValue(0, view_directions.size() - 1);
+        facing_direction = view_directions[randDirection];
     }
 }
