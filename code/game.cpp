@@ -12,10 +12,15 @@ Game::Game()
     display_surface = rg::display::SetMode(WINDOW_WIDTH, WINDOW_HEIGHT);
     rg::display::SetCaption("RPG Monsters");
 
+    // groups
     all_sprites = std::make_shared<AllSprites>();
     collision_sprites = std::make_shared<rg::sprite::Group>();
     character_sprites = std::make_shared<rg::sprite::Group>();
     transition_sprites = std::make_shared<rg::sprite::Group>();
+
+    // transition / tint
+    transition_target = {};
+    tint_surf = std::make_shared<rg::Surface>(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     ImportAssets();
     Setup("world", "house");
@@ -46,6 +51,7 @@ void Game::run()
             dialog_tree->Update();
         }
 
+        TintScreen(dt);
         rg::display::Update();
     }
 }
@@ -67,6 +73,12 @@ void Game::ImportAssets()
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)
 {
+    // clear the map
+    all_sprites->empty();
+    collision_sprites->empty();
+    character_sprites->empty();
+    transition_sprites->empty();
+
     const rl::tmx_map *map = tmx_maps[map_name];
 
     const rl::tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
@@ -176,7 +188,8 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         std::string pos = rl::tmx_get_property(transition->properties, "pos")->value.string;
         std::make_shared<TransitionSprite>(
                 rg::math::Vector2{float(transition->x), float(transition->y)},
-                rg::math::Vector2{float(transition->width), float(transition->height)}, target)
+                rg::math::Vector2{float(transition->width), float(transition->height)},
+                std::make_pair(target, pos))
                 ->add(transition_sprites.get());
         transition = transition->next;
     }
@@ -312,5 +325,28 @@ void Game::TransitionCheck()
     if (!sprites.empty())
     {
         player->Block();
+        transition_target = sprites[0]->target;
+        tint_mode = "tint";
     }
+}
+
+void Game::TintScreen(const double dt)
+{
+    if (!std::strcmp(tint_mode.c_str(), "untint"))
+    {
+        tint_progress -= tint_speed * dt;
+    }
+    if (!std::strcmp(tint_mode.c_str(), "tint"))
+    {
+        tint_progress += tint_speed * dt;
+        if (tint_progress >= 255)
+        {
+            Setup(transition_target.first, transition_target.second);
+            tint_mode = "untint";
+            transition_target = {};
+        }
+    }
+    tint_progress = rl::Clamp(tint_progress, 0, 255);
+    tint_surf->SetAlpha(tint_progress);
+    display_surface->Blit(tint_surf, {0, 0});
 }

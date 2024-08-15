@@ -79,7 +79,9 @@ class TransitionSprite : public Sprite
 {
 public:
 
-    TransitionSprite(rg::math::Vector2 pos, rg::math::Vector2 size, std::string target);
+    TransitionSprite(
+            rg::math::Vector2 pos, rg::math::Vector2 size,
+            std::pair<std::string, std::string> target);
 
-    std::string target;
+    std::pair<std::string, std::string> target;
 };

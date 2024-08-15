@@ -83,6 +83,7 @@ DialogSprite::DialogSprite(
 }
 
 TransitionSprite::TransitionSprite(
-        const rg::math::Vector2 pos, rg::math::Vector2 size, std::string target)
+        const rg::math::Vector2 pos, rg::math::Vector2 size,
+        std::pair<std::string, std::string> target)
     : Sprite(pos, std::make_shared<rg::Surface>(size)), target(std::move(target))
 {}
