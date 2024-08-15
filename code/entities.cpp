@@ -277,6 +277,7 @@ void Character::Move(const float dt)
         {
             direction = {};
             has_moved = true;
+            create_dialog(std::dynamic_pointer_cast<Character>(shared_from_this()));
         }
     }
 }
