@@ -30,4 +30,5 @@ private:
 
     std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons;
     int index{};
+    int selected_index = -1;
 };

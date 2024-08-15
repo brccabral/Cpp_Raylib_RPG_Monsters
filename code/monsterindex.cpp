@@ -36,6 +36,25 @@ void MonsterIndex::Input()
     }
     const int size = (int) monsters->size();
     index = (index % size + size) % size;
+
+    if (IsKeyPressed(rl::KEY_SPACE))
+    {
+        // one SPACE to select, another to change order
+        if (selected_index != -1)
+        {
+            // second SPACE is to change the order
+            const auto selected_monster = (*monsters)[selected_index];
+            const auto current_monster = (*monsters)[index];
+            (*monsters)[index] = selected_monster;
+            (*monsters)[selected_index] = current_monster;
+            selected_index = -1;
+        }
+        else
+        {
+            // first SPACE is to select the monster from the list
+            selected_index = index;
+        }
+    }
 }
 
 void MonsterIndex::DisplayList()
@@ -45,7 +64,7 @@ void MonsterIndex::DisplayList()
     {
         // colors
         auto bg_color = (index != list_index) ? COLORS["gray"] : COLORS["light"];
-        auto text_color = COLORS["white"];
+        auto text_color = (selected_index != list_index) ? COLORS["white"] : COLORS["gold"];
 
         const float top = main_rect.top() + list_index * item_height + v_offset;
         const rg::Rect item_rect = {main_rect.x, top, list_width, item_height};
