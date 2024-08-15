@@ -16,6 +16,8 @@ add_executable(${PROJECT_NAME} code/main.cpp
         code/groups.cpp
         code/support.cpp
         code/DialogTree.cpp
+        code/monster.cpp
+        code/monsterindex.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE rygame)

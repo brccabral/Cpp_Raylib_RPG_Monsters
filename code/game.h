@@ -5,6 +5,8 @@
 #include <rygame.h>
 #include "entities.h"
 #include "groups.h"
+#include "monster.h"
+#include "monsterindex.h"
 
 
 class Game
@@ -48,8 +50,10 @@ private:
     std::pair<std::string, std::string> transition_target;
     std::shared_ptr<rg::Surface> tint_surf;
     std::string tint_mode{"untint"};
-    // float tint_progress = 255.0f;
     float tint_progress = 0.0f;
     // float tint_direction = -1;
     float tint_speed = 600.0f;
+
+    std::map<int, Monster> player_monsters;
+    std::shared_ptr<MonsterIndex> monster_index;
 };

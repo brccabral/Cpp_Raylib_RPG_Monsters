@@ -12,6 +12,13 @@ Game::Game()
     display_surface = rg::display::SetMode(WINDOW_WIDTH, WINDOW_HEIGHT);
     rg::display::SetCaption("RPG Monsters");
 
+    int player_index = 0;
+    player_monsters[player_index++] = Monster("Charmadillo", 40);
+    player_monsters[player_index++] = Monster("Larvea", 3);
+    player_monsters[player_index++] = Monster("Friolera", 29);
+    player_monsters[player_index++] = Monster("Finsta", 30);
+    player_monsters[player_index++] = Monster("Sparchu", 3);
+
     // groups
     all_sprites = std::make_shared<AllSprites>();
     collision_sprites = std::make_shared<rg::sprite::Group>();
@@ -24,7 +31,8 @@ Game::Game()
 
     ImportAssets();
     Setup("world", "house");
-    // Setup("hospital", "world");
+
+    monster_index = std::make_shared<MonsterIndex>(&player_monsters, fonts);
 }
 
 Game::~Game()
@@ -50,6 +58,10 @@ void Game::run()
         {
             dialog_tree->Update();
         }
+        if (monster_index)
+        {
+            monster_index->Update(dt);
+        }
 
         TintScreen(dt);
         rg::display::Update();
@@ -68,6 +80,12 @@ void Game::ImportAssets()
 
     fonts["dialog"] =
             std::make_shared<rg::font::Font>("resources/graphics/fonts/PixeloidSans.ttf", 30);
+    fonts["regular"] =
+            std::make_shared<rg::font::Font>("resources/graphics/fonts/PixeloidSans.ttf", 18);
+    fonts["small"] =
+            std::make_shared<rg::font::Font>("resources/graphics/fonts/PixeloidSans.ttf", 14);
+    fonts["bold"] =
+            std::make_shared<rg::font::Font>("resources/graphics/fonts/dogicapixelbold.otf", 20);
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)
