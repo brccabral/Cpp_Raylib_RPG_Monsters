@@ -25,6 +25,7 @@ private:
     void Input();
     void CreateDialog(const std::shared_ptr<Character> &character);
     void EndDialog(const std::shared_ptr<Character> &character);
+    void TransitionCheck();
 
     std::shared_ptr<rg::Surface> display_surface = nullptr;
     std::map<std::string, rl::tmx_map *> tmx_maps;
@@ -38,6 +39,7 @@ private:
     std::shared_ptr<AllSprites> all_sprites;
     std::shared_ptr<rg::sprite::Group> collision_sprites;
     std::shared_ptr<rg::sprite::Group> character_sprites;
+    std::shared_ptr<rg::sprite::Group> transition_sprites;
 
     std::map<std::string, std::shared_ptr<rg::font::Font>> fonts;
     std::shared_ptr<DialogTree> dialog_tree = nullptr;

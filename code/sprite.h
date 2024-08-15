@@ -74,3 +74,12 @@ private:
     std::shared_ptr<Character> character;
     std::shared_ptr<rg::font::Font> font;
 };
+
+class TransitionSprite : public Sprite
+{
+public:
+
+    TransitionSprite(rg::math::Vector2 pos, rg::math::Vector2 size, std::string target);
+
+    std::string target;
+};

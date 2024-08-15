@@ -15,6 +15,8 @@ Game::Game()
     all_sprites = std::make_shared<AllSprites>();
     collision_sprites = std::make_shared<rg::sprite::Group>();
     character_sprites = std::make_shared<rg::sprite::Group>();
+    transition_sprites = std::make_shared<rg::sprite::Group>();
+
     ImportAssets();
     Setup("world", "house");
     // Setup("hospital", "world");
@@ -30,11 +32,12 @@ void Game::run()
     while (!rl::WindowShouldClose())
     {
         const float dt = rg::time::Clock::tick();
+        display_surface->Fill(rl::BLACK);
 
         // game logic
         Input();
+        TransitionCheck();
         all_sprites->Update(dt);
-        display_surface->Fill(rl::BLACK);
         all_sprites->Draw(player);
 
         // overlays
@@ -71,6 +74,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     const rl::tmx_layer *water_layer = tmx_find_layer_by_name(map, "Water");
     const rl::tmx_layer *coast_layer = tmx_find_layer_by_name(map, "Coast");
     const rl::tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
+    const rl::tmx_layer *transition_layer = tmx_find_layer_by_name(map, "Transition");
     const rl::tmx_layer *collision_layer = tmx_find_layer_by_name(map, "Collisions");
     const rl::tmx_layer *monster_layer = tmx_find_layer_by_name(map, "Monsters");
     const rl::tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
@@ -162,6 +166,19 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             }
         }
         object = object->next;
+    }
+
+    // transition objects
+    auto transition = transition_layer->content.objgr->head;
+    while (transition)
+    {
+        std::string target = rl::tmx_get_property(transition->properties, "target")->value.string;
+        std::string pos = rl::tmx_get_property(transition->properties, "pos")->value.string;
+        std::make_shared<TransitionSprite>(
+                rg::math::Vector2{float(transition->x), float(transition->y)},
+                rg::math::Vector2{float(transition->width), float(transition->height)}, target)
+                ->add(transition_sprites.get());
+        transition = transition->next;
     }
 
     // collision objects
@@ -279,4 +296,21 @@ void Game::EndDialog(const std::shared_ptr<Character> &character)
 {
     dialog_tree = nullptr;
     player->Unblock();
+}
+
+void Game::TransitionCheck()
+{
+    std::vector<std::shared_ptr<TransitionSprite>> sprites;
+    // transition_sprites must contain only TransitionSprite
+    for (const auto &transition_sprite: transition_sprites->Sprites())
+    {
+        if (transition_sprite->rect.colliderect(player->hitbox))
+        {
+            sprites.push_back(std::dynamic_pointer_cast<TransitionSprite>(transition_sprite));
+        }
+    }
+    if (!sprites.empty())
+    {
+        player->Block();
+    }
 }

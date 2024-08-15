@@ -1,4 +1,6 @@
 #include "sprite.h"
+
+#include <utility>
 #include "settings.h"
 
 
@@ -79,3 +81,8 @@ DialogSprite::DialogSprite(
     image = surf;
     rect = image->GetRect().midbottom(character->rect.midtop() + rg::math::Vector2{0, -10});
 }
+
+TransitionSprite::TransitionSprite(
+        const rg::math::Vector2 pos, rg::math::Vector2 size, std::string target)
+    : Sprite(pos, std::make_shared<rg::Surface>(size)), target(std::move(target))
+{}
