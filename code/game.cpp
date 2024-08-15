@@ -36,7 +36,9 @@ Game::Game()
     ImportAssets();
     Setup("world", "house");
 
-    monster_index = std::make_shared<MonsterIndex>(&player_monsters, fonts, &monster_icons);
+    monster_frames = MonsterImporter(4, 2, "resources/graphics/monsters");
+    monster_index = std::make_shared<MonsterIndex>(
+            &player_monsters, fonts, &monster_icons, &monster_frames);
 }
 
 Game::~Game()

@@ -6,8 +6,9 @@
 MonsterIndex::MonsterIndex(
         std::map<int, Monster> *monsters,
         const std::map<std::string, std::shared_ptr<rg::font::Font>> &fonts,
-        std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons)
-    : monsters(monsters), fonts(fonts), monster_icons(monster_icons)
+        std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons,
+        std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *monster_frames)
+    : monsters(monsters), fonts(fonts), monster_icons(monster_icons), monster_frames(monster_frames)
 {
     tint_surf = std::make_shared<rg::Surface>(WINDOW_WIDTH, WINDOW_HEIGHT);
     tint_surf->SetAlpha(200);
@@ -132,4 +133,11 @@ void MonsterIndex::DisplayMain(const double dt)
     const auto top_rect =
             rg::Rect{rect.topleft(), rg::math::Vector2{rect.width, rect.height * 0.4f}};
     rg::draw::rect(display_surface, COLORS[element], top_rect, 0, 12, false, true, false, false);
+
+    // monster animation
+    frame_index += ANIMATION_SPEED * dt;
+    auto monster_frame = (*monster_frames)[monster.name]["idle"];
+    monster_frame->SetAtlas(frame_index);
+    auto monster_rect = monster_frame->GetRect().center(top_rect.center());
+    display_surface->Blit(monster_frame, monster_rect.pos);
 }

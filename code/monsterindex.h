@@ -10,7 +10,9 @@ public:
     MonsterIndex(
             std::map<int, Monster> *monsters,
             const std::map<std::string, std::shared_ptr<rg::font::Font>> &fonts,
-            std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons);
+            std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons,
+            std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
+                    *monster_frames);
     void Update(float dt);
     void Input();
 
@@ -32,4 +34,6 @@ private:
     std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons;
     int index{};
     int selected_index = -1;
+    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *monster_frames;
+    float frame_index{};
 };

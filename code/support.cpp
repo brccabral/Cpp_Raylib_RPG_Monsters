@@ -103,3 +103,22 @@ bool CheckConnections(
     }
     return false;
 }
+
+std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
+MonsterImporter(const int cols, const int rows, const char *path)
+{
+    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> result{};
+
+    for (const auto &dirEntry: std::filesystem::recursive_directory_iterator(path))
+    {
+        auto filename = dirEntry.path().stem().string();
+        auto entryPath = dirEntry.path().string();
+        const auto monster_frames = rg::Frames::Load(entryPath.c_str(), rows, cols);
+        const auto tex_width = (float) monster_frames->GetTexture().width;
+        const auto tex_height = (float) monster_frames->GetTexture().height;
+        result[filename]["idle"] = monster_frames->SubFrames({0, 0, tex_width, tex_height / 2.0f});
+        result[filename]["attack"] =
+                monster_frames->SubFrames({0, tex_height / 2.0f, tex_width, tex_height / 2.0f});
+    }
+    return result;
+}
