@@ -100,6 +100,15 @@ void MonsterIndex::DisplayList()
         }
     }
 
+    // lines
+    for (int i = 1; i < std::min(visible_items, (int) monsters->size()); ++i)
+    {
+        auto y = main_rect.top() + item_height * i;
+        auto left = main_rect.left();
+        auto right = main_rect.left() + list_width;
+        rg::draw::line(display_surface, COLORS["light-gray"], {left, y}, {right, y});
+    }
+
     // shadow
     auto shadow_surf = std::make_shared<rg::Surface>(4, main_rect.height);
     shadow_surf->SetAlpha(100);
