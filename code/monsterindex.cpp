@@ -1,5 +1,7 @@
 #include "monsterindex.h"
 
+#include <raylib.h>
+
 
 MonsterIndex::MonsterIndex(
         std::map<int, Monster> *monsters,
@@ -18,7 +20,6 @@ void MonsterIndex::Update(float dt)
     Input();
     // tint main game
     display_surface->Blit(tint_surf, {0, 0});
-    rg::draw::rect(display_surface, rl::BLACK, main_rect);
     // display the list
     DisplayList();
     // display the main section
@@ -79,7 +80,21 @@ void MonsterIndex::DisplayList()
 
         if (item_rect.colliderect(main_rect))
         {
-            rg::draw::rect(display_surface, bg_color, item_rect);
+            // check corners
+            if (item_rect.collidepoint(main_rect.topleft()))
+            {
+                rg::draw::rect(
+                        display_surface, bg_color, item_rect, 0, 12, true, false, false, false);
+            }
+            else if (item_rect.collidepoint(main_rect.bottomleft() + rg::math::Vector2{1, -1}))
+            {
+                rg::draw::rect(
+                        display_surface, bg_color, item_rect, 0, 12, false, false, true, false);
+            }
+            else
+            {
+                rg::draw::rect(display_surface, bg_color, item_rect);
+            }
             display_surface->Blit(text_surf, text_rect.pos);
             display_surface->Blit(icon_surf, icon_rect.pos);
         }
