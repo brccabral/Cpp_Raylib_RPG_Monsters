@@ -232,9 +232,26 @@ std::vector<std::string> Character::GetDialog() const
 
 void Character::Raycast()
 {
-    auto s = std::dynamic_pointer_cast<Character>(shared_from_this());
-    if (!has_moved && !has_noticed && CheckConnections(radius, s, player))
+    const auto s = std::dynamic_pointer_cast<Character>(shared_from_this());
+    if (!has_moved && !has_noticed && CheckConnections(radius, s, player) && HasLineOfSight())
     {
         player->Block();
+        player->ChangeFacingDirection(rect.center());
     }
+}
+
+bool Character::HasLineOfSight() const
+{
+    if (rect.center().distance_to(player->rect.center()) < radius)
+    {
+        for (auto collision_rect: collision_rects)
+        {
+            if (collision_rect.clipline(rect.center(), player->rect.center()))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
 }
