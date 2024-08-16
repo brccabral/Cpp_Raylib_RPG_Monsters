@@ -165,12 +165,14 @@ void MonsterIndex::DisplayMain(const double dt)
     display_surface->Blit(element_surf, element_rect.pos);
 
     // health and energy
-    rg::Rect common_rect = {
-            rect.left() + rect.width / 4.0f, top_rect.bottom() + rect.width * 0.03f,
-            rect.width * 0.45f, 30};
+    float bar_width = rect.width * 0.45f;
+    float bar_height = 30;
+    float bar_top = top_rect.bottom() + rect.width * 0.03f;
+    float bar_leftside = rect.left() + rect.width / 4;
+    float bar_rightside = rect.left() + rect.width * 3.0f / 4.0f;
 
-    auto health_rect = common_rect;
-    health_rect.midtop(common_rect.pos);
+    auto health_rect = rg::Rect{0, 0, bar_width, bar_height};
+    health_rect.midtop(rg::math::Vector2{bar_leftside, bar_top});
     rg::draw::bar(
             display_surface, health_rect, monster.health, monster.GetStat("max_health"),
             COLORS["red"], COLORS["black"], 2);
@@ -180,8 +182,8 @@ void MonsterIndex::DisplayMain(const double dt)
     auto hp_rect = hp_text->GetRect().midleft(health_rect.midleft() + rg::math::Vector2{10, 0});
     display_surface->Blit(hp_text, hp_rect.pos);
 
-    auto energy_rect = common_rect;
-    energy_rect.midtop(common_rect.topright());
+    auto energy_rect = rg::Rect{0, 0, bar_width, bar_height};
+    energy_rect.midtop(rg::math::Vector2{bar_rightside, bar_top});
     rg::draw::bar(
             display_surface, energy_rect, monster.energy, monster.GetStat("max_energy"),
             COLORS["blue"], COLORS["black"], 2);
