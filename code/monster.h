@@ -11,7 +11,7 @@ public:
     Monster(const std::string &name, int level);
 
     std::string name;
-    // int level;
+    int level;
     ElementType element;
     std::map<std::string, float> base_stats;
 };

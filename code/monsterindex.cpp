@@ -140,4 +140,22 @@ void MonsterIndex::DisplayMain(const double dt)
     monster_frame->SetAtlas(frame_index);
     auto monster_rect = monster_frame->GetRect().center(top_rect.center());
     display_surface->Blit(monster_frame, monster_rect.pos);
+
+    // name
+    auto name_surf = fonts["bold"]->render(monster.name.c_str(), COLORS["white"]);
+    auto name_rect = name_surf->GetRect().topleft(top_rect.topleft() + rg::math::Vector2{10, 10});
+    display_surface->Blit(name_surf, name_rect.pos);
+
+    // level
+    auto level_surf =
+            fonts["regular"]->render(rl::TextFormat("Lvl: %d", monster.level), COLORS["white"]);
+    auto level_rect =
+            level_surf->GetRect().bottomleft(top_rect.bottomleft() + rg::math::Vector2{10, -10});
+    display_surface->Blit(level_surf, level_rect.pos);
+
+    // element
+    auto element_surf = fonts["regular"]->render(element.c_str(), COLORS["white"]);
+    auto element_rect = element_surf->GetRect().bottomright(
+            top_rect.bottomright() + rg::math::Vector2{-10, -10});
+    display_surface->Blit(element_surf, element_rect.pos);
 }
