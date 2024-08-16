@@ -14,4 +14,6 @@ public:
     int level;
     ElementType element;
     std::map<std::string, float> base_stats;
+    float xp{};
+    float level_up{};
 };

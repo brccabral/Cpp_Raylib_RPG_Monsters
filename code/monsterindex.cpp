@@ -153,6 +153,11 @@ void MonsterIndex::DisplayMain(const double dt)
             level_surf->GetRect().bottomleft(top_rect.bottomleft() + rg::math::Vector2{10, -10});
     display_surface->Blit(level_surf, level_rect.pos);
 
+    // xp bar
+    rg::draw::bar(
+            display_surface, {level_rect.bottomleft(), {100, 4}}, monster.xp, monster.level_up,
+            COLORS["white"], COLORS["dark"]);
+
     // element
     auto element_surf = fonts["regular"]->render(element.c_str(), COLORS["white"]);
     auto element_rect = element_surf->GetRect().bottomright(
