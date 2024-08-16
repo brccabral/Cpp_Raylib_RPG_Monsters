@@ -120,7 +120,7 @@ void MonsterIndex::DisplayList()
 void MonsterIndex::DisplayMain(const double dt)
 {
     // data
-    const auto monster = (*monsters)[index];
+    auto monster = (*monsters)[index];
     const auto element = NAMES_ELEMENT_TYPES[monster.element];
 
     // main bg
@@ -150,7 +150,7 @@ void MonsterIndex::DisplayMain(const double dt)
     auto level_surf =
             fonts["regular"]->render(rl::TextFormat("Lvl: %d", monster.level), COLORS["white"]);
     auto level_rect =
-            level_surf->GetRect().bottomleft(top_rect.bottomleft() + rg::math::Vector2{10, -10});
+            level_surf->GetRect().bottomleft(top_rect.bottomleft() + rg::math::Vector2{10, -16});
     display_surface->Blit(level_surf, level_rect.pos);
 
     // xp bar
@@ -163,4 +163,31 @@ void MonsterIndex::DisplayMain(const double dt)
     auto element_rect = element_surf->GetRect().bottomright(
             top_rect.bottomright() + rg::math::Vector2{-10, -10});
     display_surface->Blit(element_surf, element_rect.pos);
+
+    // health and energy
+    rg::Rect common_rect = {
+            rect.left() + rect.width / 4.0f, top_rect.bottom() + rect.width * 0.03f,
+            rect.width * 0.45f, 30};
+
+    auto health_rect = common_rect;
+    health_rect.midtop(common_rect.pos);
+    rg::draw::bar(
+            display_surface, health_rect, monster.health, monster.GetStat("max_health"),
+            COLORS["red"], COLORS["black"], 2);
+    auto hp_text = fonts["regular"]->render(
+            rl::TextFormat("HP: %.0f/%.0f", monster.health, monster.GetStat("max_health")),
+            COLORS["white"]);
+    auto hp_rect = hp_text->GetRect().midleft(health_rect.midleft() + rg::math::Vector2{10, 0});
+    display_surface->Blit(hp_text, hp_rect.pos);
+
+    auto energy_rect = common_rect;
+    energy_rect.midtop(common_rect.topright());
+    rg::draw::bar(
+            display_surface, energy_rect, monster.energy, monster.GetStat("max_energy"),
+            COLORS["blue"], COLORS["black"], 2);
+    auto ep_text = fonts["regular"]->render(
+            rl::TextFormat("EP: %.0f/%.0f", monster.energy, monster.GetStat("max_energy")),
+            COLORS["white"]);
+    auto ep_rect = ep_text->GetRect().midleft(energy_rect.midleft() + rg::math::Vector2{10, 0});
+    display_surface->Blit(ep_text, ep_rect.pos);
 }

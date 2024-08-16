@@ -9,6 +9,7 @@ public:
 
     Monster() = default; // need a default constructor for map<>
     Monster(const std::string &name, int level);
+    float GetStat(const std::string &stat);
 
     std::string name;
     int level;
@@ -16,4 +17,6 @@ public:
     std::map<std::string, float> base_stats;
     float xp{};
     float level_up{};
+    float health{};
+    float energy{};
 };
