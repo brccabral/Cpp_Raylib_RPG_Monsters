@@ -38,7 +38,7 @@ Game::Game()
 
     monster_frames = MonsterImporter(4, 2, "resources/graphics/monsters");
     monster_index = std::make_shared<MonsterIndex>(
-            &player_monsters, fonts, &monster_icons, &monster_frames);
+            &player_monsters, fonts, &monster_icons, &ui_icons, &monster_frames);
 }
 
 Game::~Game()
@@ -94,6 +94,7 @@ void Game::ImportAssets()
             std::make_shared<rg::font::Font>("resources/graphics/fonts/dogicapixelbold.otf", 20);
 
     monster_icons = rg::image::ImportFolderDict("resources/graphics/icons");
+    ui_icons = rg::image::ImportFolderDict("resources/graphics/ui");
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)

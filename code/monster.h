@@ -10,6 +10,7 @@ public:
     Monster() = default; // need a default constructor for map<>
     Monster(const std::string &name, int level);
     float GetStat(const std::string &stat);
+    std::vector<std::pair<std::string, float>> GetStats();
 
     std::string name;
     int level;

@@ -11,6 +11,7 @@ public:
             std::map<int, Monster> *monsters,
             const std::map<std::string, std::shared_ptr<rg::font::Font>> &fonts,
             std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons,
+            std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
             std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
                     *monster_frames);
     void Update(float dt);
@@ -36,4 +37,6 @@ private:
     int selected_index = -1;
     std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *monster_frames;
     float frame_index{};
+    std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons;
+    std::map<std::string, float> max_stats;
 };

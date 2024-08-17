@@ -7,12 +7,24 @@ MonsterIndex::MonsterIndex(
         std::map<int, Monster> *monsters,
         const std::map<std::string, std::shared_ptr<rg::font::Font>> &fonts,
         std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons,
+        std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
         std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *monster_frames)
-    : monsters(monsters), fonts(fonts), monster_icons(monster_icons), monster_frames(monster_frames)
+    : monsters(monsters), fonts(fonts), monster_icons(monster_icons),
+      monster_frames(monster_frames), ui_icons(ui_icons)
 {
     tint_surf = std::make_shared<rg::Surface>(WINDOW_WIDTH, WINDOW_HEIGHT);
     tint_surf->SetAlpha(200);
     main_rect.center(rg::math::Vector2{WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
+
+    for (auto &[monster_name, monster_data]: MONSTER_DATA)
+    {
+        for (auto &[stat, value]: monster_data.stats)
+        {
+            max_stats[stat] = (value > max_stats[stat]) ? value : max_stats[stat];
+        }
+    }
+    max_stats["health"] = max_stats["max_health"];
+    max_stats["energy"] = max_stats["max_energy"];
 }
 
 void MonsterIndex::Update(const float dt)
@@ -192,4 +204,47 @@ void MonsterIndex::DisplayMain(const double dt)
             COLORS["white"]);
     auto ep_rect = ep_text->GetRect().midleft(energy_rect.midleft() + rg::math::Vector2{10, 0});
     display_surface->Blit(ep_text, ep_rect.pos);
+
+    // info
+    auto info_height = rect.bottom() - health_rect.bottom();
+
+    // stats
+    auto stats_rect =
+            rg::Rect{health_rect.left(), health_rect.bottom(), health_rect.width, info_height}
+                    .inflate(0, -60)
+                    .move({0, 15});
+    auto stats_text_surf = fonts["regular"]->render("Stats", COLORS["white"]);
+    auto stats_text_rect = stats_text_surf->GetRect().bottomleft(stats_rect.topleft());
+    display_surface->Blit(stats_text_surf, stats_text_rect.pos);
+
+    auto monster_stats = monster.GetStats();
+    float stat_height = stats_rect.height / monster_stats.size();
+    int i = 0;
+    for (auto &[stat, value]: monster_stats)
+    {
+        auto single_stat_rect = rg::Rect{
+                stats_rect.left(), stats_rect.top() + i * stat_height, stats_rect.width,
+                stat_height};
+
+        // icon
+        auto icon_surf = (*ui_icons)[stat];
+        auto icon_rect =
+                icon_surf->GetRect().midleft(single_stat_rect.midleft() + rg::math::Vector2{5, 0});
+        display_surface->Blit(icon_surf, icon_rect.pos);
+
+        // text
+        auto text_surf = fonts["regular"]->render(stat.c_str(), COLORS["white"]);
+        auto text_rect =
+                text_surf->GetRect().topleft(icon_rect.topright() + rg::math::Vector2{10, -5});
+        display_surface->Blit(text_surf, text_rect.pos);
+
+        // bar
+        auto bar_rect = rg::Rect{
+                text_rect.left(), text_rect.bottom() + 2, single_stat_rect.width * 0.9f, 4};
+        rg::draw::bar(
+                display_surface, bar_rect, value, max_stats[stat] * monster.level, COLORS["white"],
+                COLORS["black"]);
+
+        ++i;
+    }
 }
