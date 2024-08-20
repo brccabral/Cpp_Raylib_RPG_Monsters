@@ -91,7 +91,7 @@ MonsterSprite::MonsterSprite(
         const rg::math::Vector2 pos,
         const std::map<std::string, std::shared_ptr<rg::Frames>> &frames, Monster *monster,
         const int index, const int pos_index, const std::string &entity)
-    : index(index), pos_index(pos_index), entity(entity), monster(monster), frames(frames)
+    : monster(monster), index(index), pos_index(pos_index), entity(entity), frames(frames)
 {
     int p = this->index + this->pos_index + this->frame_index + this->monster->level;
     image = this->frames[state];
@@ -110,4 +110,18 @@ void MonsterSprite::Animate(const float dt)
     frame_index += ANIMATION_SPEED * dt;
     image = frames[state];
     std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(frame_index);
+}
+
+MonsterNameSprite::MonsterNameSprite(
+        const rg::math::Vector2 pos, const std::shared_ptr<MonsterSprite> &monster_sprite,
+        const std::shared_ptr<rg::font::Font> &font)
+{
+    const auto text_surf = font->render(monster_sprite->monster->name.c_str(), COLORS["black"]);
+    constexpr int padding = 10;
+
+    image = std::make_shared<rg::Surface>(
+            text_surf->GetRect().width + padding * 2, text_surf->GetRect().height + padding * 2);
+    image->Fill(COLORS["white"]);
+    image->Blit(text_surf, {padding, padding});
+    rect = image->GetRect().midtop(pos);
 }
