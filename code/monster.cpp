@@ -50,3 +50,11 @@ std::vector<Attack> Monster::GetAbilities(const bool all)
     }
     return result;
 }
+
+std::ostream &operator<<(std::ostream &os, Monster const &m)
+{
+    char level[3]{};
+    sprintf(level, "%d", m.level);
+    os << std::string("Monster: ") << m.name << std::string(", lvl: ") << std::string(level);
+    return os;
+}

@@ -86,3 +86,15 @@ TransitionSprite::TransitionSprite(
         std::pair<std::string, std::string> target)
     : Sprite(pos, std::make_shared<rg::Surface>(size)), target(std::move(target))
 {}
+
+MonsterSprite::MonsterSprite(
+        const rg::math::Vector2 pos,
+        const std::map<std::string, std::shared_ptr<rg::Frames>> &frames, Monster *monster,
+        const int index, const int pos_index, const std::string &entity)
+    : index(index), pos_index(pos_index), entity(entity), monster(monster), frames(frames)
+{
+    int p = this->index + this->pos_index + this->frame_index + this->monster->level;
+    image = this->frames[state];
+    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(p - p);
+    rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(pos);
+}

@@ -32,3 +32,22 @@ inline std::map<std::string, rl::Color> COLORS = {
         {"normal", {0xff, 0xff, 0xff, 0xff}}, //
         {"dark white", {0xf0, 0xf0, 0xf0, 0xff}}, //
 };
+
+inline std::map<std::string, std::vector<rg::math::Vector2>> BATTLE_POSITIONS = {
+        {
+                "left",
+                {
+                        {360, 260}, // top
+                        {190, 400}, // center
+                        {410, 520} // bottom
+                } //
+        }, //
+        {
+                "right",
+                {
+                        {900, 260}, // top
+                        {1110, 390}, // center
+                        {900, 550} // bottom
+                } //
+        } //
+};

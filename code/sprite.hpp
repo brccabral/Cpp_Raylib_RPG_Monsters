@@ -1,9 +1,11 @@
 #pragma once
 #include <rygame.hpp>
 #include "entities.hpp"
+#include "monster.hpp"
 #include "settings.hpp"
 
 
+// overworld sprites
 class Sprite : public rg::sprite::Sprite
 {
 public:
@@ -83,4 +85,25 @@ public:
             std::pair<std::string, std::string> target);
 
     std::pair<std::string, std::string> target;
+};
+
+// battle sprites
+class MonsterSprite : public rg::sprite::Sprite
+{
+public:
+
+    MonsterSprite(
+            rg::math::Vector2 pos, const std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
+            Monster *monster, int index, int pos_index, const std::string &entity);
+
+private:
+
+    int index{};
+    int pos_index{};
+    std::string entity;
+    Monster *monster;
+
+    float frame_index{};
+    std::map<std::string, std::shared_ptr<rg::Frames>> frames;
+    std::string state = "idle";
 };

@@ -61,7 +61,8 @@ private:
     std::shared_ptr<MonsterIndex> monster_index;
     bool index_open{};
     std::map<std::string, std::shared_ptr<rg::Surface>> monster_icons;
-    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> monster_frames;
+    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
+            monster_frames; // Name, Idle/Attack, Frames
     std::map<std::string, std::shared_ptr<rg::Surface>> ui_icons;
 
     std::map<std::string, std::shared_ptr<rg::Surface>> bg_frames;
