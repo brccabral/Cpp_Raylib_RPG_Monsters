@@ -255,13 +255,17 @@ void MonsterIndex::DisplayMain(const double dt)
     auto abilities = monster.GetAbilities();
     for (int a_index = 0; a_index < abilities.size(); ++a_index)
     {
+        auto a_element = ATTACK_DATA[abilities[a_index]].element;
+
         auto text_surf = fonts["regular"]->render(
                 ATTACK_DATA[abilities[a_index]].name.c_str(), COLORS["black"]);
         float x = ability_rect.left() + a_index % 2 * ability_rect.width / 2;
         float y =
                 20.0f + ability_rect.top() + int(a_index / 2) * (text_surf->GetRect().height + 20);
         auto a_rect = text_surf->GetRect().topleft(rg::math::Vector2{x, y});
-        rg::draw::rect(display_surface, COLORS["white"], a_rect.inflate(10, 10), 0, 4);
+        rg::draw::rect(
+                display_surface, COLORS[NAMES_ELEMENT_TYPES[a_element]], a_rect.inflate(10, 10), 0,
+                4);
         display_surface->Blit(text_surf, a_rect.pos);
     }
 }
