@@ -97,4 +97,17 @@ MonsterSprite::MonsterSprite(
     image = this->frames[state];
     std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(p - p);
     rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(pos);
+    animation_speed = (float) ANIMATION_SPEED + rg::math::get_random_uniform(-1, 1);
+}
+
+void MonsterSprite::Update(const float deltaTime)
+{
+    Animate(deltaTime);
+}
+
+void MonsterSprite::Animate(const float dt)
+{
+    frame_index += ANIMATION_SPEED * dt;
+    image = frames[state];
+    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(frame_index);
 }

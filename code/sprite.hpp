@@ -95,8 +95,11 @@ public:
     MonsterSprite(
             rg::math::Vector2 pos, const std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
             Monster *monster, int index, int pos_index, const std::string &entity);
+    void Update(float deltaTime) override;
 
 private:
+
+    void Animate(float dt);
 
     int index{};
     int pos_index{};
@@ -106,4 +109,6 @@ private:
     float frame_index{};
     std::map<std::string, std::shared_ptr<rg::Frames>> frames;
     std::string state = "idle";
+
+    float animation_speed{};
 };

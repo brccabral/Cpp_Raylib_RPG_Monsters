@@ -14,10 +14,11 @@ Battle::Battle(
     Setup();
 }
 
-void Battle::Update(float dt)
+void Battle::Update(const float dt)
 {
     int e = fonts->size();
     display_surface->Blit(bg_surf, {float(e - e), 0});
+    battle_sprites.Update(dt);
     battle_sprites.Draw(display_surface);
 }
 
