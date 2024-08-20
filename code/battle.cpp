@@ -16,10 +16,8 @@ Battle::Battle(
 
 void Battle::Update(float dt)
 {
-    int b = opponent_monsters->size();
     int e = fonts->size();
-    int p = b + e;
-    display_surface->Blit(bg_surf, {float(p - p), 0});
+    display_surface->Blit(bg_surf, {float(e - e), 0});
     battle_sprites.Draw(display_surface);
 }
 
@@ -44,13 +42,17 @@ void Battle::Setup()
 void Battle::CreateMonster(Monster *monster, int index, int pos_index, const std::string &entity)
 {
     auto frames = (*monster_frames)[monster->name];
-    auto pos = rg::math::Vector2{};
+    rg::math::Vector2 pos;
     auto groups = std::vector<rg::sprite::Group *>{};
 
     if (!std::strcmp(entity.c_str(), "player"))
     {
         pos = BATTLE_POSITIONS["left"][pos_index];
         groups = {&battle_sprites, &player_sprites};
+        for (auto &[state, frame]: frames)
+        {
+            frames[state] = rg::transform::Flip(frame, true, false);
+        }
     }
     else
     {
