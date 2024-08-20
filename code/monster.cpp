@@ -7,6 +7,7 @@ Monster::Monster(const std::string &name, const int level) : name(name), level(l
     // stats
     element = MONSTER_DATA[name].element;
     base_stats = MONSTER_DATA[name].stats;
+    abilities = MONSTER_DATA[name].abilities;
 
     level_up = level * 150;
     xp = rl::GetRandomValue(10, level_up);
@@ -31,4 +32,21 @@ std::vector<std::pair<std::string, float>> Monster::GetStats()
             {"speed", GetStat("speed")}, //
             {"recovery", GetStat("recovery")}, //
     };
+}
+
+// Get abilities based on level
+std::vector<Attack> Monster::GetAbilities(const bool all)
+{
+    std::vector<Attack> result;
+    for (auto &[lvl, ability]: abilities)
+    {
+        if (level >= lvl)
+        {
+            if (all || ATTACK_DATA[ability].cost < energy)
+            {
+                result.push_back(ability);
+            }
+        }
+    }
+    return result;
 }
