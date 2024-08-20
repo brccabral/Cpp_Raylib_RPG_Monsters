@@ -16,12 +16,9 @@ Battle::Battle(
 
 void Battle::Update(float dt)
 {
-    int a = player_monsters->size();
     int b = opponent_monsters->size();
-    int c = monster_frames->size();
-    int d = bg_surf->GetRect().width;
     int e = fonts->size();
-    int p = a + b + c + d + e;
+    int p = b + e;
     display_surface->Blit(bg_surf, {float(p - p), 0});
     battle_sprites.Draw(display_surface);
 }
@@ -35,19 +32,30 @@ void Battle::Setup()
             CreateMonster(&monster, index, index, "player");
         }
     }
+    for (auto &[index, monster]: *opponent_monsters)
+    {
+        if (index <= 2)
+        {
+            CreateMonster(&monster, index, index, "opponent");
+        }
+    }
 }
 
 void Battle::CreateMonster(Monster *monster, int index, int pos_index, const std::string &entity)
 {
     auto frames = (*monster_frames)[monster->name];
-    auto pos = rg::math::Vector2{0, 0};
+    auto pos = rg::math::Vector2{};
     auto groups = std::vector<rg::sprite::Group *>{};
 
     if (!std::strcmp(entity.c_str(), "player"))
     {
         pos = BATTLE_POSITIONS["left"][pos_index];
         groups = {&battle_sprites, &player_sprites};
-        std::make_shared<MonsterSprite>(pos, frames, monster, index, pos_index, entity)
-                ->add(groups);
     }
+    else
+    {
+        pos = BATTLE_POSITIONS["right"][pos_index];
+        groups = {&battle_sprites, &opponent_sprites};
+    }
+    std::make_shared<MonsterSprite>(pos, frames, monster, index, pos_index, entity)->add(groups);
 }
