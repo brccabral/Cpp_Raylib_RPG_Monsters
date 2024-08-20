@@ -1,5 +1,5 @@
-#include "DialogTree.h"
-#include "sprite.h"
+#include "DialogTree.hpp"
+#include "sprite.hpp"
 
 
 DialogTree::DialogTree(

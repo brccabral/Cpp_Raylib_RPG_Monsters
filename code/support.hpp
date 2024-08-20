@@ -1,6 +1,6 @@
 #pragma once
 #include <rygame.hpp>
-#include "entities.h"
+#include "entities.hpp"
 
 
 std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>

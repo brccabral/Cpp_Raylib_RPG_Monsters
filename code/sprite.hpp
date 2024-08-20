@@ -1,7 +1,7 @@
 #pragma once
 #include <rygame.hpp>
-#include "entities.h"
-#include "settings.h"
+#include "entities.hpp"
+#include "settings.hpp"
 
 
 class Sprite : public rg::sprite::Sprite

@@ -1,7 +1,7 @@
 #pragma once
-#include "entities.h"
-#include "groups.h"
-#include "sprite.h"
+#include "entities.hpp"
+#include "groups.hpp"
+#include "sprite.hpp"
 
 class DialogTree
 {

@@ -1,6 +1,6 @@
 #pragma once
 #include <rygame.hpp>
-#include "entities.h"
+#include "entities.hpp"
 
 
 class AllSprites : public rg::sprite::Group

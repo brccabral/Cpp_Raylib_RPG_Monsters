@@ -1,5 +1,5 @@
 #include <rygame.hpp>
-#include "monster.h"
+#include "monster.hpp"
 
 
 Monster::Monster(const std::string &name, const int level) : name(name), level(level)

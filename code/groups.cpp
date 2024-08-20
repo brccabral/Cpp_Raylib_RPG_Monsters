@@ -1,7 +1,7 @@
 #include <algorithm>
-#include "groups.h"
-#include "settings.h"
-#include "sprite.h"
+#include "groups.hpp"
+#include "settings.hpp"
+#include "sprite.hpp"
 
 
 AllSprites::AllSprites() : Group()

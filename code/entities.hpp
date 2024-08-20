@@ -1,8 +1,6 @@
 #pragma once
 #include <rygame.hpp>
-#include "game_data.h"
-
-
+#include "game_data.hpp"
 
 
 class Entity : public rg::sprite::Sprite

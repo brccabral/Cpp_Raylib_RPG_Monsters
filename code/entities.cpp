@@ -1,8 +1,8 @@
 #include <utility>
-#include "entities.h"
-#include "settings.h"
-#include "sprite.h"
-#include "support.h"
+#include "entities.hpp"
+#include "settings.hpp"
+#include "sprite.hpp"
+#include "support.hpp"
 
 
 Entity::Entity(

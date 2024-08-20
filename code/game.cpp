@@ -1,9 +1,9 @@
 #include <memory>
-#include "game.h"
-#include "settings.h"
-#include "sprite.h"
-#include "support.h"
-#include "game_data.h"
+#include "game.hpp"
+#include "settings.hpp"
+#include "sprite.hpp"
+#include "support.hpp"
+#include "game_data.hpp"
 
 
 Game::Game()

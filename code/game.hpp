@@ -1,10 +1,10 @@
 #pragma once
 #include <rygame.hpp>
-#include "DialogTree.h"
-#include "entities.h"
-#include "groups.h"
-#include "monster.h"
-#include "monsterindex.h"
+#include "DialogTree.hpp"
+#include "entities.hpp"
+#include "groups.hpp"
+#include "monster.hpp"
+#include "monsterindex.hpp"
 
 
 class Game
