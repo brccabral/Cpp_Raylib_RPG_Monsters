@@ -1,4 +1,7 @@
 #pragma once
+#include "battle.hpp"
+
+
 #include <rygame.hpp>
 #include "dialogtree.hpp"
 #include "entities.hpp"
@@ -44,6 +47,7 @@ private:
 
     std::map<std::string, std::shared_ptr<rg::font::Font>> fonts;
     std::shared_ptr<DialogTree> dialog_tree = nullptr;
+    std::shared_ptr<Battle> battle = nullptr;
 
     std::pair<std::string, std::string> transition_target;
     std::shared_ptr<rg::Surface> tint_surf;
@@ -53,9 +57,12 @@ private:
     float tint_speed = 600.0f;
 
     std::map<int, Monster> player_monsters;
+    std::map<int, Monster> dummy_monsters;
     std::shared_ptr<MonsterIndex> monster_index;
     bool index_open{};
     std::map<std::string, std::shared_ptr<rg::Surface>> monster_icons;
     std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> monster_frames;
     std::map<std::string, std::shared_ptr<rg::Surface>> ui_icons;
+
+    std::map<std::string, std::shared_ptr<rg::Surface>> bg_frames;
 };

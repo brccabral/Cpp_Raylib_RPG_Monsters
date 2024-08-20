@@ -23,6 +23,13 @@ Game::Game()
     player_monsters[player_index++] = Monster("Pouch", 3);
     player_monsters[player_index++] = Monster("Finsta", 30);
 
+    int dummy_index = 0;
+    dummy_monsters[dummy_index++] = Monster("Atrox", 12);
+    dummy_monsters[dummy_index++] = Monster("Sparchu", 15);
+    dummy_monsters[dummy_index++] = Monster("Gulfin", 19);
+    dummy_monsters[dummy_index++] = Monster("Jacana", 2);
+    dummy_monsters[dummy_index++] = Monster("Pouch", 3);
+
     // groups
     all_sprites = std::make_shared<AllSprites>();
     collision_sprites = std::make_shared<rg::sprite::Group>();
@@ -39,6 +46,9 @@ Game::Game()
     monster_frames = MonsterImporter(4, 2, "resources/graphics/monsters");
     monster_index = std::make_shared<MonsterIndex>(
             &player_monsters, fonts, &monster_icons, &ui_icons, &monster_frames);
+
+    battle = std::make_shared<Battle>(
+            &player_monsters, &dummy_monsters, &monster_frames, bg_frames["forest"], &fonts);
 }
 
 Game::~Game()
@@ -68,6 +78,10 @@ void Game::run()
         {
             monster_index->Update(dt);
         }
+        if (battle)
+        {
+            battle->Update(dt);
+        }
 
         TintScreen(dt);
         rg::display::Update();
@@ -95,6 +109,8 @@ void Game::ImportAssets()
 
     monster_icons = rg::image::ImportFolderDict("resources/graphics/icons");
     ui_icons = rg::image::ImportFolderDict("resources/graphics/ui");
+
+    bg_frames = rg::image::ImportFolderDict("resources/graphics/backgrounds");
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)
@@ -302,6 +318,10 @@ void Game::UnloadResources()
 void Game::Input()
 {
     if (dialog_tree)
+    {
+        return;
+    }
+    if (battle)
     {
         return;
     }
