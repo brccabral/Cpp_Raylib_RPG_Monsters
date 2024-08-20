@@ -241,7 +241,8 @@ void MonsterIndex::DisplayMain(const double dt)
 
         // bar
         auto bar_rect = rg::Rect{
-                text_rect.left(), text_rect.bottom() + 2, single_stat_rect.width * 0.9f, 4};
+                text_rect.left(), text_rect.bottom() + 2,
+                single_stat_rect.width - (text_rect.left() - single_stat_rect.left()), 4};
         rg::draw::bar(
                 display_surface, bar_rect, value, max_stats[stat] * monster.level, COLORS["white"],
                 COLORS["black"]);
