@@ -72,6 +72,9 @@ void MonsterIndex::Input()
 
 void MonsterIndex::DisplayList()
 {
+    auto bg_rect = rg::Rect{main_rect.topleft(), rg::math::Vector2{list_width, main_rect.height}};
+    rg::draw::rect(display_surface, COLORS["gray"], bg_rect, 0, 12, true, false, true, false);
+
     float v_offset = (index < visible_items) ? 0 : -(index - visible_items + 1) * item_height;
     for (const auto &[list_index, monster]: *monsters)
     {
