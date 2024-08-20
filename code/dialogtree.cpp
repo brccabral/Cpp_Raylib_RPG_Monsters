@@ -1,4 +1,4 @@
-#include "DialogTree.hpp"
+#include "dialogtree.hpp"
 #include "sprite.hpp"
 
 

@@ -15,7 +15,7 @@ add_executable(${PROJECT_NAME} code/main.cpp
         code/entities.cpp
         code/groups.cpp
         code/support.cpp
-        code/DialogTree.cpp
+        code/dialogtree.cpp
         code/monster.cpp
         code/monsterindex.cpp
 )
