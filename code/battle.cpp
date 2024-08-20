@@ -75,6 +75,20 @@ void Battle::CreateMonster(Monster *monster, int index, int pos_index, const std
     {
         name_pos = monster_sprite->rect.midright() + rg::math::Vector2{-40, -70};
     }
-    std::make_shared<MonsterNameSprite>(name_pos, monster_sprite, (*fonts)["regular"])
+    const auto name_sprite =
+            std::make_shared<MonsterNameSprite>(name_pos, monster_sprite, (*fonts)["regular"]);
+    name_sprite->add(&battle_sprites);
+
+    rg::math::Vector2 anchor;
+    if (!std::strcmp(entity.c_str(), "player"))
+    {
+        anchor = name_sprite->rect.bottomleft();
+    }
+    else
+    {
+        anchor = name_sprite->rect.bottomright();
+    }
+    std::make_shared<MonsterLevelSprite>(entity, anchor, monster_sprite, (*fonts)["small"])
             ->add(&battle_sprites);
+    // std::make_shared<MonsterStatsSprite>();
 }

@@ -115,6 +115,7 @@ void MonsterSprite::Animate(const float dt)
 MonsterNameSprite::MonsterNameSprite(
         const rg::math::Vector2 pos, const std::shared_ptr<MonsterSprite> &monster_sprite,
         const std::shared_ptr<rg::font::Font> &font)
+    : monster_sprite(monster_sprite)
 {
     const auto text_surf = font->render(monster_sprite->monster->name.c_str(), COLORS["black"]);
     constexpr int padding = 10;
@@ -124,4 +125,26 @@ MonsterNameSprite::MonsterNameSprite(
     image->Fill(COLORS["white"]);
     image->Blit(text_surf, {padding, padding});
     rect = image->GetRect().midtop(pos);
+}
+
+MonsterLevelSprite::MonsterLevelSprite(
+        const std::string &entity, const rg::math::Vector2 anchor,
+        const std::shared_ptr<MonsterSprite> &monster_sprite,
+        const std::shared_ptr<rg::font::Font> &font)
+    : monster_sprite(monster_sprite), font(font)
+{
+    image = std::make_shared<rg::Surface>(60, 26);
+    if (!std::strcmp(entity.c_str(), "player"))
+    {
+        rect = image->GetRect().topleft(anchor);
+    }
+    else
+    {
+        rect = image->GetRect().topright(anchor);
+    }
+}
+
+void MonsterLevelSprite::Update(float deltaTime)
+{
+    image->Fill(COLORS["white"]);
 }
