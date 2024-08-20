@@ -1,6 +1,6 @@
 #pragma once
-#include "game_data.h"
 #include <string>
+#include "game_data.h"
 
 
 class Monster

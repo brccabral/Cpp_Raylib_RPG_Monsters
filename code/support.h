@@ -1,8 +1,7 @@
 #pragma once
+#include <rygame.hpp>
 #include "entities.h"
 
-
-#include <rygame.h>
 
 std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
 CoastImporter(const char *file, int rows, int cols);

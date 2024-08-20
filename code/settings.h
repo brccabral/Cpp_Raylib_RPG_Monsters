@@ -1,5 +1,5 @@
 #pragma once
-#include <rygame.h>
+#include <rygame.hpp>
 
 
 constexpr int WINDOW_WIDTH = 1280;

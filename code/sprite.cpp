@@ -1,6 +1,5 @@
-#include "sprite.h"
-
 #include <utility>
+#include "sprite.h"
 #include "settings.h"
 
 

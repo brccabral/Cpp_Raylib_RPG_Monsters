@@ -1,6 +1,5 @@
-#include "entities.h"
-
 #include <utility>
+#include "entities.h"
 #include "settings.h"
 #include "sprite.h"
 #include "support.h"

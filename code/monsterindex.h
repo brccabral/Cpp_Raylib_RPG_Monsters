@@ -1,6 +1,7 @@
 #pragma once
-#include <rygame.h>
+#include <rygame.hpp>
 #include "monster.h"
+#include "settings.h"
 
 
 class MonsterIndex

@@ -1,3 +1,4 @@
+#include <rygame.hpp>
 #include "monster.h"
 
 

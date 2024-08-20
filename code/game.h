@@ -1,8 +1,6 @@
 #pragma once
+#include <rygame.hpp>
 #include "DialogTree.h"
-
-
-#include <rygame.h>
 #include "entities.h"
 #include "groups.h"
 #include "monster.h"

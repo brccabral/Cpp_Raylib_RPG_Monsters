@@ -1,7 +1,5 @@
 #include "monsterindex.h"
 
-#include <raylib.h>
-
 
 MonsterIndex::MonsterIndex(
         std::map<int, Monster> *monsters,
