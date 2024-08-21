@@ -100,6 +100,7 @@ public:
 
     Monster *monster;
     std::string state = "idle";
+    float frame_index{};
 
 private:
 
@@ -109,7 +110,6 @@ private:
     int pos_index{};
     SelectionSide entity;
 
-    float frame_index{};
     std::map<std::string, std::shared_ptr<rg::Frames>> frames;
 
     float animation_speed{};
@@ -168,6 +168,7 @@ public:
     MonsterOutlineSprite(
             const std::shared_ptr<MonsterSprite> &monster_sprite,
             const std::map<std::string, std::shared_ptr<rg::Frames>> &frames);
+    void Update(float deltaTime) override;
 
     std::shared_ptr<MonsterSprite> monster_sprite;
 

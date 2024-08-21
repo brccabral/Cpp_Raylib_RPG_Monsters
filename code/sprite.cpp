@@ -217,7 +217,14 @@ MonsterOutlineSprite::MonsterOutlineSprite(
     z = BATTLE_LAYERS["outline"];
 
     image = this->frames[this->monster_sprite->state];
-    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas();
+    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(this->monster_sprite->frame_index);
     rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(
-            monster_sprite->rect.center());
+            this->monster_sprite->rect.center());
+}
+void MonsterOutlineSprite::Update(float deltaTime)
+{
+    image = this->frames[this->monster_sprite->state];
+    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(this->monster_sprite->frame_index);
+    rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(
+            this->monster_sprite->rect.center());
 }
