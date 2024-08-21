@@ -257,7 +257,7 @@ void MonsterIndex::DisplayMain(const double dt)
     display_surface->Blit(ability_text_surf, ability_text_rect.pos);
 
     auto abilities = monster.GetAbilities();
-    for (int a_index = 0; a_index < abilities.size(); ++a_index)
+    for (unsigned int a_index = 0; a_index < abilities.size(); ++a_index)
     {
         auto a_element = ATTACK_DATA[abilities[a_index]].element;
 

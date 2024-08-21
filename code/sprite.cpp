@@ -203,7 +203,7 @@ void MonsterStatsSprite::Update(float deltaTime)
 
     const auto info = monster_sprite->monster->GetInfo();
     const std::array<rl::Color, 3> colors = {COLORS["red"], COLORS["blue"], COLORS["gray"]};
-    for (int index = 0; index < info.size(); ++index)
+    for (unsigned int index = 0; index < info.size(); ++index)
     {
         const auto [value, max_value] = info[index];
         const auto color = colors[index];

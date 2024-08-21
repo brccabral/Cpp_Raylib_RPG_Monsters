@@ -24,7 +24,7 @@ CoastImporter(const char *file, const int rows, const int cols)
     const auto height = frame.height / rows;
     // const auto width = frame->GetRect().width;
     // const auto height = frame->GetRect().height;
-    for (int index = 0; index < terrains.size(); ++index)
+    for (unsigned int index = 0; index < terrains.size(); ++index)
     {
         const auto &terrain = terrains[index];
         result[terrain] = {};
@@ -67,7 +67,7 @@ CharacterImporter(const int rows, const int cols, const char *file)
     const float width = frame_dict->GetRect().width;
     const float height = frame_dict->GetRect().height;
     const std::vector<std::string> directions = {"down", "left", "right", "up"};
-    for (int i = 0; i < directions.size(); ++i)
+    for (unsigned int i = 0; i < directions.size(); ++i)
     {
         // result[directions[i]] =
         //         frame_dict->SubSurface({0, i * height, width * cols, height}, 1, cols);
