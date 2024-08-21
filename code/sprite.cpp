@@ -90,10 +90,10 @@ TransitionSprite::TransitionSprite(
 MonsterSprite::MonsterSprite(
         const rg::math::Vector2 pos,
         const std::map<std::string, std::shared_ptr<rg::Frames>> &frames, Monster *monster,
-        const int index, const int pos_index, const std::string &entity)
+        const int index, const int pos_index, const SelectionSide entity)
     : monster(monster), index(index), pos_index(pos_index), entity(entity), frames(frames)
 {
-    int p = this->index + this->pos_index + this->frame_index + this->monster->level;
+    int p = this->index + this->pos_index + this->entity;
     image = this->frames[state];
     std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(p - p);
     rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(pos);
@@ -104,6 +104,7 @@ MonsterSprite::MonsterSprite(
 void MonsterSprite::Update(const float deltaTime)
 {
     Animate(deltaTime);
+    monster->Update(deltaTime);
 }
 
 void MonsterSprite::Animate(const float dt)
@@ -130,13 +131,13 @@ MonsterNameSprite::MonsterNameSprite(
 }
 
 MonsterLevelSprite::MonsterLevelSprite(
-        const std::string &entity, const rg::math::Vector2 anchor,
+        SelectionSide entity, const rg::math::Vector2 anchor,
         const std::shared_ptr<MonsterSprite> &monster_sprite,
         const std::shared_ptr<rg::font::Font> &font)
     : monster_sprite(monster_sprite), font(font)
 {
     image = std::make_shared<rg::Surface>(60, 26);
-    if (!std::strcmp(entity.c_str(), "player"))
+    if (entity == PLAYER)
     {
         rect = image->GetRect().topleft(anchor);
     }

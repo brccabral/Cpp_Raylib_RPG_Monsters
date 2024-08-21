@@ -13,6 +13,7 @@ public:
     std::vector<std::pair<std::string, float>> GetStats();
     std::vector<Attack> GetAbilities(bool all = true);
     std::array<std::pair<float, float>, 3> GetInfo();
+    void Update(float dt);
 
     friend std::ostream &operator<<(std::ostream &os, Monster const &m);
 
@@ -26,4 +27,5 @@ public:
     float health{};
     float energy{};
     float initiative{};
+    bool paused{};
 };

@@ -94,7 +94,7 @@ public:
 
     MonsterSprite(
             rg::math::Vector2 pos, const std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
-            Monster *monster, int index, int pos_index, const std::string &entity);
+            Monster *monster, int index, int pos_index, SelectionSide entity);
     void Update(float deltaTime) override;
     Monster *monster;
 
@@ -104,7 +104,7 @@ private:
 
     int index{};
     int pos_index{};
-    std::string entity;
+    SelectionSide entity;
 
     float frame_index{};
     std::map<std::string, std::shared_ptr<rg::Frames>> frames;
@@ -131,7 +131,7 @@ class MonsterLevelSprite : public rg::sprite::Sprite
 public:
 
     MonsterLevelSprite(
-            const std::string &entity, rg::math::Vector2 anchor,
+            SelectionSide entity, rg::math::Vector2 anchor,
             const std::shared_ptr<MonsterSprite> &monster_sprite,
             const std::shared_ptr<rg::font::Font> &font);
     void Update(float deltaTime) override;

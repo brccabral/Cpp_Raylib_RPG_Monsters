@@ -15,8 +15,6 @@ Monster::Monster(const std::string &name, const int level) : name(name), level(l
     health -= rl::GetRandomValue(0, health);
     energy = base_stats["max_energy"] * level;
     energy -= rl::GetRandomValue(0, energy);
-
-    initiative = rl::GetRandomValue(0, 100);
 }
 
 float Monster::GetStat(const std::string &stat)
@@ -60,6 +58,14 @@ std::array<std::pair<float, float>, 3> Monster::GetInfo()
     info[1] = std::make_pair(energy, GetStat("max_energy"));
     info[2] = std::make_pair(initiative, 100.0f);
     return info;
+}
+
+void Monster::Update(const float dt)
+{
+    if (!paused)
+    {
+        initiative += GetStat("speed") * dt;
+    }
 }
 
 std::ostream &operator<<(std::ostream &os, Monster const &m)

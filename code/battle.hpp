@@ -20,7 +20,14 @@ public:
 private:
 
     void Setup();
-    void CreateMonster(Monster *monster, int index, int pos_index, const std::string &entity);
+    void CreateMonster(Monster *monster, int index, int pos_index, SelectionSide entity);
+    // Battle System
+    // check what is the first monster to get Initiative = 100
+    // it depends on monster speed
+    // when the first monster achieves 100, pause the others
+    void CheckActive();
+    void CheckActiveGroup(const rg::sprite::Group *group, SelectionSide side);
+    void UpdateAllMonsters(bool do_pause) const;
 
     std::shared_ptr<rg::Surface> display_surface = rg::display::GetSurface();
     std::map<int, Monster> *player_monsters;
