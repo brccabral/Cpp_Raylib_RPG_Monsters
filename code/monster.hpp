@@ -17,8 +17,8 @@ public:
     friend std::ostream &operator<<(std::ostream &os, Monster const &m);
 
     std::string name;
-    int level;
-    ElementType element;
+    int level{};
+    ElementType element{};
     std::map<std::string, float> base_stats;
     std::vector<std::pair<int, Attack>> abilities;
     float xp{};

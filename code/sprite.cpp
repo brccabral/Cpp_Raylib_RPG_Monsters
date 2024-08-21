@@ -191,6 +191,9 @@ void MonsterStatsSprite::Update(float deltaTime)
             rg::draw::bar(image, bar_rect, value, max_value, color, COLORS["black"], 2);
         }
         else // initiative
-        {}
+        {
+            const auto init_rect = rg::Rect{0, rect.height - 2, rect.width, 2.0f};
+            rg::draw::bar(image, init_rect, value, max_value, color, COLORS["white"]);
+        }
     }
 }
