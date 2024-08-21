@@ -16,10 +16,9 @@ Battle::Battle(
 
 void Battle::Update(const float dt)
 {
-    int e = fonts->size();
-    display_surface->Blit(bg_surf, {float(e - e), 0});
+    display_surface->Blit(bg_surf, {0, 0});
     battle_sprites.Update(dt);
-    battle_sprites.Draw(display_surface);
+    battle_sprites.Draw();
 }
 
 void Battle::Setup()

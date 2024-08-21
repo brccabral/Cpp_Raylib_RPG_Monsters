@@ -111,3 +111,11 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
         display_surface->Blit(sprite->image, sprite->rect.topleft() + offset);
     }
 }
+
+void BattleSprites::Draw()
+{
+    for (const auto &sprite: Sprites())
+    {
+        display_surface->Blit(sprite->image, sprite->rect.pos);
+    }
+}

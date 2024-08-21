@@ -1,4 +1,7 @@
 #pragma once
+#include "groups.hpp"
+
+
 #include <rygame.hpp>
 #include "monster.hpp"
 
@@ -26,7 +29,7 @@ private:
     std::shared_ptr<rg::Surface> bg_surf;
     std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts;
 
-    rg::sprite::Group battle_sprites{};
+    BattleSprites battle_sprites{};
     rg::sprite::Group player_sprites{};
     rg::sprite::Group opponent_sprites{};
 };
