@@ -182,7 +182,7 @@ void Battle::DrawGeneral()
         }
         else
         {
-            surf = (*ui_icons)[battle_choice.icon];
+            surf = rg::transform::GrayScale((*ui_icons)[battle_choice.icon]);
         }
         auto rect = surf->GetRect().center(current_monster->rect.midright() + battle_choice.pos);
         display_surface->Blit(surf, rect);
