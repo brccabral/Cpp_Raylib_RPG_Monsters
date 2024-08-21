@@ -175,7 +175,15 @@ void Battle::DrawGeneral()
     int index = 0;
     for (auto &[option, battle_choice]: BATTLE_CHOICES["full"])
     {
-        auto surf = (*ui_icons)[battle_choice.icon];
+        std::shared_ptr<rg::Surface> surf;
+        if (index == indexes[SELECTMODE_GENERAL])
+        {
+            surf = (*ui_icons)[battle_choice.icon + "_highlight"];
+        }
+        else
+        {
+            surf = (*ui_icons)[battle_choice.icon];
+        }
         auto rect = surf->GetRect().center(current_monster->rect.midright() + battle_choice.pos);
         display_surface->Blit(surf, rect);
         ++index;
