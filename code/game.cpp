@@ -402,5 +402,5 @@ void Game::TintScreen(const double dt)
     }
     tint_progress = rl::Clamp(tint_progress, 0, 255);
     tint_surf->SetAlpha(tint_progress);
-    display_surface->Blit(tint_surf, {0, 0});
+    display_surface->Blit(tint_surf, rg::math::Vector2{0, 0});
 }

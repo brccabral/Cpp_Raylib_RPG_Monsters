@@ -149,7 +149,7 @@ MonsterNameSprite::MonsterNameSprite(
     image = std::make_shared<rg::Surface>(
             text_surf->GetRect().width + padding * 2, text_surf->GetRect().height + padding * 2);
     image->Fill(COLORS["white"]);
-    image->Blit(text_surf, {padding, padding});
+    image->Blit(text_surf, rg::math::Vector2{padding, padding});
     rect = image->GetRect().midtop(pos);
     z = BATTLE_LAYERS["name"];
 }
@@ -180,7 +180,7 @@ void MonsterLevelSprite::Update(float deltaTime)
     const auto text_surf = font->render(
             rl::TextFormat("Lvl: %d", monster_sprite->monster->level), COLORS["black"]);
     const auto text_rect = text_surf->GetRect().center({rect.width / 2, rect.height / 2});
-    image->Blit(text_surf, text_rect.pos);
+    image->Blit(text_surf, text_rect);
 
     rg::draw::bar(
             image, xp_rect, monster_sprite->monster->xp, monster_sprite->monster->level_up,
@@ -216,7 +216,7 @@ void MonsterStatsSprite::Update(float deltaTime)
             const auto bar_rect = rg::Rect{
                     text_rect.bottomleft() + rg::math::Vector2{0, -2}, {rect.width * 0.9f, 4}};
 
-            image->Blit(text_surf, text_rect.pos);
+            image->Blit(text_surf, text_rect);
             rg::draw::bar(image, bar_rect, value, max_value, color, COLORS["black"], 2);
         }
         else // initiative

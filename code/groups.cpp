@@ -126,12 +126,12 @@ void BattleSprites::Draw(const std::shared_ptr<MonsterSprite> &current_monster_s
             const auto outline_sprite = std::dynamic_pointer_cast<MonsterOutlineSprite>(sprite);
             if (outline_sprite->monster_sprite == current_monster_sprite)
             {
-                display_surface->Blit(outline_sprite->image, outline_sprite->rect.pos);
+                display_surface->Blit(outline_sprite->image, outline_sprite->rect);
             }
         }
         else
         {
-            display_surface->Blit(sprite->image, sprite->rect.pos);
+            display_surface->Blit(sprite->image, sprite->rect);
         }
     }
 }

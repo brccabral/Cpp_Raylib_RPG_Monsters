@@ -1,5 +1,4 @@
 #include "battle.hpp"
-
 #include "sprite.hpp"
 
 
@@ -22,7 +21,7 @@ void Battle::Update(const float dt)
     CheckActive();
 
     // drawing
-    display_surface->Blit(bg_surf, {0, 0});
+    display_surface->Blit(bg_surf, rg::math::Vector2{0, 0});
     battle_sprites.Draw(current_monster);
 }
 
