@@ -140,4 +140,5 @@ private:
 
     std::shared_ptr<MonsterSprite> monster_sprite;
     std::shared_ptr<rg::font::Font> font;
+    rg::Rect xp_rect{};
 };

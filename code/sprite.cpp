@@ -142,9 +142,19 @@ MonsterLevelSprite::MonsterLevelSprite(
     {
         rect = image->GetRect().topright(anchor);
     }
+    xp_rect = rg::Rect{0, rect.height - 2, rect.width, 2};
 }
 
 void MonsterLevelSprite::Update(float deltaTime)
 {
     image->Fill(COLORS["white"]);
+
+    const auto text_surf = font->render(
+            rl::TextFormat("Lvl: %d", monster_sprite->monster->level), COLORS["black"]);
+    const auto text_rect = text_surf->GetRect().center({rect.width / 2, rect.height / 2});
+    image->Blit(text_surf, text_rect.pos);
+
+    rg::draw::bar(
+            image, xp_rect, monster_sprite->monster->xp, monster_sprite->monster->level_up,
+            COLORS["black"], COLORS["white"]);
 }
