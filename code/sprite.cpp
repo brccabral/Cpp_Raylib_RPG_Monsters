@@ -158,3 +158,39 @@ void MonsterLevelSprite::Update(float deltaTime)
             image, xp_rect, monster_sprite->monster->xp, monster_sprite->monster->level_up,
             COLORS["black"], COLORS["white"]);
 }
+
+MonsterStatsSprite::MonsterStatsSprite(
+        const rg::math::Vector2 pos, const std::shared_ptr<MonsterSprite> &monster_sprite,
+        rg::math::Vector2 size, const std::shared_ptr<rg::font::Font> &font)
+    : monster_sprite(monster_sprite), font(font)
+{
+    image = std::make_shared<rg::Surface>(size);
+    rect = image->GetRect().midbottom(pos);
+}
+
+void MonsterStatsSprite::Update(float deltaTime)
+{
+    image->Fill(COLORS["white"]);
+
+    const auto info = monster_sprite->monster->GetInfo();
+    const std::array<rl::Color, 3> colors = {COLORS["red"], COLORS["blue"], COLORS["gray"]};
+    for (int index = 0; index < info.size(); ++index)
+    {
+        const auto [value, max_value] = info[index];
+        const auto color = colors[index];
+        if (index < 2) // health and energy
+        {
+            const auto text_surf =
+                    font->render(rl::TextFormat("%.f/%.f", value, max_value), COLORS["black"]);
+            const auto text_rect =
+                    text_surf->GetRect().topleft({rect.width * 0.05f, index * rect.height / 2});
+            const auto bar_rect = rg::Rect{
+                    text_rect.bottomleft() + rg::math::Vector2{0, -2}, {rect.width * 0.9f, 4}};
+
+            image->Blit(text_surf, text_rect.pos);
+            rg::draw::bar(image, bar_rect, value, max_value, color, COLORS["black"], 2);
+        }
+        else // initiative
+        {}
+    }
+}

@@ -142,3 +142,18 @@ private:
     std::shared_ptr<rg::font::Font> font;
     rg::Rect xp_rect{};
 };
+
+class MonsterStatsSprite : public rg::sprite::Sprite
+{
+public:
+
+    MonsterStatsSprite(
+            rg::math::Vector2 pos, const std::shared_ptr<MonsterSprite> &monster_sprite,
+            rg::math::Vector2 size, const std::shared_ptr<rg::font::Font> &font);
+    void Update(float deltaTime) override;
+
+private:
+
+    std::shared_ptr<MonsterSprite> monster_sprite;
+    std::shared_ptr<rg::font::Font> font;
+};

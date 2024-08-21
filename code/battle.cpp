@@ -90,5 +90,8 @@ void Battle::CreateMonster(Monster *monster, int index, int pos_index, const std
     }
     std::make_shared<MonsterLevelSprite>(entity, anchor, monster_sprite, (*fonts)["small"])
             ->add(&battle_sprites);
-    // std::make_shared<MonsterStatsSprite>();
+    std::make_shared<MonsterStatsSprite>(
+            monster_sprite->rect.midbottom() + rg::math::Vector2{0, 20}, monster_sprite,
+            rg::math::Vector2{150, 48}, (*fonts)["small"])
+            ->add(&battle_sprites);
 }

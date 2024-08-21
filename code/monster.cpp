@@ -51,6 +51,15 @@ std::vector<Attack> Monster::GetAbilities(const bool all)
     return result;
 }
 
+std::array<std::pair<float, float>, 3> Monster::GetInfo()
+{
+    std::array<std::pair<float, float>, 3> info;
+    info[0] = std::make_pair(health, GetStat("max_health"));
+    info[1] = std::make_pair(energy, GetStat("max_energy"));
+    info[2] = std::make_pair(initiative, 100.0f);
+    return info;
+}
+
 std::ostream &operator<<(std::ostream &os, Monster const &m)
 {
     char level[3]{};
