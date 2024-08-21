@@ -98,6 +98,7 @@ MonsterSprite::MonsterSprite(
     std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(p - p);
     rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(pos);
     animation_speed = (float) ANIMATION_SPEED + rg::math::get_random_uniform(-1, 1);
+    z = BATTLE_LAYERS["monster"];
 }
 
 void MonsterSprite::Update(const float deltaTime)
@@ -125,6 +126,7 @@ MonsterNameSprite::MonsterNameSprite(
     image->Fill(COLORS["white"]);
     image->Blit(text_surf, {padding, padding});
     rect = image->GetRect().midtop(pos);
+    z = BATTLE_LAYERS["name"];
 }
 
 MonsterLevelSprite::MonsterLevelSprite(
@@ -143,6 +145,7 @@ MonsterLevelSprite::MonsterLevelSprite(
         rect = image->GetRect().topright(anchor);
     }
     xp_rect = rg::Rect{0, rect.height - 2, rect.width, 2};
+    z = BATTLE_LAYERS["name"];
 }
 
 void MonsterLevelSprite::Update(float deltaTime)
@@ -166,6 +169,7 @@ MonsterStatsSprite::MonsterStatsSprite(
 {
     image = std::make_shared<rg::Surface>(size);
     rect = image->GetRect().midbottom(pos);
+    z = BATTLE_LAYERS["overlay"];
 }
 
 void MonsterStatsSprite::Update(float deltaTime)

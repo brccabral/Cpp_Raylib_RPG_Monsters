@@ -114,7 +114,12 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
 
 void BattleSprites::Draw()
 {
-    for (const auto &sprite: Sprites())
+    auto sprites = Sprites();
+    std::sort(
+            sprites.begin(), sprites.end(),
+            [](const std::shared_ptr<rg::sprite::Sprite> &l,
+               const std::shared_ptr<rg::sprite::Sprite> &r) { return l->z < r->z; });
+    for (const auto &sprite: sprites)
     {
         display_surface->Blit(sprite->image, sprite->rect.pos);
     }

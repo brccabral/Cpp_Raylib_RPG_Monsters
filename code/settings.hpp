@@ -51,3 +51,11 @@ inline std::map<std::string, std::vector<rg::math::Vector2>> BATTLE_POSITIONS = 
                 } //
         } //
 };
+
+inline std::map<std::string, int> BATTLE_LAYERS = {
+        {"outline", 0}, //
+        {"name", 1}, //
+        {"monster", 2}, //
+        {"effects", 3}, //
+        {"overlay", 4}, //
+};
