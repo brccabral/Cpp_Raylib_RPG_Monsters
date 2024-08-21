@@ -47,7 +47,7 @@ Game::Game()
             &player_monsters, fonts, &monster_icons, &ui_icons, &monster_frames);
 
     battle = std::make_shared<Battle>(
-            &player_monsters, &dummy_monsters, &monster_frames, &outline_frames,
+            &player_monsters, &dummy_monsters, &monster_frames, &outline_frames, &ui_icons,
             bg_frames["forest"], &fonts);
 }
 

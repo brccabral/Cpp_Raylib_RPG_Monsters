@@ -59,3 +59,42 @@ inline std::map<std::string, int> BATTLE_LAYERS = {
         {"effects", 3}, //
         {"overlay", 4}, //
 };
+
+enum SelectionMode
+{
+    SELECTMODE_NONE = 0,
+    SELECTMODE_GENERAL,
+    SELECTMODE_MONSTER,
+    SELECTMODE_ATTACKS,
+    SELECTMODE_SWITCH,
+    SELECTMODE_TARGET,
+};
+
+typedef struct BattleChoice
+{
+    rg::math::Vector2 pos;
+    std::string icon;
+} BattleChoice;
+
+inline std::map<std::string, std::vector<std::pair<std::string, BattleChoice>>> BATTLE_CHOICES{
+        // numbers adjusted from tutorial
+        {
+                "full",
+                {
+                        //
+                        {"fight", {{30, -60}, "sword"}}, //
+                        {"defend", {{40, -20}, "shield"}}, //
+                        {"switch", {{40, 20}, "arrows"}}, //
+                        {"catch", {{30, 60}, "hand"}}, //
+                }, //
+        }, //
+        {
+                "limited",
+                {
+                        //
+                        {"fight", {{30, -40}, "sword"}}, //
+                        {"defend", {{40, 0}, "shield"}}, //
+                        {"switch", {{30, 40}, "arrows"}}, //
+                }, //
+        }, //
+};

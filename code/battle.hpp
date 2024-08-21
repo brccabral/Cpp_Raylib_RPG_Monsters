@@ -16,6 +16,7 @@ public:
                    *monster_frames,
            std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
                    *outline_frames,
+           std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
            const std::shared_ptr<rg::Surface> &bg_surf,
            std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts);
     void Update(float dt);
@@ -32,11 +33,16 @@ private:
     void CheckActiveGroup(const rg::sprite::Group *group, SelectionSide side);
     void UpdateAllMonsters(bool do_pause) const;
 
+    // ui
+    void DrawUi();
+    void DrawGeneral();
+
     std::shared_ptr<rg::Surface> display_surface = rg::display::GetSurface();
     std::map<int, Monster> *player_monsters;
     std::map<int, Monster> *opponent_monsters;
     std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *monster_frames;
     std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *outline_frames;
+    std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons;
     std::shared_ptr<rg::Surface> bg_surf;
     std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts;
 
@@ -45,4 +51,8 @@ private:
     rg::sprite::Group opponent_sprites{};
 
     std::shared_ptr<MonsterSprite> current_monster;
+
+    SelectionMode selection_mode{};
+    SelectionSide selection_side{};
+    std::map<SelectionMode, int> indexes;
 };

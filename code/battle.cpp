@@ -6,11 +6,19 @@ Battle::Battle(
         std::map<int, Monster> *player_monsters, std::map<int, Monster> *opponent_monsters,
         std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *monster_frames,
         std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *outline_frames,
+        std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
         const std::shared_ptr<rg::Surface> &bg_surf,
         std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts)
     : player_monsters(player_monsters), opponent_monsters(opponent_monsters),
-      monster_frames(monster_frames), outline_frames(outline_frames), bg_surf(bg_surf), fonts(fonts)
+      monster_frames(monster_frames), outline_frames(outline_frames), ui_icons(ui_icons),
+      bg_surf(bg_surf), fonts(fonts)
 {
+    indexes[SELECTMODE_GENERAL] = 0;
+    indexes[SELECTMODE_MONSTER] = 0;
+    indexes[SELECTMODE_ATTACKS] = 0;
+    indexes[SELECTMODE_SWITCH] = 0;
+    indexes[SELECTMODE_TARGET] = 0;
+
     Setup();
 }
 
@@ -23,6 +31,7 @@ void Battle::Update(const float dt)
     // drawing
     display_surface->Blit(bg_surf, rg::math::Vector2{0, 0});
     battle_sprites.Draw(current_monster);
+    DrawUi();
 }
 
 void Battle::Setup()
@@ -127,6 +136,11 @@ void Battle::CheckActiveGroup(const rg::sprite::Group *group, SelectionSide side
             monster_sprite->monster->initiative = 0;
             monster_sprite->SetHighlight(true);
             current_monster = monster_sprite;
+            if (side == PLAYER)
+            {
+                selection_mode = SELECTMODE_GENERAL;
+                selection_side = PLAYER;
+            }
         }
     }
 }
@@ -142,5 +156,28 @@ void Battle::UpdateAllMonsters(const bool do_pause) const
     {
         const auto monster_sprite = std::dynamic_pointer_cast<MonsterSprite>(sprite);
         monster_sprite->monster->paused = do_pause;
+    }
+}
+
+void Battle::DrawUi()
+{
+    if (current_monster)
+    {
+        if (selection_mode == SELECTMODE_GENERAL)
+        {
+            DrawGeneral();
+        }
+    }
+}
+
+void Battle::DrawGeneral()
+{
+    int index = 0;
+    for (auto &[option, battle_choice]: BATTLE_CHOICES["full"])
+    {
+        auto surf = (*ui_icons)[battle_choice.icon];
+        auto rect = surf->GetRect().center(current_monster->rect.midright() + battle_choice.pos);
+        display_surface->Blit(surf, rect);
+        ++index;
     }
 }
