@@ -99,10 +99,15 @@ MonsterSprite::MonsterSprite(
     rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(pos);
     animation_speed = (float) ANIMATION_SPEED + rg::math::get_random_uniform(-1, 1);
     z = BATTLE_LAYERS["monster"];
+    timers["remove_highlight"] = rg::Timer(0.5f, false, false, [this] { SetHighlight(false); });
 }
 
 void MonsterSprite::Update(const float deltaTime)
 {
+    for (auto &[key, timer]: timers)
+    {
+        timer.Update();
+    }
     Animate(deltaTime);
     monster->Update(deltaTime);
 }
@@ -111,6 +116,10 @@ void MonsterSprite::Update(const float deltaTime)
 void MonsterSprite::SetHighlight(const bool value)
 {
     highlight = value;
+    if (highlight)
+    {
+        timers["remove_highlight"].Activate();
+    }
 }
 
 void MonsterSprite::Animate(const float dt)
@@ -118,6 +127,15 @@ void MonsterSprite::Animate(const float dt)
     frame_index += ANIMATION_SPEED * dt;
     image = frames[state];
     std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(frame_index);
+
+    if (highlight)
+    {
+        auto frames = std::dynamic_pointer_cast<rg::Frames>(image);
+        auto mask_surf = rg::mask::FromSurface(frames).ToFrames(frames->rows, frames->cols);
+        mask_surf->Fill(rl::BLANK);
+        mask_surf->frames = frames->frames;
+        image = mask_surf;
+    }
 }
 
 MonsterNameSprite::MonsterNameSprite(

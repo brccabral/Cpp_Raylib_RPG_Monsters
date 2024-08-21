@@ -114,6 +114,7 @@ private:
 
     float animation_speed{};
     bool highlight{};
+    std::map<std::string, rg::Timer> timers;
 };
 
 class MonsterNameSprite : public rg::sprite::Sprite
