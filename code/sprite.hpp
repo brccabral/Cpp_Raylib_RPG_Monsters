@@ -96,7 +96,10 @@ public:
             rg::math::Vector2 pos, const std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
             Monster *monster, int index, int pos_index, SelectionSide entity);
     void Update(float deltaTime) override;
+    void SetHighlight(bool value);
+
     Monster *monster;
+    std::string state = "idle";
 
 private:
 
@@ -108,9 +111,9 @@ private:
 
     float frame_index{};
     std::map<std::string, std::shared_ptr<rg::Frames>> frames;
-    std::string state = "idle";
 
     float animation_speed{};
+    bool highlight{};
 };
 
 class MonsterNameSprite : public rg::sprite::Sprite
@@ -156,4 +159,19 @@ private:
 
     std::shared_ptr<MonsterSprite> monster_sprite;
     std::shared_ptr<rg::font::Font> font;
+};
+
+class MonsterOutlineSprite : public rg::sprite::Sprite
+{
+public:
+
+    MonsterOutlineSprite(
+            const std::shared_ptr<MonsterSprite> &monster_sprite,
+            const std::map<std::string, std::shared_ptr<rg::Frames>> &frames);
+
+    std::shared_ptr<MonsterSprite> monster_sprite;
+
+private:
+
+    std::map<std::string, std::shared_ptr<rg::Frames>> frames;
 };

@@ -107,6 +107,12 @@ void MonsterSprite::Update(const float deltaTime)
     monster->Update(deltaTime);
 }
 
+// blink monster with a white mask
+void MonsterSprite::SetHighlight(const bool value)
+{
+    highlight = value;
+}
+
 void MonsterSprite::Animate(const float dt)
 {
     frame_index += ANIMATION_SPEED * dt;
@@ -201,4 +207,17 @@ void MonsterStatsSprite::Update(float deltaTime)
             rg::draw::bar(image, init_rect, value, max_value, color, COLORS["white"]);
         }
     }
+}
+
+MonsterOutlineSprite::MonsterOutlineSprite(
+        const std::shared_ptr<MonsterSprite> &monster_sprite,
+        const std::map<std::string, std::shared_ptr<rg::Frames>> &frames)
+    : monster_sprite(monster_sprite), frames(frames)
+{
+    z = BATTLE_LAYERS["outline"];
+
+    image = this->frames[this->monster_sprite->state];
+    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas();
+    rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(
+            monster_sprite->rect.center());
 }

@@ -112,7 +112,7 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
     }
 }
 
-void BattleSprites::Draw()
+void BattleSprites::Draw(const std::shared_ptr<MonsterSprite> &current_monster_sprite)
 {
     auto sprites = Sprites();
     std::sort(
@@ -121,6 +121,17 @@ void BattleSprites::Draw()
                const std::shared_ptr<rg::sprite::Sprite> &r) { return l->z < r->z; });
     for (const auto &sprite: sprites)
     {
-        display_surface->Blit(sprite->image, sprite->rect.pos);
+        if (sprite->z == BATTLE_LAYERS["outline"])
+        {
+            const auto outline_sprite = std::dynamic_pointer_cast<MonsterOutlineSprite>(sprite);
+            if (outline_sprite->monster_sprite == current_monster_sprite)
+            {
+                display_surface->Blit(outline_sprite->image, outline_sprite->rect.pos);
+            }
+        }
+        else
+        {
+            display_surface->Blit(sprite->image, sprite->rect.pos);
+        }
     }
 }

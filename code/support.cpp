@@ -122,3 +122,67 @@ MonsterImporter(const int cols, const int rows, const char *path)
     }
     return result;
 }
+
+std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> OutlineCreator(
+        const std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
+                &monster_frames,
+        const float width)
+{
+    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> result;
+    for (auto &[name, state_frames]: monster_frames)
+    {
+        result[name] = {};
+        for (auto &[state, frames]: state_frames)
+        {
+            auto mask_surf = rg::mask::FromSurface(frames).ToFrames(frames->rows, frames->cols);
+            mask_surf->SetColorKey(rl::BLACK);
+
+            auto new_surf = std::make_shared<rg::Frames>(
+                    frames->render.texture.width, frames->render.texture.height, frames->rows,
+                    frames->cols);
+            new_surf->frames = frames->frames;
+            new_surf->SetColorKey(rl::BLACK);
+
+            new_surf->Blit(
+                    mask_surf->render.texture, {-width, -width},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // topleft
+            new_surf->Blit(
+                    mask_surf->render.texture, {0, -width},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // topcenter
+            new_surf->Blit(
+                    mask_surf->render.texture, {width, -width},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // topright
+            new_surf->Blit(
+                    mask_surf->render.texture, {-width, 0},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // left
+            new_surf->Blit(
+                    mask_surf->render.texture, {0, 0},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // center
+            new_surf->Blit(
+                    mask_surf->render.texture, {width, 0},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // right
+            new_surf->Blit(
+                    mask_surf->render.texture, {-width, width},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // bottomleft
+            new_surf->Blit(
+                    mask_surf->render.texture, {0, width},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // bottomcenter
+            new_surf->Blit(
+                    mask_surf->render.texture, {width, width},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // bottomright
+            new_surf->SetAtlas();
+
+            result[name][state] = new_surf;
+        }
+    }
+    return result;
+}

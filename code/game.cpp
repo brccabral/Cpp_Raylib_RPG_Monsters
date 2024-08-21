@@ -43,12 +43,12 @@ Game::Game()
     ImportAssets();
     Setup("world", "house");
 
-    monster_frames = MonsterImporter(4, 2, "resources/graphics/monsters");
     monster_index = std::make_shared<MonsterIndex>(
             &player_monsters, fonts, &monster_icons, &ui_icons, &monster_frames);
 
     battle = std::make_shared<Battle>(
-            &player_monsters, &dummy_monsters, &monster_frames, bg_frames["forest"], &fonts);
+            &player_monsters, &dummy_monsters, &monster_frames, &outline_frames,
+            bg_frames["forest"], &fonts);
 }
 
 Game::~Game()
@@ -111,6 +111,9 @@ void Game::ImportAssets()
     ui_icons = rg::image::ImportFolderDict("resources/graphics/ui");
 
     bg_frames = rg::image::ImportFolderDict("resources/graphics/backgrounds");
+
+    monster_frames = MonsterImporter(4, 2, "resources/graphics/monsters");
+    outline_frames = OutlineCreator(monster_frames, 4);
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)

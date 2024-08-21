@@ -1,6 +1,7 @@
 #pragma once
 #include <rygame.hpp>
 #include "entities.hpp"
+#include "sprite.hpp"
 
 
 class AllSprites : public rg::sprite::Group
@@ -26,7 +27,7 @@ public:
 
     BattleSprites() = default;
     void Draw(const std::shared_ptr<rg::Surface> &surface) override{};
-    void Draw();
+    void Draw(const std::shared_ptr<MonsterSprite> &current_monster_sprite);
 
 private:
 

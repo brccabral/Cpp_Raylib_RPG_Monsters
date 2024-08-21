@@ -18,3 +18,8 @@ bool CheckConnections(
 
 std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
 MonsterImporter(int cols, int rows, const char *path);
+
+std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> OutlineCreator(
+        const std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
+                &monster_frames,
+        float width);

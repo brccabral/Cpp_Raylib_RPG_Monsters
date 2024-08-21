@@ -6,10 +6,11 @@
 Battle::Battle(
         std::map<int, Monster> *player_monsters, std::map<int, Monster> *opponent_monsters,
         std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *monster_frames,
+        std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *outline_frames,
         const std::shared_ptr<rg::Surface> &bg_surf,
         std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts)
     : player_monsters(player_monsters), opponent_monsters(opponent_monsters),
-      monster_frames(monster_frames), bg_surf(bg_surf), fonts(fonts)
+      monster_frames(monster_frames), outline_frames(outline_frames), bg_surf(bg_surf), fonts(fonts)
 {
     Setup();
 }
@@ -22,7 +23,7 @@ void Battle::Update(const float dt)
 
     // drawing
     display_surface->Blit(bg_surf, {0, 0});
-    battle_sprites.Draw();
+    battle_sprites.Draw(current_monster);
 }
 
 void Battle::Setup()
@@ -46,6 +47,7 @@ void Battle::Setup()
 void Battle::CreateMonster(Monster *monster, int index, int pos_index, SelectionSide entity)
 {
     auto frames = (*monster_frames)[monster->name];
+    auto outlines = (*outline_frames)[monster->name];
     rg::math::Vector2 pos;
     auto groups = std::vector<rg::sprite::Group *>{};
 
@@ -57,6 +59,10 @@ void Battle::CreateMonster(Monster *monster, int index, int pos_index, Selection
         {
             frames[state] = rg::transform::Flip(frame, true, false);
         }
+        for (auto &[state, frame]: outlines)
+        {
+            outlines[state] = rg::transform::Flip(frame, true, false);
+        }
     }
     else
     {
@@ -66,6 +72,8 @@ void Battle::CreateMonster(Monster *monster, int index, int pos_index, Selection
     const auto monster_sprite =
             std::make_shared<MonsterSprite>(pos, frames, monster, index, pos_index, entity);
     monster_sprite->add(groups);
+
+    std::make_shared<MonsterOutlineSprite>(monster_sprite, outlines)->add(&battle_sprites);
 
     // ui
     rg::math::Vector2 name_pos;
@@ -117,6 +125,9 @@ void Battle::CheckActiveGroup(const rg::sprite::Group *group, SelectionSide side
         if (monster_sprite->monster->initiative >= 100)
         {
             UpdateAllMonsters(true);
+            monster_sprite->monster->initiative = 0;
+            monster_sprite->SetHighlight(true);
+            current_monster = monster_sprite;
         }
     }
 }
