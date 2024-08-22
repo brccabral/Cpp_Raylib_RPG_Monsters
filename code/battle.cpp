@@ -198,6 +198,34 @@ void Battle::Input()
             indexes[selection_mode] =
                     limiter ? ((indexes[selection_mode] - 1) % limiter + limiter) % limiter : 0;
         }
+        if (IsKeyPressed(rl::KEY_SPACE))
+        {
+            if (selection_mode == SELECTMODE_GENERAL)
+            {
+                if (indexes[SELECTMODE_GENERAL] == 0)
+                {
+                    selection_mode = SELECTMODE_ATTACKS;
+                }
+                else if (indexes[SELECTMODE_GENERAL] == 1)
+                {
+                    // select defense resumes battle
+                    current_monster->monster->defending = true;
+                    UpdateAllMonsters(false);
+                    current_monster = nullptr;
+                    selection_mode = SELECTMODE_NONE;
+                    indexes[SELECTMODE_GENERAL] = 0;
+                }
+                else if (indexes[SELECTMODE_GENERAL] == 2)
+                {
+                    selection_mode = SELECTMODE_SWITCH;
+                }
+                else if (indexes[SELECTMODE_GENERAL] == 3)
+                {
+                    selection_mode = SELECTMODE_TARGET;
+                    selection_side = OPPONENT;
+                }
+            }
+        }
     }
 }
 
