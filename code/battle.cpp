@@ -24,6 +24,7 @@ Battle::Battle(
 
 void Battle::Update(const float dt)
 {
+    Input();
     // updates
     battle_sprites.Update(dt);
     CheckActive();
@@ -121,7 +122,7 @@ void Battle::CheckActive()
     CheckActiveGroup(&opponent_sprites, OPPONENT);
 }
 
-void Battle::CheckActiveGroup(const rg::sprite::Group *group, SelectionSide side)
+void Battle::CheckActiveGroup(const rg::sprite::Group *group, const SelectionSide side)
 {
     if (group->Sprites().empty())
     {
@@ -159,6 +160,47 @@ void Battle::UpdateAllMonsters(const bool do_pause) const
     }
 }
 
+void Battle::Input()
+{
+    if (selection_mode && current_monster)
+    {
+        int limiter = 0;
+        switch (selection_mode)
+        {
+            case SELECTMODE_GENERAL:
+            {
+                limiter = BATTLE_CHOICES["full"].size();
+                break;
+            }
+            case SELECTMODE_ATTACKS:
+            {
+                limiter = current_monster->monster->GetAbilities(false).size();
+                break;
+            }
+            case SELECTMODE_SWITCH:
+            {
+                break;
+            }
+            case SELECTMODE_TARGET:
+            {
+                break;
+            }
+            default:
+                break;
+        }
+        if (IsKeyPressed(rl::KEY_DOWN))
+        {
+            indexes[selection_mode] =
+                    limiter ? ((indexes[selection_mode] + 1) % limiter + limiter) % limiter : 0;
+        }
+        if (IsKeyPressed(rl::KEY_UP))
+        {
+            indexes[selection_mode] =
+                    limiter ? ((indexes[selection_mode] - 1) % limiter + limiter) % limiter : 0;
+        }
+    }
+}
+
 void Battle::DrawUi()
 {
     if (current_monster)
@@ -184,7 +226,8 @@ void Battle::DrawGeneral()
         {
             surf = rg::transform::GrayScale((*ui_icons)[battle_choice.icon]);
         }
-        auto rect = surf->GetRect().center(current_monster->rect.midright() + battle_choice.pos);
+        const auto rect =
+                surf->GetRect().center(current_monster->rect.midright() + battle_choice.pos);
         display_surface->Blit(surf, rect);
         ++index;
     }

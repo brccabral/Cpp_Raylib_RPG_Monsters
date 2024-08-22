@@ -8,7 +8,7 @@
 
 Game::Game()
 {
-    rg::Init();
+    rg::Init(rl::LOG_INFO);
     display_surface = rg::display::SetMode(WINDOW_WIDTH, WINDOW_HEIGHT);
     rg::display::SetCaption("RPG Monsters");
 

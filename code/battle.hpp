@@ -32,6 +32,7 @@ private:
     void CheckActive();
     void CheckActiveGroup(const rg::sprite::Group *group, SelectionSide side);
     void UpdateAllMonsters(bool do_pause) const;
+    void Input();
 
     // ui
     void DrawUi();
