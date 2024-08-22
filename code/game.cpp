@@ -8,7 +8,7 @@
 
 Game::Game()
 {
-    rg::Init(rl::LOG_INFO);
+    rg::Init(rl::LOG_WARNING);
     display_surface = rg::display::SetMode(WINDOW_WIDTH, WINDOW_HEIGHT);
     rg::display::SetCaption("RPG Monsters");
 
@@ -66,8 +66,11 @@ void Game::run()
         // game logic
         Input();
         TransitionCheck();
-        all_sprites->Update(dt);
-        all_sprites->Draw(player);
+        if (!battle)
+        {
+            all_sprites->Update(dt);
+            all_sprites->Draw(player);
+        }
 
         // overlays
         if (dialog_tree)

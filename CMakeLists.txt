@@ -27,6 +27,8 @@ if (WIN32)
 else ()
     #    set(CMAKE_CXX_COMPILER "clang++") # Sprite::Kill() has [[nodiscard]]
     target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Werror" "-Wpedantic" "-Wno-missing-braces" "-Wno-gnu-anonymous-struct" "-Wno-nested-anon-types")
+    #    target_compile_options(${PROJECT_NAME} PRIVATE "-pg") # gprof
+    #    target_link_options(${PROJECT_NAME} PRIVATE "-pg") # gprof
 endif ()
 
 # copy resources to Build folder for debugging
