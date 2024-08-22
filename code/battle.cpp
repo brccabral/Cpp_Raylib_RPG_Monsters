@@ -237,6 +237,14 @@ void Battle::DrawUi()
         {
             DrawGeneral();
         }
+        else if (selection_mode == SELECTMODE_ATTACKS)
+        {
+            DrawAttacks();
+        }
+        else if (selection_mode == SELECTMODE_SWITCH)
+        {
+            DrawSwitch();
+        }
     }
 }
 
@@ -260,3 +268,59 @@ void Battle::DrawGeneral()
         ++index;
     }
 }
+
+void Battle::DrawAttacks()
+{
+    // data
+    const auto abilities = current_monster->monster->GetAbilities(false);
+    constexpr float width = 150;
+    constexpr float height = 200;
+    constexpr int visible_attacks = 4;
+    constexpr float item_height = height / visible_attacks;
+    int v_offset;
+    if (indexes[SELECTMODE_ATTACKS] < visible_attacks)
+    {
+        v_offset = 0;
+    }
+    else
+    {
+        v_offset = -(indexes[SELECTMODE_ATTACKS] - visible_attacks + 1) * item_height;
+    }
+
+    // bg
+    const auto bg_rect = rg::Rect{0, 0, width, height}.midleft(
+            current_monster->rect.midright() + rg::math::Vector2{20, 0});
+    rg::draw::rect(display_surface, COLORS["white"], bg_rect, 0, 5);
+
+    for (int index = 0; index < (int) abilities.size(); ++index)
+    {
+        const bool selected = index == indexes[SELECTMODE_ATTACKS];
+        rl::Color text_color;
+        if (selected)
+        {
+            auto element = ATTACK_DATA[abilities[index]].element;
+            if (element == ELEMENT_NORMAL)
+            {
+                text_color = COLORS["black"];
+            }
+            else
+            {
+                text_color = COLORS[NAMES_ELEMENT_TYPES[element]];
+            }
+        }
+        else
+        {
+            text_color = COLORS["light"];
+        }
+        auto text_surf =
+                (*fonts)["regular"]->render(ATTACK_DATA[abilities[index]].name.c_str(), text_color);
+        auto text_rect = text_surf->GetRect().center(
+                bg_rect.midtop() +
+                rg::math::Vector2{0, item_height / 2 + index * item_height + v_offset});
+
+        display_surface->Blit(text_surf, text_rect);
+    }
+}
+
+void Battle::DrawSwitch()
+{}

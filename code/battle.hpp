@@ -37,6 +37,8 @@ private:
     // ui
     void DrawUi();
     void DrawGeneral();
+    void DrawAttacks();
+    void DrawSwitch();
 
     std::shared_ptr<rg::Surface> display_surface = rg::display::GetSurface();
     std::map<int, Monster> *player_monsters;
