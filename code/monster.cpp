@@ -12,9 +12,9 @@ Monster::Monster(const std::string &name, const int level) : name(name), level(l
     level_up = level * 150;
     xp = rl::GetRandomValue(10, level_up);
     health = base_stats["max_health"] * level;
-    health -= rl::GetRandomValue(0, health);
+    // health -= rl::GetRandomValue(0, health);
     energy = base_stats["max_energy"] * level;
-    energy -= rl::GetRandomValue(0, energy);
+    // energy -= rl::GetRandomValue(0, energy);
 }
 
 float Monster::GetStat(const std::string &stat)
@@ -42,7 +42,7 @@ std::vector<Attack> Monster::GetAbilities(const bool all)
     {
         if (level >= lvl)
         {
-            if (all || ATTACK_DATA[ability].cost < energy)
+            if (all || ATTACK_DATA[ability].cost <= energy)
             {
                 result.push_back(ability);
             }

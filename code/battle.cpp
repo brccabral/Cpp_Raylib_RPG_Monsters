@@ -317,8 +317,32 @@ void Battle::DrawAttacks()
         auto text_rect = text_surf->GetRect().center(
                 bg_rect.midtop() +
                 rg::math::Vector2{0, item_height / 2 + index * item_height + v_offset});
+        auto text_bg_rect = rg::Rect{0, 0, width, item_height}.center(text_rect.center());
 
-        display_surface->Blit(text_surf, text_rect);
+        // draw
+        if (bg_rect.collidepoint(text_rect.center()))
+        {
+            if (selected)
+            {
+                if (text_bg_rect.collidepoint(bg_rect.topleft()))
+                {
+                    rg::draw::rect(
+                            display_surface, COLORS["dark white"], text_bg_rect, 0, 5, true, true,
+                            false, false);
+                }
+                else if (text_bg_rect.collidepoint(bg_rect.midbottom() + rg::math::Vector2{0, -1}))
+                {
+                    rg::draw::rect(
+                            display_surface, COLORS["dark white"], text_bg_rect, 0, 5, false, false,
+                            true, true);
+                }
+                else
+                {
+                    rg::draw::rect(display_surface, COLORS["dark white"], text_bg_rect);
+                }
+            }
+            display_surface->Blit(text_surf, text_rect);
+        }
     }
 }
 
