@@ -278,13 +278,45 @@ void Battle::Input()
 }
 
 void Battle::ApplyAttack(
-        const std::shared_ptr<MonsterSprite> &target_sprite, Attack attack, float amount)
+        const std::shared_ptr<MonsterSprite> &target_sprite, const Attack attack, float amount)
 {
     // play an animation
     std::make_shared<AttackSprite>(
             target_sprite->rect.center(), (*attack_frames)[ATTACK_DATA[attack].animation])
             ->add(&battle_sprites);
+
     // get correct attack damage amount (defense, element)
+    // double attack if effective
+    const auto attack_element = ATTACK_DATA[attack].element;
+    const auto target_element = target_sprite->monster->element;
+    if ((attack_element == ELEMENT_FIRE && target_element == ELEMENT_FIRE) ||
+        (attack_element == ELEMENT_WATER && target_element == ELEMENT_FIRE) ||
+        (attack_element == ELEMENT_PLANT && target_element == ELEMENT_WATER))
+    {
+        amount *= 2;
+    }
+    // half attack if not effective
+    if ((attack_element == ELEMENT_FIRE && target_element == ELEMENT_WATER) ||
+        (attack_element == ELEMENT_WATER && target_element == ELEMENT_PLANT) ||
+        (attack_element == ELEMENT_PLANT && target_element == ELEMENT_FIRE))
+    {
+        amount *= 0.5f;
+    }
+
+    // update defense based on monster level and base stats
+    // it will lower the amount above
+    auto target_defense = 1 - target_sprite->monster->GetStat("defense") / 2000;
+    if (target_sprite->monster->defending)
+    {
+        target_defense -= 0.2;
+    }
+    target_defense = rl::Clamp(target_defense, 0, 1);
+
+    // update monster health
+    target_sprite->monster->health -= amount * target_defense;
+
+    // resume
+    UpdateAllMonsters(false);
 }
 
 void Battle::DrawUi()

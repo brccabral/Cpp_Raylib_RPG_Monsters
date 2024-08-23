@@ -24,9 +24,9 @@ Game::Game()
     player_monsters[player_index++] = Monster("Finsta", 30);
 
     int dummy_index = 0;
-    dummy_monsters[dummy_index++] = Monster("Atrox", 12);
-    dummy_monsters[dummy_index++] = Monster("Sparchu", 15);
-    dummy_monsters[dummy_index++] = Monster("Gulfin", 19);
+    dummy_monsters[dummy_index++] = Monster("Atrox", 2);
+    dummy_monsters[dummy_index++] = Monster("Sparchu", 3);
+    dummy_monsters[dummy_index++] = Monster("Gulfin", 3);
     dummy_monsters[dummy_index++] = Monster("Jacana", 2);
     dummy_monsters[dummy_index++] = Monster("Pouch", 3);
 
