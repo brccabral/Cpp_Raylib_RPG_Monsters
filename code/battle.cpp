@@ -314,9 +314,33 @@ void Battle::ApplyAttack(
 
     // update monster health
     target_sprite->monster->health -= amount * target_defense;
+    CheckDeath();
 
     // resume
     UpdateAllMonsters(false);
+}
+
+void Battle::CheckDeath()
+{
+    CheckDeathGroup(&player_sprites, PLAYER);
+    CheckDeathGroup(&opponent_sprites, OPPONENT);
+}
+
+void Battle::CheckDeathGroup(const rg::sprite::Group *group, const SelectionSide side)
+{
+    for (const auto &sprite: group->Sprites())
+    {
+        auto monster_sprite = std::dynamic_pointer_cast<MonsterSprite>(sprite);
+        if (monster_sprite->monster->health <= 0)
+        {
+            if (side == PLAYER)
+            {}
+            else
+            {
+                monster_sprite->Kill();
+            }
+        }
+    }
 }
 
 void Battle::DrawUi()

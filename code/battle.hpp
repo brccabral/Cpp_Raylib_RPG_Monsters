@@ -37,6 +37,8 @@ private:
     void Input();
     void
     ApplyAttack(const std::shared_ptr<MonsterSprite> &target_sprite, Attack attack, float amount);
+    void CheckDeath();
+    void CheckDeathGroup(const rg::sprite::Group *group, SelectionSide side);
 
     // ui
     void DrawUi();

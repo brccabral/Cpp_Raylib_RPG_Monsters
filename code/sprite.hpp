@@ -136,6 +136,7 @@ public:
     MonsterNameSprite(
             rg::math::Vector2 pos, const std::shared_ptr<MonsterSprite> &monster_sprite,
             const std::shared_ptr<rg::font::Font> &font);
+    void Update(float deltaTime) override;
 
 private:
 

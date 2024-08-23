@@ -177,6 +177,14 @@ MonsterNameSprite::MonsterNameSprite(
     z = BATTLE_LAYERS["name"];
 }
 
+void MonsterNameSprite::Update(float deltaTime)
+{
+    if (monster_sprite->Groups().empty())
+    {
+        Kill();
+    }
+}
+
 MonsterLevelSprite::MonsterLevelSprite(
         SelectionSide entity, const rg::math::Vector2 anchor,
         const std::shared_ptr<MonsterSprite> &monster_sprite,
@@ -208,6 +216,11 @@ void MonsterLevelSprite::Update(float deltaTime)
     rg::draw::bar(
             image, xp_rect, monster_sprite->monster->xp, monster_sprite->monster->level_up,
             COLORS["black"], COLORS["white"]);
+
+    if (monster_sprite->Groups().empty())
+    {
+        Kill();
+    }
 }
 
 MonsterStatsSprite::MonsterStatsSprite(
@@ -248,6 +261,11 @@ void MonsterStatsSprite::Update(float deltaTime)
             rg::draw::bar(image, init_rect, value, max_value, color, COLORS["white"]);
         }
     }
+
+    if (monster_sprite->Groups().empty())
+    {
+        Kill();
+    }
 }
 
 MonsterOutlineSprite::MonsterOutlineSprite(
@@ -269,6 +287,11 @@ void MonsterOutlineSprite::Update(float deltaTime)
     std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(this->monster_sprite->frame_index);
     rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(
             this->monster_sprite->rect.center());
+
+    if (monster_sprite->Groups().empty())
+    {
+        Kill();
+    }
 }
 
 AttackSprite::AttackSprite(
