@@ -62,4 +62,5 @@ private:
     std::map<SelectionMode, int> indexes;
 
     std::map<int, Monster> available_monsters;
+    Attack selected_attack = ATTACK_NONE;
 };

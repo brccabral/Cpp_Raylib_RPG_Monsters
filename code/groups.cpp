@@ -112,8 +112,30 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
     }
 }
 
-void BattleSprites::Draw(const std::shared_ptr<MonsterSprite> &current_monster_sprite)
+void BattleSprites::Draw(
+        const std::shared_ptr<MonsterSprite> &current_monster_sprite, const SelectionSide side,
+        const SelectionMode mode, const int target_index, const Group *player_sprites,
+        const Group *opponent_sprites)
 {
+    // get available positions
+    auto *sprite_group = side == OPPONENT ? opponent_sprites : player_sprites;
+    std::shared_ptr<MonsterSprite> monster_sprite = nullptr;
+    // when a monster gets defeated, the group may change, but the "pos_index" won't
+    // create a list ordered by "pos_index"
+    auto ordered_pos = sprite_group->Sprites();
+    if (!ordered_pos.empty())
+    {
+
+        std::sort(
+                ordered_pos.begin(), ordered_pos.end(),
+                [](const auto &a, const auto &b)
+                {
+                    return std::dynamic_pointer_cast<MonsterSprite>(a)->pos_index <
+                           std::dynamic_pointer_cast<MonsterSprite>(b)->pos_index;
+                });
+        monster_sprite = std::dynamic_pointer_cast<MonsterSprite>(ordered_pos[target_index]);
+    }
+
     auto sprites = Sprites();
     std::sort(
             sprites.begin(), sprites.end(),
@@ -124,7 +146,10 @@ void BattleSprites::Draw(const std::shared_ptr<MonsterSprite> &current_monster_s
         if (sprite->z == BATTLE_LAYERS["outline"])
         {
             const auto outline_sprite = std::dynamic_pointer_cast<MonsterOutlineSprite>(sprite);
-            if (outline_sprite->monster_sprite == current_monster_sprite)
+            if ((outline_sprite->monster_sprite == current_monster_sprite &&
+                 !(mode == SELECTMODE_TARGET && side == PLAYER)) ||
+                (outline_sprite->monster_sprite == monster_sprite && mode == SELECTMODE_TARGET &&
+                 side == monster_sprite->entity))
             {
                 display_surface->Blit(outline_sprite->image, outline_sprite->rect);
             }

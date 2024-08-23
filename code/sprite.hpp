@@ -102,13 +102,13 @@ public:
     std::string state = "idle";
     float frame_index{};
     int index{};
+    int pos_index{};
+    SelectionSide entity;
 
 private:
 
     void Animate(float dt);
 
-    int pos_index{};
-    SelectionSide entity;
 
     std::map<std::string, std::shared_ptr<rg::Frames>> frames;
 

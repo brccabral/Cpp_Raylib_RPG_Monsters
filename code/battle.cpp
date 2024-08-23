@@ -32,7 +32,9 @@ void Battle::Update(const float dt)
 
     // drawing
     display_surface->Blit(bg_surf, rg::math::Vector2{0, 0});
-    battle_sprites.Draw(current_monster);
+    battle_sprites.Draw(
+            current_monster, selection_side, selection_mode, indexes[SELECTMODE_TARGET],
+            &player_sprites, &opponent_sprites);
     DrawUi();
 }
 
@@ -185,6 +187,9 @@ void Battle::Input()
             }
             case SELECTMODE_TARGET:
             {
+                // some attacks like "defense"/"healing" are targeting the player
+                limiter = selection_side == OPPONENT ? opponent_sprites.Sprites().size()
+                                                     : player_sprites.Sprites().size();
                 break;
             }
             default:
@@ -202,7 +207,30 @@ void Battle::Input()
         }
         if (IsKeyPressed(rl::KEY_SPACE))
         {
-            if (selection_mode == SELECTMODE_GENERAL)
+            if (selection_mode == SELECTMODE_TARGET)
+            {
+                const auto *sprite_group =
+                        selection_side == PLAYER ? &player_sprites : &opponent_sprites;
+                // when a monster gets defeated, the group may change, but the "pos_index" won't
+                // create a list ordered by "pos_index"
+                auto ordered_pos = sprite_group->Sprites();
+                std::sort(
+                        ordered_pos.begin(), ordered_pos.end(),
+                        [](const auto &a, const auto &b)
+                        {
+                            return std::dynamic_pointer_cast<MonsterSprite>(a)->pos_index <
+                                   std::dynamic_pointer_cast<MonsterSprite>(b)->pos_index;
+                        });
+                auto monster_sprite = ordered_pos[indexes[SELECTMODE_TARGET]];
+            }
+            else if (selection_mode == SELECTMODE_ATTACKS)
+            {
+                selection_mode = SELECTMODE_TARGET;
+                selected_attack =
+                        current_monster->monster->GetAbilities(false)[indexes[SELECTMODE_ATTACKS]];
+                selection_side = ATTACK_DATA[selected_attack].target;
+            }
+            else if (selection_mode == SELECTMODE_GENERAL)
             {
                 if (indexes[SELECTMODE_GENERAL] == 0)
                 {

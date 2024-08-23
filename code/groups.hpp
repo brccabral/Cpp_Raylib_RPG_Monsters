@@ -27,7 +27,10 @@ public:
 
     BattleSprites() = default;
     void Draw(const std::shared_ptr<rg::Surface> &surface) override{};
-    void Draw(const std::shared_ptr<MonsterSprite> &current_monster_sprite);
+    void
+    Draw(const std::shared_ptr<MonsterSprite> &current_monster_sprite, SelectionSide side,
+         SelectionMode mode, int target_index, const Group *player_sprites,
+         const Group *opponent_sprites);
 
 private:
 
