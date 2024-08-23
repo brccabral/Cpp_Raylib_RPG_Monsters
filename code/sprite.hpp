@@ -93,13 +93,14 @@ class MonsterSprite : public rg::sprite::Sprite
 public:
 
     MonsterSprite(
-            rg::math::Vector2 pos, const std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
-            Monster *monster, int index, int pos_index, SelectionSide entity);
+            rg::math::Vector2 pos,
+            const std::map<AnimationState, std::shared_ptr<rg::Frames>> &frames, Monster *monster,
+            int index, int pos_index, SelectionSide entity);
     void Update(float deltaTime) override;
     void SetHighlight(bool value);
 
     Monster *monster;
-    std::string state = "idle";
+    AnimationState state = ANIMATIONSTATE_IDLE;
     float frame_index{};
     int index{};
     int pos_index{};
@@ -110,7 +111,7 @@ private:
     void Animate(float dt);
 
 
-    std::map<std::string, std::shared_ptr<rg::Frames>> frames;
+    std::map<AnimationState, std::shared_ptr<rg::Frames>> frames;
 
     float animation_speed{};
     bool highlight{};
@@ -168,12 +169,12 @@ public:
 
     MonsterOutlineSprite(
             const std::shared_ptr<MonsterSprite> &monster_sprite,
-            const std::map<std::string, std::shared_ptr<rg::Frames>> &frames);
+            const std::map<AnimationState, std::shared_ptr<rg::Frames>> &frames);
     void Update(float deltaTime) override;
 
     std::shared_ptr<MonsterSprite> monster_sprite;
 
 private:
 
-    std::map<std::string, std::shared_ptr<rg::Frames>> frames;
+    std::map<AnimationState, std::shared_ptr<rg::Frames>> frames;
 };

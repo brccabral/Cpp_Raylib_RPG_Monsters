@@ -89,7 +89,7 @@ TransitionSprite::TransitionSprite(
 
 MonsterSprite::MonsterSprite(
         const rg::math::Vector2 pos,
-        const std::map<std::string, std::shared_ptr<rg::Frames>> &frames, Monster *monster,
+        const std::map<AnimationState, std::shared_ptr<rg::Frames>> &frames, Monster *monster,
         const int index, const int pos_index, const SelectionSide entity)
     : monster(monster), index(index), pos_index(pos_index), entity(entity), frames(frames)
 {
@@ -128,10 +128,10 @@ void MonsterSprite::Animate(const float dt)
     image = frames[state];
     std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(frame_index);
 
-    if (highlight)
+    if (highlight) // blink
     {
-        auto frames = std::dynamic_pointer_cast<rg::Frames>(image);
-        auto mask_surf = rg::mask::FromSurface(frames).ToFrames(frames->rows, frames->cols);
+        const auto frames = std::dynamic_pointer_cast<rg::Frames>(image);
+        const auto mask_surf = rg::mask::FromSurface(frames).ToFrames(frames->rows, frames->cols);
         mask_surf->Fill(rl::BLANK);
         mask_surf->frames = frames->frames;
         image = mask_surf;
@@ -229,7 +229,7 @@ void MonsterStatsSprite::Update(float deltaTime)
 
 MonsterOutlineSprite::MonsterOutlineSprite(
         const std::shared_ptr<MonsterSprite> &monster_sprite,
-        const std::map<std::string, std::shared_ptr<rg::Frames>> &frames)
+        const std::map<AnimationState, std::shared_ptr<rg::Frames>> &frames)
     : monster_sprite(monster_sprite), frames(frames)
 {
     z = BATTLE_LAYERS["outline"];
@@ -239,6 +239,7 @@ MonsterOutlineSprite::MonsterOutlineSprite(
     rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(
             this->monster_sprite->rect.center());
 }
+
 void MonsterOutlineSprite::Update(float deltaTime)
 {
     image = this->frames[this->monster_sprite->state];

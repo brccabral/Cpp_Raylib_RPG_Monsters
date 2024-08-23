@@ -2,14 +2,14 @@
 #include "sprite.hpp"
 
 
-Battle::Battle(
-        std::map<int, Monster> *player_monsters, std::map<int, Monster> *opponent_monsters,
-        std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *monster_frames,
-        std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *outline_frames,
-        std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons,
-        std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
-        const std::shared_ptr<rg::Surface> &bg_surf,
-        std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts)
+Battle::
+Battle(std::map<int, Monster> *player_monsters, std::map<int, Monster> *opponent_monsters,
+       std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> *monster_frames,
+       std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> *outline_frames,
+       std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons,
+       std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
+       const std::shared_ptr<rg::Surface> &bg_surf,
+       std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts)
     : player_monsters(player_monsters), opponent_monsters(opponent_monsters),
       monster_frames(monster_frames), outline_frames(outline_frames), monster_icons(monster_icons),
       ui_icons(ui_icons), bg_surf(bg_surf), fonts(fonts)

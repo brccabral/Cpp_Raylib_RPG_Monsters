@@ -104,10 +104,10 @@ bool CheckConnections(
     return false;
 }
 
-std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
+std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
 MonsterImporter(const int cols, const int rows, const char *path)
 {
-    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> result{};
+    std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> result{};
 
     for (const auto &dirEntry: std::filesystem::recursive_directory_iterator(path))
     {
@@ -116,28 +116,30 @@ MonsterImporter(const int cols, const int rows, const char *path)
         const auto monster_frames = rg::Frames::Load(entryPath.c_str(), rows, cols);
         const auto tex_width = (float) monster_frames->GetTexture().width;
         const auto tex_height = (float) monster_frames->GetTexture().height;
-        result[filename]["idle"] = monster_frames->SubFrames({0, 0, tex_width, tex_height / 2.0f});
-        result[filename]["attack"] =
+        result[filename][ANIMATIONSTATE_IDLE] =
+                monster_frames->SubFrames({0, 0, tex_width, tex_height / 2.0f});
+        result[filename][ANIMATIONSTATE_ATTACK] =
                 monster_frames->SubFrames({0, tex_height / 2.0f, tex_width, tex_height / 2.0f});
     }
     return result;
 }
 
-std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> OutlineCreator(
-        const std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
+std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> OutlineCreator(
+        const std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
                 &monster_frames,
         const float width)
 {
-    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> result;
+    std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> result;
     for (auto &[name, state_frames]: monster_frames)
     {
         result[name] = {};
         for (auto &[state, frames]: state_frames)
         {
-            auto mask_surf = rg::mask::FromSurface(frames).ToFrames(frames->rows, frames->cols);
+            const auto mask_surf =
+                    rg::mask::FromSurface(frames).ToFrames(frames->rows, frames->cols);
             mask_surf->SetColorKey(rl::BLACK);
 
-            auto new_surf = std::make_shared<rg::Frames>(
+            const auto new_surf = std::make_shared<rg::Frames>(
                     frames->render.texture.width, frames->render.texture.height, frames->rows,
                     frames->cols);
             new_surf->frames = frames->frames;

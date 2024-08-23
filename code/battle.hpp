@@ -12,9 +12,9 @@ class Battle
 public:
 
     Battle(std::map<int, Monster> *player_monsters, std::map<int, Monster> *opponent_monsters,
-           std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
+           std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
                    *monster_frames,
-           std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
+           std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
                    *outline_frames,
            std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons,
            std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
@@ -44,8 +44,8 @@ private:
     std::shared_ptr<rg::Surface> display_surface = rg::display::GetSurface();
     std::map<int, Monster> *player_monsters;
     std::map<int, Monster> *opponent_monsters;
-    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *monster_frames;
-    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *outline_frames;
+    std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> *monster_frames;
+    std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> *outline_frames;
     std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons;
     std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons;
     std::shared_ptr<rg::Surface> bg_surf;

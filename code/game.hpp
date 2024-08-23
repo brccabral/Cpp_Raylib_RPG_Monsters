@@ -1,8 +1,6 @@
 #pragma once
-#include "battle.hpp"
-
-
 #include <rygame.hpp>
+#include "battle.hpp"
 #include "dialogtree.hpp"
 #include "entities.hpp"
 #include "groups.hpp"
@@ -61,9 +59,9 @@ private:
     std::shared_ptr<MonsterIndex> monster_index;
     bool index_open{};
     std::map<std::string, std::shared_ptr<rg::Surface>> monster_icons;
-    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
+    std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
             monster_frames; // Name, Idle/Attack, Frames
-    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
+    std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
             outline_frames; // Name, Idle/Attack, Frames
     std::map<std::string, std::shared_ptr<rg::Surface>> ui_icons;
 

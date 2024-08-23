@@ -125,7 +125,6 @@ void BattleSprites::Draw(
     auto ordered_pos = sprite_group->Sprites();
     if (!ordered_pos.empty())
     {
-
         std::sort(
                 ordered_pos.begin(), ordered_pos.end(),
                 [](const auto &a, const auto &b)

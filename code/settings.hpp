@@ -98,3 +98,9 @@ inline std::map<std::string, std::vector<std::pair<std::string, BattleChoice>>> 
                 }, //
         }, //
 };
+
+enum AnimationState
+{
+    ANIMATIONSTATE_IDLE = 0,
+    ANIMATIONSTATE_ATTACK,
+};
