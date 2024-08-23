@@ -316,12 +316,12 @@ enum Attack
 
 enum AttackAnimation
 {
-    ANIMATION_FIRE = 0,
-    ANIMATION_GREEN,
-    ANIMATION_SCRATCH,
-    ANIMATION_SPLASH,
-    ANIMATION_EXPLOSION,
-    ANIMATION_ICE
+    ATTACKANIMATION_FIRE = 0,
+    ATTACKANIMATION_GREEN,
+    ATTACKANIMATION_SCRATCH,
+    ATTACKANIMATION_SPLASH,
+    ATTACKANIMATION_EXPLOSION,
+    ATTACKANIMATION_ICE
 };
 
 enum ElementType
@@ -339,15 +339,15 @@ static std::map<ElementType, std::string> NAMES_ELEMENT_TYPES{
         {ELEMENT_NORMAL, "normal"}};
 
 static std::map<std::string, AttackAnimation> ATTACK_ANIMATION_NAMES = {
-        {"fire", ANIMATION_FIRE},           {"green", ANIMATION_GREEN},
-        {"scratch", ANIMATION_SCRATCH},     {"splash", ANIMATION_SPLASH},
-        {"explosion", ANIMATION_EXPLOSION}, {"ice", ANIMATION_ICE},
+        {"fire", ATTACKANIMATION_FIRE},           {"green", ATTACKANIMATION_GREEN},
+        {"scratch", ATTACKANIMATION_SCRATCH},     {"splash", ATTACKANIMATION_SPLASH},
+        {"explosion", ATTACKANIMATION_EXPLOSION}, {"ice", ATTACKANIMATION_ICE},
 };
 
 static std::map<AttackAnimation, std::string> NAMES_ATTACK_ANIMATION = {
-        {ANIMATION_FIRE, "fire"},           {ANIMATION_GREEN, "green"},
-        {ANIMATION_SCRATCH, "scratch"},     {ANIMATION_SPLASH, "splash"},
-        {ANIMATION_EXPLOSION, "explosion"}, {ANIMATION_ICE, "ice"},
+        {ATTACKANIMATION_FIRE, "fire"},           {ATTACKANIMATION_GREEN, "green"},
+        {ATTACKANIMATION_SCRATCH, "scratch"},     {ATTACKANIMATION_SPLASH, "splash"},
+        {ATTACKANIMATION_EXPLOSION, "explosion"}, {ATTACKANIMATION_ICE, "ice"},
 };
 
 struct MonsterData
@@ -663,16 +663,18 @@ struct AttackData
 };
 
 inline std::map<Attack, AttackData> ATTACK_DATA = {
-        {ATTACK_BURN, {"burn", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ANIMATION_FIRE}}, //
-        {ATTACK_HEAL, {"heal", PLAYER, -1.2f, 600, ELEMENT_PLANT, ANIMATION_GREEN}}, //
-        {ATTACK_BATTLECRY, {"battlecry", PLAYER, -1.4f, 20, ELEMENT_NORMAL, ANIMATION_GREEN}}, //
-        {ATTACK_SPARK, {"spark", OPPONENT, 1.1f, 20, ELEMENT_FIRE, ANIMATION_FIRE}}, //
-        {ATTACK_SCRATCH, {"scratch", OPPONENT, 1.2f, 20, ELEMENT_NORMAL, ANIMATION_SCRATCH}}, //
-        {ATTACK_SPLASH, {"splash", OPPONENT, 2.0f, 15, ELEMENT_WATER, ANIMATION_SPLASH}}, //
-        {ATTACK_FIRE, {"fire", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ANIMATION_FIRE}}, //
+        {ATTACK_BURN, {"burn", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ATTACKANIMATION_FIRE}}, //
+        {ATTACK_HEAL, {"heal", PLAYER, -1.2f, 600, ELEMENT_PLANT, ATTACKANIMATION_GREEN}}, //
+        {ATTACK_BATTLECRY,
+         {"battlecry", PLAYER, -1.4f, 20, ELEMENT_NORMAL, ATTACKANIMATION_GREEN}}, //
+        {ATTACK_SPARK, {"spark", OPPONENT, 1.1f, 20, ELEMENT_FIRE, ATTACKANIMATION_FIRE}}, //
+        {ATTACK_SCRATCH,
+         {"scratch", OPPONENT, 1.2f, 20, ELEMENT_NORMAL, ATTACKANIMATION_SCRATCH}}, //
+        {ATTACK_SPLASH, {"splash", OPPONENT, 2.0f, 15, ELEMENT_WATER, ATTACKANIMATION_SPLASH}}, //
+        {ATTACK_FIRE, {"fire", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ATTACKANIMATION_FIRE}}, //
         {ATTACK_EXPLOSTION,
-         {"explosion", OPPONENT, 2.0f, 90, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
+         {"explosion", OPPONENT, 2.0f, 90, ELEMENT_FIRE, ATTACKANIMATION_EXPLOSION}}, //
         {ATTACK_ANNIHILATE,
-         {"annihilate", OPPONENT, 3.0f, 30, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
-        {ATTACK_ICE, {"ice", OPPONENT, 2.0f, 15, ELEMENT_WATER, ANIMATION_ICE}}, //
+         {"annihilate", OPPONENT, 3.0f, 30, ELEMENT_FIRE, ATTACKANIMATION_EXPLOSION}}, //
+        {ATTACK_ICE, {"ice", OPPONENT, 2.0f, 15, ELEMENT_WATER, ATTACKANIMATION_ICE}}, //
 };
