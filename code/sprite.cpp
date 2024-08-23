@@ -122,9 +122,27 @@ void MonsterSprite::SetHighlight(const bool value)
     }
 }
 
+void MonsterSprite::ActivateAttack(
+        const std::shared_ptr<MonsterSprite> &monster_sprite, const Attack selected_attack)
+{
+    state = ANIMATIONSTATE_ATTACK;
+    frame_index = 0;
+    target_sprite = monster_sprite;
+    current_attack = selected_attack;
+    monster->ReduceEnergy(selected_attack);
+}
+
 void MonsterSprite::Animate(const float dt)
 {
     frame_index += ANIMATION_SPEED * dt;
+    // attack animation has finished
+    if (state == ANIMATIONSTATE_ATTACK &&
+        frame_index >= std::dynamic_pointer_cast<rg::Frames>(image)->frames.size())
+    {
+        // apply attack
+        state = ANIMATIONSTATE_IDLE;
+    }
+
     image = frames[state];
     std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(frame_index);
 

@@ -98,6 +98,8 @@ public:
             int index, int pos_index, SelectionSide entity);
     void Update(float deltaTime) override;
     void SetHighlight(bool value);
+    void
+    ActivateAttack(const std::shared_ptr<MonsterSprite> &monster_sprite, Attack selected_attack);
 
     Monster *monster;
     AnimationState state = ANIMATIONSTATE_IDLE;
@@ -116,6 +118,9 @@ private:
     float animation_speed{};
     bool highlight{};
     std::map<std::string, rg::Timer> timers;
+
+    std::shared_ptr<MonsterSprite> target_sprite = nullptr;
+    Attack current_attack = ATTACK_NONE;
 };
 
 class MonsterNameSprite : public rg::sprite::Sprite
