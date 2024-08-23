@@ -427,8 +427,11 @@ void Battle::DrawSwitch()
             }
         }
 
-        display_surface->Blit(icon_surf, icon_rect);
-        display_surface->Blit(text_surf, text_rect);
+        if (bg_rect.collidepoint(item_bg_rect.center()))
+        {
+            display_surface->Blit(icon_surf, icon_rect);
+            display_surface->Blit(text_surf, text_rect);
+        }
 
         ++index;
     }
