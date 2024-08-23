@@ -228,6 +228,13 @@ void Battle::Input()
                 }
             }
         }
+        if (IsKeyPressed(rl::KEY_ESCAPE))
+        {
+            if (selection_mode >= SELECTMODE_ATTACKS && selection_mode <= SELECTMODE_TARGET)
+            {
+                selection_mode = SELECTMODE_GENERAL;
+            }
+        }
     }
 }
 
