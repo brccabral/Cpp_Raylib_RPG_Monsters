@@ -396,9 +396,8 @@ void Battle::DrawSwitch()
     for (auto &[i, monster]: available_monsters)
     {
         const bool selected = index == indexes[SELECTMODE_SWITCH];
-        // auto item_bg_rect = rg::Rect{0, 0, width, item_height}.midleft(rg::math::Vector2{
-        //         bg_rect.left(), bg_rect.top() + item_height / 2 + index * item_height +
-        //         v_offset});
+        auto item_bg_rect = rg::Rect{0, 0, width, item_height}.midleft(rg::math::Vector2{
+                bg_rect.left(), bg_rect.top() + item_height / 2 + index * item_height + v_offset});
         auto icon_surf = (*monster_icons)[monster.name];
         auto icon_rect = icon_surf->GetRect().midleft(
                 bg_rect.topleft() +
@@ -407,6 +406,26 @@ void Battle::DrawSwitch()
                 rl::TextFormat("%s (%d)", monster.name.c_str(), monster.level),
                 selected ? COLORS["red"] : COLORS["black"]);
         auto text_rect = text_surf->GetRect().topleft({bg_rect.left() + 90, icon_rect.top()});
+
+        // selection bg
+        if (selected)
+        {
+            if (item_bg_rect.collidepoint(bg_rect.topleft()))
+            {
+                rg::draw::rect(
+                        display_surface, COLORS["dark white"], item_bg_rect, 0, 5, true, true);
+            }
+            else if (item_bg_rect.collidepoint(bg_rect.midbottom() + rg::math::Vector2{0, -1}))
+            {
+                rg::draw::rect(
+                        display_surface, COLORS["dark white"], item_bg_rect, 0, 5, false, false,
+                        true, true);
+            }
+            else
+            {
+                rg::draw::rect(display_surface, COLORS["dark white"], item_bg_rect);
+            }
+        }
 
         display_surface->Blit(icon_surf, icon_rect);
         display_surface->Blit(text_surf, text_rect);
