@@ -431,6 +431,17 @@ void Battle::DrawSwitch()
         {
             display_surface->Blit(icon_surf, icon_rect);
             display_surface->Blit(text_surf, text_rect);
+
+            auto health_rect =
+                    rg::Rect{text_rect.bottomleft() + rg::math::Vector2{0, 4}, {100.0f, 4.0f}};
+            auto energy_rect =
+                    rg::Rect{health_rect.bottomleft() + rg::math::Vector2{0, 2}, {80, 4}};
+            rg::draw::bar(
+                    display_surface, health_rect, monster.health, monster.GetStat("max_health"),
+                    COLORS["red"], COLORS["black"]);
+            rg::draw::bar(
+                    display_surface, energy_rect, monster.energy, monster.GetStat("max_energy"),
+                    COLORS["blue"], COLORS["black"]);
         }
 
         ++index;
