@@ -101,12 +101,12 @@ public:
     Monster *monster;
     std::string state = "idle";
     float frame_index{};
+    int index{};
 
 private:
 
     void Animate(float dt);
 
-    int index{};
     int pos_index{};
     SelectionSide entity;
 

@@ -16,6 +16,7 @@ public:
                    *monster_frames,
            std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
                    *outline_frames,
+           std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons,
            std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
            const std::shared_ptr<rg::Surface> &bg_surf,
            std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts);
@@ -45,6 +46,7 @@ private:
     std::map<int, Monster> *opponent_monsters;
     std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *monster_frames;
     std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *outline_frames;
+    std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons;
     std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons;
     std::shared_ptr<rg::Surface> bg_surf;
     std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts;
@@ -58,4 +60,6 @@ private:
     SelectionMode selection_mode{};
     SelectionSide selection_side{};
     std::map<SelectionMode, int> indexes;
+
+    std::map<int, Monster> available_monsters;
 };

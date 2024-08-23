@@ -6,12 +6,13 @@ Battle::Battle(
         std::map<int, Monster> *player_monsters, std::map<int, Monster> *opponent_monsters,
         std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *monster_frames,
         std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> *outline_frames,
+        std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons,
         std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
         const std::shared_ptr<rg::Surface> &bg_surf,
         std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts)
     : player_monsters(player_monsters), opponent_monsters(opponent_monsters),
-      monster_frames(monster_frames), outline_frames(outline_frames), ui_icons(ui_icons),
-      bg_surf(bg_surf), fonts(fonts)
+      monster_frames(monster_frames), outline_frames(outline_frames), monster_icons(monster_icons),
+      ui_icons(ui_icons), bg_surf(bg_surf), fonts(fonts)
 {
     indexes[SELECTMODE_GENERAL] = 0;
     indexes[SELECTMODE_MONSTER] = 0;
@@ -179,6 +180,7 @@ void Battle::Input()
             }
             case SELECTMODE_SWITCH:
             {
+                limiter = available_monsters.size();
                 break;
             }
             case SELECTMODE_TARGET:
@@ -347,4 +349,68 @@ void Battle::DrawAttacks()
 }
 
 void Battle::DrawSwitch()
-{}
+{
+    // data
+    constexpr float width = 300;
+    constexpr float height = 320;
+    constexpr int visible_monsters = 4;
+    constexpr float item_height = height / visible_monsters;
+    int v_offset;
+    if (indexes[SELECTMODE_SWITCH] < visible_monsters)
+    {
+        v_offset = 0;
+    }
+    else
+    {
+        v_offset = -(indexes[SELECTMODE_SWITCH] - visible_monsters + 1) * item_height;
+    }
+
+    // bg
+    const auto bg_rect = rg::Rect{0, 0, width, height}.midleft(
+            current_monster->rect.midright() + rg::math::Vector2{20, 0});
+    rg::draw::rect(display_surface, COLORS["white"], bg_rect, 0, 5);
+
+    // monsters
+    std::vector<std::pair<int, Monster *>> active_monsters; // monsters in battle
+    active_monsters.reserve(player_sprites.Sprites().size());
+    for (auto &monster: player_sprites.Sprites())
+    {
+        const auto monster_sprite = std::dynamic_pointer_cast<MonsterSprite>(monster);
+        active_monsters.emplace_back(monster_sprite->index, monster_sprite->monster);
+    }
+
+    // find player's monsters that are not in battle
+    available_monsters.clear();
+    for (auto &[index, monster]: *player_monsters)
+    {
+        auto find_pair = std::make_pair(index, &monster);
+        if (monster.health > 0 &&
+            std::find(active_monsters.begin(), active_monsters.end(), find_pair) ==
+                    active_monsters.end())
+        {
+            available_monsters[index] = monster;
+        }
+    }
+
+    int index = 0;
+    for (auto &[i, monster]: available_monsters)
+    {
+        const bool selected = index == indexes[SELECTMODE_SWITCH];
+        // auto item_bg_rect = rg::Rect{0, 0, width, item_height}.midleft(rg::math::Vector2{
+        //         bg_rect.left(), bg_rect.top() + item_height / 2 + index * item_height +
+        //         v_offset});
+        auto icon_surf = (*monster_icons)[monster.name];
+        auto icon_rect = icon_surf->GetRect().midleft(
+                bg_rect.topleft() +
+                rg::math::Vector2{10, item_height / 2 + index * item_height + v_offset});
+        auto text_surf = (*fonts)["regular"]->render(
+                rl::TextFormat("%s (%d)", monster.name.c_str(), monster.level),
+                selected ? COLORS["red"] : COLORS["black"]);
+        auto text_rect = text_surf->GetRect().topleft({bg_rect.left() + 90, icon_rect.top()});
+
+        display_surface->Blit(icon_surf, icon_rect);
+        display_surface->Blit(text_surf, text_rect);
+
+        ++index;
+    }
+}

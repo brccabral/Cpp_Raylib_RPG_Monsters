@@ -93,9 +93,9 @@ MonsterSprite::MonsterSprite(
         const int index, const int pos_index, const SelectionSide entity)
     : monster(monster), index(index), pos_index(pos_index), entity(entity), frames(frames)
 {
-    int p = this->index + this->pos_index + this->entity;
+    // int p = this->index + this->pos_index + this->entity;
     image = this->frames[state];
-    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(p - p);
+    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas();
     rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(pos);
     animation_speed = (float) ANIMATION_SPEED + rg::math::get_random_uniform(-1, 1);
     z = BATTLE_LAYERS["monster"];
