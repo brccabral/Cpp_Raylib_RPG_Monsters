@@ -188,3 +188,15 @@ std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> Out
     }
     return result;
 }
+
+std::map<AttackAnimation, std::shared_ptr<rg::Frames>> AttackImporter(const char *path)
+{
+    std::map<AttackAnimation, std::shared_ptr<rg::Frames>> result;
+    for (const auto &dirEntry: std::filesystem::recursive_directory_iterator(path))
+    {
+        auto filename = dirEntry.path().stem().string();
+        auto entryPath = dirEntry.path().string();
+        result[ATTACK_ANIMATION_NAMES[filename]] = rg::Frames::Load(entryPath.c_str(), 1, 4);
+    }
+    return result;
+}

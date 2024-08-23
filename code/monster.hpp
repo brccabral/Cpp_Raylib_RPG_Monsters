@@ -15,6 +15,7 @@ public:
     std::array<std::pair<float, float>, 3> GetInfo();
     void Update(float dt);
     void ReduceEnergy(Attack attack);
+    float GetBaseDamage(Attack attack);
 
     friend std::ostream &operator<<(std::ostream &os, Monster const &m);
 

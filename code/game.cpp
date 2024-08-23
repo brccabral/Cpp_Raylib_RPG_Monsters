@@ -48,7 +48,7 @@ Game::Game()
 
     battle = std::make_shared<Battle>(
             &player_monsters, &dummy_monsters, &monster_frames, &outline_frames, &monster_icons,
-            &ui_icons, bg_frames["forest"], &fonts);
+            &ui_icons, &attack_frames, bg_frames["forest"], &fonts);
 }
 
 Game::~Game()
@@ -117,6 +117,8 @@ void Game::ImportAssets()
 
     monster_frames = MonsterImporter(4, 2, "resources/graphics/monsters");
     outline_frames = OutlineCreator(monster_frames, 4);
+
+    attack_frames = AttackImporter("resources/graphics/attacks");
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)

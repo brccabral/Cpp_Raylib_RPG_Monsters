@@ -8,11 +8,12 @@ Battle(std::map<int, Monster> *player_monsters, std::map<int, Monster> *opponent
        std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> *outline_frames,
        std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons,
        std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
+       std::map<AttackAnimation, std::shared_ptr<rg::Frames>> *attack_frames,
        const std::shared_ptr<rg::Surface> &bg_surf,
        std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts)
     : player_monsters(player_monsters), opponent_monsters(opponent_monsters),
       monster_frames(monster_frames), outline_frames(outline_frames), monster_icons(monster_icons),
-      ui_icons(ui_icons), bg_surf(bg_surf), fonts(fonts)
+      ui_icons(ui_icons), bg_surf(bg_surf), fonts(fonts), attack_frames(attack_frames)
 {
     indexes[SELECTMODE_GENERAL] = 0;
     indexes[SELECTMODE_MONSTER] = 0;
@@ -81,8 +82,10 @@ void Battle::CreateMonster(Monster *monster, int index, int pos_index, Selection
         pos = BATTLE_POSITIONS["right"][pos_index];
         groups = {&battle_sprites, &opponent_sprites};
     }
-    const auto monster_sprite =
-            std::make_shared<MonsterSprite>(pos, frames, monster, index, pos_index, entity);
+    const auto monster_sprite = std::make_shared<MonsterSprite>(
+            pos, frames, monster, index, pos_index, entity,
+            [this](const std::shared_ptr<MonsterSprite> &target_sprite, const Attack attack,
+                   const float amount) { ApplyAttack(target_sprite, attack, amount); });
     monster_sprite->add(groups);
 
     std::make_shared<MonsterOutlineSprite>(monster_sprite, outlines)->add(&battle_sprites);
@@ -272,6 +275,16 @@ void Battle::Input()
             }
         }
     }
+}
+
+void Battle::ApplyAttack(
+        const std::shared_ptr<MonsterSprite> &target_sprite, Attack attack, float amount)
+{
+    // play an animation
+    std::make_shared<AttackSprite>(
+            target_sprite->rect.center(), (*attack_frames)[ATTACK_DATA[attack].animation])
+            ->add(&battle_sprites);
+    // get correct attack damage amount (defense, element)
 }
 
 void Battle::DrawUi()

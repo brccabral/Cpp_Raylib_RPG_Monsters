@@ -25,11 +25,11 @@ public:
             int z = WORLD_LAYERS["main"]);
 
     void Update(float deltaTime) override;
-    void Animate(float dt);
+    virtual void Animate(float dt);
 
     std::shared_ptr<rg::Frames> image;
 
-private:
+protected:
 
     float frame_index{};
 };
@@ -95,7 +95,10 @@ public:
     MonsterSprite(
             rg::math::Vector2 pos,
             const std::map<AnimationState, std::shared_ptr<rg::Frames>> &frames, Monster *monster,
-            int index, int pos_index, SelectionSide entity);
+            int index, int pos_index, SelectionSide entity,
+            const std::function<
+                    void(const std::shared_ptr<MonsterSprite> &target_sprite, Attack attack,
+                         float amount)> &apply_attack);
     void Update(float deltaTime) override;
     void SetHighlight(bool value);
     void
@@ -112,7 +115,6 @@ private:
 
     void Animate(float dt);
 
-
     std::map<AnimationState, std::shared_ptr<rg::Frames>> frames;
 
     float animation_speed{};
@@ -121,6 +123,10 @@ private:
 
     std::shared_ptr<MonsterSprite> target_sprite = nullptr;
     Attack current_attack = ATTACK_NONE;
+
+    const std::function<void(
+            const std::shared_ptr<MonsterSprite> &target_sprite, Attack attack, float amount)>
+            apply_attack;
 };
 
 class MonsterNameSprite : public rg::sprite::Sprite
@@ -182,4 +188,14 @@ public:
 private:
 
     std::map<AnimationState, std::shared_ptr<rg::Frames>> frames;
+};
+
+class AttackSprite : public AnimatedSprite
+{
+public:
+
+    AttackSprite(
+            rg::math::Vector2 position, const std::shared_ptr<rg::Frames> &frames,
+            int z = BATTLE_LAYERS["overlay"]);
+    void Animate(float dt) override;
 };

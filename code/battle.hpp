@@ -18,6 +18,7 @@ public:
                    *outline_frames,
            std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons,
            std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
+           std::map<AttackAnimation, std::shared_ptr<rg::Frames>> *attack_frames,
            const std::shared_ptr<rg::Surface> &bg_surf,
            std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts);
     void Update(float dt);
@@ -34,6 +35,8 @@ private:
     void CheckActiveGroup(const rg::sprite::Group *group, SelectionSide side);
     void UpdateAllMonsters(bool do_pause) const;
     void Input();
+    void
+    ApplyAttack(const std::shared_ptr<MonsterSprite> &target_sprite, Attack attack, float amount);
 
     // ui
     void DrawUi();
@@ -63,4 +66,5 @@ private:
 
     std::map<int, Monster> available_monsters;
     Attack selected_attack = ATTACK_NONE;
+    std::map<AttackAnimation, std::shared_ptr<rg::Frames>> *attack_frames;
 };

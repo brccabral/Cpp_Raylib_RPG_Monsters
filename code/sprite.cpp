@@ -90,8 +90,12 @@ TransitionSprite::TransitionSprite(
 MonsterSprite::MonsterSprite(
         const rg::math::Vector2 pos,
         const std::map<AnimationState, std::shared_ptr<rg::Frames>> &frames, Monster *monster,
-        const int index, const int pos_index, const SelectionSide entity)
-    : monster(monster), index(index), pos_index(pos_index), entity(entity), frames(frames)
+        const int index, const int pos_index, const SelectionSide entity,
+        const std::function<
+                void(const std::shared_ptr<MonsterSprite> &target_sprite, const Attack attack,
+                     float amount)> &apply_attack)
+    : monster(monster), index(index), pos_index(pos_index), entity(entity), frames(frames),
+      apply_attack(apply_attack)
 {
     // int p = this->index + this->pos_index + this->entity;
     image = this->frames[state];
@@ -140,6 +144,7 @@ void MonsterSprite::Animate(const float dt)
         frame_index >= std::dynamic_pointer_cast<rg::Frames>(image)->frames.size())
     {
         // apply attack
+        apply_attack(target_sprite, current_attack, monster->GetBaseDamage(current_attack));
         state = ANIMATIONSTATE_IDLE;
     }
 
@@ -264,4 +269,24 @@ void MonsterOutlineSprite::Update(float deltaTime)
     std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(this->monster_sprite->frame_index);
     rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(
             this->monster_sprite->rect.center());
+}
+
+AttackSprite::AttackSprite(
+        const rg::math::Vector2 position, const std::shared_ptr<rg::Frames> &frames, const int z)
+    : AnimatedSprite(position, frames, z)
+{
+    rect.center(position);
+}
+
+void AttackSprite::Animate(const float dt)
+{
+    frame_index += ANIMATION_SPEED * dt;
+    if (frame_index < image->frames.size())
+    {
+        image->SetAtlas(frame_index);
+    }
+    else
+    {
+        Kill();
+    }
 }

@@ -73,6 +73,11 @@ void Monster::ReduceEnergy(const Attack attack)
     energy -= ATTACK_DATA[attack].cost;
 }
 
+float Monster::GetBaseDamage(const Attack attack)
+{
+    return GetStat("attack") * ATTACK_DATA[attack].amount;
+}
+
 std::ostream &operator<<(std::ostream &os, Monster const &m)
 {
     char level[3]{};

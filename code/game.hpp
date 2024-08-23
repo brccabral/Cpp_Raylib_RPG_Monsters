@@ -64,6 +64,7 @@ private:
     std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
             outline_frames; // Name, Idle/Attack, Frames
     std::map<std::string, std::shared_ptr<rg::Surface>> ui_icons;
+    std::map<AttackAnimation, std::shared_ptr<rg::Frames>> attack_frames;
 
     std::map<std::string, std::shared_ptr<rg::Surface>> bg_frames;
 };

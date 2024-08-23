@@ -24,3 +24,5 @@ std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> Out
         const std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
                 &monster_frames,
         float width);
+
+std::map<AttackAnimation, std::shared_ptr<rg::Frames>> AttackImporter(const char *path);
