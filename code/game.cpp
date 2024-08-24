@@ -13,22 +13,22 @@ Game::Game()
     rg::display::SetCaption("RPG Monsters");
 
     int player_index = 0;
-    player_monsters[player_index++] = Monster("Charmadillo", 30);
-    player_monsters[player_index++] = Monster("Friolera", 30);
-    player_monsters[player_index++] = Monster("Larvea", 3);
-    player_monsters[player_index++] = Monster("Atrox", 24);
-    player_monsters[player_index++] = Monster("Sparchu", 24);
-    player_monsters[player_index++] = Monster("Gulfin", 24);
-    player_monsters[player_index++] = Monster("Jacana", 2);
-    player_monsters[player_index++] = Monster("Pouch", 3);
-    player_monsters[player_index++] = Monster("Finsta", 30);
+    player_monsters[player_index++] = std::make_shared<Monster>("Charmadillo", 30);
+    player_monsters[player_index++] = std::make_shared<Monster>("Friolera", 30);
+    player_monsters[player_index++] = std::make_shared<Monster>("Larvea", 3);
+    player_monsters[player_index++] = std::make_shared<Monster>("Atrox", 24);
+    player_monsters[player_index++] = std::make_shared<Monster>("Sparchu", 24);
+    player_monsters[player_index++] = std::make_shared<Monster>("Gulfin", 24);
+    player_monsters[player_index++] = std::make_shared<Monster>("Jacana", 2);
+    player_monsters[player_index++] = std::make_shared<Monster>("Pouch", 3);
+    player_monsters[player_index++] = std::make_shared<Monster>("Finsta", 30);
 
     int dummy_index = 0;
-    dummy_monsters[dummy_index++] = Monster("Atrox", 2);
-    dummy_monsters[dummy_index++] = Monster("Sparchu", 3);
-    dummy_monsters[dummy_index++] = Monster("Gulfin", 3);
-    dummy_monsters[dummy_index++] = Monster("Jacana", 2);
-    dummy_monsters[dummy_index++] = Monster("Pouch", 3);
+    dummy_monsters[dummy_index++] = std::make_shared<Monster>("Atrox", 2);
+    dummy_monsters[dummy_index++] = std::make_shared<Monster>("Sparchu", 3);
+    dummy_monsters[dummy_index++] = std::make_shared<Monster>("Gulfin", 3);
+    dummy_monsters[dummy_index++] = std::make_shared<Monster>("Jacana", 2);
+    dummy_monsters[dummy_index++] = std::make_shared<Monster>("Pouch", 3);
 
     // groups
     all_sprites = std::make_shared<AllSprites>();

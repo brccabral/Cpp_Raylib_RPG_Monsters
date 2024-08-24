@@ -1,8 +1,6 @@
 #pragma once
-#include "groups.hpp"
-
-
 #include <rygame.hpp>
+#include "groups.hpp"
 #include "monster.hpp"
 #include "sprite.hpp"
 
@@ -11,7 +9,8 @@ class Battle
 {
 public:
 
-    Battle(std::map<int, Monster> *player_monsters, std::map<int, Monster> *opponent_monsters,
+    Battle(std::map<int, std::shared_ptr<Monster>> *player_monsters,
+           std::map<int, std::shared_ptr<Monster>> *opponent_monsters,
            std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
                    *monster_frames,
            std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
@@ -26,7 +25,8 @@ public:
 private:
 
     void Setup();
-    void CreateMonster(Monster *monster, int index, int pos_index, SelectionSide entity);
+    void
+    CreateMonster(const std::shared_ptr<Monster>& monster, int index, int pos_index, SelectionSide entity);
     // Battle System
     // check what is the first monster to get Initiative = 100
     // it depends on monster speed
@@ -47,8 +47,8 @@ private:
     void DrawSwitch();
 
     std::shared_ptr<rg::Surface> display_surface = rg::display::GetSurface();
-    std::map<int, Monster> *player_monsters;
-    std::map<int, Monster> *opponent_monsters;
+    std::map<int, std::shared_ptr<Monster>> *player_monsters;
+    std::map<int, std::shared_ptr<Monster>> *opponent_monsters;
     std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> *monster_frames;
     std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> *outline_frames;
     std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons;
@@ -66,7 +66,7 @@ private:
     SelectionSide selection_side{};
     std::map<SelectionMode, int> indexes;
 
-    std::map<int, Monster> available_monsters;
+    std::map<int, std::shared_ptr<Monster>> available_monsters;
     Attack selected_attack = ATTACK_NONE;
     std::map<AttackAnimation, std::shared_ptr<rg::Frames>> *attack_frames;
 };

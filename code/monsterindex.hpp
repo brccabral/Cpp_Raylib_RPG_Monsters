@@ -9,7 +9,7 @@ class MonsterIndex
 public:
 
     MonsterIndex(
-            std::map<int, Monster> *monsters,
+            std::map<int, std::shared_ptr<Monster>> *monsters,
             const std::map<std::string, std::shared_ptr<rg::font::Font>> &fonts,
             std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons,
             std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
@@ -24,7 +24,7 @@ private:
     void DisplayMain(double dt);
 
     std::shared_ptr<rg::Surface> display_surface = rg::display::GetSurface();
-    std::map<int, Monster> *monsters;
+    std::map<int, std::shared_ptr<Monster>> *monsters;
     std::map<std::string, std::shared_ptr<rg::font::Font>> fonts;
     std::shared_ptr<rg::Surface> tint_surf;
 

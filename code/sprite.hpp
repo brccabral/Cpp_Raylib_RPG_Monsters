@@ -94,17 +94,22 @@ public:
 
     MonsterSprite(
             rg::math::Vector2 pos,
-            const std::map<AnimationState, std::shared_ptr<rg::Frames>> &frames, Monster *monster,
-            int index, int pos_index, SelectionSide entity,
+            const std::map<AnimationState, std::shared_ptr<rg::Frames>> &frames,
+            const std::shared_ptr<Monster> &monster, int index, int pos_index, SelectionSide entity,
             const std::function<
                     void(const std::shared_ptr<MonsterSprite> &target_sprite, Attack attack,
-                         float amount)> &apply_attack);
+                         float amount)> &apply_attack,
+            const std::function<
+                    void(std::shared_ptr<Monster> monster, int index, int pos_index,
+                         SelectionSide entity)> &createMonster);
     void Update(float deltaTime) override;
     void SetHighlight(bool value);
     void
     ActivateAttack(const std::shared_ptr<MonsterSprite> &monster_sprite, Attack selected_attack);
+    void DelayedKill(
+            const std::shared_ptr<Monster> &monster, int index, int pos_index, SelectionSide side);
 
-    Monster *monster;
+    std::shared_ptr<Monster> monster;
     AnimationState state = ANIMATIONSTATE_IDLE;
     float frame_index{};
     int index{};
@@ -114,6 +119,7 @@ public:
 private:
 
     void Animate(float dt);
+    void Destroy();
 
     std::map<AnimationState, std::shared_ptr<rg::Frames>> frames;
 
@@ -127,6 +133,14 @@ private:
     const std::function<void(
             const std::shared_ptr<MonsterSprite> &target_sprite, Attack attack, float amount)>
             apply_attack;
+
+    std::shared_ptr<Monster> newMonster = nullptr;
+    int newIndex = 0;
+    int newPosIndex = 0;
+    SelectionSide newSide{};
+    const std::function<void(
+            std::shared_ptr<Monster> monster, int index, int pos_index, SelectionSide entity)>
+            createMonster;
 };
 
 class MonsterNameSprite : public rg::sprite::Sprite

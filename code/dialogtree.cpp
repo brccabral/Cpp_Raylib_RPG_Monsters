@@ -1,5 +1,4 @@
 #include "dialogtree.hpp"
-#include "sprite.hpp"
 
 
 DialogTree::DialogTree(

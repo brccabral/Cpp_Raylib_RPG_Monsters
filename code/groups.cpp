@@ -1,7 +1,6 @@
 #include <algorithm>
 #include "groups.hpp"
 #include "settings.hpp"
-#include "sprite.hpp"
 
 
 AllSprites::AllSprites() : Group()
@@ -114,7 +113,7 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
 
 void BattleSprites::Draw(
         const std::shared_ptr<MonsterSprite> &current_monster_sprite, const SelectionSide side,
-        const SelectionMode mode, const int target_index, const Group *player_sprites,
+        const SelectionMode mode, int target_index, const Group *player_sprites,
         const Group *opponent_sprites)
 {
     // get available positions
@@ -132,6 +131,7 @@ void BattleSprites::Draw(
                     return std::dynamic_pointer_cast<MonsterSprite>(a)->pos_index <
                            std::dynamic_pointer_cast<MonsterSprite>(b)->pos_index;
                 });
+        target_index = target_index % ordered_pos.size();
         monster_sprite = std::dynamic_pointer_cast<MonsterSprite>(ordered_pos[target_index]);
     }
 

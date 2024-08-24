@@ -54,8 +54,8 @@ private:
     // float tint_direction = -1;
     float tint_speed = 600.0f;
 
-    std::map<int, Monster> player_monsters;
-    std::map<int, Monster> dummy_monsters;
+    std::map<int, std::shared_ptr<Monster>> player_monsters;
+    std::map<int, std::shared_ptr<Monster>> dummy_monsters;
     std::shared_ptr<MonsterIndex> monster_index;
     bool index_open{};
     std::map<std::string, std::shared_ptr<rg::Surface>> monster_icons;

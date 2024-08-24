@@ -89,21 +89,25 @@ TransitionSprite::TransitionSprite(
 
 MonsterSprite::MonsterSprite(
         const rg::math::Vector2 pos,
-        const std::map<AnimationState, std::shared_ptr<rg::Frames>> &frames, Monster *monster,
-        const int index, const int pos_index, const SelectionSide entity,
+        const std::map<AnimationState, std::shared_ptr<rg::Frames>> &frames,
+        const std::shared_ptr<Monster> &monster, const int index, const int pos_index,
+        const SelectionSide entity,
         const std::function<
                 void(const std::shared_ptr<MonsterSprite> &target_sprite, const Attack attack,
-                     float amount)> &apply_attack)
+                     float amount)> &apply_attack,
+        const std::function<void(
+                std::shared_ptr<Monster> monster, int index, int pos_index, SelectionSide entity)>
+                &createMonster)
     : monster(monster), index(index), pos_index(pos_index), entity(entity), frames(frames),
-      apply_attack(apply_attack)
+      apply_attack(apply_attack), createMonster(createMonster)
 {
-    // int p = this->index + this->pos_index + this->entity;
     image = this->frames[state];
     std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas();
     rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(pos);
     animation_speed = (float) ANIMATION_SPEED + rg::math::get_random_uniform(-1, 1);
     z = BATTLE_LAYERS["monster"];
     timers["remove_highlight"] = rg::Timer(0.5f, false, false, [this] { SetHighlight(false); });
+    timers["kill"] = rg::Timer(0.6f, false, false, [this] { Destroy(); });
 }
 
 void MonsterSprite::Update(const float deltaTime)
@@ -136,6 +140,20 @@ void MonsterSprite::ActivateAttack(
     monster->ReduceEnergy(selected_attack);
 }
 
+void MonsterSprite::DelayedKill(
+        const std::shared_ptr<Monster> &monster, const int index, const int pos_index,
+        const SelectionSide side)
+{
+    if (!timers["kill"].active)
+    {
+        newMonster = monster;
+        newIndex = index;
+        newPosIndex = pos_index;
+        newSide = side;
+        timers["kill"].Activate();
+    }
+}
+
 void MonsterSprite::Animate(const float dt)
 {
     frame_index += ANIMATION_SPEED * dt;
@@ -159,6 +177,17 @@ void MonsterSprite::Animate(const float dt)
         mask_surf->frames = frames->frames;
         image = mask_surf;
     }
+}
+
+void MonsterSprite::Destroy()
+{
+    if (newMonster)
+    {
+        createMonster(newMonster, newIndex, newPosIndex, newSide);
+        newMonster = nullptr;
+    }
+    target_sprite = nullptr;
+    Kill();
 }
 
 MonsterNameSprite::MonsterNameSprite(

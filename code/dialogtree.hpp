@@ -3,6 +3,7 @@
 #include "groups.hpp"
 #include "sprite.hpp"
 
+
 class DialogTree
 {
 public:
