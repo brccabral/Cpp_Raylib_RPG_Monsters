@@ -24,7 +24,7 @@ Game::Game()
     player_monsters[player_index++] = std::make_shared<Monster>("Finsta", 30);
 
     int dummy_index = 0;
-    dummy_monsters[dummy_index++] = std::make_shared<Monster>("Atrox", 2);
+    dummy_monsters[dummy_index++] = std::make_shared<Monster>("Atrox", 50);
     dummy_monsters[dummy_index++] = std::make_shared<Monster>("Sparchu", 3);
     dummy_monsters[dummy_index++] = std::make_shared<Monster>("Gulfin", 3);
     dummy_monsters[dummy_index++] = std::make_shared<Monster>("Jacana", 2);

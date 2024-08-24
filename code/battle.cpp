@@ -21,12 +21,15 @@ Battle(std::map<int, std::shared_ptr<Monster>> *player_monsters,
     indexes[SELECTMODE_SWITCH] = 0;
     indexes[SELECTMODE_TARGET] = 0;
 
+    timers["opponent_delay"] = rg::Timer(0.6f, false, false, [this] { OpponentAttack(); });
+
     Setup();
 }
 
 void Battle::Update(const float dt)
 {
     Input();
+    UpdateTimers();
     // updates
     battle_sprites.Update(dt);
     CheckActive();
@@ -167,6 +170,10 @@ void Battle::CheckActiveGroup(const rg::sprite::Group *group, const SelectionSid
             {
                 selection_mode = SELECTMODE_GENERAL;
                 selection_side = PLAYER;
+            }
+            else
+            {
+                timers["opponent_delay"].Activate();
             }
         }
     }
@@ -604,5 +611,50 @@ void Battle::DrawSwitch()
         }
 
         ++index;
+    }
+}
+
+void Battle::UpdateTimers()
+{
+    for (auto &[key, timer]: timers)
+    {
+        timer.Update();
+    }
+}
+
+void Battle::OpponentAttack() const
+{
+    if (!current_monster)
+    {
+        return;
+    }
+    const auto abilities = current_monster->monster->GetAbilities();
+    // if monster is out of energy, abilities is empty
+    if (abilities.empty())
+    {
+        return;
+    }
+    const auto random_ability_index = rl::GetRandomValue(0, abilities.size() - 1);
+    const auto ability = abilities[random_ability_index];
+
+    const auto side = ATTACK_DATA[ability].target;
+    // side of the attack = PLAYER - attack same team (healing/defense) | OPPONENT - attack the
+    // other team
+    std::vector<std::shared_ptr<rg::sprite::Sprite>> sprites;
+    if (side == PLAYER)
+    {
+        sprites = opponent_sprites.Sprites();
+    }
+    else
+    {
+        sprites = player_sprites.Sprites();
+    }
+
+    if (!sprites.empty())
+    {
+        const auto random_target_index = rl::GetRandomValue(0, sprites.size() - 1);
+        const auto random_target =
+                std::dynamic_pointer_cast<MonsterSprite>(sprites[random_target_index]);
+        current_monster->ActivateAttack(random_target, ability);
     }
 }

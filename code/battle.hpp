@@ -25,8 +25,9 @@ public:
 private:
 
     void Setup();
-    void
-    CreateMonster(const std::shared_ptr<Monster>& monster, int index, int pos_index, SelectionSide entity);
+    void CreateMonster(
+            const std::shared_ptr<Monster> &monster, int index, int pos_index,
+            SelectionSide entity);
     // Battle System
     // check what is the first monster to get Initiative = 100
     // it depends on monster speed
@@ -45,6 +46,9 @@ private:
     void DrawGeneral();
     void DrawAttacks();
     void DrawSwitch();
+
+    void UpdateTimers();
+    void OpponentAttack() const;
 
     std::shared_ptr<rg::Surface> display_surface = rg::display::GetSurface();
     std::map<int, std::shared_ptr<Monster>> *player_monsters;
@@ -69,4 +73,6 @@ private:
     std::map<int, std::shared_ptr<Monster>> available_monsters;
     Attack selected_attack = ATTACK_NONE;
     std::map<AttackAnimation, std::shared_ptr<rg::Frames>> *attack_frames;
+
+    std::map<std::string, rg::Timer> timers;
 };
