@@ -201,6 +201,11 @@ void Battle::Input()
             case SELECTMODE_ATTACKS:
             {
                 limiter = current_monster->monster->GetAbilities(false).size();
+                // in case monster A has more attacks than monster B
+                if (limiter)
+                {
+                    indexes[SELECTMODE_ATTACKS] = indexes[SELECTMODE_ATTACKS] % limiter;
+                }
                 break;
             }
             case SELECTMODE_SWITCH:
@@ -256,10 +261,18 @@ void Battle::Input()
             }
             else if (selection_mode == SELECTMODE_ATTACKS)
             {
-                selection_mode = SELECTMODE_TARGET;
-                selected_attack =
-                        current_monster->monster->GetAbilities(false)[indexes[SELECTMODE_ATTACKS]];
-                selection_side = ATTACK_DATA[selected_attack].target;
+                const auto abilities = current_monster->monster->GetAbilities(false);
+                // when monster is out of energy abilities returns empty
+                if (!abilities.empty())
+                {
+                    selection_mode = SELECTMODE_TARGET;
+                    selected_attack = abilities[indexes[SELECTMODE_ATTACKS]];
+                    selection_side = ATTACK_DATA[selected_attack].target;
+                }
+                else
+                {
+                    selection_mode = SELECTMODE_GENERAL;
+                }
             }
             else if (selection_mode == SELECTMODE_GENERAL)
             {
