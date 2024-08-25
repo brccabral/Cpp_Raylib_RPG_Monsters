@@ -309,6 +309,13 @@ void Battle::Input()
                     selection_side = OPPONENT;
                 }
             }
+
+            // reset all indexes after an action
+            // the tutorial uses this, but we deal in limiter or checking vector<> sizes
+            // for (auto &[mode, value]: indexes)
+            // {
+            //     indexes[mode] = 0;
+            // }
         }
         if (IsKeyPressed(rl::KEY_ESCAPE))
         {
