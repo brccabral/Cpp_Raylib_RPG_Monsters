@@ -34,7 +34,7 @@ private:
     // when the first monster achieves 100, pause the others
     void CheckActive();
     void CheckActiveGroup(const rg::sprite::Group *group, SelectionSide side);
-    void UpdateAllMonsters(bool do_pause) const;
+    void UpdateAllMonsters(bool do_pause);
     void Input();
     void
     ApplyAttack(const std::shared_ptr<MonsterSprite> &target_sprite, Attack attack, float amount);
@@ -75,4 +75,5 @@ private:
     std::map<AttackAnimation, std::shared_ptr<rg::Frames>> *attack_frames;
 
     std::map<std::string, rg::Timer> timers;
+    bool monsters_paused{};
 };

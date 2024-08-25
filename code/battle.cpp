@@ -44,6 +44,7 @@ void Battle::Update(const float dt)
 
 void Battle::Setup()
 {
+    monsters_paused = false;
     std::vector<int> added_opponents;
     for (auto &[index, monster]: *player_monsters)
     {
@@ -110,6 +111,7 @@ void Battle::CreateMonster(
                    const SelectionSide entity_)
             { CreateMonster(monster_, index_, pos_index_, entity_); });
     monster_sprite->add(groups);
+    monster_sprite->monster->paused = monsters_paused;
 
     std::make_shared<MonsterOutlineSprite>(monster_sprite, outlines)->add(&battle_sprites);
 
@@ -179,8 +181,9 @@ void Battle::CheckActiveGroup(const rg::sprite::Group *group, const SelectionSid
     }
 }
 
-void Battle::UpdateAllMonsters(const bool do_pause) const
+void Battle::UpdateAllMonsters(const bool do_pause)
 {
+    monsters_paused = do_pause;
     for (const auto &sprite: player_sprites.Sprites())
     {
         const auto monster_sprite = std::dynamic_pointer_cast<MonsterSprite>(sprite);
@@ -376,7 +379,39 @@ void Battle::CheckDeathGroup(const rg::sprite::Group *group, const SelectionSide
             std::shared_ptr<Monster> newMonster = nullptr;
             int newIndex = 0, newPosIndex = 0; // new monster
             if (side == PLAYER)
-            {}
+            {
+                // monsters in the battle
+                std::vector<std::pair<const int, std::shared_ptr<Monster>>> active_monsters;
+                for (const auto &player_sprite: player_sprites.Sprites())
+                {
+                    const auto player_monster_sprite =
+                            std::dynamic_pointer_cast<MonsterSprite>(player_sprite);
+                    active_monsters.emplace_back(
+                            player_monster_sprite->index, player_monster_sprite->monster);
+                }
+
+                // monsters with health and not in battle
+                std::vector<std::pair<const int, std::shared_ptr<Monster>>> available_monsters;
+                for (auto &[i, monster]: *player_monsters)
+                {
+                    std::pair<const int, std::shared_ptr<Monster>> pair_monster = {i, monster};
+                    if (monster->health > 0 &&
+                        std::find(active_monsters.begin(), active_monsters.end(), pair_monster) ==
+                                active_monsters.end())
+                    {
+                        available_monsters.emplace_back(i, monster);
+                        break;
+                    }
+                }
+
+                // if there are monsters to add to battle
+                if (!available_monsters.empty())
+                {
+                    newMonster = available_monsters[0].second;
+                    newIndex = available_monsters[0].first;
+                    newPosIndex = monster_sprite->pos_index;
+                }
+            }
             else
             {
                 // check if opponent has more monsters
