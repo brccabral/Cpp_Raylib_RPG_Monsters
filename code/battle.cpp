@@ -245,7 +245,26 @@ void Battle::Input()
         }
         if (IsKeyPressed(rl::KEY_SPACE))
         {
-            if (selection_mode == SELECTMODE_TARGET)
+            if (selection_mode == SELECTMODE_SWITCH)
+            {
+                if (!available_monsters.empty())
+                {
+                    std::vector<std::pair<int, std::shared_ptr<Monster>>> list_available;
+                    list_available.reserve(available_monsters.size());
+                    for (const auto &[index, monster]: available_monsters)
+                    {
+                        list_available.emplace_back(index, monster);
+                    }
+
+                    const int newIndex = list_available[indexes[SELECTMODE_SWITCH]].first;
+                    const auto newMonster = list_available[indexes[SELECTMODE_SWITCH]].second;
+                    current_monster->Kill();
+                    CreateMonster(newMonster, newIndex, current_monster->pos_index, PLAYER);
+                    selection_mode = SELECTMODE_NONE;
+                    UpdateAllMonsters(false);
+                }
+            }
+            else if (selection_mode == SELECTMODE_TARGET)
             {
                 const auto *sprite_group =
                         selection_side == PLAYER ? &player_sprites : &opponent_sprites;
