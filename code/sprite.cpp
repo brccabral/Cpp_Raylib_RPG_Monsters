@@ -342,3 +342,16 @@ void AttackSprite::Animate(const float dt)
         Kill();
     }
 }
+
+TimedSprite::TimedSprite(
+        const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf, float duration)
+    : Sprite(pos, surf, BATTLE_LAYERS["overlay"])
+{
+    rect.center(pos);
+    death_timer = rg::Timer(duration, false, true, [this] { Kill(); });
+}
+
+void TimedSprite::Update(float deltaTime)
+{
+    death_timer.Update();
+}

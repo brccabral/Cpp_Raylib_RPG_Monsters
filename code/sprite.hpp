@@ -214,3 +214,15 @@ public:
             int z = BATTLE_LAYERS["overlay"]);
     void Animate(float dt) override;
 };
+
+class TimedSprite : public Sprite
+{
+public:
+
+    TimedSprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf, float duration);
+    void Update(float deltaTime) override;
+
+private:
+
+    rg::Timer death_timer;
+};

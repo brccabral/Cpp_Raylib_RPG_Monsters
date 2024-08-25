@@ -268,6 +268,29 @@ void Battle::Input()
                     current_monster = nullptr;
                     selection_mode = SELECTMODE_NONE;
                 }
+                else
+                {
+                    if (monster_sprite->monster->health <
+                        monster_sprite->monster->GetStat("max_health") *
+                                0.9f) // TODO 0.9f is for testing, lower it
+                    {
+                        // catching monster
+                        monster_sprite->entity =
+                                PLAYER; // when deleting, set to PLAYER to not delete `Monster *`
+                        (*player_monsters)[player_monsters->size()] = monster_sprite->monster;
+                        monster_sprite->DelayedKill(
+                                nullptr, 0, 0,
+                                OPPONENT); // kills the MonsterSprite*, not the Monster*
+                        UpdateAllMonsters(false);
+                    }
+                    else
+                    {
+                        // can't catch monster, show a red X
+                        std::make_shared<TimedSprite>(
+                                monster_sprite->rect.center(), (*ui_icons)["cross"], 1.0f)
+                                ->add(&battle_sprites);
+                    }
+                }
             }
             else if (selection_mode == SELECTMODE_ATTACKS)
             {
