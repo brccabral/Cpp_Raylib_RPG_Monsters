@@ -16,6 +16,7 @@ public:
     void Update(float dt);
     void ReduceEnergy(Attack attack);
     float GetBaseDamage(Attack attack);
+    void UpdateXP(int amount);
 
     friend std::ostream &operator<<(std::ostream &os, Monster const &m);
 

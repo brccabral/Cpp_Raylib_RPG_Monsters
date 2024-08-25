@@ -426,6 +426,17 @@ void Battle::CheckDeathGroup(const rg::sprite::Group *group, const SelectionSide
                 {
                     indexes[SELECTMODE_TARGET] = 0;
                 }
+                // increase XP
+                auto p_sprites = player_sprites.Sprites();
+                if (!p_sprites.empty())
+                {
+                    const int xp_amount = monster_sprite->monster->level * 100 / p_sprites.size();
+                    for (const auto &player_sprite: p_sprites)
+                    {
+                        std::dynamic_pointer_cast<MonsterSprite>(player_sprite)
+                                ->monster->UpdateXP(xp_amount);
+                    }
+                }
             }
             monster_sprite->DelayedKill(newMonster, newIndex, newPosIndex, side);
         }
