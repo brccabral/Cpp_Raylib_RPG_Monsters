@@ -8,13 +8,15 @@ Evolution::Evolution(
         const std::shared_ptr<rg::font::Font> &font, const std::function<void()> &endEvolution,
         const std::vector<std::shared_ptr<rg::Surface>> &star_animation_surfs)
 {
+    // ! these Scale and Mask hangs the game
+
     auto start2x = rg::transform::Scale2x(monster_frames[start_monster][ANIMATIONSTATE_IDLE]);
     start_monster_surf = std::make_shared<rg::Frames>(start2x, 2, 4);
     auto end2x = rg::transform::Scale2x(monster_frames[end_monster][ANIMATIONSTATE_IDLE]);
     end_monster_surf = std::make_shared<rg::Frames>(end2x, 2, 4);
 
     // start will run until `tint_amount` gets to 1.0f (tint_speed)
-    timers["start"] = rg::Timer(0.8f, false, true);
+    timers["start"] = rg::Timer(200.0f, false, false);
     timers["end"] = rg::Timer(1.8f, false, false, endEvolution);
 
     // screen tint
@@ -43,9 +45,13 @@ Evolution::Evolution(
 
 void Evolution::Update(const double dt)
 {
-    if (!timers["start"].active)
+    display_surface->Blit(tint_surf, rg::math::Vector2{});
+    if (!IsActive())
     {
-        display_surface->Blit(tint_surf, rg::math::Vector2{});
+        timers["start"].Activate();
+    }
+    if (timers["start"].active)
+    {
         if (tint_amount < 255)
         {
             const auto rect = start_monster_surf->GetRect().center(
@@ -63,21 +69,25 @@ void Evolution::Update(const double dt)
         }
         else
         {
-            const auto rect =
-                    end_monster_surf->GetRect().center({WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
-            display_surface->Blit(end_monster_surf, rect);
-
-            const auto text_rect =
-                    end_text_surf->GetRect().midtop(rect.midbottom() + rg::math::Vector2{0, 20});
-            rg::draw::rect(display_surface, COLORS["white"], text_rect.inflate(20, 20), 0, 5);
-            display_surface->Blit(end_text_surf, text_rect);
-            DisplayStars(dt);
-
+            // force start deactivation
+            timers["start"].Deactivate();
             if (!timers["end"].active)
             {
                 timers["end"].Activate();
             }
         }
+    }
+    else if (timers["end"].active)
+    {
+        const auto rect =
+                end_monster_surf->GetRect().center({WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
+        display_surface->Blit(end_monster_surf, rect);
+
+        const auto text_rect =
+                end_text_surf->GetRect().midtop(rect.midbottom() + rg::math::Vector2{0, 20});
+        rg::draw::rect(display_surface, COLORS["white"], text_rect.inflate(20, 20), 0, 5);
+        display_surface->Blit(end_text_surf, text_rect);
+        DisplayStars(dt);
     }
     // update timers after display because "end" destroys ~Evolution() and
     // we loose all pointers
@@ -85,6 +95,11 @@ void Evolution::Update(const double dt)
     {
         timer.Update();
     }
+}
+
+bool Evolution::IsActive()
+{
+    return timers["start"].active || timers["end"].active;
 }
 
 void Evolution::DisplayStars(const float dt)

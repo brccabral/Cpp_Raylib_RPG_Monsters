@@ -16,6 +16,7 @@ Game::Game()
     player_monsters[player_index++] = std::make_shared<Monster>("Charmadillo", 30);
     player_monsters[player_index++] = std::make_shared<Monster>("Friolera", 29);
     player_monsters[player_index++] = std::make_shared<Monster>("Larvea", 4);
+    player_monsters[player_index++] = std::make_shared<Monster>("Plumette", 15);
     player_monsters[player_index++] = std::make_shared<Monster>("Atrox", 24);
     // player_monsters[player_index++] = std::make_shared<Monster>("Sparchu", 24);
     // player_monsters[player_index++] = std::make_shared<Monster>("Gulfin", 24);
@@ -90,6 +91,12 @@ void Game::run()
         if (evolution)
         {
             evolution->Update(dt);
+            if (!evolution->IsActive())
+            {
+                evolution.reset();
+                evolution = nullptr;
+                CheckEvolution(); // check if there are more evolutions
+            }
         }
         if (!ev_init && rl::GetTime() > 5)
         {
@@ -571,6 +578,7 @@ void Game::CheckEvolution()
                         [this] { EndEvolution(); }, star_animation_surfs);
                 player_monsters[index] =
                         std::make_shared<Monster>(monster->evolution.first, monster->level);
+                break; // run the first evolution. When it is done we check if there are more
             }
         }
     }
@@ -578,7 +586,5 @@ void Game::CheckEvolution()
 
 void Game::EndEvolution()
 {
-    evolution.reset();
-    evolution = nullptr;
     player->Unblock();
 }
