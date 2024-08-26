@@ -13,10 +13,10 @@ Game::Game()
     rg::display::SetCaption("RPG Monsters");
 
     int player_index = 0;
-    player_monsters[player_index++] = std::make_shared<Monster>("Charmadillo", 30);
-    player_monsters[player_index++] = std::make_shared<Monster>("Friolera", 29);
-    player_monsters[player_index++] = std::make_shared<Monster>("Larvea", 4);
-    player_monsters[player_index++] = std::make_shared<Monster>("Atrox", 24);
+    player_monsters[player_index++] = std::make_shared<Monster>("Charmadillo", 2);
+    player_monsters[player_index++] = std::make_shared<Monster>("Friolera", 2);
+    player_monsters[player_index++] = std::make_shared<Monster>("Larvea", 2);
+    player_monsters[player_index++] = std::make_shared<Monster>("Atrox", 2);
     // player_monsters[player_index++] = std::make_shared<Monster>("Sparchu", 24);
     // player_monsters[player_index++] = std::make_shared<Monster>("Gulfin", 24);
     // player_monsters[player_index++] = std::make_shared<Monster>("Jacana", 2);
@@ -60,7 +60,7 @@ Game::~Game()
 
 void Game::run()
 {
-    while (!rl::WindowShouldClose())
+    while (!rg::WindowCloseOrQuit())
     {
         const float dt = rg::time::Clock::tick();
         display_surface->Fill(rl::BLACK);
