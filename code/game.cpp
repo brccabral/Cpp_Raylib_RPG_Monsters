@@ -13,29 +13,9 @@ Game::Game()
     rg::display::SetCaption("RPG Monsters");
 
     int player_index = 0;
-    player_monsters[player_index++] = std::make_shared<Monster>("Charmadillo", 30);
-    player_monsters[player_index++] = std::make_shared<Monster>("Friolera", 29);
-    player_monsters[player_index++] = std::make_shared<Monster>("Larvea", 4);
-    player_monsters[player_index++] = std::make_shared<Monster>("Plumette", 15);
-    player_monsters[player_index++] = std::make_shared<Monster>("Atrox", 24);
-    // player_monsters[player_index++] = std::make_shared<Monster>("Sparchu", 24);
-    // player_monsters[player_index++] = std::make_shared<Monster>("Gulfin", 24);
-    // player_monsters[player_index++] = std::make_shared<Monster>("Jacana", 2);
-    // player_monsters[player_index++] = std::make_shared<Monster>("Pouch", 3);
-    // player_monsters[player_index++] = std::make_shared<Monster>("Finsta", 30);
-
-    // for (auto &[i, monster]: player_monsters)
-    // {
-    //     monster->health *= 0.5f;
-    //     monster->energy *= 0.5f;
-    // }
-
-    // int dummy_index = 0;
-    // dummy_monsters[dummy_index++] = std::make_shared<Monster>("Atrox", 100);
-    // dummy_monsters[dummy_index++] = std::make_shared<Monster>("Sparchu", 3);
-    // dummy_monsters[dummy_index++] = std::make_shared<Monster>("Gulfin", 3);
-    // dummy_monsters[dummy_index++] = std::make_shared<Monster>("Jacana", 2);
-    // dummy_monsters[dummy_index++] = std::make_shared<Monster>("Pouch", 3);
+    player_monsters[player_index++] = std::make_shared<Monster>("Charmadillo", 50);
+    player_monsters[player_index++] = std::make_shared<Monster>("Larvea", 3);
+    player_monsters[player_index++] = std::make_shared<Monster>("Plumette", 14);
 
     all_sprites = std::make_shared<AllSprites>();
 
@@ -417,6 +397,7 @@ void Game::EndDialog(const std::shared_ptr<Character> &character)
     }
     else
     {
+        CheckEvolution();
         player->Unblock();
     }
 }
