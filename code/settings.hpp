@@ -104,3 +104,9 @@ enum AnimationState
     ANIMATIONSTATE_IDLE = 0,
     ANIMATIONSTATE_ATTACK,
 };
+
+enum TINT_MODE
+{
+    UNTINT = 0,
+    TINT
+};

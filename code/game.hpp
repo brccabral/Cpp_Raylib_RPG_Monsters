@@ -49,7 +49,7 @@ private:
 
     std::pair<std::string, std::string> transition_target;
     std::shared_ptr<rg::Surface> tint_surf;
-    std::string tint_mode{"untint"};
+    TINT_MODE tint_mode = UNTINT;
     float tint_progress = 0.0f;
     // float tint_direction = -1;
     float tint_speed = 600.0f;

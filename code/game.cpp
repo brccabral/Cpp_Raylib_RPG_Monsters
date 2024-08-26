@@ -403,23 +403,23 @@ void Game::TransitionCheck()
     {
         player->Block();
         transition_target = sprites[0]->target;
-        tint_mode = "tint";
+        tint_mode = TINT;
     }
 }
 
 void Game::TintScreen(const double dt)
 {
-    if (!std::strcmp(tint_mode.c_str(), "untint"))
+    if (tint_mode == UNTINT)
     {
         tint_progress -= tint_speed * dt;
     }
-    if (!std::strcmp(tint_mode.c_str(), "tint"))
+    if (tint_mode == TINT)
     {
         tint_progress += tint_speed * dt;
         if (tint_progress >= 255)
         {
             Setup(transition_target.first, transition_target.second);
-            tint_mode = "untint";
+            tint_mode = UNTINT;
             transition_target = {};
         }
     }
