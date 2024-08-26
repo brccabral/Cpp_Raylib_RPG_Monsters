@@ -2,13 +2,8 @@
 
 int main()
 {
-    // game has to leave scope before Quit() in order to unload resources
-    {
-        Game game;
-        game.run();
-    }
-
-    rg::Quit();
+    Game game;
+    game.run();
 
     return 0;
 }
