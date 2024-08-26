@@ -10,8 +10,7 @@ public:
 
     DialogTree(
             const std::shared_ptr<Character> &character, const std::shared_ptr<Player> &player,
-            const std::shared_ptr<AllSprites> &all_sprites,
-            const std::shared_ptr<rg::font::Font> &font,
+            AllSprites *all_sprites, const std::shared_ptr<rg::font::Font> &font,
             const std::function<void(const std::shared_ptr<Character> &char_)> &end_dialog);
     void Update();
     void Input();
@@ -20,7 +19,7 @@ private:
 
     std::shared_ptr<Character> character;
     std::shared_ptr<Player> player;
-    std::shared_ptr<AllSprites> all_sprites;
+    AllSprites *all_sprites;
     std::shared_ptr<rg::font::Font> font;
     std::vector<std::string> dialog{};
     int dialog_num{};

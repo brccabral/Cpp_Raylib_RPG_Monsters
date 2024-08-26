@@ -99,8 +99,7 @@ std::string Entity::GetState()
 
 Player::Player(
         const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
-        const std::string &facing_direction,
-        const std::shared_ptr<rg::sprite::Group> &collision_sprites)
+        const std::string &facing_direction, rg::sprite::Group *collision_sprites)
     : Entity(pos, frames, facing_direction), collision_sprites(collision_sprites)
 {}
 
@@ -200,10 +199,10 @@ Character::Character(
         const std::string &facing_direction, CharacterData *char_data,
         const std::shared_ptr<Player> &player,
         const std::function<void(const std::shared_ptr<Character> &character)> &create_dialog,
-        const std::shared_ptr<rg::sprite::Group> &collision_sprites, const float radius,
-        const bool nurse)
+        rg::sprite::Group *collision_sprites, const float radius, const bool nurse)
     : Entity(pos, frames, facing_direction), character_data(char_data), nurse(nurse),
-      player(player), create_dialog(create_dialog), radius(radius)
+      player(player), create_dialog(create_dialog), collision_sprites(collision_sprites),
+      radius(radius)
 {
     for (const auto &sprite: collision_sprites->Sprites())
     {

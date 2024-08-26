@@ -41,8 +41,7 @@ class Player : public Entity
 public:
 
     Player(const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
-           const std::string &facing_direction,
-           const std::shared_ptr<rg::sprite::Group> &collision_sprites);
+           const std::string &facing_direction, rg::sprite::Group *collision_sprites);
     void Update(float dt) override;
 
     bool noticed = false;
@@ -53,7 +52,7 @@ private:
     void Move(float dt);
     void Collisions(const std::string &axis);
 
-    std::shared_ptr<rg::sprite::Group> collision_sprites;
+    rg::sprite::Group *collision_sprites;
 };
 
 class Character : public Entity
@@ -66,7 +65,7 @@ public:
             const std::string &facing_direction, CharacterData *char_data,
             const std::shared_ptr<Player> &player,
             const std::function<void(const std::shared_ptr<Character> &character)> &create_dialog,
-            const std::shared_ptr<rg::sprite::Group> &collision_sprites, float radius, bool nurse);
+            rg::sprite::Group *collision_sprites, float radius, bool nurse);
     void Update(float deltaTime) override;
     [[nodiscard]] std::vector<std::string> GetDialog() const;
 
@@ -85,7 +84,7 @@ private:
 
     std::shared_ptr<Player> player;
     std::function<void(const std::shared_ptr<Character> &character)> create_dialog;
-    std::shared_ptr<rg::sprite::Group> collision_sprites;
+    rg::sprite::Group *collision_sprites;
     std::vector<rg::Rect> collision_rects;
     bool has_moved{};
     bool has_noticed{};

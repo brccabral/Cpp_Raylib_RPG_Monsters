@@ -40,10 +40,11 @@ private:
     std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> characters_dict;
 
     // Groups
-    std::shared_ptr<AllSprites> all_sprites;
-    std::shared_ptr<rg::sprite::Group> collision_sprites;
-    std::shared_ptr<rg::sprite::Group> character_sprites;
-    std::shared_ptr<rg::sprite::Group> transition_sprites;
+    // need shared_ptr due to AllSprites loads images in constructor
+    std::shared_ptr<AllSprites> all_sprites = nullptr;
+    rg::sprite::Group collision_sprites{};
+    rg::sprite::Group character_sprites{};
+    rg::sprite::Group transition_sprites{};
 
     std::map<std::string, std::shared_ptr<rg::font::Font>> fonts;
     std::shared_ptr<DialogTree> dialog_tree = nullptr;

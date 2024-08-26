@@ -36,11 +36,7 @@ Game::Game()
     // dummy_monsters[dummy_index++] = std::make_shared<Monster>("Jacana", 2);
     // dummy_monsters[dummy_index++] = std::make_shared<Monster>("Pouch", 3);
 
-    // groups
     all_sprites = std::make_shared<AllSprites>();
-    collision_sprites = std::make_shared<rg::sprite::Group>();
-    character_sprites = std::make_shared<rg::sprite::Group>();
-    transition_sprites = std::make_shared<rg::sprite::Group>();
 
     // transition / tint
     transition_target = {};
@@ -127,9 +123,9 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
 {
     // clear the map
     all_sprites->empty();
-    collision_sprites->empty();
-    character_sprites->empty();
-    transition_sprites->empty();
+    collision_sprites.empty();
+    character_sprites.empty();
+    transition_sprites.empty();
 
     const rl::tmx_map *map = tmx_maps[map_name];
 
@@ -226,7 +222,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             else
             {
                 std::make_shared<CollidableSprite>(position, objSurf)
-                        ->add({all_sprites.get(), collision_sprites.get()});
+                        ->add({all_sprites.get(), &collision_sprites});
             }
         }
         object = object->next;
@@ -242,7 +238,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
                 rg::math::Vector2{float(transition->x), float(transition->y)},
                 rg::math::Vector2{float(transition->width), float(transition->height)},
                 std::make_pair(target, pos))
-                ->add(transition_sprites.get());
+                ->add(&transition_sprites);
         transition = transition->next;
     }
 
@@ -253,7 +249,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         auto position = rg::tmx::GetTMXObjPosition(collision);
         std::make_shared<BorderSprite>(
                 position, std::make_shared<rg::Surface>(collision->width, collision->height))
-                ->add(collision_sprites.get());
+                ->add(&collision_sprites);
         collision = collision->next;
     }
 
@@ -287,7 +283,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             if (std::strcmp(entity_pos, player_start_position.c_str()) == 0)
             {
                 player = std::make_shared<Player>(
-                        position, characters_dict["player"], direction, collision_sprites);
+                        position, characters_dict["player"], direction, &collision_sprites);
                 player->add(all_sprites.get());
             }
         }
@@ -311,8 +307,8 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             std::make_shared<Character>(
                     position, characters_dict[graphic], direction, &TRAINER_DATA[character_id],
                     player, [this](const std::shared_ptr<Character> &char_)
-                    { CreateDialog(char_); }, collision_sprites, radius, nurse)
-                    ->add({all_sprites.get(), collision_sprites.get(), character_sprites.get()});
+                    { CreateDialog(char_); }, &collision_sprites, radius, nurse)
+                    ->add({all_sprites.get(), &collision_sprites, &character_sprites});
         }
         entity = entity->next;
     }
@@ -338,7 +334,7 @@ void Game::Input()
     }
     if (IsKeyPressed(rl::KEY_SPACE))
     {
-        for (const auto &character_sprite: character_sprites->Sprites())
+        for (const auto &character_sprite: character_sprites.Sprites())
         {
             auto character = std::dynamic_pointer_cast<Character>(character_sprite);
             if (CheckConnections(100, player, character))
@@ -362,7 +358,7 @@ void Game::CreateDialog(const std::shared_ptr<Character> &character)
     if (!dialog_tree)
     {
         dialog_tree = std::make_shared<DialogTree>(
-                character, player, all_sprites, fonts["dialog"],
+                character, player, all_sprites.get(), fonts["dialog"],
                 [this](const std::shared_ptr<Character> &char_) { EndDialog(char_); });
     }
 }
@@ -408,7 +404,7 @@ void Game::TransitionCheck()
     }
     std::vector<std::shared_ptr<TransitionSprite>> sprites;
     // transition_sprites must contain only TransitionSprite
-    for (const auto &transition_sprite: transition_sprites->Sprites())
+    for (const auto &transition_sprite: transition_sprites.Sprites())
     {
         if (transition_sprite->rect.colliderect(player->hitbox))
         {
