@@ -59,7 +59,7 @@ std::array<std::pair<float, float>, 3> Monster::GetInfo()
 
 void Monster::Update(const float dt)
 {
-    if (!paused)
+    if (!paused && health > 0)
     {
         initiative += GetStat("speed") * dt;
     }
