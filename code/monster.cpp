@@ -59,6 +59,7 @@ std::array<std::pair<float, float>, 3> Monster::GetInfo()
 
 void Monster::Update(const float dt)
 {
+    StatLimiter();
     if (!paused && health > 0)
     {
         initiative += GetStat("speed") * dt;
@@ -87,6 +88,12 @@ void Monster::UpdateXP(const int amount)
         xp = amount - (level_up - xp);
         level_up = level * 150;
     }
+}
+
+void Monster::StatLimiter()
+{
+    health = rl::Clamp(health, 0, GetStat("max_health"));
+    energy = rl::Clamp(energy, 0, GetStat("max_energy"));
 }
 
 std::ostream &operator<<(std::ostream &os, Monster const &m)

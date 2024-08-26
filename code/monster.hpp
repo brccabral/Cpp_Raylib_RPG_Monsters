@@ -34,4 +34,8 @@ public:
     // when it is this monster time to action, if already defending, stop defending. When
     // it is being attacked, if defending, reduces damage taken
     bool defending{};
+
+private:
+
+    void StatLimiter();
 };
