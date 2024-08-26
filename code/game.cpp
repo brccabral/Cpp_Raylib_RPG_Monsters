@@ -569,6 +569,8 @@ void Game::CheckEvolution()
                 evolution = std::make_shared<Evolution>(
                         monster_frames, monster->name, monster->evolution.first, fonts["bold"],
                         [this] { EndEvolution(); }, star_animation_surfs);
+                player_monsters[index] =
+                        std::make_shared<Monster>(monster->evolution.first, monster->level);
             }
         }
     }
