@@ -19,7 +19,9 @@ public:
            std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
            std::map<AttackAnimation, std::shared_ptr<rg::Frames>> *attack_frames,
            const std::shared_ptr<rg::Surface> &bg_surf,
-           std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts);
+           std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts,
+           const std::function<void(const std::shared_ptr<Character> &c)> &endBattle,
+           const std::shared_ptr<Character> &character);
     void Update(float dt);
 
 private:
@@ -79,4 +81,6 @@ private:
     bool monsters_paused{};
 
     bool battle_over{};
+    const std::function<void(const std::shared_ptr<Character> &character)> endBattle;
+    const std::shared_ptr<Character> character;
 };

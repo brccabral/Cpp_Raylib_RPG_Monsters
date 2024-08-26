@@ -10,10 +10,13 @@ Battle(std::map<int, std::shared_ptr<Monster>> *player_monsters,
        std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
        std::map<AttackAnimation, std::shared_ptr<rg::Frames>> *attack_frames,
        const std::shared_ptr<rg::Surface> &bg_surf,
-       std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts)
+       std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts,
+       const std::function<void(const std::shared_ptr<Character> &c)> &endBattle,
+       const std::shared_ptr<Character> &character)
     : player_monsters(player_monsters), opponent_monsters(opponent_monsters),
       monster_frames(monster_frames), outline_frames(outline_frames), monster_icons(monster_icons),
-      ui_icons(ui_icons), bg_surf(bg_surf), fonts(fonts), attack_frames(attack_frames)
+      ui_icons(ui_icons), bg_surf(bg_surf), fonts(fonts), attack_frames(attack_frames),
+      endBattle(endBattle), character(character)
 {
     indexes[SELECTMODE_GENERAL] = 0;
     indexes[SELECTMODE_MONSTER] = 0;
@@ -496,6 +499,16 @@ void Battle::CheckDeathGroup(const rg::sprite::Group *group, const SelectionSide
 
 void Battle::CheckEndBattle()
 {
+    // opponents have been defeated
+    if (opponent_sprites.Sprites().empty() && !battle_over)
+    {
+        battle_over = true;
+        for (auto &[i, monster]: *player_monsters)
+        {
+            monster->initiative = 0;
+        }
+        endBattle(character);
+    }
     // player has been defeated
     if (player_sprites.Sprites().empty())
     {

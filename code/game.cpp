@@ -390,8 +390,13 @@ void Game::EndDialog(const std::shared_ptr<Character> &character)
         transition_target->battle = std::make_shared<Battle>(
                 &player_monsters, &character->monsters, &monster_frames, &outline_frames,
                 &monster_icons, &ui_icons, &attack_frames,
-                bg_frames[character->character_data->biome], &fonts);
+                bg_frames[character->character_data->biome], &fonts,
+                [this](const std::shared_ptr<Character> &c) { EndBattle(c); }, character);
         tint_mode = TINT;
+    }
+    else
+    {
+        player->Unblock();
     }
 }
 
@@ -452,4 +457,20 @@ void Game::TintScreen(const double dt)
     tint_progress = rl::Clamp(tint_progress, 0, 255);
     tint_surf->SetAlpha(tint_progress);
     display_surface->Blit(tint_surf, rg::math::Vector2{0, 0});
+}
+
+void Game::EndBattle(const std::shared_ptr<Character> &character)
+{
+    if (transition_target)
+    {
+        transition_target.reset();
+        transition_target = nullptr;
+    }
+    transition_target = std::make_shared<TransitionTarget>(TRANSITIONTARGET_BATTLE2LEVEL);
+    tint_mode = TINT;
+    if (character)
+    {
+        character->character_data->defeated = true;
+        CreateDialog(character);
+    }
 }

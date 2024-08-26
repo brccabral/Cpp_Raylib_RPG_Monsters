@@ -29,6 +29,7 @@ private:
     void EndDialog(const std::shared_ptr<Character> &character);
     void TransitionCheck();
     void TintScreen(double dt);
+    void EndBattle(const std::shared_ptr<Character> &character);
 
     std::shared_ptr<rg::Surface> display_surface = nullptr;
     std::map<std::string, rl::tmx_map *> tmx_maps;
