@@ -30,5 +30,8 @@ void Evolution::Update(double dt)
     if (!timers["start"].active)
     {
         display_surface->Blit(tint_surf, rg::math::Vector2{});
+        const auto rect =
+                start_monster_surf->GetRect().center({WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
+        display_surface->Blit(start_monster_surf, rect);
     }
 }
