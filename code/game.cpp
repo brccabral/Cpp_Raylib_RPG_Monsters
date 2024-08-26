@@ -13,10 +13,10 @@ Game::Game()
     rg::display::SetCaption("RPG Monsters");
 
     int player_index = 0;
-    player_monsters[player_index++] = std::make_shared<Monster>("Charmadillo", 2);
-    player_monsters[player_index++] = std::make_shared<Monster>("Friolera", 2);
-    player_monsters[player_index++] = std::make_shared<Monster>("Larvea", 2);
-    player_monsters[player_index++] = std::make_shared<Monster>("Atrox", 2);
+    player_monsters[player_index++] = std::make_shared<Monster>("Charmadillo", 30);
+    player_monsters[player_index++] = std::make_shared<Monster>("Friolera", 29);
+    player_monsters[player_index++] = std::make_shared<Monster>("Larvea", 4);
+    player_monsters[player_index++] = std::make_shared<Monster>("Atrox", 24);
     // player_monsters[player_index++] = std::make_shared<Monster>("Sparchu", 24);
     // player_monsters[player_index++] = std::make_shared<Monster>("Gulfin", 24);
     // player_monsters[player_index++] = std::make_shared<Monster>("Jacana", 2);
@@ -49,8 +49,6 @@ Game::Game()
             &player_monsters, fonts, &monster_icons, &ui_icons, &monster_frames);
 
     encounter_timer = rg::Timer(2.0f, false, false, [this] { MonsterEncounter(); });
-
-    CheckEvolution();
 }
 
 Game::~Game()
@@ -93,6 +91,11 @@ void Game::run()
         {
             evolution->Update(dt);
         }
+        if (!ev_init && rl::GetTime() > 5)
+        {
+            CheckEvolution();
+            ev_init = true;
+        }
 
         TintScreen(dt);
         rg::display::Update();
@@ -127,6 +130,8 @@ void Game::ImportAssets()
     outline_frames = OutlineCreator(monster_frames, 4);
 
     attack_frames = AttackImporter("resources/graphics/attacks");
+
+    star_animation_surfs = rg::image::ImportFolder("resources/graphics/other/star animation");
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)
@@ -563,7 +568,7 @@ void Game::CheckEvolution()
                 }
                 evolution = std::make_shared<Evolution>(
                         monster_frames, monster->name, monster->evolution.first, fonts["bold"],
-                        [this] { EndEvolution(); });
+                        [this] { EndEvolution(); }, star_animation_surfs);
             }
         }
     }
