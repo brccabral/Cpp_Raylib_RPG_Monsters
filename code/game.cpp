@@ -87,6 +87,10 @@ void Game::run()
         {
             battle->Update(dt);
         }
+        if (evolution)
+        {
+            evolution->Update(dt);
+        }
 
         TintScreen(dt);
         rg::display::Update();
@@ -476,9 +480,10 @@ void Game::EndBattle(const std::shared_ptr<Character> &character)
         character->character_data->defeated = true;
         CreateDialog(character);
     }
-    else
+    else if (!evolution)
     {
         player->Unblock();
+        CheckEvolution();
     }
 }
 
@@ -538,4 +543,33 @@ void Game::MonsterEncounter()
             break; // only need the first sprite
         }
     }
+}
+
+void Game::CheckEvolution()
+{
+    for (auto &[index, monster]: player_monsters)
+    {
+        if (monster->evolution.second) // if evolution level
+        {
+            if (monster->level >= monster->evolution.second)
+            {
+                player->Block();
+                if (evolution)
+                {
+                    evolution.reset();
+                    evolution = nullptr;
+                }
+                evolution = std::make_shared<Evolution>(
+                        monster_frames, monster->name, monster->evolution.first, fonts["bold"],
+                        [this] { EndEvolution(); });
+            }
+        }
+    }
+}
+
+void Game::EndEvolution()
+{
+    evolution.reset();
+    evolution = nullptr;
+    player->Unblock();
 }

@@ -20,6 +20,7 @@ add_executable(${PROJECT_NAME} code/main.cpp
         code/monsterindex.cpp
         code/battle.cpp
         code/transitiontarget.cpp
+        code/evolution.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE rygame)

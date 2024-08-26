@@ -12,6 +12,8 @@ Monster::Monster(const std::string &name, const int level) : name(name), level(l
     level_up = level * 150;
     health = base_stats["max_health"] * level;
     energy = base_stats["max_energy"] * level;
+
+    evolution = MONSTER_DATA[name].evolve;
 }
 
 float Monster::GetStat(const std::string &stat)

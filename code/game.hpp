@@ -3,6 +3,7 @@
 #include "battle.hpp"
 #include "dialogtree.hpp"
 #include "entities.hpp"
+#include "evolution.hpp"
 #include "groups.hpp"
 #include "monster.hpp"
 #include "monsterindex.hpp"
@@ -33,6 +34,8 @@ private:
     // monster encounters
     void CheckMonster();
     void MonsterEncounter();
+    void CheckEvolution();
+    void EndEvolution();
 
     std::shared_ptr<rg::Surface> display_surface = nullptr;
     std::map<std::string, rl::tmx_map *> tmx_maps;
@@ -77,4 +80,6 @@ private:
     std::map<std::string, std::shared_ptr<rg::Surface>> bg_frames;
 
     rg::Timer encounter_timer;
+
+    std::shared_ptr<Evolution> evolution = nullptr;
 };
