@@ -1,6 +1,7 @@
 #pragma once
 #include <rygame.hpp>
 #include "game_data.hpp"
+#include "monster.hpp"
 
 
 class Entity : public rg::sprite::Sprite
@@ -72,6 +73,7 @@ public:
     CharacterData *character_data;
     bool can_rotate = true;
     bool nurse;
+    std::map<int, std::shared_ptr<Monster>> monsters;
 
 private:
 

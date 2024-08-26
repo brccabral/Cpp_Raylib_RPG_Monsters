@@ -215,6 +215,12 @@ Character::Character(
     view_directions = character_data->directions;
     timers["look around"] = rg::Timer(1.5f, true, true, [this] { RandomViewDirection(); });
     timers["notice"] = rg::Timer{0.5f, false, false, [this] { StartMove(); }};
+
+    for (unsigned int i = 0; i < character_data->monsters.size(); ++i)
+    {
+        auto [name, level] = character_data->monsters[i];
+        monsters[i] = std::make_shared<Monster>(name, level);
+    }
 }
 
 void Character::Update(const float deltaTime)

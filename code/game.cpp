@@ -23,15 +23,15 @@ Game::Game()
     // player_monsters[player_index++] = std::make_shared<Monster>("Pouch", 3);
     // player_monsters[player_index++] = std::make_shared<Monster>("Finsta", 30);
 
-    for (auto &[i, monster]: player_monsters)
-    {
-        monster->health *= 0.5f;
-        monster->energy *= 0.5f;
-    }
+    // for (auto &[i, monster]: player_monsters)
+    // {
+    //     monster->health *= 0.5f;
+    //     monster->energy *= 0.5f;
+    // }
 
-    int dummy_index = 0;
-    dummy_monsters[dummy_index++] = std::make_shared<Monster>("Atrox", 100);
-    dummy_monsters[dummy_index++] = std::make_shared<Monster>("Sparchu", 3);
+    // int dummy_index = 0;
+    // dummy_monsters[dummy_index++] = std::make_shared<Monster>("Atrox", 100);
+    // dummy_monsters[dummy_index++] = std::make_shared<Monster>("Sparchu", 3);
     // dummy_monsters[dummy_index++] = std::make_shared<Monster>("Gulfin", 3);
     // dummy_monsters[dummy_index++] = std::make_shared<Monster>("Jacana", 2);
     // dummy_monsters[dummy_index++] = std::make_shared<Monster>("Pouch", 3);
@@ -51,10 +51,6 @@ Game::Game()
 
     monster_index = std::make_shared<MonsterIndex>(
             &player_monsters, fonts, &monster_icons, &ui_icons, &monster_frames);
-
-    // battle = std::make_shared<Battle>(
-    //         &player_monsters, &dummy_monsters, &monster_frames, &outline_frames, &monster_icons,
-    //         &ui_icons, &attack_frames, bg_frames["forest"], &fonts);
 }
 
 Game::~Game()
@@ -382,6 +378,13 @@ void Game::EndDialog(const std::shared_ptr<Character> &character)
             monster->energy = monster->GetStat("max_energy");
         }
         player->Unblock();
+    }
+    else if (!character->character_data->defeated)
+    {
+        battle = std::make_shared<Battle>(
+                &player_monsters, &character->monsters, &monster_frames, &outline_frames,
+                &monster_icons, &ui_icons, &attack_frames,
+                bg_frames[character->character_data->biome], &fonts);
     }
 }
 
