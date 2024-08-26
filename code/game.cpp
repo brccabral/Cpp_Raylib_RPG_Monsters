@@ -47,6 +47,8 @@ Game::Game()
 
     monster_index = std::make_shared<MonsterIndex>(
             &player_monsters, fonts, &monster_icons, &ui_icons, &monster_frames);
+
+    encounter_timer = rg::Timer(2.0f, false, false, [this] { MonsterEncounter(); });
 }
 
 Game::~Game()
@@ -61,6 +63,7 @@ void Game::run()
         const float dt = rg::time::Clock::tick();
         display_surface->Fill(rl::BLACK);
 
+        encounter_timer.Update();
         // game logic
         Input();
         TransitionCheck();
@@ -69,6 +72,7 @@ void Game::run()
             all_sprites->Update(dt);
             all_sprites->Draw(player);
         }
+        CheckMonster();
 
         // overlays
         if (dialog_tree)
@@ -261,12 +265,15 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         if (map->tiles[gid])
         {
             std::string biome = rl::tmx_get_property(monster->properties, "biome")->value.string;
+            std::string monsters =
+                    rl::tmx_get_property(monster->properties, "monsters")->value.string;
+            int level = rl::tmx_get_property(monster->properties, "level")->value.integer;
             rg::Rect atlas;
             auto monster_texture = rg::tmx::GetTMXTileTexture(map->tiles[gid], &atlas);
             auto position = rg::tmx::GetTMXObjPosition(monster);
             auto monster_surf = std::make_shared<rg::Surface>(monster_texture, atlas);
-            std::make_shared<MonsterPatchSprite>(position, monster_surf, biome)
-                    ->add(all_sprites.get());
+            std::make_shared<MonsterPatchSprite>(position, monster_surf, biome, monsters, level)
+                    ->add({all_sprites.get(), &monster_sprites});
         }
         monster = monster->next;
     }
@@ -468,5 +475,67 @@ void Game::EndBattle(const std::shared_ptr<Character> &character)
     {
         character->character_data->defeated = true;
         CreateDialog(character);
+    }
+    else
+    {
+        player->Unblock();
+    }
+}
+
+void Game::CheckMonster()
+{
+    if (battle || !player->direction || encounter_timer.active)
+    {
+        return;
+    }
+    for (const auto &sprite: monster_sprites.Sprites())
+    {
+        if (sprite->rect.colliderect(player->hitbox))
+        {
+            encounter_timer.Activate();
+        }
+    }
+}
+
+void Game::MonsterEncounter()
+{
+    if (!player->direction)
+    {
+        return;
+    }
+    for (const auto &sprite: monster_sprites.Sprites())
+    {
+        if (sprite->rect.colliderect(player->hitbox))
+        {
+            // change encounter timer duration for the next encounter
+            encounter_timer.duration = rl::GetRandomValue(8, 25) / 10.0f;
+
+            const auto monster_patch_sprite = std::dynamic_pointer_cast<MonsterPatchSprite>(sprite);
+
+            player->Block();
+            if (transition_target)
+            {
+                transition_target.reset();
+                transition_target = nullptr;
+            }
+            transition_target = std::make_shared<TransitionTarget>(TRANSITIONTARGET_LEVEL2BATTLE);
+
+            encounter_monsters.clear();
+            int count_monsters = 0;
+            for (auto &monster_name: monster_patch_sprite->monsters)
+            {
+                int level = monster_patch_sprite->level + rl::GetRandomValue(-3, 3);
+                encounter_monsters[count_monsters++] =
+                        std::make_shared<Monster>(monster_name, level);
+            }
+
+            transition_target->battle = std::make_shared<Battle>(
+                    &player_monsters, &encounter_monsters, &monster_frames, &outline_frames,
+                    &monster_icons, &ui_icons, &attack_frames,
+                    bg_frames[monster_patch_sprite->biome], &fonts,
+                    [this](const std::shared_ptr<Character> &c) { EndBattle(c); }, nullptr);
+            tint_mode = TINT;
+            break; // only need the first sprite
+        }
     }
 }

@@ -35,8 +35,8 @@ void AnimatedSprite::Animate(const float dt)
 
 MonsterPatchSprite::MonsterPatchSprite(
         const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf,
-        const std::string &biome)
-    : Sprite(pos, surf, WORLD_LAYERS["main"]), biome(biome)
+        const std::string &biome, const std::string &patch_monsters, const int level)
+    : Sprite(pos, surf, WORLD_LAYERS["main"]), biome(biome), level(level)
 {
     y_sort -= 40;
     // move sand patches to background drawing layer
@@ -44,6 +44,7 @@ MonsterPatchSprite::MonsterPatchSprite(
     {
         z = WORLD_LAYERS["bg"];
     }
+    monsters = rg::Split(patch_monsters, ',');
 }
 
 BorderSprite::BorderSprite(const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf)
@@ -344,7 +345,7 @@ void AttackSprite::Animate(const float dt)
 }
 
 TimedSprite::TimedSprite(
-        const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf, float duration)
+        const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf, const float duration)
     : Sprite(pos, surf, BATTLE_LAYERS["overlay"])
 {
     rect.center(pos);

@@ -30,6 +30,9 @@ private:
     void TransitionCheck();
     void TintScreen(double dt);
     void EndBattle(const std::shared_ptr<Character> &character);
+    // monster encounters
+    void CheckMonster();
+    void MonsterEncounter();
 
     std::shared_ptr<rg::Surface> display_surface = nullptr;
     std::map<std::string, rl::tmx_map *> tmx_maps;
@@ -45,6 +48,7 @@ private:
     rg::sprite::Group collision_sprites{};
     rg::sprite::Group character_sprites{};
     rg::sprite::Group transition_sprites{};
+    rg::sprite::Group monster_sprites{};
 
     std::map<std::string, std::shared_ptr<rg::font::Font>> fonts;
     std::shared_ptr<DialogTree> dialog_tree = nullptr;
@@ -58,6 +62,7 @@ private:
     float tint_speed = 600.0f;
 
     std::map<int, std::shared_ptr<Monster>> player_monsters;
+    std::map<int, std::shared_ptr<Monster>> encounter_monsters;
     // std::map<int, std::shared_ptr<Monster>> dummy_monsters;
     std::shared_ptr<MonsterIndex> monster_index;
     bool index_open{};
@@ -70,4 +75,6 @@ private:
     std::map<AttackAnimation, std::shared_ptr<rg::Frames>> attack_frames;
 
     std::map<std::string, std::shared_ptr<rg::Surface>> bg_frames;
+
+    rg::Timer encounter_timer;
 };

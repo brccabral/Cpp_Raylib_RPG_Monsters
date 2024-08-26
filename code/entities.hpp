@@ -19,10 +19,10 @@ public:
     rg::Rect hitbox{};
     std::string facing_direction;
     bool blocked = false; // block player movements
+    rg::math::Vector2 direction{};
 
 protected:
 
-    rg::math::Vector2 direction{};
     float speed = 250;
 
 private:

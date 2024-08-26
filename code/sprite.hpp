@@ -40,11 +40,11 @@ public:
 
     MonsterPatchSprite(
             rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf,
-            const std::string &biome);
-
-private:
+            const std::string &biome, const std::string &patch_monsters, int level);
 
     std::string biome;
+    std::vector<std::string> monsters{};
+    int level;
 };
 
 class BorderSprite : public Sprite
