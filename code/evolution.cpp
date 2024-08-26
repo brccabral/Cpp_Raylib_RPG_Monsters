@@ -36,12 +36,26 @@ void Evolution::Update(const double dt)
     if (!timers["start"].active)
     {
         display_surface->Blit(tint_surf, rg::math::Vector2{});
-        const auto rect =
-                start_monster_surf->GetRect().center({WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
-        display_surface->Blit(start_monster_surf, rect);
+        if (tint_amount < 255)
+        {
+            const auto rect = start_monster_surf->GetRect().center(
+                    {WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
+            display_surface->Blit(start_monster_surf, rect);
 
-        tint_amount += tint_speed * dt;
-        start_monster_surf_white->SetAlpha(tint_amount);
-        display_surface->Blit(start_monster_surf_white, rect);
+            tint_amount += tint_speed * dt;
+            start_monster_surf_white->SetAlpha(tint_amount);
+            display_surface->Blit(start_monster_surf_white, rect);
+        }
+        else
+        {
+            const auto rect =
+                    end_monster_surf->GetRect().center({WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
+            display_surface->Blit(end_monster_surf, rect);
+
+            if (!timers["end"].active)
+            {
+                timers["end"].Activate();
+            }
+        }
     }
 }

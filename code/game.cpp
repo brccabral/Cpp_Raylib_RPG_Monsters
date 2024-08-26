@@ -49,6 +49,8 @@ Game::Game()
             &player_monsters, fonts, &monster_icons, &ui_icons, &monster_frames);
 
     encounter_timer = rg::Timer(2.0f, false, false, [this] { MonsterEncounter(); });
+
+    CheckEvolution();
 }
 
 Game::~Game()
@@ -90,10 +92,6 @@ void Game::run()
         if (evolution)
         {
             evolution->Update(dt);
-        }
-        else
-        {
-            CheckEvolution();
         }
 
         TintScreen(dt);
