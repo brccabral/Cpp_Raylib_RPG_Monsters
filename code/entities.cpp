@@ -200,9 +200,10 @@ Character::Character(
         const std::string &facing_direction, CharacterData *char_data,
         const std::shared_ptr<Player> &player,
         const std::function<void(const std::shared_ptr<Character> &character)> &create_dialog,
-        const std::shared_ptr<rg::sprite::Group> &collision_sprites, const float radius)
-    : Entity(pos, frames, facing_direction), character_data(char_data), player(player),
-      create_dialog(create_dialog), radius(radius)
+        const std::shared_ptr<rg::sprite::Group> &collision_sprites, const float radius,
+        const bool nurse)
+    : Entity(pos, frames, facing_direction), character_data(char_data), nurse(nurse),
+      player(player), create_dialog(create_dialog), radius(radius)
 {
     for (const auto &sprite: collision_sprites->Sprites())
     {

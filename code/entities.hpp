@@ -65,12 +65,13 @@ public:
             const std::string &facing_direction, CharacterData *char_data,
             const std::shared_ptr<Player> &player,
             const std::function<void(const std::shared_ptr<Character> &character)> &create_dialog,
-            const std::shared_ptr<rg::sprite::Group> &collision_sprites, float radius);
+            const std::shared_ptr<rg::sprite::Group> &collision_sprites, float radius, bool nurse);
     void Update(float deltaTime) override;
     [[nodiscard]] std::vector<std::string> GetDialog() const;
 
     CharacterData *character_data;
     bool can_rotate = true;
+    bool nurse;
 
 private:
 

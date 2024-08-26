@@ -23,6 +23,12 @@ Game::Game()
     // player_monsters[player_index++] = std::make_shared<Monster>("Pouch", 3);
     // player_monsters[player_index++] = std::make_shared<Monster>("Finsta", 30);
 
+    for (auto &[i, monster]: player_monsters)
+    {
+        monster->health *= 0.5f;
+        monster->energy *= 0.5f;
+    }
+
     int dummy_index = 0;
     dummy_monsters[dummy_index++] = std::make_shared<Monster>("Atrox", 100);
     dummy_monsters[dummy_index++] = std::make_shared<Monster>("Sparchu", 3);
@@ -46,9 +52,9 @@ Game::Game()
     monster_index = std::make_shared<MonsterIndex>(
             &player_monsters, fonts, &monster_icons, &ui_icons, &monster_frames);
 
-    battle = std::make_shared<Battle>(
-            &player_monsters, &dummy_monsters, &monster_frames, &outline_frames, &monster_icons,
-            &ui_icons, &attack_frames, bg_frames["forest"], &fonts);
+    // battle = std::make_shared<Battle>(
+    //         &player_monsters, &dummy_monsters, &monster_frames, &outline_frames, &monster_icons,
+    //         &ui_icons, &attack_frames, bg_frames["forest"], &fonts);
 }
 
 Game::~Game()
@@ -305,10 +311,11 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             const char *graphic = rl::tmx_get_property(entity->properties, "graphic")->value.string;
             int radius =
                     std::stoi(rl::tmx_get_property(entity->properties, "radius")->value.string);
+            bool nurse = std::strcmp(character_id.c_str(), "Nurse") == 0;
             std::make_shared<Character>(
                     position, characters_dict[graphic], direction, &TRAINER_DATA[character_id],
                     player, [this](const std::shared_ptr<Character> &char_)
-                    { CreateDialog(char_); }, collision_sprites, radius)
+                    { CreateDialog(char_); }, collision_sprites, radius, nurse)
                     ->add({all_sprites.get(), collision_sprites.get(), character_sprites.get()});
         }
         entity = entity->next;
@@ -367,7 +374,15 @@ void Game::CreateDialog(const std::shared_ptr<Character> &character)
 void Game::EndDialog(const std::shared_ptr<Character> &character)
 {
     dialog_tree = nullptr;
-    player->Unblock();
+    if (character->nurse)
+    {
+        for (auto &[i, monster]: player_monsters)
+        {
+            monster->health = monster->GetStat("max_health");
+            monster->energy = monster->GetStat("max_energy");
+        }
+        player->Unblock();
+    }
 }
 
 void Game::TransitionCheck()
