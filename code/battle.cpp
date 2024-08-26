@@ -28,6 +28,7 @@ Battle(std::map<int, std::shared_ptr<Monster>> *player_monsters,
 
 void Battle::Update(const float dt)
 {
+    CheckEndBattle();
     Input();
     UpdateTimers();
     // updates
@@ -488,7 +489,17 @@ void Battle::CheckDeathGroup(const rg::sprite::Group *group, const SelectionSide
                 }
             }
             monster_sprite->DelayedKill(newMonster, newIndex, newPosIndex, side);
+            selection_mode = SELECTMODE_NONE;
         }
+    }
+}
+
+void Battle::CheckEndBattle()
+{
+    // player has been defeated
+    if (player_sprites.Sprites().empty())
+    {
+        rg::Quit();
     }
 }
 

@@ -40,6 +40,7 @@ private:
     ApplyAttack(const std::shared_ptr<MonsterSprite> &target_sprite, Attack attack, float amount);
     void CheckDeath();
     void CheckDeathGroup(const rg::sprite::Group *group, SelectionSide side);
+    void CheckEndBattle();
 
     // ui
     void DrawUi();
@@ -76,4 +77,6 @@ private:
 
     std::map<std::string, rg::Timer> timers;
     bool monsters_paused{};
+
+    bool battle_over{};
 };
