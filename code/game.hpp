@@ -6,6 +6,7 @@
 #include "groups.hpp"
 #include "monster.hpp"
 #include "monsterindex.hpp"
+#include "transitiontarget.hpp"
 
 
 class Game
@@ -47,7 +48,7 @@ private:
     std::shared_ptr<DialogTree> dialog_tree = nullptr;
     std::shared_ptr<Battle> battle = nullptr;
 
-    std::pair<std::string, std::string> transition_target;
+    std::shared_ptr<TransitionTarget> transition_target = nullptr;
     std::shared_ptr<rg::Surface> tint_surf;
     TINT_MODE tint_mode = UNTINT;
     float tint_progress = 0.0f;

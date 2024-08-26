@@ -381,15 +381,26 @@ void Game::EndDialog(const std::shared_ptr<Character> &character)
     }
     else if (!character->character_data->defeated)
     {
-        battle = std::make_shared<Battle>(
+        if (transition_target)
+        {
+            transition_target.reset();
+            transition_target = nullptr;
+        }
+        transition_target = std::make_shared<TransitionTarget>(TRANSITIONTARGET_LEVEL2BATTLE);
+        transition_target->battle = std::make_shared<Battle>(
                 &player_monsters, &character->monsters, &monster_frames, &outline_frames,
                 &monster_icons, &ui_icons, &attack_frames,
                 bg_frames[character->character_data->biome], &fonts);
+        tint_mode = TINT;
     }
 }
 
 void Game::TransitionCheck()
 {
+    if (transition_target)
+    {
+        return;
+    }
     std::vector<std::shared_ptr<TransitionSprite>> sprites;
     // transition_sprites must contain only TransitionSprite
     for (const auto &transition_sprite: transition_sprites->Sprites())
@@ -402,7 +413,9 @@ void Game::TransitionCheck()
     if (!sprites.empty())
     {
         player->Block();
-        transition_target = sprites[0]->target;
+        transition_target = std::make_shared<TransitionTarget>(TRANSITIONTARGET_MAP);
+        transition_target->map_name = sprites[0]->target.first;
+        transition_target->start_position = sprites[0]->target.second;
         tint_mode = TINT;
     }
 }
@@ -418,9 +431,22 @@ void Game::TintScreen(const double dt)
         tint_progress += tint_speed * dt;
         if (tint_progress >= 255)
         {
-            Setup(transition_target.first, transition_target.second);
+            if (transition_target->target_type == TRANSITIONTARGET_LEVEL2BATTLE)
+            {
+                battle = transition_target->battle;
+            }
+            else if (transition_target->target_type == TRANSITIONTARGET_BATTLE2LEVEL)
+            {
+                battle.reset();
+                battle = nullptr;
+            }
+            else if (transition_target->target_type == TRANSITIONTARGET_MAP)
+            {
+                Setup(transition_target->map_name, transition_target->start_position);
+            }
             tint_mode = UNTINT;
-            transition_target = {};
+            transition_target.reset();
+            transition_target = nullptr;
         }
     }
     tint_progress = rl::Clamp(tint_progress, 0, 255);
