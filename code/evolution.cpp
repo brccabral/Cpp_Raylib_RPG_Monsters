@@ -25,6 +25,13 @@ Evolution::Evolution(
     start_monster_surf_white = rg::mask::FromSurface(start_monster_surf).ToFrames(2, 4);
     start_monster_surf_white->SetColorKey(rl::BLACK);
     start_monster_surf_white->SetAlpha(tint_amount);
+
+    // text
+    start_text_surf =
+            font->render(rl::TextFormat("%s is evolving", start_monster.c_str()), COLORS["black"]);
+    end_text_surf = font->render(
+            rl::TextFormat("%s evolved into %s", start_monster.c_str(), end_monster.c_str()),
+            COLORS["black"]);
 }
 
 void Evolution::Update(const double dt)
@@ -45,12 +52,22 @@ void Evolution::Update(const double dt)
             tint_amount += tint_speed * dt;
             start_monster_surf_white->SetAlpha(tint_amount);
             display_surface->Blit(start_monster_surf_white, rect);
+
+            const auto text_rect =
+                    start_text_surf->GetRect().midtop(rect.midbottom() + rg::math::Vector2{0, 20});
+            rg::draw::rect(display_surface, COLORS["white"], text_rect.inflate(20, 20), 0, 5);
+            display_surface->Blit(start_text_surf, text_rect);
         }
         else
         {
             const auto rect =
                     end_monster_surf->GetRect().center({WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
             display_surface->Blit(end_monster_surf, rect);
+
+            const auto text_rect =
+                    end_text_surf->GetRect().midtop(rect.midbottom() + rg::math::Vector2{0, 20});
+            rg::draw::rect(display_surface, COLORS["white"], text_rect.inflate(20, 20), 0, 5);
+            display_surface->Blit(end_text_surf, text_rect);
 
             if (!timers["end"].active)
             {

@@ -26,4 +26,7 @@ private:
     std::shared_ptr<rg::Frames> start_monster_surf_white = nullptr;
     float tint_amount = 0.0f;
     float tint_speed = 80.0f;
+
+    std::shared_ptr<rg::Surface> start_text_surf = nullptr;
+    std::shared_ptr<rg::Surface> end_text_surf = nullptr;
 };
