@@ -15,7 +15,7 @@ Game::Game()
     int player_index = 0;
     player_monsters[player_index++] = std::make_shared<Monster>("Charmadillo", 30);
     player_monsters[player_index++] = std::make_shared<Monster>("Friolera", 29);
-    player_monsters[player_index++] = std::make_shared<Monster>("Larvea", 3);
+    player_monsters[player_index++] = std::make_shared<Monster>("Larvea", 4);
     player_monsters[player_index++] = std::make_shared<Monster>("Atrox", 24);
     // player_monsters[player_index++] = std::make_shared<Monster>("Sparchu", 24);
     // player_monsters[player_index++] = std::make_shared<Monster>("Gulfin", 24);
@@ -90,6 +90,10 @@ void Game::run()
         if (evolution)
         {
             evolution->Update(dt);
+        }
+        else
+        {
+            CheckEvolution();
         }
 
         TintScreen(dt);

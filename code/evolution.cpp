@@ -16,12 +16,18 @@ Evolution::Evolution(
     timers["start"] = rg::Timer(0.8f, false, true);
     timers["end"] = rg::Timer(1.8f, false, false, endEvolution);
 
+    // screen tint
     tint_surf = std::make_shared<rg::Surface>(
             display_surface->GetRect().width, display_surface->GetRect().height);
     tint_surf->SetAlpha(200);
+
+    // white tint
+    start_monster_surf_white = rg::mask::FromSurface(start_monster_surf).ToFrames(2, 4);
+    start_monster_surf_white->SetColorKey(rl::BLACK);
+    start_monster_surf_white->SetAlpha(tint_amount);
 }
 
-void Evolution::Update(double dt)
+void Evolution::Update(const double dt)
 {
     for (auto &[key, timer]: timers)
     {
@@ -33,5 +39,9 @@ void Evolution::Update(double dt)
         const auto rect =
                 start_monster_surf->GetRect().center({WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
         display_surface->Blit(start_monster_surf, rect);
+
+        tint_amount += tint_speed * dt;
+        start_monster_surf_white->SetAlpha(tint_amount);
+        display_surface->Blit(start_monster_surf_white, rect);
     }
 }

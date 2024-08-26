@@ -23,4 +23,8 @@ private:
     std::map<std::string, rg::Timer> timers;
 
     std::shared_ptr<rg::Surface> tint_surf = nullptr;
+    std::shared_ptr<rg::Frames> start_monster_surf_white = nullptr;
+    std::shared_ptr<rg::Frames> end_monster_surf_white = nullptr;
+    float tint_amount = 0.0f;
+    float tint_speed = 80.0f;
 };
