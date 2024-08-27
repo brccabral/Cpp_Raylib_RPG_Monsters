@@ -14,7 +14,7 @@ Sprite::Sprite(const rg::math::Vector2 pos, const rg::Surface_Ptr &surf, const i
 }
 
 AnimatedSprite::AnimatedSprite(
-        const rg::math::Vector2 pos, const std::shared_ptr<rg::Frames> &surf, const int z)
+        const rg::math::Vector2 pos, const rg::Frames_Ptr &surf, const int z)
     : Sprite(pos, surf, z), image(surf)
 {}
 
@@ -90,7 +90,7 @@ TransitionSprite::TransitionSprite(
 
 MonsterSprite::MonsterSprite(
         const rg::math::Vector2 pos,
-        const std::map<AnimationState, std::shared_ptr<rg::Frames>> &frames,
+        const std::map<AnimationState, rg::Frames_Ptr> &frames,
         const std::shared_ptr<Monster> &monster, const int index, const int pos_index,
         const SelectionSide entity,
         const std::function<
@@ -300,7 +300,7 @@ void MonsterStatsSprite::Update(float deltaTime)
 
 MonsterOutlineSprite::MonsterOutlineSprite(
         const std::shared_ptr<MonsterSprite> &monster_sprite,
-        const std::map<AnimationState, std::shared_ptr<rg::Frames>> &frames)
+        const std::map<AnimationState, rg::Frames_Ptr> &frames)
     : monster_sprite(monster_sprite), frames(frames)
 {
     z = BATTLE_LAYERS["outline"];
@@ -325,7 +325,7 @@ void MonsterOutlineSprite::Update(float deltaTime)
 }
 
 AttackSprite::AttackSprite(
-        const rg::math::Vector2 position, const std::shared_ptr<rg::Frames> &frames, const int z)
+        const rg::math::Vector2 position, const rg::Frames_Ptr &frames, const int z)
     : AnimatedSprite(position, frames, z)
 {
     rect.center(position);

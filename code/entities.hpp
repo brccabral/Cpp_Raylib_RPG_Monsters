@@ -8,7 +8,7 @@ class Entity : public rg::sprite::Sprite
 {
 public:
 
-    Entity(const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
+    Entity(const rg::math::Vector2 &pos, std::map<std::string, rg::Frames_Ptr> &frames,
            const std::string &facing_direction);
     void Update(float deltaTime) override;
     void Block();
@@ -32,7 +32,7 @@ private:
     // update and return state
     std::string GetState();
 
-    std::map<std::string, std::shared_ptr<rg::Frames>> frames_direction;
+    std::map<std::string, rg::Frames_Ptr> frames_direction;
     float frame_index{};
 };
 
@@ -40,7 +40,7 @@ class Player : public Entity
 {
 public:
 
-    Player(const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
+    Player(const rg::math::Vector2 &pos, std::map<std::string, rg::Frames_Ptr> &frames,
            const std::string &facing_direction, rg::sprite::Group *collision_sprites);
     void Update(float dt) override;
 
@@ -61,7 +61,7 @@ public:
 
     Character(
             const rg::math::Vector2 &pos,
-            std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
+            std::map<std::string, rg::Frames_Ptr> &frames,
             const std::string &facing_direction, CharacterData *char_data,
             const std::shared_ptr<Player> &player,
             const std::function<void(const std::shared_ptr<Character> &character)> &create_dialog,

@@ -41,9 +41,9 @@ private:
     std::map<std::string, rl::tmx_map *> tmx_maps;
 
     // overworld frames
-    std::shared_ptr<rg::Frames> waterFrames = nullptr;
-    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> cost_dict;
-    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> characters_dict;
+    rg::Frames_Ptr waterFrames = nullptr;
+    std::map<std::string, std::map<std::string, rg::Frames_Ptr>> cost_dict;
+    std::map<std::string, std::map<std::string, rg::Frames_Ptr>> characters_dict;
 
     // Groups
     // need shared_ptr due to AllSprites loads images in constructor
@@ -70,12 +70,12 @@ private:
     std::shared_ptr<MonsterIndex> monster_index;
     bool index_open{};
     std::map<std::string, rg::Surface_Ptr> monster_icons;
-    std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
+    std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>>
             monster_frames; // Name, Idle/Attack, Frames
-    std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
+    std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>>
             outline_frames; // Name, Idle/Attack, Frames
     std::map<std::string, rg::Surface_Ptr> ui_icons;
-    std::map<AttackAnimation, std::shared_ptr<rg::Frames>> attack_frames;
+    std::map<AttackAnimation, rg::Frames_Ptr> attack_frames;
 
     std::map<std::string, rg::Surface_Ptr> bg_frames;
 

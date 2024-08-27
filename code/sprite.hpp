@@ -20,14 +20,12 @@ class AnimatedSprite : public Sprite
 {
 public:
 
-    AnimatedSprite(
-            rg::math::Vector2 pos, const std::shared_ptr<rg::Frames> &surf,
-            int z = WORLD_LAYERS["main"]);
+    AnimatedSprite(rg::math::Vector2 pos, const rg::Frames_Ptr &surf, int z = WORLD_LAYERS["main"]);
 
     void Update(float deltaTime) override;
     virtual void Animate(float dt);
 
-    std::shared_ptr<rg::Frames> image;
+    rg::Frames_Ptr image;
 
 protected:
 
@@ -94,7 +92,7 @@ public:
 
     MonsterSprite(
             rg::math::Vector2 pos,
-            const std::map<AnimationState, std::shared_ptr<rg::Frames>> &frames,
+            const std::map<AnimationState, rg::Frames_Ptr> &frames,
             const std::shared_ptr<Monster> &monster, int index, int pos_index, SelectionSide entity,
             const std::function<
                     void(const std::shared_ptr<MonsterSprite> &target_sprite, Attack attack,
@@ -121,7 +119,7 @@ private:
     void Animate(float dt);
     void Destroy();
 
-    std::map<AnimationState, std::shared_ptr<rg::Frames>> frames;
+    std::map<AnimationState, rg::Frames_Ptr> frames;
 
     float animation_speed{};
     bool highlight{};
@@ -195,14 +193,14 @@ public:
 
     MonsterOutlineSprite(
             const std::shared_ptr<MonsterSprite> &monster_sprite,
-            const std::map<AnimationState, std::shared_ptr<rg::Frames>> &frames);
+            const std::map<AnimationState, rg::Frames_Ptr> &frames);
     void Update(float deltaTime) override;
 
     std::shared_ptr<MonsterSprite> monster_sprite;
 
 private:
 
-    std::map<AnimationState, std::shared_ptr<rg::Frames>> frames;
+    std::map<AnimationState, rg::Frames_Ptr> frames;
 };
 
 class AttackSprite : public AnimatedSprite
@@ -210,7 +208,7 @@ class AttackSprite : public AnimatedSprite
 public:
 
     AttackSprite(
-            rg::math::Vector2 position, const std::shared_ptr<rg::Frames> &frames,
+            rg::math::Vector2 position, const rg::Frames_Ptr &frames,
             int z = BATTLE_LAYERS["overlay"]);
     void Animate(float dt) override;
 };

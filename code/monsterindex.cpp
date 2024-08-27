@@ -6,7 +6,7 @@ MonsterIndex::MonsterIndex(
         const std::map<std::string, std::shared_ptr<rg::font::Font>> &fonts,
         std::map<std::string, rg::Surface_Ptr> *monster_icons,
         std::map<std::string, rg::Surface_Ptr> *ui_icons,
-        std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
+        std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>>
                 *monster_frames)
     : monsters(monsters), fonts(fonts), monster_icons(monster_icons),
       monster_frames(monster_frames), ui_icons(ui_icons)

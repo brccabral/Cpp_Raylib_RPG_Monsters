@@ -6,7 +6,7 @@
 
 
 Entity::Entity(
-        const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
+        const rg::math::Vector2 &pos, std::map<std::string, rg::Frames_Ptr> &frames,
         const std::string &facing_direction)
     : facing_direction(facing_direction), frames_direction(frames)
 {
@@ -98,7 +98,7 @@ std::string Entity::GetState()
 }
 
 Player::Player(
-        const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
+        const rg::math::Vector2 &pos, std::map<std::string, rg::Frames_Ptr> &frames,
         const std::string &facing_direction, rg::sprite::Group *collision_sprites)
     : Entity(pos, frames, facing_direction), collision_sprites(collision_sprites)
 {}
@@ -195,7 +195,7 @@ void Player::Collisions(const std::string &axis)
 }
 
 Character::Character(
-        const rg::math::Vector2 &pos, std::map<std::string, std::shared_ptr<rg::Frames>> &frames,
+        const rg::math::Vector2 &pos, std::map<std::string, rg::Frames_Ptr> &frames,
         const std::string &facing_direction, CharacterData *char_data,
         const std::shared_ptr<Player> &player,
         const std::function<void(const std::shared_ptr<Character> &character)> &create_dialog,

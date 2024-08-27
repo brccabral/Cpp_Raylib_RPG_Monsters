@@ -1,10 +1,10 @@
 #include "support.hpp"
 
 
-std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
+std::map<std::string, std::map<std::string, rg::Frames_Ptr>>
 CoastImporter(const char *file, const int rows, const int cols)
 {
-    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> result;
+    std::map<std::string, std::map<std::string, rg::Frames_Ptr>> result;
     const auto frame = rg::LoadTextureSafe(file);
     // const auto frame = rg::Frames::Load(file, rows, cols);
     const std::vector<std::string> terrains = {"grass", "grass_i", "sand_i", "sand",
@@ -45,10 +45,9 @@ CoastImporter(const char *file, const int rows, const int cols)
     return result;
 }
 
-std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>>
-AllCharacterImport(const char *path)
+std::map<std::string, std::map<std::string, rg::Frames_Ptr>> AllCharacterImport(const char *path)
 {
-    std::map<std::string, std::map<std::string, std::shared_ptr<rg::Frames>>> result{};
+    std::map<std::string, std::map<std::string, rg::Frames_Ptr>> result{};
 
     for (const auto &dirEntry: std::filesystem::recursive_directory_iterator(path))
     {
@@ -59,10 +58,10 @@ AllCharacterImport(const char *path)
     return result;
 }
 
-std::map<std::string, std::shared_ptr<rg::Frames>>
+std::map<std::string, rg::Frames_Ptr>
 CharacterImporter(const int rows, const int cols, const char *file)
 {
-    std::map<std::string, std::shared_ptr<rg::Frames>> result{};
+    std::map<std::string, rg::Frames_Ptr> result{};
     const auto frame_dict = rg::Frames::Load(file, rows, cols);
     const float width = frame_dict->GetRect().width;
     const float height = frame_dict->GetRect().height;
@@ -104,10 +103,10 @@ bool CheckConnections(
     return false;
 }
 
-std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
+std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>>
 MonsterImporter(const int cols, const int rows, const char *path)
 {
-    std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> result{};
+    std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>> result{};
 
     for (const auto &dirEntry: std::filesystem::recursive_directory_iterator(path))
     {
@@ -124,12 +123,11 @@ MonsterImporter(const int cols, const int rows, const char *path)
     return result;
 }
 
-std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> OutlineCreator(
-        const std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
-                &monster_frames,
+std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>> OutlineCreator(
+        const std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>> &monster_frames,
         const float width)
 {
-    std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> result;
+    std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>> result;
     for (auto &[name, state_frames]: monster_frames)
     {
         result[name] = {};
@@ -189,9 +187,9 @@ std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> Out
     return result;
 }
 
-std::map<AttackAnimation, std::shared_ptr<rg::Frames>> AttackImporter(const char *path)
+std::map<AttackAnimation, rg::Frames_Ptr> AttackImporter(const char *path)
 {
-    std::map<AttackAnimation, std::shared_ptr<rg::Frames>> result;
+    std::map<AttackAnimation, rg::Frames_Ptr> result;
     for (const auto &dirEntry: std::filesystem::recursive_directory_iterator(path))
     {
         auto filename = dirEntry.path().stem().string();

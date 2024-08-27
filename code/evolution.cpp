@@ -2,8 +2,7 @@
 
 
 Evolution::Evolution(
-        std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
-                &monster_frames,
+        std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>> &monster_frames,
         const std::string &start_monster, const std::string &end_monster,
         const std::shared_ptr<rg::font::Font> &font, const std::function<void()> &endEvolution,
         const std::vector<rg::Surface_Ptr> &star_animation_surfs)
