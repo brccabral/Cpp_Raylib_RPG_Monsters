@@ -199,10 +199,11 @@ Character::Character(
         const std::string &facing_direction, CharacterData *char_data,
         const std::shared_ptr<Player> &player,
         const std::function<void(const std::shared_ptr<Character> &character)> &create_dialog,
-        rg::sprite::Group *collision_sprites, const float radius, const bool nurse)
+        rg::sprite::Group *collision_sprites, const float radius, const bool nurse,
+        const std::shared_ptr<rg::mixer::Sound> &notice_sound)
     : Entity(pos, frames, facing_direction), character_data(char_data), nurse(nurse),
       player(player), create_dialog(create_dialog), collision_sprites(collision_sprites),
-      radius(radius)
+      radius(radius), notice_sound(notice_sound)
 {
     for (const auto &sprite: collision_sprites->Sprites())
     {
@@ -258,6 +259,7 @@ void Character::Raycast()
         can_rotate = false; // stop look around
         has_noticed = true;
         player->noticed = true;
+        notice_sound->Play();
     }
 }
 

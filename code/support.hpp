@@ -26,3 +26,5 @@ std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> Out
         float width);
 
 std::map<AttackAnimation, std::shared_ptr<rg::Frames>> AttackImporter(const char *path);
+
+std::map<std::string, std::shared_ptr<rg::mixer::Sound>> AudioImporter(const char *path);

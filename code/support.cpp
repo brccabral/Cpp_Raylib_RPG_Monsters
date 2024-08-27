@@ -200,3 +200,26 @@ std::map<AttackAnimation, std::shared_ptr<rg::Frames>> AttackImporter(const char
     }
     return result;
 }
+
+std::map<std::string, std::shared_ptr<rg::mixer::Sound>> AudioImporter(const char *path)
+{
+    std::map<std::string, std::shared_ptr<rg::mixer::Sound>> result;
+
+    const std::string audio_path = path;
+    const std::string music_path = audio_path + "/musics";
+    const std::string sounds_path = audio_path + "/sounds";
+
+    for (const auto &dirEntry: std::filesystem::recursive_directory_iterator(music_path.c_str()))
+    {
+        auto filename = dirEntry.path().stem().string();
+        auto entryPath = dirEntry.path().string();
+        result[filename] = std::make_shared<rg::mixer::Sound>(entryPath.c_str(), true);
+    }
+    for (const auto &dirEntry: std::filesystem::recursive_directory_iterator(sounds_path.c_str()))
+    {
+        auto filename = dirEntry.path().stem().string();
+        auto entryPath = dirEntry.path().string();
+        result[filename] = std::make_shared<rg::mixer::Sound>(entryPath.c_str(), false);
+    }
+    return result;
+}

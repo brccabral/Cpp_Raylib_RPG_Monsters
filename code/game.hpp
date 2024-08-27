@@ -82,6 +82,7 @@ private:
     rg::Timer encounter_timer;
 
     std::shared_ptr<Evolution> evolution = nullptr;
-    bool ev_init = false;
     std::vector<std::shared_ptr<rg::Surface>> star_animation_surfs{};
+
+    std::map<std::string, std::shared_ptr<rg::mixer::Sound>> audio;
 };

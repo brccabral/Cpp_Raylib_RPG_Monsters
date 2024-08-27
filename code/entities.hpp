@@ -65,7 +65,8 @@ public:
             const std::string &facing_direction, CharacterData *char_data,
             const std::shared_ptr<Player> &player,
             const std::function<void(const std::shared_ptr<Character> &character)> &create_dialog,
-            rg::sprite::Group *collision_sprites, float radius, bool nurse);
+            rg::sprite::Group *collision_sprites, float radius, bool nurse,
+            const std::shared_ptr<rg::mixer::Sound> &notice_sound);
     void Update(float deltaTime) override;
     [[nodiscard]] std::vector<std::string> GetDialog() const;
 
@@ -92,4 +93,6 @@ private:
     std::vector<std::string> view_directions = {"left", "right"};
 
     std::map<std::string, rg::Timer> timers;
+
+    std::shared_ptr<rg::mixer::Sound> notice_sound;
 };

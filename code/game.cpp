@@ -78,11 +78,6 @@ void Game::run()
                 CheckEvolution(); // check if there are more evolutions
             }
         }
-        if (!ev_init && rl::GetTime() > 5)
-        {
-            CheckEvolution();
-            ev_init = true;
-        }
 
         TintScreen(dt);
         rg::display::Update();
@@ -123,6 +118,8 @@ void Game::ImportAssets()
     {
         star_animation_surfs.push_back(rg::transform::Scale2x(star_surf));
     }
+
+    audio = AudioImporter("resources/audio");
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)
@@ -316,7 +313,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             std::make_shared<Character>(
                     position, characters_dict[graphic], direction, &TRAINER_DATA[character_id],
                     player, [this](const std::shared_ptr<Character> &char_)
-                    { CreateDialog(char_); }, &collision_sprites, radius, nurse)
+                    { CreateDialog(char_); }, &collision_sprites, radius, nurse, audio["notice"])
                     ->add({all_sprites.get(), &collision_sprites, &character_sprites});
         }
         entity = entity->next;
