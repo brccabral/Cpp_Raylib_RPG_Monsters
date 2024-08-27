@@ -1,38 +1,15 @@
-#include <sstream>
-#include <filesystem>
-#include "support.h"
+#include "support.hpp"
 
-using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
-std::vector<Texture2D> ImportFolder(const char *path)
+std::map<std::string, std::map<std::string, rg::Frames_Ptr>>
+CoastImporter(const char *file, const int rows, const int cols)
 {
-    std::vector<Texture2D> frames;
-    for (const auto &dirEntry: recursive_directory_iterator(path))
-    {
-        auto entryPath = dirEntry.path().string();
-        frames.push_back(LoadTexture(entryPath.c_str()));
-    }
-    return frames;
-}
-
-std::map<std::string, Texture2D> ImportNamedFolder(const char *path)
-{
-    std::map<std::string, Texture2D> textures;
-    for (const auto &dirEntry: recursive_directory_iterator(path))
-    {
-        auto filename = dirEntry.path().stem().string();
-        auto entryPath = dirEntry.path().string();
-        textures[filename] = LoadTexture(entryPath.c_str());
-    }
-    return textures;
-}
-
-std::map<std::string, tilerect_name> coast_rects()
-{
-    std::map<std::string, tilerect_name> new_dict;
+    std::map<std::string, std::map<std::string, rg::Frames_Ptr>> result;
+    const auto frame = rg::LoadTextureSafe(file);
+    // const auto frame = rg::Frames::Load(file, rows, cols);
     const std::vector<std::string> terrains = {"grass", "grass_i", "sand_i", "sand",
                                                "rock",  "rock_i",  "ice",    "ice_i"};
-    const std::map<std::string, std::tuple<int, int>> sides = {
+    std::vector<std::pair<std::string, rg::math::Vector2>> sides = {
             {"topleft", {0, 0}}, //
             {"top", {1, 0}}, //
             {"topright", {2, 0}}, //
@@ -41,249 +18,206 @@ std::map<std::string, tilerect_name> coast_rects()
             {"right", {2, 1}}, //
             {"bottomleft", {0, 2}}, //
             {"bottom", {1, 2}}, //
-            {"bottomright", {2, 2}} //
+            {"bottomright", {2, 2}}, //
     };
-    for (int index = 0; index < terrains.size(); ++index)
+    const auto width = frame.width / cols;
+    const auto height = frame.height / rows;
+    // const auto width = frame->GetRect().width;
+    // const auto height = frame->GetRect().height;
+    for (unsigned int index = 0; index < terrains.size(); ++index)
     {
-        const std::string &terrain = terrains[index];
-        new_dict[terrain] = {};
+        const auto &terrain = terrains[index];
+        result[terrain] = {};
         for (const auto &[key, pos]: sides)
         {
-            for (int row = 0; row < 4; ++row)
+            result[terrain][key] = std::make_shared<rg::Frames>(width * 4, height, 1, 4);
+            for (int row = 0; row < rows; row += 3)
             {
-                new_dict[terrain][key].push_back(
-                        {(std::get<0>(pos) + index * 3) * 64.0f,
-                         (std::get<1>(pos) + row * 3) * 64.0f, 64.0f, 64.0f});
+                const auto x = (pos.x + index * 3);
+                const auto y = (pos.y + row);
+                result[terrain][key]->Blit(
+                        frame, {row / 3.0f * width, 0},
+                        {(float) x * width, (float) y * height, (float) width, (float) height});
             }
         }
     }
-
-    return new_dict;
-}
-
-std::vector<std::vector<RectangleU>>
-import_tilemap_rects(const int cols, const int rows, const char *path)
-{
-    std::vector<std::vector<RectangleU>> frames;
-    const Texture2D surf = LoadTexture(path);
-
-    const auto cell_width = float(surf.width) / cols;
-    const auto cell_height = float(surf.height) / rows;
-
-    for (int row = 0; row < rows; ++row)
-    {
-        frames.emplace_back();
-        for (int col = 0; col < cols; ++col)
-        {
-            frames[row].push_back({col * cell_width, row * cell_height, cell_width, cell_height});
-        }
-    }
-    UnloadTexture(surf);
-    return frames;
-}
-
-tilerect_face CharacterImporter(const int cols, const int rows, const char *path)
-{
-    std::vector<std::vector<RectangleU>> frames = import_tilemap_rects(cols, rows, path);
-    tilerect_face new_dic = {};
-    // same order as in image set
-    const std::vector directions = {DOWN, LEFT, RIGHT, UP};
-    const std::vector idle_directions = {DOWN_IDLE, LEFT_IDLE, RIGHT_IDLE, UP_IDLE};
-    for (int row = 0; row < directions.size(); ++row)
-    {
-        for (int col = 0; col < cols; ++col)
-        {
-            new_dic[directions[row]].push_back(frames[row][col]);
-        }
-        FacingDirection idle_name = idle_directions[row];
-        new_dic[idle_name] = {frames[row][0]};
-    }
-    return new_dic;
-}
-
-std::map<std::string, animation_rects>
-MonsterImporter(const int cols, const int rows, const char *path)
-{
-    std::map<std::string, animation_rects> monster_dict;
-
-    for (const auto &dirEntry: recursive_directory_iterator(path))
-    {
-        auto filename = dirEntry.path().stem().string();
-        auto entryPath = dirEntry.path().string();
-        auto frames = import_tilemap_rects(cols, rows, entryPath.c_str());
-        monster_dict[filename][ANIMATION_IDLE] = frames[0];
-        monster_dict[filename][ANIMATION_ATTACK] = frames[1];
-    }
-
-    return monster_dict;
-}
-
-AttackAnimationRects AttackImporter(const int cols, const int rows, const char *path)
-{
-    AttackAnimationRects result;
-
-    for (const auto &dirEntry: recursive_directory_iterator(path))
-    {
-        auto filename = dirEntry.path().stem().string();
-        auto entryPath = dirEntry.path().string();
-        auto frames = import_tilemap_rects(cols, rows, entryPath.c_str());
-        result[ATTACK_ANIMATION_NAMES[filename]] = frames[0];
-    }
-
+    rg::UnloadTextureSafe(frame);
     return result;
 }
 
-std::map<std::string, tilerect_face> all_character_import(const char *path)
+std::map<std::string, std::map<std::string, rg::Frames_Ptr>> AllCharacterImport(const char *path)
 {
-    std::map<std::string, tilerect_face> new_dict = {};
+    std::map<std::string, std::map<std::string, rg::Frames_Ptr>> result{};
 
-    for (const auto &dirEntry: recursive_directory_iterator(path))
+    for (const auto &dirEntry: std::filesystem::recursive_directory_iterator(path))
     {
-        if (dirEntry.is_regular_file())
-        {
-            auto filename = dirEntry.path().stem().string();
-            auto entryPath = dirEntry.path().string();
-            new_dict[filename] = CharacterImporter(4, 4, entryPath.c_str());
-        }
+        auto filename = dirEntry.path().stem().string();
+        auto entryPath = dirEntry.path().string();
+        result[filename] = CharacterImporter(4, 4, entryPath.c_str());
     }
+    return result;
+}
 
-    return new_dict;
+std::map<std::string, rg::Frames_Ptr>
+CharacterImporter(const int rows, const int cols, const char *file)
+{
+    std::map<std::string, rg::Frames_Ptr> result{};
+    const auto frame_dict = rg::Frames::Load(file, rows, cols);
+    const float width = frame_dict->GetRect().width;
+    const float height = frame_dict->GetRect().height;
+    const std::vector<std::string> directions = {"down", "left", "right", "up"};
+    for (unsigned int i = 0; i < directions.size(); ++i)
+    {
+        // result[directions[i]] =
+        //         frame_dict->SubSurface({0, i * height, width * cols, height}, 1, cols);
+        // std::string idle = directions[i] + "_idle";
+        // result[idle] = frame_dict->SubSurface({0, i * height, width, height}, 1, 1);
+        result[directions[i]] = frame_dict->SubFrames({0, i * height, width * cols, height});
+        std::string idle = directions[i] + "_idle";
+        result[idle] = frame_dict->SubFrames({0, i * height, width, height});
+    }
+    return result;
 }
 
 bool CheckConnections(
-        const float radius, const Entity *entity, const Entity *target, float tolerance)
+        const float radius, const std::shared_ptr<Entity> &entity,
+        const std::shared_ptr<Entity> &target, const float tolerance)
 {
-    const Vector2 relation =
-            Vector2Subtract(GetRectCenter(target->rect), GetRectCenter(entity->rect));
-    // player is close to target
-    if (Vector2Length(relation) < radius)
+    const auto relation = target->rect.center() - entity->rect.center();
+    if (relation.magnitude() < radius)
     {
         // if player is facing left, player is on the right side of target,
         // and in same horizontal plane (not above or below target.y)
-        if ((entity->facing_direction == LEFT || entity->facing_direction == LEFT_IDLE) &&
-            relation.x < 0 && abs(relation.y) < tolerance)
+        if ((!strcmp(entity->facing_direction.c_str(), "left") && relation.x < 0 &&
+             std::abs(relation.y) < tolerance) ||
+            (!strcmp(entity->facing_direction.c_str(), "right") && relation.x > 0 &&
+             std::abs(relation.y) < tolerance) ||
+            (!strcmp(entity->facing_direction.c_str(), "up") && relation.y < 0 &&
+             std::abs(relation.x) < tolerance) ||
+            (!strcmp(entity->facing_direction.c_str(), "down") && relation.y > 0 &&
+             std::abs(relation.x) < tolerance))
         {
             return true;
-        }
-        if ((entity->facing_direction == RIGHT || entity->facing_direction == RIGHT_IDLE) &&
-            relation.x > 0 && abs(relation.y) < tolerance)
-        {
-            return true;
-        }
-        if ((entity->facing_direction == UP || entity->facing_direction == UP_IDLE) &&
-            relation.y < 0 && abs(relation.x) < tolerance)
-        {
-            return true;
-        }
-        if ((entity->facing_direction == DOWN || entity->facing_direction == DOWN_IDLE) &&
-            relation.y > 0 && abs(relation.x) < tolerance)
-        {
-            return true;
-        }
+        };
     }
     return false;
 }
 
-std::map<std::string, tmx_map *> tmx_importer(const char *path)
+std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>>
+MonsterImporter(const int cols, const int rows, const char *path)
 {
-    std::map<std::string, tmx_map *> maps;
-    for (const auto &dirEntry: recursive_directory_iterator(path))
+    std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>> result{};
+
+    for (const auto &dirEntry: std::filesystem::recursive_directory_iterator(path))
     {
         auto filename = dirEntry.path().stem().string();
         auto entryPath = dirEntry.path().string();
-        maps[filename] = LoadTMX(entryPath.c_str());
+        const auto monster_frames = rg::Frames::Load(entryPath.c_str(), rows, cols);
+        const auto tex_width = (float) monster_frames->GetTexture().width;
+        const auto tex_height = (float) monster_frames->GetTexture().height;
+        result[filename][ANIMATIONSTATE_IDLE] =
+                monster_frames->SubFrames({0, 0, tex_width, tex_height / 2.0f});
+        result[filename][ANIMATIONSTATE_ATTACK] =
+                monster_frames->SubFrames({0, tex_height / 2.0f, tex_width, tex_height / 2.0f});
     }
-    return maps;
-}
-
-std::map<std::string, Texture2D>
-OutlineCreator(const std::map<std::string, Texture2D> &texture_dict, const float width)
-{
-    std::map<std::string, Texture2D> outline_texture_dict;
-    for (auto &[monster, monster_texture]: texture_dict)
-    {
-        Image image = LoadImageFromTexture(monster_texture);
-        Image mask = ImageFromChannel(image, 3);
-        ImageAlphaMask(&mask, mask);
-
-        Image new_image = GenImageColor(image.width, image.height, {0});
-        // copy mask in all 8 directions to create an Outline effect
-        // Left
-        ImageDraw(
-                &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {-width, 0, (float) image.width, (float) image.height}, COLORS["blue"]);
-        // Right
-        ImageDraw(
-                &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {width, 0, (float) image.width, (float) image.height}, COLORS["blue"]);
-        // TopLeft
-        ImageDraw(
-                &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {-width, -width, (float) image.width, (float) image.height}, COLORS["blue"]);
-        // TopMid
-        ImageDraw(
-                &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {0, -width, (float) image.width, (float) image.height}, COLORS["blue"]);
-        // TopRight
-        ImageDraw(
-                &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {width, -width, (float) image.width, (float) image.height}, COLORS["blue"]);
-        // BottomLeft
-        ImageDraw(
-                &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {-width, width, (float) image.width, (float) image.height}, COLORS["blue"]);
-        // BottomMid
-        ImageDraw(
-                &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {0, width, (float) image.width, (float) image.height}, COLORS["blue"]);
-        // BottomRight
-        ImageDraw(
-                &new_image, mask, {0, 0, (float) image.width, (float) image.height},
-                {width, width, (float) image.width, (float) image.height}, COLORS["blue"]);
-
-        outline_texture_dict[monster] = LoadTextureFromImage(new_image);
-
-        UnloadImage(new_image);
-        UnloadImage(image);
-        UnloadImage(mask);
-    }
-    return outline_texture_dict;
-}
-
-std::vector<std::string> split(const std::string &s, const char delim)
-{
-    std::vector<std::string> result;
-    std::stringstream ss(s);
-    std::string item;
-
-    while (getline(ss, item, delim))
-    {
-        result.push_back(item);
-    }
-
     return result;
 }
 
-std::map<std::string, Music> MusicsImporter(const char *path)
+std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>> OutlineCreator(
+        const std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>> &monster_frames,
+        const float width)
 {
-    std::map<std::string, Music> musics;
-    for (const auto &dirEntry: recursive_directory_iterator(path))
+    std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>> result;
+    for (auto &[name, state_frames]: monster_frames)
     {
-        auto filename = dirEntry.path().stem().string();
-        auto entryPath = dirEntry.path().string();
-        musics[filename] = LoadMusicStream(entryPath.c_str());
+        result[name] = {};
+        for (auto &[state, frames]: state_frames)
+        {
+            const auto mask_surf =
+                    rg::mask::FromSurface(frames).ToFrames(frames->rows, frames->cols);
+            mask_surf->SetColorKey(rl::BLACK);
+
+            const auto new_surf = std::make_shared<rg::Frames>(
+                    frames->render.texture.width, frames->render.texture.height, frames->rows,
+                    frames->cols);
+            new_surf->frames = frames->frames;
+            new_surf->SetColorKey(rl::BLACK);
+
+            new_surf->Blit(
+                    mask_surf->render.texture, {-width, -width},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // topleft
+            new_surf->Blit(
+                    mask_surf->render.texture, {0, -width},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // topcenter
+            new_surf->Blit(
+                    mask_surf->render.texture, {width, -width},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // topright
+            new_surf->Blit(
+                    mask_surf->render.texture, {-width, 0},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // left
+            new_surf->Blit(
+                    mask_surf->render.texture, {0, 0},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // center
+            new_surf->Blit(
+                    mask_surf->render.texture, {width, 0},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // right
+            new_surf->Blit(
+                    mask_surf->render.texture, {-width, width},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // bottomleft
+            new_surf->Blit(
+                    mask_surf->render.texture, {0, width},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // bottomcenter
+            new_surf->Blit(
+                    mask_surf->render.texture, {width, width},
+                    {0, 0, (float) mask_surf->render.texture.width,
+                     (float) mask_surf->render.texture.height}); // bottomright
+            new_surf->SetAtlas();
+
+            result[name][state] = new_surf;
+        }
     }
-    return musics;
+    return result;
 }
 
-std::map<std::string, Sound> SoundsImporter(const char *path)
+std::map<AttackAnimation, rg::Frames_Ptr> AttackImporter(const char *path)
 {
-    std::map<std::string, Sound> sounds;
-    for (const auto &dirEntry: recursive_directory_iterator(path))
+    std::map<AttackAnimation, rg::Frames_Ptr> result;
+    for (const auto &dirEntry: std::filesystem::recursive_directory_iterator(path))
     {
         auto filename = dirEntry.path().stem().string();
         auto entryPath = dirEntry.path().string();
-        sounds[filename] = LoadSound(entryPath.c_str());
+        result[ATTACK_ANIMATION_NAMES[filename]] = rg::Frames::Load(entryPath.c_str(), 1, 4);
     }
-    return sounds;
+    return result;
+}
+
+std::map<std::string, std::shared_ptr<rg::mixer::Sound>> AudioImporter(const char *path)
+{
+    std::map<std::string, std::shared_ptr<rg::mixer::Sound>> result;
+
+    const std::string audio_path = path;
+    const std::string music_path = audio_path + "/musics";
+    const std::string sounds_path = audio_path + "/sounds";
+
+    for (const auto &dirEntry: std::filesystem::recursive_directory_iterator(music_path.c_str()))
+    {
+        auto filename = dirEntry.path().stem().string();
+        auto entryPath = dirEntry.path().string();
+        result[filename] = std::make_shared<rg::mixer::Sound>(entryPath.c_str(), true);
+    }
+    for (const auto &dirEntry: std::filesystem::recursive_directory_iterator(sounds_path.c_str()))
+    {
+        auto filename = dirEntry.path().stem().string();
+        auto entryPath = dirEntry.path().string();
+        result[filename] = std::make_shared<rg::mixer::Sound>(entryPath.c_str(), false);
+    }
+    return result;
 }

@@ -1,22 +1,19 @@
-#include <sstream>
-#include <utility>
-#include "monster.h"
-#include "game_data.h"
-
-#include <raymath.h>
+#include <rygame.hpp>
+#include "monster.hpp"
 
 
-Monster::Monster(std::string name_, const int level) : name(std::move(name_)), level(level)
+Monster::Monster(const std::string &name, const int level) : name(name), level(level)
 {
+    // stats
     element = MONSTER_DATA[name].element;
     base_stats = MONSTER_DATA[name].stats;
     abilities = MONSTER_DATA[name].abilities;
-    evolve = MONSTER_DATA[name].evolve;
 
     level_up = level * 150;
     health = base_stats["max_health"] * level;
     energy = base_stats["max_energy"] * level;
-    initiative = 0;
+
+    evolution = MONSTER_DATA[name].evolve;
 }
 
 float Monster::GetStat(const std::string &stat)
@@ -44,7 +41,7 @@ std::vector<Attack> Monster::GetAbilities(const bool all)
     {
         if (level >= lvl)
         {
-            if (all || ATTACK_DATA[ability].cost < energy)
+            if (all || ATTACK_DATA[ability].cost <= energy)
             {
                 result.push_back(ability);
             }
@@ -62,10 +59,10 @@ std::array<std::pair<float, float>, 3> Monster::GetInfo()
     return info;
 }
 
-void Monster::Update(const double dt)
+void Monster::Update(const float dt)
 {
     StatLimiter();
-    if (!paused)
+    if (!paused && health > 0)
     {
         initiative += GetStat("speed") * dt;
     }
@@ -95,16 +92,15 @@ void Monster::UpdateXP(const int amount)
     }
 }
 
-// avoids showing negative numbers for health and energy
 void Monster::StatLimiter()
 {
-    health = Clamp(health, 0, GetStat("max_health"));
-    energy = Clamp(energy, 0, GetStat("max_energy"));
+    health = rl::Clamp(health, 0, GetStat("max_health"));
+    energy = rl::Clamp(energy, 0, GetStat("max_energy"));
 }
 
 std::ostream &operator<<(std::ostream &os, Monster const &m)
 {
-    char level[3];
+    char level[3]{};
     sprintf(level, "%d", m.level);
     os << std::string("Monster: ") << m.name << std::string(", lvl: ") << std::string(level);
     return os;

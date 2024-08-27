@@ -1,39 +1,37 @@
-#include "dialogtree.h"
+#include "dialogtree.hpp"
 
 
 DialogTree::DialogTree(
-        Character *character_, Player *player_, const std::vector<SpriteGroup *> &grps,
-        const Font &font_, const std::function<void(Character *)> &end_dialog)
-    : character(character_), player(player_), groups(grps), font(font_), end_dialog(end_dialog)
+        const std::shared_ptr<Character> &character, const std::shared_ptr<Player> &player,
+        AllSprites *all_sprites, const std::shared_ptr<rg::font::Font> &font,
+        const std::function<void(const std::shared_ptr<Character> &char_)> &end_dialog)
+    : character(character), player(player), all_sprites(all_sprites), font(font),
+      end_dialog(end_dialog)
 {
     dialog = character->GetDialog();
     dialog_num = dialog.size();
 
-    currentDialog = new DialogSprite(dialog[dialog_index], character, groups, font);
+    current_dialog = std::make_shared<DialogSprite>(dialog[dialog_index], character, this->font);
+    current_dialog->add(all_sprites);
 }
 
-DialogTree::~DialogTree()
+void DialogTree::Update()
 {
-    if (currentDialog)
-    {
-        delete currentDialog;
-        currentDialog = nullptr;
-    }
+    dialog_timer.Update();
+    Input();
 }
 
 void DialogTree::Input()
 {
-    if (IsKeyPressed(KEY_SPACE) && !dialog_timer.active)
+    if (IsKeyPressed(rl::KEY_SPACE) && !dialog_timer.active)
     {
-        if (currentDialog)
-        {
-            delete currentDialog;
-            currentDialog = nullptr;
-        }
-        ++dialog_index;
+        current_dialog->Kill();
+        dialog_index += 1;
         if (dialog_index < dialog_num)
         {
-            currentDialog = new DialogSprite(dialog[dialog_index], character, groups, font);
+            current_dialog =
+                    std::make_shared<DialogSprite>(dialog[dialog_index], character, this->font);
+            current_dialog->add(all_sprites);
             dialog_timer.Activate();
         }
         else
@@ -41,11 +39,4 @@ void DialogTree::Input()
             end_dialog(character);
         }
     }
-    // PollInputEvents(); // if pool events here the game won't exit during dialog
-}
-
-void DialogTree::Update()
-{
-    dialog_timer.Update();
-    Input();
 }

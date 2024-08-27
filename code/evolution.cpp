@@ -1,119 +1,70 @@
-#include "evolution.h"
+#include "evolution.hpp"
+
 
 Evolution::Evolution(
-        std::map<std::string, Texture2D> *textures,
-        std::map<std::string, animation_rects> *animation_frames, const char *start_monster_name,
-        const char *end_monster_name, const Font &font, const std::function<void()> &end_evolution,
-        const std::vector<Texture2D> &star_animation_textures, const int level, const int index)
-    : end_monster(end_monster_name), level(level), index(index), font(font),
-      start_monster(start_monster_name), star_textures(star_animation_textures)
+        std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>> &monster_frames,
+        const std::string &start_monster, const std::string &end_monster,
+        const std::shared_ptr<rg::font::Font> &font, const std::function<void()> &endEvolution,
+        const std::vector<rg::Surface_Ptr> &star_animation_surfs)
 {
-    Image start_image = LoadImageFromTexture((*textures)[start_monster]);
-    ImageResize(&start_image, start_image.width * 2, start_image.height * 2);
-    start_surf.texture = (Texture2D *) MemAlloc(sizeof(Texture2D));
-    *(start_surf.texture) = LoadTextureFromImage(start_image);
-
-    start_surf.rect = (*animation_frames)[start_monster][ANIMATION_IDLE][0];
-    start_surf.rect.width *= 2;
-    start_surf.rect.height *= 2;
-
-    Image start_image_mask = ImageFromChannel(start_image, 3);
-    ImageAlphaMask(&start_image_mask, start_image_mask);
-    start_mask.texture = (Texture2D *) MemAlloc(sizeof(Texture2D));
-    *(start_mask.texture) = LoadTextureFromImage(start_image_mask);
-
-    start_mask.rect = start_surf.rect;
-
-    UnloadImage(start_image);
-    UnloadImage(start_image_mask);
-
-    Image end_image = LoadImageFromTexture((*textures)[end_monster]);
-    ImageResize(&end_image, end_image.width * 2, end_image.height * 2);
-    end_surf.texture = (Texture2D *) MemAlloc(sizeof(Texture2D));
-    *(end_surf.texture) = LoadTextureFromImage(end_image);
-
-    end_surf.rect = (*animation_frames)[end_monster][ANIMATION_IDLE][0];
-    end_surf.rect.width *= 2;
-    end_surf.rect.height *= 2;
-
-    UnloadImage(end_image);
+    auto start2x = rg::transform::Scale2x(monster_frames[start_monster][ANIMATIONSTATE_IDLE]);
+    start_monster_surf = std::make_shared<rg::Frames>(start2x, 2, 4);
+    auto end2x = rg::transform::Scale2x(monster_frames[end_monster][ANIMATIONSTATE_IDLE]);
+    end_monster_surf = std::make_shared<rg::Frames>(end2x, 2, 4);
 
     // start will run until `tint_amount` gets to 1.0f (tint_speed)
-    timers["start"] = Timer(200.0f, false, true);
-    timers["end"] = Timer(1.8f, false, false, end_evolution);
+    timers["start"] = rg::Timer(200.0f, false, false);
+    timers["end"] = rg::Timer(1.8f, false, false, endEvolution);
 
-    const RectangleU screen_rect = {0, 0, (float) GetScreenWidth(), (float) GetScreenHeight()};
+    // screen tint
+    tint_surf = std::make_shared<rg::Surface>(
+            display_surface->GetRect().width, display_surface->GetRect().height);
+    tint_surf->SetAlpha(200);
 
-    star_pos = Vector2Add(
-            GetRectCenter(screen_rect),
-            {-star_textures[0].width / 2.0f, -star_textures[0].height / 2.0f});
+    // white tint
+    start_monster_surf_white = rg::mask::FromSurface(start_monster_surf).ToFrames(2, 4);
+    start_monster_surf_white->SetColorKey(rl::BLACK);
+    start_monster_surf_white->SetAlpha(tint_amount);
 
-    TextFormatSafe(start_text, "%s is evolving", start_monster);
-    const Vector2 start_text_size = MeasureTextEx(font, start_text, font.baseSize, 1);
-    const Vector2 start_pos = Vector2Add(
-            GetRectCenter(screen_rect), {-start_text_size.x / 2, start_surf.rect.height / 2});
-    start_font = new TiledFont(start_text, font, start_pos, {10, 10}, 0.3f);
+    // text
+    start_text_surf =
+            font->render(rl::TextFormat("%s is evolving", start_monster.c_str()), COLORS["black"]);
+    end_text_surf = font->render(
+            rl::TextFormat("%s evolved into %s", start_monster.c_str(), end_monster.c_str()),
+            COLORS["black"]);
 
-    TextFormatSafe(end_text, "%s has evolved into %s", start_monster, end_monster);
-    const Vector2 end_text_size = MeasureTextEx(font, end_text, font.baseSize, 1);
-    const Vector2 end_pos = Vector2Add(
-            GetRectCenter(screen_rect), {-end_text_size.x / 2, end_surf.rect.height / 2});
-    end_font = new TiledFont(end_text, font, end_pos, {10, 10}, 0.3f);
-}
-
-Evolution::~Evolution()
-{
-    for (auto &[key, timer]: timers)
+    // star animation
+    // ! these Scale hangs the game, we scale in Game.ImportAssets()
+    for (const auto &star_surf: star_animation_surfs)
     {
-        timer.Deactivate();
-    }
-    delete start_font;
-    delete end_font;
-    if (start_surf.texture)
-    {
-        UnloadTexture(*start_surf.texture);
-    }
-    if (start_mask.texture)
-    {
-        UnloadTexture(*start_mask.texture);
-    }
-    if (end_surf.texture)
-    {
-        UnloadTexture(*end_surf.texture);
+        // star_surfs.push_back(rg::transform::Scale2x(star_surf));
+        star_surfs.push_back(star_surf);
     }
 }
 
 void Evolution::Update(const double dt)
 {
-    for (auto &[key, timer]: timers)
+    display_surface->Blit(tint_surf, rg::math::Vector2{});
+    if (!IsActive())
     {
-        timer.Update();
+        timers["start"].Activate();
     }
-
-    BeginTextureModeSafe(display_surface); // we don't want to clear background
-    const RectangleU screen_rect = {0, 0, (float) GetScreenWidth(), (float) GetScreenHeight()};
-    DrawRectangleRec(screen_rect.rectangle, Fade(BLACK, 200.0f / 255.0f));
-
-    RectangleU position_rect = start_surf.rect;
-    RectToCenter(position_rect, GetRectCenter(screen_rect));
-
     if (timers["start"].active)
     {
-        if (tint_amount < 1.0f)
+        if (tint_amount < 255)
         {
-            DrawTextureRec(
-                    *start_surf.texture, start_surf.rect.rectangle, position_rect.pos, WHITE);
+            const auto rect = start_monster_surf->GetRect().center(
+                    {WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
+            display_surface->Blit(start_monster_surf, rect);
 
             tint_amount += tint_speed * dt;
-            if (tint_amount >= 1.0f)
-            {
-                tint_amount = 1.0f;
-            }
-            DrawTextureRec(
-                    *start_mask.texture, start_mask.rect.rectangle, position_rect.pos,
-                    Fade(WHITE, tint_amount));
+            start_monster_surf_white->SetAlpha(tint_amount);
+            display_surface->Blit(start_monster_surf_white, rect);
 
-            start_font->Draw();
+            const auto text_rect =
+                    start_text_surf->GetRect().midtop(rect.midbottom() + rg::math::Vector2{0, 20});
+            rg::draw::rect(display_surface, COLORS["white"], text_rect.inflate(20, 20), 0, 5);
+            display_surface->Blit(start_text_surf, text_rect);
         }
         else
         {
@@ -127,13 +78,22 @@ void Evolution::Update(const double dt)
     }
     else if (timers["end"].active)
     {
-        DrawTextureRec(*end_surf.texture, end_surf.rect.rectangle, position_rect.pos, WHITE);
-        end_font->Draw();
+        const auto rect =
+                end_monster_surf->GetRect().center({WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
+        display_surface->Blit(end_monster_surf, rect);
+
+        const auto text_rect =
+                end_text_surf->GetRect().midtop(rect.midbottom() + rg::math::Vector2{0, 20});
+        rg::draw::rect(display_surface, COLORS["white"], text_rect.inflate(20, 20), 0, 5);
+        display_surface->Blit(end_text_surf, text_rect);
+        DisplayStars(dt);
     }
-    // the tutorial show stars only at the end monster, I deliberately want to show stars
-    // during the whole evolution
-    DisplayStars(dt);
-    EndTextureModeSafe();
+    // update timers after display because "end" destroys ~Evolution() and
+    // we loose all pointers
+    for (auto &[key, timer]: timers)
+    {
+        timer.Update();
+    }
 }
 
 bool Evolution::IsActive()
@@ -141,9 +101,13 @@ bool Evolution::IsActive()
     return timers["start"].active || timers["end"].active;
 }
 
-void Evolution::DisplayStars(const double dt)
+void Evolution::DisplayStars(const float dt)
 {
-    frame_index += 50 * dt;
-    const Texture2D star = star_textures[int(frame_index) % star_textures.size()];
-    DrawTextureV(star, star_pos, WHITE);
+    frame_index += 20 * dt;
+    if (frame_index < star_surfs.size())
+    {
+        const auto frame = star_surfs[int(frame_index)];
+        const auto rect = frame->GetRect().center({WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
+        display_surface->Blit(frame, rect);
+    }
 }

@@ -1,9 +1,8 @@
-#include "game.h"
-#include "settings.h"
+#include "game.hpp"
 
 int main()
 {
-    Game game(WINDOW_WIDTH, WINDOW_HEIGHT);
+    Game game;
     game.run();
 
     return 0;

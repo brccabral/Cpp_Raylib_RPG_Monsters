@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "settings.h"
+#include <map>
 
 struct TrainerDialog
 {
@@ -19,7 +19,7 @@ struct CharacterData
 {
     std::vector<TrainerMonster> monsters;
     TrainerDialog dialog;
-    std::vector<FacingDirection> directions;
+    std::vector<std::string> directions;
     bool look_around;
     bool defeated;
     std::string biome;
@@ -30,7 +30,7 @@ inline CharacterData o1 = {
         {{"Jacana", 14}, {"Cleaf", 15}}, //
         {{"Hey, how are you?", "Oh, so you want to fight?", "FIGHT!"},
          {"You are very strong!", "Let's fight again sometime?"}}, //
-        {DOWN},
+        {"down"},
         true,
         false,
         "forest",
@@ -40,7 +40,7 @@ inline CharacterData o2 = {
         {{"Atrox", 14}, {"Pouch", 15}, {"Draem", 13}, {"Cindrill", 13}}, //
         {{"I don't like sand", "It's coarse and rough", "oh god, fight"},
          {"May the force be with you"}}, //
-        {LEFT, DOWN},
+        {"left", "down"},
         false,
         false,
         "sand",
@@ -49,7 +49,7 @@ inline CharacterData o2 = {
 inline CharacterData o3 = {
         {{"Atrox", 14}, {"Pouch", 15}, {"Draem", 13}, {"Cindrill", 13}}, //
         {{"I love skating!", "FIGHT!"}, {"Good luck with the boss", "It's so cold in here"}}, //
-        {LEFT, RIGHT, UP, DOWN},
+        {"left", "right", "up", "down"},
         true,
         false,
         "sand",
@@ -58,7 +58,7 @@ inline CharacterData o3 = {
 inline CharacterData o4 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
         {{"I love skating!", "FIGHT!"}, {"Good luck with the boss", "It's so cold in here"}}, //
-        {RIGHT},
+        {"right"},
         true,
         false,
         "forest",
@@ -68,7 +68,7 @@ inline CharacterData o5 = {
         {{"Plumette", 20}, {"Ivieron", 22}, {"Atrox", 24}, {"Pouch", 19}}, //
         {{"So you want to challenge the big ones", "This will be fun!"},
          {"I hope the lawyers will never spot you", "<3"}}, //
-        {UP, RIGHT},
+        {"up", "right"},
         true,
         false,
         "forest",
@@ -77,7 +77,7 @@ inline CharacterData o5 = {
 inline CharacterData o6 = {
         {{"Finsta", 15}, {"Finsta", 15}, {"Finsta", 15}}, //
         {{"I love skating!", "FIGHT!"}, {"Good luck with the boss", "It's so cold in here"}}, //
-        {DOWN},
+        {"down"},
         false,
         false,
         "sand",
@@ -87,7 +87,7 @@ inline CharacterData o7 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
         {{"There are no bugs in the snow!"},
          {"Maybe I should check a vulcano...", "It's so cold in here"}}, //
-        {RIGHT},
+        {"right"},
         false,
         false,
         "ice",
@@ -96,7 +96,7 @@ inline CharacterData o7 = {
 inline CharacterData p1 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
         {{"I love trees", "and fights"}, {"Good luck with the boss!"}}, //
-        {RIGHT},
+        {"right"},
         false,
         false,
         "forest",
@@ -105,7 +105,7 @@ inline CharacterData p1 = {
 inline CharacterData p2 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
         {{"I love trees", "and fights"}, {"Good luck with the boss!"}}, //
-        {RIGHT},
+        {"right"},
         false,
         false,
         "forest",
@@ -114,7 +114,7 @@ inline CharacterData p2 = {
 inline CharacterData p3 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
         {{"I love trees", "and fights"}, {"Good luck with the boss!"}}, //
-        {RIGHT},
+        {"right"},
         false,
         false,
         "forest",
@@ -123,7 +123,7 @@ inline CharacterData p3 = {
 inline CharacterData p4 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
         {{"I love trees", "and fights"}, {"Good luck with the boss!"}}, //
-        {RIGHT},
+        {"right"},
         false,
         false,
         "forest",
@@ -132,7 +132,7 @@ inline CharacterData p4 = {
 inline CharacterData px = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
         {{"I love trees", "and fights"}, {"Good luck with the boss!"}}, //
-        {RIGHT},
+        {"right"},
         false,
         false,
         "forest",
@@ -142,7 +142,7 @@ inline CharacterData w1 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
         {{"It's so cold in here", "maybe a fight will warm me up"},
          {"Good luck with the boss!"}}, //
-        {LEFT},
+        {"left"},
         true,
         false,
         "ice",
@@ -152,7 +152,7 @@ inline CharacterData w2 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
         {{"It's so cold in here", "maybe a fight will warm me up"},
          {"Good luck with the boss!"}}, //
-        {RIGHT},
+        {"right"},
         true,
         false,
         "ice",
@@ -162,7 +162,7 @@ inline CharacterData w3 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
         {{"It's so cold in here", "maybe a fight will warm me up"},
          {"Good luck with the boss!"}}, //
-        {RIGHT},
+        {"right"},
         true,
         false,
         "ice",
@@ -172,7 +172,7 @@ inline CharacterData w4 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
         {{"It's so cold in here", "maybe a fight will warm me up"},
          {"Good luck with the boss!"}}, //
-        {LEFT},
+        {"left"},
         true,
         false,
         "ice",
@@ -182,7 +182,7 @@ inline CharacterData w5 = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
         {{"It's so cold in here", "maybe a fight will warm me up"},
          {"Good luck with the boss!"}}, //
-        {RIGHT},
+        {"right"},
         true,
         false,
         "ice",
@@ -191,7 +191,7 @@ inline CharacterData w5 = {
 inline CharacterData wx = {
         {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
         {{"I hope you brought rations", "This will be a long journey"}, {"Congratultion!"}}, //
-        {DOWN},
+        {"down"},
         false,
         false,
         "ice",
@@ -200,7 +200,7 @@ inline CharacterData wx = {
 inline CharacterData f1 = {
         {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
         {{"This place feels kinda warm...", "fight!"}, {"Congratultion!"}}, //
-        {RIGHT},
+        {"right"},
         true,
         false,
         "sand",
@@ -209,7 +209,7 @@ inline CharacterData f1 = {
 inline CharacterData f2 = {
         {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
         {{"This place feels kinda warm...", "fight!"}, {"Congratultion!"}}, //
-        {RIGHT, LEFT},
+        {"right", "left"},
         false,
         false,
         "sand",
@@ -218,7 +218,7 @@ inline CharacterData f2 = {
 inline CharacterData f3 = {
         {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
         {{"This place feels kinda warm...", "fight!"}, {"Congratultion!"}}, //
-        {RIGHT, LEFT},
+        {"right", "left"},
         true,
         false,
         "sand",
@@ -227,7 +227,7 @@ inline CharacterData f3 = {
 inline CharacterData f4 = {
         {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
         {{"This place feels kinda warm...", "fight!"}, {"Congratultion!"}}, //
-        {UP, RIGHT},
+        {"up", "right"},
         true,
         false,
         "sand",
@@ -236,7 +236,7 @@ inline CharacterData f4 = {
 inline CharacterData f5 = {
         {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
         {{"This place feels kinda warm...", "fight!"}, {"Congratultion!"}}, //
-        {LEFT},
+        {"left"},
         true,
         false,
         "sand",
@@ -245,7 +245,7 @@ inline CharacterData f5 = {
 inline CharacterData f6 = {
         {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
         {{"This place feels kinda warm...", "fight!"}, {"Congratultion!"}}, //
-        {RIGHT},
+        {"right"},
         true,
         false,
         "sand",
@@ -254,7 +254,7 @@ inline CharacterData f6 = {
 inline CharacterData fx = {
         {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
         {{"Time to bring the heat", "fight!"}, {"Congratultion!"}}, //
-        {DOWN},
+        {"down"},
         false,
         false,
         "sand",
@@ -263,14 +263,14 @@ inline CharacterData fx = {
 inline CharacterData Nurse = {
         {}, //
         {{"Welcome to the hospital", "Your monsters have been healed"}, {}}, //
-        {DOWN},
+        {"down"},
         false,
         false,
         "None",
         0};
 
 
-static std::map<std::string, CharacterData> TRAINER_DATA = {
+inline std::map<std::string, CharacterData> TRAINER_DATA = {
         {"o1", o1}, //
         {"o2", o2}, //
         {"o3", o3}, //
@@ -316,12 +316,12 @@ enum Attack
 
 enum AttackAnimation
 {
-    ANIMATION_FIRE = 0,
-    ANIMATION_GREEN,
-    ANIMATION_SCRATCH,
-    ANIMATION_SPLASH,
-    ANIMATION_EXPLOSION,
-    ANIMATION_ICE
+    ATTACKANIMATION_FIRE = 0,
+    ATTACKANIMATION_GREEN,
+    ATTACKANIMATION_SCRATCH,
+    ATTACKANIMATION_SPLASH,
+    ATTACKANIMATION_EXPLOSION,
+    ATTACKANIMATION_ICE
 };
 
 enum ElementType
@@ -339,15 +339,15 @@ static std::map<ElementType, std::string> NAMES_ELEMENT_TYPES{
         {ELEMENT_NORMAL, "normal"}};
 
 static std::map<std::string, AttackAnimation> ATTACK_ANIMATION_NAMES = {
-        {"fire", ANIMATION_FIRE},           {"green", ANIMATION_GREEN},
-        {"scratch", ANIMATION_SCRATCH},     {"splash", ANIMATION_SPLASH},
-        {"explosion", ANIMATION_EXPLOSION}, {"ice", ANIMATION_ICE},
+        {"fire", ATTACKANIMATION_FIRE},           {"green", ATTACKANIMATION_GREEN},
+        {"scratch", ATTACKANIMATION_SCRATCH},     {"splash", ATTACKANIMATION_SPLASH},
+        {"explosion", ATTACKANIMATION_EXPLOSION}, {"ice", ATTACKANIMATION_ICE},
 };
 
 static std::map<AttackAnimation, std::string> NAMES_ATTACK_ANIMATION = {
-        {ANIMATION_FIRE, "fire"},           {ANIMATION_GREEN, "green"},
-        {ANIMATION_SCRATCH, "scratch"},     {ANIMATION_SPLASH, "splash"},
-        {ANIMATION_EXPLOSION, "explosion"}, {ANIMATION_ICE, "ice"},
+        {ATTACKANIMATION_FIRE, "fire"},           {ATTACKANIMATION_GREEN, "green"},
+        {ATTACKANIMATION_SCRATCH, "scratch"},     {ATTACKANIMATION_SPLASH, "splash"},
+        {ATTACKANIMATION_EXPLOSION, "explosion"}, {ATTACKANIMATION_ICE, "ice"},
 };
 
 struct MonsterData
@@ -655,7 +655,7 @@ struct AttackData
 {
     std::string name;
     SelectionSide target; // PLAYER - attack same team (healing/defense) | OPPONENT - attack the
-    // other team
+                          // other team
     float amount;
     int cost;
     ElementType element;
@@ -663,16 +663,18 @@ struct AttackData
 };
 
 inline std::map<Attack, AttackData> ATTACK_DATA = {
-        {ATTACK_BURN, {"burn", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ANIMATION_FIRE}}, //
-        {ATTACK_HEAL, {"heal", PLAYER, -1.2f, 600, ELEMENT_PLANT, ANIMATION_GREEN}}, //
-        {ATTACK_BATTLECRY, {"battlecry", PLAYER, -1.4f, 20, ELEMENT_NORMAL, ANIMATION_GREEN}}, //
-        {ATTACK_SPARK, {"spark", OPPONENT, 1.1f, 20, ELEMENT_FIRE, ANIMATION_FIRE}}, //
-        {ATTACK_SCRATCH, {"scratch", OPPONENT, 1.2f, 20, ELEMENT_NORMAL, ANIMATION_SCRATCH}}, //
-        {ATTACK_SPLASH, {"splash", OPPONENT, 2.0f, 15, ELEMENT_WATER, ANIMATION_SPLASH}}, //
-        {ATTACK_FIRE, {"fire", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ANIMATION_FIRE}}, //
+        {ATTACK_BURN, {"burn", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ATTACKANIMATION_FIRE}}, //
+        {ATTACK_HEAL, {"heal", PLAYER, -1.2f, 600, ELEMENT_PLANT, ATTACKANIMATION_GREEN}}, //
+        {ATTACK_BATTLECRY,
+         {"battlecry", PLAYER, -1.4f, 20, ELEMENT_NORMAL, ATTACKANIMATION_GREEN}}, //
+        {ATTACK_SPARK, {"spark", OPPONENT, 1.1f, 20, ELEMENT_FIRE, ATTACKANIMATION_FIRE}}, //
+        {ATTACK_SCRATCH,
+         {"scratch", OPPONENT, 1.2f, 20, ELEMENT_NORMAL, ATTACKANIMATION_SCRATCH}}, //
+        {ATTACK_SPLASH, {"splash", OPPONENT, 2.0f, 15, ELEMENT_WATER, ATTACKANIMATION_SPLASH}}, //
+        {ATTACK_FIRE, {"fire", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ATTACKANIMATION_FIRE}}, //
         {ATTACK_EXPLOSTION,
-         {"explosion", OPPONENT, 2.0f, 90, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
+         {"explosion", OPPONENT, 2.0f, 90, ELEMENT_FIRE, ATTACKANIMATION_EXPLOSION}}, //
         {ATTACK_ANNIHILATE,
-         {"annihilate", OPPONENT, 3.0f, 30, ELEMENT_FIRE, ANIMATION_EXPLOSION}}, //
-        {ATTACK_ICE, {"ice", OPPONENT, 2.0f, 15, ELEMENT_WATER, ANIMATION_ICE}}, //
+         {"annihilate", OPPONENT, 3.0f, 30, ELEMENT_FIRE, ATTACKANIMATION_EXPLOSION}}, //
+        {ATTACK_ICE, {"ice", OPPONENT, 2.0f, 15, ELEMENT_WATER, ATTACKANIMATION_ICE}}, //
 };

@@ -1,45 +1,36 @@
 #pragma once
 #include <string>
-#include <map>
-#include <vector>
-#include <array>
-#include "game_data.h"
+#include "game_data.hpp"
 
-#if defined(PLATFORM_DESKTOP)
-#define GLSL_VERSION 330
-#else // PLATFORM_ANDROID, PLATFORM_WEB
-#define GLSL_VERSION 100
-#endif
 
 class Monster
 {
 public:
 
-    Monster() = default;
-    Monster(std::string name_, int level);
+    Monster() = default; // need a default constructor for map<>
+    Monster(const std::string &name, int level);
     float GetStat(const std::string &stat);
     std::vector<std::pair<std::string, float>> GetStats();
     std::vector<Attack> GetAbilities(bool all = true);
     std::array<std::pair<float, float>, 3> GetInfo();
-    void Update(double dt);
+    void Update(float dt);
     void ReduceEnergy(Attack attack);
     float GetBaseDamage(Attack attack);
     void UpdateXP(int amount);
-    void StatLimiter();
+
     friend std::ostream &operator<<(std::ostream &os, Monster const &m);
 
     std::string name;
-    int level;
-    ElementType element;
+    int level{};
+    ElementType element{};
     std::map<std::string, float> base_stats;
     std::vector<std::pair<int, Attack>> abilities;
 
-    // evolution
-    int level_up{};
-    int xp{};
-    std::pair<std::string, int> evolve;
+    // experience
+    float xp{};
+    float level_up{};
+    std::pair<std::string, int> evolution;
 
-    // stats
     float health{};
     float energy{};
     float initiative{};
@@ -47,4 +38,8 @@ public:
     // when it is this monster time to action, if already defending, stop defending. When
     // it is being attacked, if defending, reduces damage taken
     bool defending{};
+
+private:
+
+    void StatLimiter();
 };

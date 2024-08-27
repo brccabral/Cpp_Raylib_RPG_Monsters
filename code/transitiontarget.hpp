@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
-#include "battle.h"
+#include "battle.hpp"
+
 
 enum TransitionTargetType
 {
@@ -18,6 +19,6 @@ public:
 
     std::string map_name{};
     std::string start_position{};
-    Battle *battle = nullptr;
+    std::shared_ptr<Battle> battle = nullptr;
     TransitionTargetType target_type{};
 };

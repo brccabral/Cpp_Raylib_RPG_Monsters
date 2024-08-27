@@ -1,115 +1,63 @@
-#include <cstring>
-#include <ctime>
-#include <raylib.h>
-#define RAYLIB_TMX_IMPLEMENTATION
-#include "raylib-tmx.h"
-#include "game.h"
-#include "raylib_utils.h"
-
-#include <iostream>
+#include <memory>
+#include "game.hpp"
+#include "settings.hpp"
+#include "sprite.hpp"
+#include "support.hpp"
+#include "game_data.hpp"
 
 
-Game::Game(const int width, const int height)
+Game::Game()
 {
-    SetTraceLogLevel(LOG_WARNING);
-    InitWindow(width, height, "RPG Monsters");
-    // SetTargetFPS(60);
-    SetRandomSeed(std::time(nullptr));
-    SetExitKey(KEY_NULL); // Disable KEY_ESCAPE to close window, X-button still works
-    InitAudioDevice();
+    rg::Init(rl::LOG_WARNING);
+    display_surface = rg::display::SetMode(WINDOW_WIDTH, WINDOW_HEIGHT);
+    rg::display::SetCaption("RPG Monsters");
 
-    display_surface = LoadRenderTexture(width, height);
-    while (!IsRenderTextureReady(display_surface))
-    {}
+    int player_index = 0;
+    player_monsters[player_index++] = std::make_shared<Monster>("Charmadillo", 50);
+    player_monsters[player_index++] = std::make_shared<Monster>("Larvea", 3);
+    player_monsters[player_index++] = std::make_shared<Monster>("Plumette", 14);
 
-    ImporAssets();
-    ClearSpriteGroups();
+    all_sprites = std::make_shared<AllSprites>();
 
+    // transition / tint
+    transition_target = {};
+    tint_surf = std::make_shared<rg::Surface>(WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    ImportAssets();
     Setup("world", "house");
-    SetupFrames();
 
-    encounter_timer = Timer(2.0f, false, false, [this] { MonsterEncounter(); });
+    audio["overworld"]->Play();
 
-    SetCurrentBackgroundMusic(musics["overworld"]);
+    monster_index = std::make_shared<MonsterIndex>(
+            &player_monsters, fonts, &monster_icons, &ui_icons, &monster_frames);
+
+    encounter_timer = rg::Timer(2.0f, false, false, [this] { MonsterEncounter(); });
 }
 
 Game::~Game()
 {
     UnloadResources();
-    CloseWindow();
-}
-
-void Game::ClearSpriteGroups()
-{
-    if (all_sprites)
-    {
-        delete all_sprites;
-        all_sprites = nullptr;
-    }
-    if (collition_sprites)
-    {
-        delete collition_sprites;
-        collition_sprites = nullptr;
-    }
-    if (characters_sprites)
-    {
-        delete characters_sprites;
-        characters_sprites = nullptr;
-    }
-    if (transition_sprites)
-    {
-        delete transition_sprites;
-        transition_sprites = nullptr;
-    }
-    if (monster_sprites)
-    {
-        delete monster_sprites;
-        monster_sprites = nullptr;
-    }
-    // create all_sprites after InitWindow for it uses LoadTexture
-    all_sprites = new AllSprites;
-    collition_sprites = new SpriteGroup;
-    characters_sprites = new SpriteGroup;
-    transition_sprites = new SpriteGroup;
-    monster_sprites = new SpriteGroup;
-}
-
-void Game::Draw() const
-{
-    BeginTextureModeC(display_surface, BLACK);
-    all_sprites->Draw(player);
-    EndTextureModeSafe();
 }
 
 void Game::run()
 {
-    while (!WindowShouldClose() && isRunning)
+    while (!rg::WindowCloseOrQuit())
     {
-        const double dt = GetFrameTime();
+        const float dt = rg::time::Clock::tick();
+        display_surface->Fill(rl::BLACK);
 
-        // update
-        UpdateMusicStream(current_music);
         encounter_timer.Update();
+        // game logic
         Input();
         TransitionCheck();
         if (!battle)
         {
             all_sprites->Update(dt);
-
-            // drawing
-            Draw();
+            all_sprites->Draw(player);
         }
         CheckMonster();
 
         // overlays
-        // dialog_tree checks for SPACE input, which conflicts
-        // with Game input.
-        // If player is next to a trainer, the Game.Input opens the first
-        // dialog, and dialog_tree opens the second.
-        // The tutorial uses a Timer to avoid the conflict
-        // The tutorial puts dialog after the drawing, but raylib
-        // resets all KEY status after EndDrawing. So, we need all
-        // inputs before drawing.
         if (dialog_tree)
         {
             dialog_tree->Update();
@@ -127,244 +75,226 @@ void Game::run()
             evolution->Update(dt);
             if (!evolution->IsActive())
             {
-                delete evolution;
+                evolution.reset();
                 evolution = nullptr;
                 CheckEvolution(); // check if there are more evolutions
             }
         }
 
         TintScreen(dt);
-
-        DisplayUpdate();
+        rg::display::Update();
     }
 }
 
-void Game::DisplayUpdate() const
+void Game::ImportAssets()
 {
-    BeginDrawingC(BLACK);
+    tmx_maps = rg::tmx::LoadTMXMaps("resources/data/maps");
 
-    // RenderTexture renders things flipped in Y axis, we draw it "unflipped"
-    // https://github.com/raysan5/raylib/issues/3803
-    // https://github.com/raysan5/raylib/issues/378=
-    DrawTextureRec(
-            display_surface.texture,
-            {0, 0, (float) display_surface.texture.width, (float) -display_surface.texture.height},
-            {0, 0}, render_tint);
-    DrawFPS(20, 20);
-#if 0
-    const auto [mouse_x, mouse_y] = GetMousePosition();
-    char mouse_text[MAX_TEXT_BUFFER_LENGTH];
-    TextFormatSafe(mouse_text, "%.f / %.f", mouse_x, mouse_y);
-    DrawCircle((int) mouse_x, (int) mouse_y, 4.0f, BLACK);
-    DrawRectangle(mouse_x, mouse_y, 60, 15, WHITE);
-    DrawText(mouse_text, (int) mouse_x + 5, (int) mouse_y + 5, 10, BLACK);
-#endif
+    const auto waterList = rg::image::LoadFolderList("resources/graphics/tilesets/water");
+    waterFrames = rg::Frames::Merge(waterList, 1, waterList.size());
 
-    EndDrawing();
-}
-
-void Game::ImporAssets()
-{
-    tmx_maps = tmx_importer("resources/data/maps");
-
-    overworld_frames["coast"] = {LoadTexture("resources/graphics/tilesets/coast.png")};
-
-    named_textures["characters"] = ImportNamedFolder("resources/graphics/characters");
-    named_textures["monsters"] = ImportNamedFolder("resources/graphics/monsters");
-    named_textures["icons"] = ImportNamedFolder("resources/graphics/icons");
-    named_textures["ui"] = ImportNamedFolder("resources/graphics/ui");
-    named_textures["bg_frames"] = ImportNamedFolder("resources/graphics/backgrounds");
-    named_textures["outlines"] = OutlineCreator(named_textures["monsters"], 4);
-    named_textures["attacks"] = ImportNamedFolder("resources/graphics/attacks");
-
-    named_rect_frames["coast"] = coast_rects();
-    animation_frames = MonsterImporter(4, 2, "resources/graphics/monsters");
-    attack_animation_rects = AttackImporter(4, 1, "resources/graphics/attacks");
-
-    star_animation_textures = ImportFolder("resources/graphics/other/star animation");
-
-    face_rect_frames["characters"] = all_character_import("resources/graphics/characters");
+    cost_dict = CoastImporter("resources/graphics/tilesets/coast.png", 12, 24);
+    characters_dict = AllCharacterImport("resources/graphics/characters");
 
     fonts["dialog"] =
-            LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", FONT_SIZE, nullptr, 0);
-    fonts["regular"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 18, nullptr, 0);
-    fonts["small"] = LoadFontEx("resources/graphics/fonts/PixeloidSans.ttf", 14, nullptr, 0);
-    fonts["bold"] = LoadFontEx("resources/graphics/fonts/dogicapixelbold.otf", 20, nullptr, 0);
+            std::make_shared<rg::font::Font>("resources/graphics/fonts/PixeloidSans.ttf", 30);
+    fonts["regular"] =
+            std::make_shared<rg::font::Font>("resources/graphics/fonts/PixeloidSans.ttf", 18);
+    fonts["small"] =
+            std::make_shared<rg::font::Font>("resources/graphics/fonts/PixeloidSans.ttf", 14);
+    fonts["bold"] =
+            std::make_shared<rg::font::Font>("resources/graphics/fonts/dogicapixelbold.otf", 20);
 
-    musics = MusicsImporter("resources/audio/musics");
-    sounds = SoundsImporter("resources/audio/sounds");
-}
+    monster_icons = rg::image::ImportFolderDict("resources/graphics/icons");
+    ui_icons = rg::image::ImportFolderDict("resources/graphics/ui");
 
-TileInfo Game::GetTileInfo(const tmx_tile *tile, const int posX, const int posY)
-{
-    TileInfo tile_info{};
-    const tmx_image *im = tile->image;
-    Texture2D *map_texture{};
+    bg_frames = rg::image::ImportFolderDict("resources/graphics/backgrounds");
 
-    tile_info.position = {float(posX), float(posY)};
+    monster_frames = MonsterImporter(4, 2, "resources/graphics/monsters");
+    outline_frames = OutlineCreator(monster_frames, 4);
 
-    RectangleU srcRect;
-    srcRect.x = tile->ul_x;
-    srcRect.y = tile->ul_y;
-    srcRect.width = tile->width;
-    srcRect.height = tile->height;
+    attack_frames = AttackImporter("resources/graphics/attacks");
 
-    tile_info.image.rect = srcRect;
-
-    if (im && im->resource_image)
+    auto star_surfs = rg::image::ImportFolder("resources/graphics/other/star animation");
+    for (const auto &star_surf: star_surfs)
     {
-        map_texture = (Texture2D *) im->resource_image;
+        star_animation_surfs.push_back(rg::transform::Scale2x(star_surf));
     }
-    else if (tile->tileset->image->resource_image)
-    {
-        map_texture = (Texture2D *) tile->tileset->image->resource_image;
-    }
-    if (map_texture)
-    {
-        tile_info.image.texture = map_texture;
-    }
-    return tile_info;
-}
 
-void Game::CreateTileLayer(const tmx_map *map, const tmx_layer *layer, const int z)
-{
-    for (int y = 0; y < map->height; y++)
-    {
-        for (int x = 0; x < map->width; x++)
-        {
-            const unsigned int baseGid = layer->content.gids[(y * map->width) + x];
-            const unsigned int gid = (baseGid) &TMX_FLIP_BITS_REMOVAL;
-            if (map->tiles[gid])
-            {
-                const tmx_tileset *ts = map->tiles[gid]->tileset;
-                auto [position, image] =
-                        GetTileInfo(map->tiles[gid], x * ts->tile_width, y * ts->tile_height);
-                new Sprite(position, image, {all_sprites}, z);
-            }
-        }
-    }
+    audio = AudioImporter("resources/audio");
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)
 {
-    ClearSpriteGroups();
+    // clear the map
+    all_sprites->empty();
+    collision_sprites.empty();
+    character_sprites.empty();
+    transition_sprites.empty();
 
-    const tmx_map *map = tmx_maps[map_name];
+    const rl::tmx_map *map = tmx_maps[map_name];
 
-    const tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
-    const tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
-    const tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
-    const tmx_layer *terrain_top_layer = tmx_find_layer_by_name(map, "Terrain Top");
-    const tmx_layer *water_layer = tmx_find_layer_by_name(map, "Water");
-    const tmx_layer *coast_layer = tmx_find_layer_by_name(map, "Coast");
-    const tmx_layer *monster_layer = tmx_find_layer_by_name(map, "Monsters");
-    const tmx_layer *collisions_layer = tmx_find_layer_by_name(map, "Collisions");
-    const tmx_layer *transition_layer = tmx_find_layer_by_name(map, "Transition");
+    const rl::tmx_layer *terrain_layer = tmx_find_layer_by_name(map, "Terrain");
+    const rl::tmx_layer *terrain_top_layer = tmx_find_layer_by_name(map, "Terrain Top");
+    const rl::tmx_layer *water_layer = tmx_find_layer_by_name(map, "Water");
+    const rl::tmx_layer *coast_layer = tmx_find_layer_by_name(map, "Coast");
+    const rl::tmx_layer *objects_layer = tmx_find_layer_by_name(map, "Objects");
+    const rl::tmx_layer *transition_layer = tmx_find_layer_by_name(map, "Transition");
+    const rl::tmx_layer *collision_layer = tmx_find_layer_by_name(map, "Collisions");
+    const rl::tmx_layer *monster_layer = tmx_find_layer_by_name(map, "Monsters");
+    const rl::tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
 
-    CreateTileLayer(map, terrain_layer, WORLD_LAYERS["bg"]);
-    CreateTileLayer(map, terrain_top_layer, WORLD_LAYERS["bg"]);
+    // terrain
+#if 0
+    auto terrain_tiles = rg::tmx::GetTMXTiles(map, terrain_layer);
+    for (auto &[position, texture, atlas_rect]: terrain_tiles)
+    {
+        auto surface = std::make_shared<rg::Surface>(texture, atlas_rect);
+        std::make_shared<Sprite>(position, surface, WORLD_LAYERS["bg"])->add(all_sprites.get());
+    }
 
+    auto terrain_top_tiles = rg::tmx::GetTMXTiles(map, terrain_top_layer);
+    for (auto &[position, texture, atlas_rect]: terrain_top_tiles)
+    {
+        auto surface = std::make_shared<rg::Surface>(texture, atlas_rect);
+        std::make_shared<Sprite>(position, surface, WORLD_LAYERS["bg"])->add(all_sprites.get());
+    }
+#else
+    const auto terrain_surf = rg::tmx::GetTMXLayerSurface(map, terrain_layer);
+    std::make_shared<Sprite>(rg::math::Vector2{}, terrain_surf, WORLD_LAYERS["bg"])
+            ->add(all_sprites.get());
+
+    const auto terrain_top_surf = rg::tmx::GetTMXLayerSurface(map, terrain_top_layer);
+    std::make_shared<Sprite>(rg::math::Vector2{}, terrain_top_surf, WORLD_LAYERS["bg"])
+            ->add(all_sprites.get());
+#endif
+
+    // water
+    auto water = water_layer->content.objgr->head;
+    while (water)
+    {
+        auto area_position = rg::tmx::GetTMXObjPosition(water);
+        for (int y = 0; y < water->height; y += TILE_SIZE)
+        {
+            for (int x = 0; x < water->width; x += TILE_SIZE)
+            {
+                auto position = area_position + rg::math::Vector2{(float) x, (float) y};
+                std::make_shared<AnimatedSprite>(position, waterFrames, WORLD_LAYERS["water"])
+                        ->add(all_sprites.get());
+            }
+        }
+        water = water->next;
+    }
+
+    // coast
+    auto coast = coast_layer->content.objgr->head;
+    while (coast)
+    {
+        const char *terrain = rl::tmx_get_property(coast->properties, "terrain")->value.string;
+        const char *side = rl::tmx_get_property(coast->properties, "side")->value.string;
+
+        auto position = rg::tmx::GetTMXObjPosition(coast);
+        auto t = cost_dict[terrain];
+        auto s = t[side];
+        std::make_shared<AnimatedSprite>(position, s, WORLD_LAYERS["bg"])->add(all_sprites.get());
+
+        coast = coast->next;
+    }
+
+    // objects
     auto object = objects_layer->content.objgr->head;
     while (object)
     {
         const int gid = object->content.gid;
         if (map->tiles[gid])
         {
-            std::string name;
+            rg::Rect atlas_rect;
+            auto *tileTexture = rg::tmx::GetTMXTileTexture(map->tiles[gid], &atlas_rect);
+            auto objSurf = std::make_shared<rg::Surface>(tileTexture, atlas_rect);
+            auto position = rg::tmx::GetTMXObjPosition(object);
+
+            std::string name{};
             if (object->name)
             {
                 name = object->name;
             }
-            if (strcmp(name.c_str(), "top") == 0)
+
+            if (!strcmp(name.c_str(), "top"))
             {
-                auto [position, image] =
-                        GetTileInfo(map->tiles[gid], object->x, object->y - object->height);
-                new Sprite(position, image, {all_sprites}, WORLD_LAYERS["top"]);
+                std::make_shared<Sprite>(position, objSurf, WORLD_LAYERS["top"])
+                        ->add(all_sprites.get());
             }
             else
             {
-                auto [position, image] =
-                        GetTileInfo(map->tiles[gid], object->x, object->y - object->height);
-                new CollidableSprite(position, image, {all_sprites, collition_sprites});
+                std::make_shared<CollidableSprite>(position, objSurf)
+                        ->add({all_sprites.get(), &collision_sprites});
             }
         }
         object = object->next;
     }
 
+    // transition objects
     auto transition = transition_layer->content.objgr->head;
     while (transition)
     {
-        std::string target = tmx_get_property(transition->properties, "target")->value.string;
-        std::string pos = tmx_get_property(transition->properties, "pos")->value.string;
-        new TransitionSprite(
-                {float(transition->x), float(transition->y)},
-                {float(transition->width), float(transition->height)}, target, pos,
-                {transition_sprites});
+        std::string target = rl::tmx_get_property(transition->properties, "target")->value.string;
+        std::string pos = rl::tmx_get_property(transition->properties, "pos")->value.string;
+        std::make_shared<TransitionSprite>(
+                rg::math::Vector2{float(transition->x), float(transition->y)},
+                rg::math::Vector2{float(transition->width), float(transition->height)},
+                std::make_pair(target, pos))
+                ->add(&transition_sprites);
         transition = transition->next;
     }
 
-    auto collision = collisions_layer->content.objgr->head;
+    // collision objects
+    auto collision = collision_layer->content.objgr->head;
     while (collision)
     {
-        TiledTexture image{};
-        image.rect = {0, 0, float(collision->width), float(collision->height)};
-        new BorderSprite({float(collision->x), float(collision->y)}, image, {collition_sprites});
-
+        auto position = rg::tmx::GetTMXObjPosition(collision);
+        std::make_shared<BorderSprite>(
+                position, std::make_shared<rg::Surface>(collision->width, collision->height))
+                ->add(&collision_sprites);
         collision = collision->next;
     }
 
+    // monster patches
     auto monster = monster_layer->content.objgr->head;
     while (monster)
     {
         const int gid = monster->content.gid;
         if (map->tiles[gid])
         {
-            auto [position, image] =
-                    GetTileInfo(map->tiles[gid], monster->x, monster->y - monster->height);
-            std::string biome = tmx_get_property(monster->properties, "biome")->value.string;
-            std::string monsters = tmx_get_property(monster->properties, "monsters")->value.string;
-            int level = tmx_get_property(monster->properties, "level")->value.integer;
-            new MonsterPatchSprite(
-                    position, image, {all_sprites, monster_sprites}, biome, monsters, level);
+            std::string biome = rl::tmx_get_property(monster->properties, "biome")->value.string;
+            std::string monsters =
+                    rl::tmx_get_property(monster->properties, "monsters")->value.string;
+            int level = rl::tmx_get_property(monster->properties, "level")->value.integer;
+            rg::Rect atlas;
+            auto monster_texture = rg::tmx::GetTMXTileTexture(map->tiles[gid], &atlas);
+            auto position = rg::tmx::GetTMXObjPosition(monster);
+            auto monster_surf = std::make_shared<rg::Surface>(monster_texture, atlas);
+            std::make_shared<MonsterPatchSprite>(position, monster_surf, biome, monsters, level)
+                    ->add({all_sprites.get(), &monster_sprites});
         }
         monster = monster->next;
     }
-
-    std::map<std::string, FacingDirection> face_name = {
-            {"down", DOWN},
-            {"left", LEFT},
-            {"up", UP},
-            {"right", RIGHT},
-    };
 
     // we need to find the player first, so it can be passed to all characters in the next look
     auto entity = entities_layer->content.objgr->head;
     while (entity)
     {
+        auto position = rg::tmx::GetTMXObjPosition(entity);
+        const char *direction = rl::tmx_get_property(entity->properties, "direction")->value.string;
         if (std::strcmp(entity->name, "Player") == 0)
         {
-            char *entity_pos = tmx_get_property(entity->properties, "pos")->value.string;
+            const char *entity_pos = rl::tmx_get_property(entity->properties, "pos")->value.string;
             if (std::strcmp(entity_pos, player_start_position.c_str()) == 0)
             {
-                std::map<FacingDirection, std::vector<TiledTexture>> face_frames;
-                std::string direction =
-                        tmx_get_property(entity->properties, "direction")->value.string;
-                FacingDirection face_direction = face_name[direction];
-
-                for (const auto &[key, rectangles]: face_rect_frames["characters"]["player"])
-                {
-                    for (const auto rect: rectangles)
-                    {
-                        face_frames[key].push_back({&named_textures["characters"]["player"], rect});
-                    }
-                }
-                player = new Player(
-                        {float(entity->x), float(entity->y)}, face_frames, {all_sprites},
-                        face_direction, collition_sprites);
-                break;
+                player = std::make_shared<Player>(
+                        position, characters_dict["player"], direction, &collision_sprites);
+                player->add(all_sprites.get());
             }
         }
-
         entity = entity->next;
     }
 
@@ -372,220 +302,103 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     entity = entities_layer->content.objgr->head;
     while (entity)
     {
-        if (strcmp(entity->name, "Player") == 0)
+        auto position = rg::tmx::GetTMXObjPosition(entity);
+        const char *direction = rl::tmx_get_property(entity->properties, "direction")->value.string;
+        if (std::strcmp(entity->name, "Character") == 0)
         {
-            entity = entity->next;
-            continue;
+            std::string character_id =
+                    rl::tmx_get_property(entity->properties, "character_id")->value.string;
+            const char *graphic = rl::tmx_get_property(entity->properties, "graphic")->value.string;
+            int radius =
+                    std::stoi(rl::tmx_get_property(entity->properties, "radius")->value.string);
+            bool nurse = std::strcmp(character_id.c_str(), "Nurse") == 0;
+            std::make_shared<Character>(
+                    position, characters_dict[graphic], direction, &TRAINER_DATA[character_id],
+                    player, [this](const std::shared_ptr<Character> &char_)
+                    { CreateDialog(char_); }, &collision_sprites, radius, nurse, audio["notice"])
+                    ->add({all_sprites.get(), &collision_sprites, &character_sprites});
         }
-        std::map<FacingDirection, std::vector<TiledTexture>> face_frames;
-        std::string direction = tmx_get_property(entity->properties, "direction")->value.string;
-        FacingDirection face_direction = face_name[direction];
-
-        std::string graphic = tmx_get_property(entity->properties, "graphic")->value.string;
-        for (const auto &[key, rectangles]: face_rect_frames["characters"][graphic])
-        {
-            for (const auto rect: rectangles)
-            {
-                face_frames[key].push_back({&named_textures["characters"][graphic], rect});
-            }
-        }
-        std::string character_id =
-                tmx_get_property(entity->properties, "character_id")->value.string;
-        int radius = std::stoi(tmx_get_property(entity->properties, "radius")->value.string);
-        bool nurse = std::strcmp(character_id.c_str(), "Nurse") == 0;
-        new Character(
-                this, {float(entity->x), float(entity->y)}, face_frames,
-                {all_sprites, collition_sprites, characters_sprites}, face_direction,
-                &TRAINER_DATA[character_id], radius, nurse);
-
         entity = entity->next;
     }
+}
 
-    auto water = water_layer->content.objgr->head;
-    while (water)
+void Game::UnloadResources()
+{
+    for (auto &[key, tmx_map]: tmx_maps)
     {
-        for (int y = 0; y < water->height; y += TILE_SIZE)
-        {
-            for (int x = 0; x < water->width; x += TILE_SIZE)
-            {
-                std::vector<TiledTexture> frames;
-                for (const auto rect: named_rect_frames["coast"]["grass"]["middle"])
-                {
-                    frames.push_back({&overworld_frames["coast"][0], rect});
-                }
-                new AnimatedSprite(
-                        {float(x + water->x), float(y + water->y)}, frames, {all_sprites},
-                        WORLD_LAYERS["water"]);
-            }
-        }
-        water = water->next;
-    }
-
-    auto coast = coast_layer->content.objgr->head;
-    while (coast)
-    {
-        std::string terrain = tmx_get_property(coast->properties, "terrain")->value.string;
-        std::string side = tmx_get_property(coast->properties, "side")->value.string;
-
-        std::vector<TiledTexture> frames;
-        for (const auto rect: named_rect_frames["coast"][terrain][side])
-        {
-            frames.push_back({&overworld_frames["coast"][0], rect});
-        }
-        new AnimatedSprite(
-                {float(coast->x), float(coast->y)}, frames, {all_sprites}, WORLD_LAYERS["bg"]);
-        coast = coast->next;
+        UnloadTMX(tmx_map);
     }
 }
 
 void Game::Input()
 {
-    if (dialog_tree || battle)
+    if (dialog_tree)
     {
         return;
     }
-    if (IsKeyPressed(KEY_SPACE))
+    if (battle)
     {
-        for (auto *sprite: characters_sprites->sprites)
+        return;
+    }
+    if (IsKeyPressed(rl::KEY_SPACE))
+    {
+        for (const auto &character_sprite: character_sprites.Sprites())
         {
-            auto *character = (Character *) sprite;
+            auto character = std::dynamic_pointer_cast<Character>(character_sprite);
             if (CheckConnections(100, player, character))
             {
                 player->Block();
-                character->ChangeFacingDirection(GetRectCenter(player->rect));
+                character->ChangeFacingDirection(player->rect.center());
                 CreateDialog(character);
                 character->can_rotate = false;
             }
         }
     }
-
-    if (IsKeyPressed(KEY_ENTER))
+    if (IsKeyPressed(rl::KEY_ENTER))
     {
         index_open = !index_open;
         player->blocked = !player->blocked;
     }
 }
 
-void Game::UnloadResources()
-{
-    UnloadRenderTexture(display_surface);
-
-    for (const auto &[key, map]: tmx_maps)
-    {
-        UnloadTMX(map);
-    }
-
-    for (const auto &[key, textures]: overworld_frames)
-    {
-        for (const auto texture: textures)
-        {
-            UnloadTexture(texture);
-        }
-    }
-
-    for (const auto &[key, named_texture]: named_textures)
-    {
-        for (const auto &[name, texture]: named_texture)
-        {
-            UnloadTexture(texture);
-        }
-    }
-
-    for (const auto &[key, font]: fonts)
-    {
-        UnloadFont(font);
-    }
-
-    for (const auto &star: star_animation_textures)
-    {
-        UnloadTexture(star);
-    }
-
-    delete dialog_tree; // delete dialog_tree before all_sprites, it will remove itself
-    delete transition_target;
-    delete all_sprites;
-    delete collition_sprites;
-    delete characters_sprites;
-    delete transition_sprites;
-    delete monster_sprites;
-    delete monster_index;
-    delete battle;
-
-    if (evolution)
-    {
-        delete evolution;
-        evolution = nullptr;
-    }
-
-    if (!encounter_monsters.empty())
-    {
-        for (auto &[i, monster]: encounter_monsters)
-        {
-            delete monster;
-        }
-        encounter_monsters.clear();
-    }
-
-    for (auto &[key, music]: musics)
-    {
-        UnloadMusicStream(music);
-    }
-
-    for (auto &[key, sound]: sounds)
-    {
-        UnloadSound(sound);
-    }
-
-    CloseAudioDevice();
-}
-
-void Game::CreateDialog(Character *character)
+void Game::CreateDialog(const std::shared_ptr<Character> &character)
 {
     if (!dialog_tree)
     {
-        dialog_tree = new DialogTree(
-                character, player, {all_sprites}, fonts["dialog"],
-                [this](Character *ch) { EndDialog(ch); });
+        dialog_tree = std::make_shared<DialogTree>(
+                character, player, all_sprites.get(), fonts["dialog"],
+                [this](const std::shared_ptr<Character> &char_) { EndDialog(char_); });
     }
 }
 
-void Game::SetCurrentBackgroundMusic(const Music &newMusic)
+void Game::EndDialog(const std::shared_ptr<Character> &character)
 {
-    if (IsMusicStreamPlaying(current_music))
-    {
-        StopMusicStream(current_music);
-    }
-    current_music = newMusic;
-    PlayMusicStream(current_music);
-}
-
-// When there is no more phrases to show, unlock player
-void Game::EndDialog(Character *character)
-{
-    delete dialog_tree;
     dialog_tree = nullptr;
-
     if (character->nurse)
     {
         for (auto &[i, monster]: player_monsters)
         {
-            monster.health = monster.GetStat("max_health");
-            monster.energy = monster.GetStat("max_energy");
+            monster->health = monster->GetStat("max_health");
+            monster->energy = monster->GetStat("max_energy");
         }
         player->Unblock();
     }
     else if (!character->character_data->defeated)
     {
-        SetCurrentBackgroundMusic(musics["battle"]);
+        audio["overworld"]->Stop();
+        audio["battle"]->Play();
 
-        const Texture2D bg = named_textures["bg_frames"][character->character_data->biome];
         if (transition_target)
         {
-            delete transition_target;
+            transition_target.reset();
             transition_target = nullptr;
         }
-        transition_target = new TransitionTarget(TRANSITIONTARGET_LEVEL2BATTLE);
-        transition_target->battle = new Battle(this, &character->monsters, bg, character);
+        transition_target = std::make_shared<TransitionTarget>(TRANSITIONTARGET_LEVEL2BATTLE);
+        transition_target->battle = std::make_shared<Battle>(
+                &player_monsters, &character->monsters, &monster_frames, &outline_frames,
+                &monster_icons, &ui_icons, &attack_frames,
+                bg_frames[character->character_data->biome], &fonts,
+                [this](const std::shared_ptr<Character> &c) { EndBattle(c); }, character, &audio);
         tint_mode = TINT;
     }
     else
@@ -601,52 +414,43 @@ void Game::TransitionCheck()
     {
         return;
     }
-    std::vector<TransitionSprite *> sprites;
-    for (const auto transition: transition_sprites->sprites)
+    std::vector<std::shared_ptr<TransitionSprite>> sprites;
+    // transition_sprites must contain only TransitionSprite
+    for (const auto &transition_sprite: transition_sprites.Sprites())
     {
-        auto *sprite = (TransitionSprite *) transition;
-        if (CheckCollisionRecs(sprite->rect.rectangle, player->hitbox.rectangle))
+        if (transition_sprite->rect.colliderect(player->hitbox))
         {
-            sprites.push_back(sprite);
+            sprites.push_back(std::dynamic_pointer_cast<TransitionSprite>(transition_sprite));
         }
     }
     if (!sprites.empty())
     {
         player->Block();
-        transition_target = new TransitionTarget(TRANSITIONTARGET_MAP);
-        transition_target->map_name = sprites[0]->map_name;
-        transition_target->start_position = sprites[0]->start_position;
+        transition_target = std::make_shared<TransitionTarget>(TRANSITIONTARGET_MAP);
+        transition_target->map_name = sprites[0]->target.first;
+        transition_target->start_position = sprites[0]->target.second;
         tint_mode = TINT;
     }
 }
 
-// Fade to black
 void Game::TintScreen(const double dt)
 {
-    // in the tutorial the tint is "transparent to black"
-    // in raylib we do "white to transparent"
-
     if (tint_mode == UNTINT)
+    {
+        tint_progress -= tint_speed * dt;
+    }
+    if (tint_mode == TINT)
     {
         tint_progress += tint_speed * dt;
         if (tint_progress >= 255)
         {
-            tint_progress = 255;
-        }
-    }
-    if (tint_mode == TINT)
-    {
-        tint_progress -= tint_speed * dt;
-        if (tint_progress <= 0)
-        {
-            tint_progress = 0;
             if (transition_target->target_type == TRANSITIONTARGET_LEVEL2BATTLE)
             {
                 battle = transition_target->battle;
             }
             else if (transition_target->target_type == TRANSITIONTARGET_BATTLE2LEVEL)
             {
-                delete battle;
+                battle.reset();
                 battle = nullptr;
             }
             else if (transition_target->target_type == TRANSITIONTARGET_MAP)
@@ -654,155 +458,25 @@ void Game::TintScreen(const double dt)
                 Setup(transition_target->map_name, transition_target->start_position);
             }
             tint_mode = UNTINT;
-            delete transition_target;
+            transition_target.reset();
             transition_target = nullptr;
         }
     }
-    render_tint = {255, 255, 255, (unsigned char) (tint_progress)};
+    tint_progress = rl::Clamp(tint_progress, 0, 255);
+    tint_surf->SetAlpha(tint_progress);
+    display_surface->Blit(tint_surf, rg::math::Vector2{0, 0});
 }
 
-void Game::SetupFrames()
+void Game::EndBattle(const std::shared_ptr<Character> &character)
 {
-    int player_index = 0;
-    player_monsters[player_index++] = Monster("Charmadillo", 40);
-    player_monsters[player_index++] = Monster("Larvea", 3);
-    player_monsters[player_index++] = Monster("Friolera", 29);
-    player_monsters[player_index++] = Monster("Finsta", 30);
-    player_monsters[player_index++] = Monster("Sparchu", 3);
-    // player_monsters[player_index++] =
-    //         Monster("Larvea", 4); // TODO force Larvea evolution at level 4
-    // player_monsters[player_index++] = Monster("Atrox", 24);
-    // player_monsters[player_index++] = Monster("Sparchu", 24);
-    // player_monsters[player_index++] = Monster("Gulfin", 24);
-    // player_monsters[player_index++] = Monster("Jacana", 2);
-    // player_monsters[player_index++] = Monster("Pouch", 3);
+    audio["battle"]->Stop();
 
-    for (const auto &[monster_name, animations]: animation_frames)
-    {
-        for (const auto &[key, frames]: animations)
-        {
-            for (const auto frame: frames)
-            {
-                monsters_frames[monster_name][key].push_back(
-                        {&named_textures["monsters"][monster_name], frame});
-
-                outline_frames[monster_name][key].push_back(
-                        {&named_textures["outlines"][monster_name], frame});
-            }
-        }
-    }
-    monster_index = new MonsterIndex(
-            &player_monsters, fonts, named_textures["icons"], monsters_frames,
-            named_textures["ui"]);
-
-    for (auto &[attack_name, attack_texture]: named_textures["attacks"])
-    {
-        AttackAnimation animation = ATTACK_ANIMATION_NAMES[attack_name];
-        for (const auto attack_rect: attack_animation_rects[animation])
-        {
-            attack_animation_frames[animation].push_back({&attack_texture, attack_rect});
-        }
-    }
-}
-
-void Game::CheckMonster()
-{
-    for (const auto sprite: monster_sprites->sprites)
-    {
-        if (!battle && player->IsMoving() &&
-            CheckCollisionRecs(sprite->rect.rectangle, player->hitbox.rectangle))
-        {
-            if (!encounter_timer.active)
-            {
-                encounter_timer.Activate();
-            }
-        }
-    }
-}
-
-void Game::MonsterEncounter()
-{
-    for (const auto sprite: monster_sprites->sprites)
-    {
-        if (player->IsMoving() &&
-            CheckCollisionRecs(sprite->rect.rectangle, player->hitbox.rectangle))
-        {
-            SetCurrentBackgroundMusic(musics["battle"]);
-
-            // change encounter timer duration for the next encounter
-            encounter_timer.duration = GetRandomValue(8, 25) / 10.0f;
-
-            const auto *monster_patch_sprite = (MonsterPatchSprite *) sprite;
-            int count_mounstes = 0;
-            if (!encounter_monsters.empty())
-            {
-                for (auto &[i, monster]: encounter_monsters)
-                {
-                    delete monster;
-                }
-                encounter_monsters.clear();
-            }
-            for (const auto &monster_name: monster_patch_sprite->monsters)
-            {
-                const int level = monster_patch_sprite->level + GetRandomValue(-3, 3);
-                encounter_monsters[count_mounstes++] = new Monster(monster_name, level);
-            }
-            player->Block();
-            Texture2D bg = named_textures["bg_frames"][monster_patch_sprite->biome];
-            if (transition_target)
-            {
-                delete transition_target;
-                transition_target = nullptr;
-            }
-            transition_target = new TransitionTarget(TRANSITIONTARGET_LEVEL2BATTLE);
-            transition_target->battle = new Battle(this, &encounter_monsters, bg, nullptr);
-            tint_mode = TINT;
-        }
-    }
-}
-
-void Game::CheckEvolution()
-{
-    for (auto &[index, monster]: player_monsters)
-    {
-        if (monster.evolve.second)
-        {
-            if (monster.level >= monster.evolve.second)
-            {
-                SetCurrentBackgroundMusic(musics["evolution"]);
-
-                player->Block();
-                const char *oldName = monster.name.c_str();
-                const char *newName = monster.evolve.first.c_str();
-                if (evolution) // clear existing data
-                {
-                    delete evolution;
-                    evolution = nullptr;
-                }
-                evolution = new Evolution(
-                        &named_textures["monsters"], &animation_frames, oldName, newName,
-                        fonts["bold"], [this] { EndEvolution(); }, star_animation_textures,
-                        monster.evolve.second, index);
-                player_monsters[index] = Monster(newName, monster.level);
-                break; // run the first evolution-> At EndEvolution, we check if there are more
-            }
-        }
-    }
-
-    if (!evolution)
-    {
-        SetCurrentBackgroundMusic(musics["overworld"]);
-    }
-}
-
-void Game::EndBattle(Character *character)
-{
     if (transition_target)
     {
-        delete transition_target;
+        transition_target.reset();
         transition_target = nullptr;
     }
-    transition_target = new TransitionTarget(TRANSITIONTARGET_BATTLE2LEVEL);
+    transition_target = std::make_shared<TransitionTarget>(TRANSITIONTARGET_BATTLE2LEVEL);
     tint_mode = TINT;
     if (character)
     {
@@ -816,8 +490,104 @@ void Game::EndBattle(Character *character)
     }
 }
 
+void Game::CheckMonster()
+{
+    if (battle || !player->direction || encounter_timer.active)
+    {
+        return;
+    }
+    for (const auto &sprite: monster_sprites.Sprites())
+    {
+        if (sprite->rect.colliderect(player->hitbox))
+        {
+            encounter_timer.Activate();
+        }
+    }
+}
+
+void Game::MonsterEncounter()
+{
+    if (!player->direction)
+    {
+        return;
+    }
+    for (const auto &sprite: monster_sprites.Sprites())
+    {
+        if (sprite->rect.colliderect(player->hitbox))
+        {
+            // change encounter timer duration for the next encounter
+            encounter_timer.duration = rl::GetRandomValue(8, 25) / 10.0f;
+
+            const auto monster_patch_sprite = std::dynamic_pointer_cast<MonsterPatchSprite>(sprite);
+
+            player->Block();
+            if (transition_target)
+            {
+                transition_target.reset();
+                transition_target = nullptr;
+            }
+            transition_target = std::make_shared<TransitionTarget>(TRANSITIONTARGET_LEVEL2BATTLE);
+
+            encounter_monsters.clear();
+            int count_monsters = 0;
+            for (auto &monster_name: monster_patch_sprite->monsters)
+            {
+                int level = monster_patch_sprite->level + rl::GetRandomValue(-3, 3);
+                encounter_monsters[count_monsters++] =
+                        std::make_shared<Monster>(monster_name, level);
+            }
+
+            audio["overworld"]->Stop();
+            audio["battle"]->Play();
+
+            transition_target->battle = std::make_shared<Battle>(
+                    &player_monsters, &encounter_monsters, &monster_frames, &outline_frames,
+                    &monster_icons, &ui_icons, &attack_frames,
+                    bg_frames[monster_patch_sprite->biome], &fonts,
+                    [this](const std::shared_ptr<Character> &c) { EndBattle(c); }, nullptr, &audio);
+            tint_mode = TINT;
+            break; // only need the first sprite
+        }
+    }
+}
+
+void Game::CheckEvolution()
+{
+    for (auto &[index, monster]: player_monsters)
+    {
+        if (monster->evolution.second) // if evolution level
+        {
+            if (monster->level >= monster->evolution.second)
+            {
+                player->Block();
+                if (evolution)
+                {
+                    evolution.reset();
+                    evolution = nullptr;
+                }
+
+                audio["overworld"]->Stop();
+                audio["evolution"]->Play();
+
+                evolution = std::make_shared<Evolution>(
+                        monster_frames, monster->name, monster->evolution.first, fonts["bold"],
+                        [this] { EndEvolution(); }, star_animation_surfs);
+                player_monsters[index] =
+                        std::make_shared<Monster>(monster->evolution.first, monster->level);
+                break; // run the first evolution. When it is done we check if there are more
+            }
+        }
+    }
+    if (!evolution)
+    {
+        audio["overworld"]->Play();
+    }
+}
+
 void Game::EndEvolution()
 {
+    audio["evolution"]->Stop();
+    audio["overworld"]->Play();
+
     player->Unblock();
-    SetCurrentBackgroundMusic(musics["overworld"]);
 }

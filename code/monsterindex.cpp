@@ -1,53 +1,19 @@
-#include "monsterindex.h"
-#include "game_data.h"
-#include "raylib_utils.h"
+#include "monsterindex.hpp"
 
 
 MonsterIndex::MonsterIndex(
-        std::map<int, Monster> *monsters, const std::map<std::string, Font> &fonts,
-        const std::map<std::string, Texture2D> &monster_icons,
-        const std::map<std::string, std::map<AnimationState, std::vector<TiledTexture>>>
-                &monsters_frms,
-        const std::map<std::string, Texture2D> &ui_frms)
-    : fonts(fonts), monsters(monsters), icon_frames(monster_icons), ui_frames(ui_frms),
-      monsters_frames(monsters_frms)
+        std::map<int, std::shared_ptr<Monster>> *monsters,
+        const std::map<std::string, std::shared_ptr<rg::font::Font>> &fonts,
+        std::map<std::string, rg::Surface_Ptr> *monster_icons,
+        std::map<std::string, rg::Surface_Ptr> *ui_icons,
+        std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>> *monster_frames)
+    : monsters(monsters), fonts(fonts), monster_icons(monster_icons),
+      monster_frames(monster_frames), ui_icons(ui_icons)
 {
-    RectToCenter(main_rect, {WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
+    tint_surf = std::make_shared<rg::Surface>(WINDOW_WIDTH, WINDOW_HEIGHT);
+    tint_surf->SetAlpha(200);
+    main_rect.center(rg::math::Vector2{WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
 
-    tint_surface = LoadRenderTexture(WINDOW_WIDTH, WINDOW_HEIGHT);
-    while (!IsRenderTextureReady(tint_surface))
-    {}
-    BeginTextureModeC(tint_surface, BLANK);
-    DrawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, Fade(BLACK, 200.0f / 255.0f));
-    EndTextureModeSafe();
-}
-
-MonsterIndex::~MonsterIndex()
-{
-    UnloadRenderTexture(tint_surface);
-}
-
-void MonsterIndex::Update(const double dt)
-{
-    // input
-    Input();
-
-    // we draw on top of main game
-    BeginTextureModeSafe(display_surface); // we don't want to clear what is there
-
-    // tint main game
-    DrawTexture(tint_surface.texture, 0, 0, WHITE);
-    // display list
-    DisplayList();
-    // display the main section
-    DisplayMain(dt);
-
-    EndTextureModeSafe();
-}
-
-std::map<std::string, float> MonsterIndex::GetMaxStats()
-{
-    std::map<std::string, float> max_stats;
     for (auto &[monster_name, monster_data]: MONSTER_DATA)
     {
         for (auto &[stat, value]: monster_data.stats)
@@ -57,228 +23,34 @@ std::map<std::string, float> MonsterIndex::GetMaxStats()
     }
     max_stats["health"] = max_stats["max_health"];
     max_stats["energy"] = max_stats["max_energy"];
-    return max_stats;
 }
 
-void MonsterIndex::DisplayList()
+void MonsterIndex::Update(const float dt)
 {
-    // BeginTextureMode was called in Update()
-    const RectangleU bg_rect = {main_rect.pos, {list_width, main_rect.height}};
-    DrawRectangleRoundedEx(bg_rect, 0.1f, 10, COLORS["gray"], true, false, true, false);
-
-    // vertical offset
-    const int v_offset = (index < visible_items) ? 0 : -(index - visible_items + 1) * item_height;
-    for (auto &[i, monster]: *monsters)
-    {
-        const Color bg_color = (i != index) ? COLORS["gray"] : COLORS["light"];
-        const Color text_color = (selected_index != i) ? COLORS["white"] : COLORS["gold"];
-        const float top = main_rect.y + i * item_height + v_offset;
-        const RectangleU item_rect = {main_rect.x, top, list_width, item_height};
-        const auto [x, y] = GetRectMidLeft(item_rect);
-
-        const Texture2D icon_texture = icon_frames[monster.name];
-
-        if (CheckCollisionRecs(item_rect.rectangle, main_rect.rectangle))
-        {
-            if (CheckCollisionPointRec(GetRectTopLeft(main_rect), item_rect.rectangle))
-            {
-                DrawRectangleRoundedEx(item_rect, 0.3f, 10, bg_color, true, false, false, false);
-            }
-            else if (CheckCollisionPointRec(
-                             Vector2Add(GetRectBottomLeft(main_rect), {1, -1}),
-                             item_rect.rectangle))
-            {
-                DrawRectangleRoundedEx(item_rect, 0.3f, 10, bg_color, false, false, true, false);
-            }
-            else
-            {
-                DrawRectangleRec(item_rect.rectangle, bg_color);
-            }
-            DrawTexture(
-                    icon_texture, x + 45 - icon_texture.width / 2.0f,
-                    y - icon_texture.height / 2.0f, WHITE);
-            DrawTextEx(
-                    fonts["regular"], monster.name.c_str(),
-                    {x + 90, y - fonts["regular"].baseSize / 2.0f}, fonts["regular"].baseSize, 2,
-                    text_color);
-        }
-    }
-
-    // lines between monsters
-    for (int i = 1; i < std::min(visible_items, (int) monsters->size()); ++i)
-    {
-        const float y = main_rect.y + item_height * i;
-        DrawLine(main_rect.x, y, main_rect.x + list_width, y, COLORS["light-gray"]);
-    }
-
-    // shadow
-    DrawRectangle(
-            main_rect.x + list_width - 4, main_rect.y, 4, main_rect.height,
-            Fade(BLACK, 100.0f / 255.0f));
-}
-
-void MonsterIndex::DisplayMain(const double dt)
-{
-    // data
-    auto monster = &(*monsters)[index];
-
-    // BeginTextureMode was called in Update()
-    // bg
-    const RectangleU rect = {
-            main_rect.x + list_width, main_rect.y, main_rect.width - list_width, main_rect.height};
-    DrawRectangleRoundedEx(rect, 0.1f, 10, COLORS["dark"], false, true, false, true);
-
-    // monster
-    const RectangleU top_rect = {rect.pos, rect.width, rect.height * 0.4f};
-    DrawRectangleRoundedEx(
-            top_rect, 0.1f, 10, COLORS[NAMES_ELEMENT_TYPES[monster->element]], false, true, false,
-            false);
-
-    // monster animation
-    frame_index += ANIMATION_SPEED * dt;
-    const auto frames = monsters_frames[monster->name][ANIMATION_IDLE];
-    const auto [surf_texture, surf_ref] = frames[int(frame_index) % (int) frames.size()];
-    RectangleU monster_rect = surf_ref;
-    RectToCenter(monster_rect, GetRectCenter(top_rect));
-    DrawTextureRec(*surf_texture, surf_ref.rectangle, monster_rect.pos, WHITE);
-
-    // name
-    DrawTextEx(
-            fonts["bold"], monster->name.c_str(), {top_rect.x + 10, top_rect.y + 10}, 14, 1,
-            COLORS["white"]);
-
-    // level
-    const Vector2 pos =
-            Vector2Add(GetRectBottomLeft(top_rect), {10.0f, -16.0f - fonts["regular"].baseSize});
-    char text_level[MAX_TEXT_BUFFER_LENGTH];
-    TextFormatSafe(text_level, "Lvl: %i", monster->level);
-    DrawTextEx(fonts["regular"], text_level, pos, fonts["regular"].baseSize, 1, COLORS["white"]);
-    DrawBar({pos.x, pos.y + fonts["regular"].baseSize, 100, 4}, monster->xp, monster->level_up,
-            COLORS["white"], COLORS["dark"]);
-
-    // element
-    const Vector2 size_element =
-            MeasureTextF(fonts["regular"], NAMES_ELEMENT_TYPES[monster->element].c_str(), 1);
-    const Vector2 pos_element = Vector2Subtract(
-            Vector2Add(GetRectBottomRight(top_rect), {-10.0f, -10.0f}), size_element);
-    DrawTextEx(
-            fonts["regular"], NAMES_ELEMENT_TYPES[monster->element].c_str(), pos_element,
-            fonts["regular"].baseSize, 1, COLORS["white"]);
-
-    // health and energy
-    const RectangleU bar_rect{
-            rect.x + rect.width * 0.03f, top_rect.y + top_rect.height + rect.width * 0.03f,
-            rect.width * 0.45f, 30.0f};
-
-    const RectangleU health_rectangle = bar_rect;
-    DrawBar(health_rectangle, monster->health, monster->GetStat("max_health"), COLORS["red"],
-            COLORS["black"], 0.4f, 20);
-    char text_hp[MAX_TEXT_BUFFER_LENGTH];
-    TextFormatSafe(text_hp, "HP: %.f/%.f", monster->health, monster->GetStat("max_health"));
-    DrawTextEx(
-            fonts["regular"], text_hp,
-            Vector2Add(GetRectMidLeft(health_rectangle), {10, -fonts["regular"].baseSize / 2.0f}),
-            fonts["regular"].baseSize, 1, COLORS["white"]);
-
-    const RectangleU energy_rectangle{bar_rect.x + rect.width / 2.0f, bar_rect.y, bar_rect.size};
-    DrawBar(energy_rectangle, monster->energy, monster->GetStat("max_energy"), COLORS["blue"],
-            COLORS["black"], 0.4f, 20);
-    char text_energy[MAX_TEXT_BUFFER_LENGTH];
-    TextFormatSafe(text_energy, "EP: %.f/%.f", monster->energy, monster->GetStat("max_energy"));
-    DrawTextEx(
-            fonts["regular"], text_energy,
-            Vector2Add(GetRectMidLeft(energy_rectangle), {10, -fonts["regular"].baseSize / 2.0f}),
-            fonts["regular"].baseSize, 1, COLORS["white"]);
-
-    // info
-    const float info_height = rect.y + rect.height - (health_rectangle.y + health_rectangle.height);
-
-    // stats
-    RectangleU stats_rectangle = {
-            health_rectangle.x, health_rectangle.y + health_rectangle.height,
-            health_rectangle.width, info_height};
-    RectInflate(stats_rectangle, 0, -60);
-    MoveRect(stats_rectangle, {0, 15});
-    const Vector2 stats_pos = GetRectTopLeft(stats_rectangle);
-    DrawTextEx(
-            fonts["regular"], "Stats", {stats_pos.x, stats_pos.y - fonts["regular"].baseSize},
-            fonts["regular"].baseSize, 1, COLORS["white"]);
-
-    auto monster_stats = monster->GetStats();
-    float stat_height = stats_rectangle.height / monster_stats.size();
-    int i = 0;
-    for (auto &[stat, value]: monster_stats)
-    {
-        RectangleU single_stat_rectangle = {
-                stats_rectangle.x, stats_rectangle.y + i * stat_height, stats_rectangle.width,
-                stat_height};
-
-        // icon
-        Texture2D icon_surf = ui_frames[stat];
-        RectangleU icon_rect = {0, 0, (float) icon_surf.width, (float) icon_surf.height};
-        RectToMidLeft(icon_rect, Vector2Add(GetRectMidLeft(single_stat_rectangle), {5, 0}));
-        DrawTextureV(icon_surf, GetRectTopLeft(icon_rect), WHITE);
-
-        // text
-        Vector2 stat_text_pos = Vector2Add(GetRectTopLeft(icon_rect), {icon_rect.width + 14, -5});
-        DrawTextEx(
-                fonts["regular"], stat.c_str(), stat_text_pos, fonts["regular"].baseSize, 1,
-                COLORS["white"]);
-
-        // bar
-        RectangleU stat_bar_rect = single_stat_rectangle;
-        stat_bar_rect.height = 4;
-        stat_bar_rect.pos = Vector2Add(stat_text_pos, {0, fonts["regular"].baseSize + 2.0f});
-        stat_bar_rect.size =
-                Vector2Add(stat_bar_rect.size, {-(stat_text_pos.x - single_stat_rectangle.x), 4});
-        DrawBar(stat_bar_rect, value, max_stats[stat] * monster->level, COLORS["white"],
-                COLORS["black"]);
-
-        ++i;
-    }
-
-    // abilities
-    RectangleU abilities_rect = stats_rectangle;
-    abilities_rect.x = energy_rectangle.x;
-    const Vector2 abilities_pos = GetRectTopLeft(abilities_rect);
-    DrawTextEx(
-            fonts["regular"], "Ability",
-            {abilities_pos.x, abilities_pos.y - fonts["regular"].baseSize},
-            fonts["regular"].baseSize, 1, COLORS["white"]);
-
-    auto abilities = monster->GetAbilities();
-    for (int a_index = 0; a_index < abilities.size(); ++a_index)
-    {
-        auto element = ATTACK_DATA[abilities[a_index]].element;
-        float x = abilities_rect.x + a_index % 2 * abilities_rect.width / 2;
-        float y = 20.0f + abilities_rect.y + int(a_index / 2) * (fonts["regular"].baseSize + 20);
-        Vector2 ability_pos = {x, y};
-        Vector2 ability_text_size =
-                MeasureTextF(fonts["regular"], ATTACK_DATA[abilities[a_index]].name.c_str(), 1);
-        RectangleU ability_rect = {ability_pos, ability_text_size};
-        RectInflate(ability_rect, 10, 10);
-
-        DrawRectangleRounded(
-                ability_rect.rectangle, 0.3f, 10, COLORS[NAMES_ELEMENT_TYPES[element]]);
-        DrawTextEx(
-                fonts["regular"], ATTACK_DATA[abilities[a_index]].name.c_str(), ability_pos,
-                fonts["regular"].baseSize, 1, COLORS["black"]);
-    }
+    // input
+    Input();
+    // tint main game
+    display_surface->Blit(tint_surf, rg::math::Vector2{0, 0});
+    // display the list
+    DisplayList();
+    // display the main section
+    DisplayMain(dt);
 }
 
 void MonsterIndex::Input()
 {
-    if (IsKeyPressed(KEY_UP))
+    if (IsKeyPressed(rl::KEY_UP))
     {
-        --index;
+        index -= 1;
     }
-    if (IsKeyPressed(KEY_DOWN))
+    if (IsKeyPressed(rl::KEY_DOWN))
     {
-        ++index;
+        index += 1;
     }
     const int size = (int) monsters->size();
     index = (index % size + size) % size;
-    if (IsKeyPressed(KEY_SPACE))
+
+    if (IsKeyPressed(rl::KEY_SPACE))
     {
         // one SPACE to select, another to change order
         if (selected_index != -1)
@@ -295,5 +67,210 @@ void MonsterIndex::Input()
             // first SPACE is to select the monster from the list
             selected_index = index;
         }
+    }
+}
+
+void MonsterIndex::DisplayList()
+{
+    auto bg_rect = rg::Rect{main_rect.topleft(), rg::math::Vector2{list_width, main_rect.height}};
+    rg::draw::rect(display_surface, COLORS["gray"], bg_rect, 0, 12, true, false, true, false);
+
+    float v_offset = (index < visible_items) ? 0 : -(index - visible_items + 1) * item_height;
+    for (const auto &[list_index, monster]: *monsters)
+    {
+        // colors
+        auto bg_color = (index != list_index) ? COLORS["gray"] : COLORS["light"];
+        auto text_color = (selected_index != list_index) ? COLORS["white"] : COLORS["gold"];
+
+        const float top = main_rect.top() + list_index * item_height + v_offset;
+        const rg::Rect item_rect = {main_rect.x, top, list_width, item_height};
+
+        auto text_surf = fonts["regular"]->render(monster->name.c_str(), text_color);
+        auto text_rect =
+                text_surf->GetRect().midleft(item_rect.midleft() + rg::math::Vector2{90, 0});
+
+        auto icon_surf = (*monster_icons)[monster->name];
+        auto icon_rect =
+                icon_surf->GetRect().center(item_rect.midleft() + rg::math::Vector2{45, 0});
+
+        if (item_rect.colliderect(main_rect))
+        {
+            // check corners
+            if (item_rect.collidepoint(main_rect.topleft()))
+            {
+                rg::draw::rect(
+                        display_surface, bg_color, item_rect, 0, 12, true, false, false, false);
+            }
+            else if (item_rect.collidepoint(main_rect.bottomleft() + rg::math::Vector2{1, -1}))
+            {
+                rg::draw::rect(
+                        display_surface, bg_color, item_rect, 0, 12, false, false, true, false);
+            }
+            else
+            {
+                rg::draw::rect(display_surface, bg_color, item_rect);
+            }
+            display_surface->Blit(text_surf, text_rect);
+            display_surface->Blit(icon_surf, icon_rect);
+        }
+    }
+
+    // lines
+    for (int i = 1; i < std::min(visible_items, (int) monsters->size()); ++i)
+    {
+        auto y = main_rect.top() + item_height * i;
+        auto left = main_rect.left();
+        auto right = main_rect.left() + list_width;
+        rg::draw::line(display_surface, COLORS["light-gray"], {left, y}, {right, y});
+    }
+
+    // shadow
+    auto shadow_surf = std::make_shared<rg::Surface>(4, main_rect.height);
+    shadow_surf->SetAlpha(100);
+    display_surface->Blit(
+            shadow_surf, rg::math::Vector2{main_rect.left() + list_width - 4, main_rect.top()});
+}
+
+void MonsterIndex::DisplayMain(const double dt)
+{
+    // data
+    auto monster = (*monsters)[index];
+    const auto element = NAMES_ELEMENT_TYPES[monster->element];
+
+    // main bg
+    const auto rect = rg::Rect{
+            main_rect.left() + list_width, main_rect.top(), main_rect.width - list_width,
+            main_rect.height};
+    rg::draw::rect(display_surface, COLORS["dark"], rect, 0, 12, false, true, false, true);
+
+    // monster display
+    const auto top_rect =
+            rg::Rect{rect.topleft(), rg::math::Vector2{rect.width, rect.height * 0.4f}};
+    rg::draw::rect(display_surface, COLORS[element], top_rect, 0, 12, false, true, false, false);
+
+    // monster animation
+    frame_index += ANIMATION_SPEED * dt;
+    auto monster_frame = (*monster_frames)[monster->name][ANIMATIONSTATE_IDLE];
+    monster_frame->SetAtlas(frame_index);
+    auto monster_rect = monster_frame->GetRect().center(top_rect.center());
+    display_surface->Blit(monster_frame, monster_rect);
+
+    // name
+    auto name_surf = fonts["bold"]->render(monster->name.c_str(), COLORS["white"]);
+    auto name_rect = name_surf->GetRect().topleft(top_rect.topleft() + rg::math::Vector2{10, 10});
+    display_surface->Blit(name_surf, name_rect);
+
+    // level
+    auto level_surf =
+            fonts["regular"]->render(rl::TextFormat("Lvl: %d", monster->level), COLORS["white"]);
+    auto level_rect =
+            level_surf->GetRect().bottomleft(top_rect.bottomleft() + rg::math::Vector2{10, -16});
+    display_surface->Blit(level_surf, level_rect);
+
+    // xp bar
+    rg::draw::bar(
+            display_surface, {level_rect.bottomleft(), {100, 4}}, monster->xp, monster->level_up,
+            COLORS["white"], COLORS["dark"]);
+
+    // element
+    auto element_surf = fonts["regular"]->render(element.c_str(), COLORS["white"]);
+    auto element_rect = element_surf->GetRect().bottomright(
+            top_rect.bottomright() + rg::math::Vector2{-10, -10});
+    display_surface->Blit(element_surf, element_rect);
+
+    // health and energy
+    float bar_width = rect.width * 0.45f;
+    float bar_height = 30;
+    float bar_top = top_rect.bottom() + rect.width * 0.03f;
+    float bar_leftside = rect.left() + rect.width / 4;
+    float bar_rightside = rect.left() + rect.width * 3.0f / 4.0f;
+
+    auto health_rect = rg::Rect{0, 0, bar_width, bar_height};
+    health_rect.midtop(rg::math::Vector2{bar_leftside, bar_top});
+    rg::draw::bar(
+            display_surface, health_rect, monster->health, monster->GetStat("max_health"),
+            COLORS["red"], COLORS["black"], 2);
+    auto hp_text = fonts["regular"]->render(
+            rl::TextFormat("HP: %.0f/%.0f", monster->health, monster->GetStat("max_health")),
+            COLORS["white"]);
+    auto hp_rect = hp_text->GetRect().midleft(health_rect.midleft() + rg::math::Vector2{10, 0});
+    display_surface->Blit(hp_text, hp_rect);
+
+    auto energy_rect = rg::Rect{0, 0, bar_width, bar_height};
+    energy_rect.midtop(rg::math::Vector2{bar_rightside, bar_top});
+    rg::draw::bar(
+            display_surface, energy_rect, monster->energy, monster->GetStat("max_energy"),
+            COLORS["blue"], COLORS["black"], 2);
+    auto ep_text = fonts["regular"]->render(
+            rl::TextFormat("EP: %.0f/%.0f", monster->energy, monster->GetStat("max_energy")),
+            COLORS["white"]);
+    auto ep_rect = ep_text->GetRect().midleft(energy_rect.midleft() + rg::math::Vector2{10, 0});
+    display_surface->Blit(ep_text, ep_rect);
+
+    // info
+    auto info_height = rect.bottom() - health_rect.bottom();
+
+    // stats
+    auto stats_rect =
+            rg::Rect{health_rect.left(), health_rect.bottom(), health_rect.width, info_height}
+                    .inflate(0, -60)
+                    .move({0, 15});
+    auto stats_text_surf = fonts["regular"]->render("Stats", COLORS["white"]);
+    auto stats_text_rect = stats_text_surf->GetRect().bottomleft(stats_rect.topleft());
+    display_surface->Blit(stats_text_surf, stats_text_rect);
+
+    auto monster_stats = monster->GetStats();
+    float stat_height = stats_rect.height / monster_stats.size();
+    int i = 0;
+    for (auto &[stat, value]: monster_stats)
+    {
+        auto single_stat_rect = rg::Rect{
+                stats_rect.left(), stats_rect.top() + i * stat_height, stats_rect.width,
+                stat_height};
+
+        // icon
+        auto icon_surf = (*ui_icons)[stat];
+        auto icon_rect =
+                icon_surf->GetRect().midleft(single_stat_rect.midleft() + rg::math::Vector2{5, 0});
+        display_surface->Blit(icon_surf, icon_rect);
+
+        // text
+        auto text_surf = fonts["regular"]->render(stat.c_str(), COLORS["white"]);
+        auto text_rect =
+                text_surf->GetRect().topleft(icon_rect.topright() + rg::math::Vector2{10, -5});
+        display_surface->Blit(text_surf, text_rect);
+
+        // bar
+        auto bar_rect = rg::Rect{
+                text_rect.left(), text_rect.bottom() + 2,
+                single_stat_rect.width - (text_rect.left() - single_stat_rect.left()), 4};
+        rg::draw::bar(
+                display_surface, bar_rect, value, max_stats[stat] * monster->level, COLORS["white"],
+                COLORS["black"]);
+
+        ++i;
+    }
+
+    // abilities
+    auto ability_rect = stats_rect.copy().left(energy_rect.left());
+    auto ability_text_surf = fonts["regular"]->render("Ability", COLORS["white"]);
+    auto ability_text_rect = ability_text_surf->GetRect().bottomleft(ability_rect.topleft());
+    display_surface->Blit(ability_text_surf, ability_text_rect);
+
+    auto abilities = monster->GetAbilities();
+    for (unsigned int a_index = 0; a_index < abilities.size(); ++a_index)
+    {
+        auto a_element = ATTACK_DATA[abilities[a_index]].element;
+
+        auto text_surf = fonts["regular"]->render(
+                ATTACK_DATA[abilities[a_index]].name.c_str(), COLORS["black"]);
+        float x = ability_rect.left() + a_index % 2 * ability_rect.width / 2;
+        float y =
+                20.0f + ability_rect.top() + int(a_index / 2) * (text_surf->GetRect().height + 20);
+        auto a_rect = text_surf->GetRect().topleft(rg::math::Vector2{x, y});
+        rg::draw::rect(
+                display_surface, COLORS[NAMES_ELEMENT_TYPES[a_element]], a_rect.inflate(10, 10), 0,
+                4);
+        display_surface->Blit(text_surf, a_rect);
     }
 }

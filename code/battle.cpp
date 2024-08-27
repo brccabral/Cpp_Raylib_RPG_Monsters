@@ -1,78 +1,60 @@
-#include <iostream>
-#include <utility>
-#include "battle.h"
-#include "groups.h"
-#include "game.h"
+#include "battle.hpp"
 
 
 Battle::Battle(
-        Game *game, std::map<int, Monster *> *opponent_monsters, const Texture2D &bg,
-        Character *character)
-    : character(character), game(game), bg_surf(bg), monsters_frames(game->monsters_frames),
-      outline_frames(game->outline_frames), ui_frames(game->named_textures["ui"]),
-      fonts(game->fonts), opponent_monsters(opponent_monsters),
-      monster_icons(game->named_textures["icons"]),
-      attack_animation_frames(game->attack_animation_frames)
+        std::map<int, std::shared_ptr<Monster>> *player_monsters,
+        std::map<int, std::shared_ptr<Monster>> *opponent_monsters,
+        std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>> *monster_frames,
+        std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>> *outline_frames,
+        std::map<std::string, rg::Surface_Ptr> *monster_icons,
+        std::map<std::string, rg::Surface_Ptr> *ui_icons,
+        std::map<AttackAnimation, rg::Frames_Ptr> *attack_frames, const rg::Surface_Ptr &bg_surf,
+        std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts,
+        const std::function<void(const std::shared_ptr<Character> &c)> &endBattle,
+        const std::shared_ptr<Character> &character,
+        std::map<std::string, std::shared_ptr<rg::mixer::Sound>> *sounds)
+    : player_monsters(player_monsters), opponent_monsters(opponent_monsters),
+      monster_frames(monster_frames), outline_frames(outline_frames), monster_icons(monster_icons),
+      ui_icons(ui_icons), bg_surf(bg_surf), fonts(fonts), attack_frames(attack_frames),
+      endBattle(endBattle), character(character), sounds(sounds)
 {
-    battle_sprites = new BattleSprites();
-    player_sprites = new SpriteGroup();
-    opponent_sprites = new SpriteGroup();
-
     indexes[SELECTMODE_GENERAL] = 0;
     indexes[SELECTMODE_MONSTER] = 0;
     indexes[SELECTMODE_ATTACKS] = 0;
     indexes[SELECTMODE_SWITCH] = 0;
     indexes[SELECTMODE_TARGET] = 0;
 
-    timers["opponent_delay"] = Timer(0.6f, false, false, [this] { OpponentAttack(); });
+    timers["opponent_delay"] = rg::Timer(0.6f, false, false, [this] { OpponentAttack(); });
 
     Setup();
 }
 
-Battle::~Battle()
-{
-    delete battle_sprites;
-    delete player_sprites;
-    delete opponent_sprites;
-
-    // if (!character)
-    // {
-    //     for (auto &[i, monster]: *monster_data[OPPONENT])
-    //     {
-    //         delete monster;
-    //     }
-    // }
-}
-
-void Battle::Update(const double dt)
+void Battle::Update(const float dt)
 {
     CheckEndBattle();
-    CreateNewMonsters(); // create new monsters outside the Update loop
     Input();
     UpdateTimers();
-    // Update Sprites before drawing into `display_surface`, as
-    // some sprites open renderes to draw into
-    battle_sprites->Update(dt);
+    // updates
+    battle_sprites.Update(dt);
     CheckActive();
 
-    BeginTextureModeC(display_surface, BLACK);
-    DrawTexture(bg_surf, 0, 0, WHITE);
-    battle_sprites->Draw(
+    // drawing
+    display_surface->Blit(bg_surf, rg::math::Vector2{0, 0});
+    battle_sprites.Draw(
             current_monster, selection_side, selection_mode, indexes[SELECTMODE_TARGET],
-            player_sprites, opponent_sprites);
+            &player_sprites, &opponent_sprites);
     DrawUi();
-    EndTextureModeSafe();
 }
 
 void Battle::Setup()
 {
+    monsters_paused = false;
     std::vector<int> added_opponents;
-
-    for (auto &[index, monster]: game->player_monsters)
+    for (auto &[index, monster]: *player_monsters)
     {
         if (index <= 2)
         {
-            CreateMonster(&monster, index, index, PLAYER);
+            CreateMonster(monster, index, index, PLAYER);
         }
     }
     for (auto &[index, monster]: *opponent_monsters)
@@ -83,7 +65,7 @@ void Battle::Setup()
             added_opponents.push_back(index);
         }
     }
-    // remove from `monster_data` opponents monsters that were createdas this will serve
+    // remove from `monster_data` opponents monsters that were created as this will serve
     // as container to add new monsters in battle after a defeat
     for (auto it = opponent_monsters->begin(); it != opponent_monsters->end();)
     {
@@ -99,72 +81,123 @@ void Battle::Setup()
     }
 }
 
-void Battle::AddNewMonster(Monster *monster, int index, int pos_index, SelectionSide entity)
-{
-    newMonstersData.emplace_back(monster, index, pos_index, entity);
-}
-
-// create new monsters outside the Update loop
-void Battle::CreateNewMonsters()
-{
-    if (!newMonstersData.empty())
-    {
-        for (auto monsterData: newMonstersData)
-        {
-            CreateMonster(
-                    std::get<0>(monsterData), std::get<1>(monsterData), std::get<2>(monsterData),
-                    std::get<3>(monsterData));
-        }
-        newMonstersData.clear();
-    }
-}
-
 void Battle::CreateMonster(
-        Monster *monster, const int index, const int pos_index, const SelectionSide entity)
+        const std::shared_ptr<Monster> &monster, int index, int pos_index, SelectionSide entity)
 {
-    monster->paused = false; // make sure all monsters are ready to battle when created
-    const auto frames = monsters_frames[monster->name];
-    const auto outlines = outline_frames[monster->name];
-    MonsterSprite *monster_sprite;
-    MonsterNameSprite *name_sprite;
-    MonsterOutlineSprite *outline_sprite;
-    Vector2 name_pos;
-    Vector2 level_pos;
+    auto frames = (*monster_frames)[monster->name];
+    auto outlines = (*outline_frames)[monster->name];
+    rg::math::Vector2 pos;
+    auto groups = std::vector<rg::sprite::Group *>{};
+
     if (entity == PLAYER)
     {
-        monster_sprite = new MonsterSprite(
-                BATTLE_POSITIONS["left"][pos_index], frames, {battle_sprites, player_sprites},
-                monster, index, pos_index, entity, this);
-        monster_sprite->FlipH();
-        name_pos = Vector2Add(GetRectMidLeft(monster_sprite->rect), {-40, -70});
-        name_sprite =
-                new MonsterNameSprite(name_pos, monster_sprite, {battle_sprites}, fonts["regular"]);
-        level_pos = GetRectBottomLeft(name_sprite->rect);
-        outline_sprite = new MonsterOutlineSprite(monster_sprite, {battle_sprites}, outlines);
-        outline_sprite->FlipH();
+        pos = BATTLE_POSITIONS["left"][pos_index];
+        groups = {&battle_sprites, &player_sprites};
+        for (auto &[state, frame]: frames)
+        {
+            frames[state] = rg::transform::Flip(frame, true, false);
+        }
+        for (auto &[state, frame]: outlines)
+        {
+            outlines[state] = rg::transform::Flip(frame, true, false);
+        }
     }
     else
     {
-        monster_sprite = new MonsterSprite(
-                BATTLE_POSITIONS["right"][pos_index], frames, {battle_sprites, opponent_sprites},
-                monster, index, pos_index, entity, this);
-        name_pos = Vector2Add(GetRectMidRight(monster_sprite->rect), {-60, -70});
-        name_sprite =
-                new MonsterNameSprite(name_pos, monster_sprite, {battle_sprites}, fonts["regular"]);
-        level_pos = GetRectBottomRight(name_sprite->rect);
-        outline_sprite = new MonsterOutlineSprite(monster_sprite, {battle_sprites}, outlines);
+        pos = BATTLE_POSITIONS["right"][pos_index];
+        groups = {&battle_sprites, &opponent_sprites};
     }
-    auto *level_sprite = new MonsterLevelSprite(
-            entity, level_pos, monster_sprite, {battle_sprites}, fonts["small"]);
-    auto *stats_sprite = new MonsterStatsSprite(
-            Vector2Add(GetRectMidBottom(monster_sprite->rect), {0.20}), monster_sprite, {150, 48},
-            {battle_sprites}, fonts["small"]);
+    const auto monster_sprite = std::make_shared<MonsterSprite>(
+            pos, frames, monster, index, pos_index, entity,
+            [this](const std::shared_ptr<MonsterSprite> &target_sprite, const Attack attack,
+                   const float amount) { ApplyAttack(target_sprite, attack, amount); },
+            [this](const std::shared_ptr<Monster> &monster_, const int index_, const int pos_index_,
+                   const SelectionSide entity_)
+            { CreateMonster(monster_, index_, pos_index_, entity_); });
+    monster_sprite->add(groups);
+    monster_sprite->monster->paused = monsters_paused;
 
-    //  set the sub sprites to be `Kill()`ed together
-    monster_sprite->SetNameSprite(name_sprite);
-    monster_sprite->SetLevelSprite(level_sprite);
-    monster_sprite->SetStatsSprite(stats_sprite);
-    monster_sprite->SetOutlineSprite(outline_sprite);
+    std::make_shared<MonsterOutlineSprite>(monster_sprite, outlines)->add(&battle_sprites);
+
+    // ui
+    rg::math::Vector2 name_pos;
+
+    if (entity == PLAYER)
+    {
+        name_pos = monster_sprite->rect.midleft() + rg::math::Vector2{16, -70};
+    }
+    else
+    {
+        name_pos = monster_sprite->rect.midright() + rg::math::Vector2{-40, -70};
+    }
+    const auto name_sprite =
+            std::make_shared<MonsterNameSprite>(name_pos, monster_sprite, (*fonts)["regular"]);
+    name_sprite->add(&battle_sprites);
+
+    rg::math::Vector2 anchor;
+    if (entity == PLAYER)
+    {
+        anchor = name_sprite->rect.bottomleft();
+    }
+    else
+    {
+        anchor = name_sprite->rect.bottomright();
+    }
+    std::make_shared<MonsterLevelSprite>(entity, anchor, monster_sprite, (*fonts)["small"])
+            ->add(&battle_sprites);
+    std::make_shared<MonsterStatsSprite>(
+            monster_sprite->rect.midbottom() + rg::math::Vector2{0, 20}, monster_sprite,
+            rg::math::Vector2{150, 48}, (*fonts)["small"])
+            ->add(&battle_sprites);
+}
+
+void Battle::CheckActive()
+{
+    CheckActiveGroup(&player_sprites, PLAYER);
+    CheckActiveGroup(&opponent_sprites, OPPONENT);
+}
+
+void Battle::CheckActiveGroup(const rg::sprite::Group *group, const SelectionSide side)
+{
+    if (group->Sprites().empty())
+    {
+        return;
+    }
+    for (const auto &sprite: group->Sprites())
+    {
+        const auto monster_sprite = std::dynamic_pointer_cast<MonsterSprite>(sprite);
+        if (monster_sprite->monster->initiative >= 100)
+        {
+            UpdateAllMonsters(true);
+            monster_sprite->monster->initiative = 0;
+            monster_sprite->SetHighlight(true);
+            current_monster = monster_sprite;
+            if (side == PLAYER)
+            {
+                selection_mode = SELECTMODE_GENERAL;
+                selection_side = PLAYER;
+            }
+            else
+            {
+                timers["opponent_delay"].Activate();
+            }
+        }
+    }
+}
+
+void Battle::UpdateAllMonsters(const bool do_pause)
+{
+    monsters_paused = do_pause;
+    for (const auto &sprite: player_sprites.Sprites())
+    {
+        const auto monster_sprite = std::dynamic_pointer_cast<MonsterSprite>(sprite);
+        monster_sprite->monster->paused = do_pause;
+    }
+    for (const auto &sprite: opponent_sprites.Sprites())
+    {
+        const auto monster_sprite = std::dynamic_pointer_cast<MonsterSprite>(sprite);
+        monster_sprite->monster->paused = do_pause;
+    }
 }
 
 void Battle::Input()
@@ -182,6 +215,11 @@ void Battle::Input()
             case SELECTMODE_ATTACKS:
             {
                 limiter = current_monster->monster->GetAbilities(false).size();
+                // in case monster A has more attacks than monster B
+                if (limiter)
+                {
+                    indexes[SELECTMODE_ATTACKS] = indexes[SELECTMODE_ATTACKS] % limiter;
+                }
                 break;
             }
             case SELECTMODE_SWITCH:
@@ -192,60 +230,60 @@ void Battle::Input()
             case SELECTMODE_TARGET:
             {
                 // some attacks like "defense"/"healing" are targeting the player
-                limiter = selection_side == OPPONENT ? opponent_sprites->sprites.size()
-                                                     : player_sprites->sprites.size();
+                limiter = selection_side == OPPONENT ? opponent_sprites.Sprites().size()
+                                                     : player_sprites.Sprites().size();
                 break;
             }
             default:
                 break;
         }
-        // when a monster is defeated and it is the last in the list, we need to update the index
-        // to avoid selecting out of bounds
-        if (indexes[selection_mode] >= limiter)
-        {
-            indexes[selection_mode] = limiter - 1;
-        }
-        if (IsKeyPressed(KEY_DOWN))
+        if (IsKeyPressed(rl::KEY_DOWN))
         {
             indexes[selection_mode] =
                     limiter ? ((indexes[selection_mode] + 1) % limiter + limiter) % limiter : 0;
         }
-        if (IsKeyPressed(KEY_UP))
+        if (IsKeyPressed(rl::KEY_UP))
         {
             indexes[selection_mode] =
                     limiter ? ((indexes[selection_mode] - 1) % limiter + limiter) % limiter : 0;
         }
-        if (IsKeyPressed(KEY_SPACE))
+        if (IsKeyPressed(rl::KEY_SPACE))
         {
             if (selection_mode == SELECTMODE_SWITCH)
             {
                 if (!available_monsters.empty())
                 {
-                    const int newIndex = indexes[SELECTMODE_SWITCH];
-                    const int newPosIndex = current_monster->pos_index;
-                    Monster *newMonster = available_monsters[newIndex];
+                    std::vector<std::pair<int, std::shared_ptr<Monster>>> list_available;
+                    list_available.reserve(available_monsters.size());
+                    for (const auto &[index, monster]: available_monsters)
+                    {
+                        list_available.emplace_back(index, monster);
+                    }
+
+                    const int newIndex = list_available[indexes[SELECTMODE_SWITCH]].first;
+                    const auto newMonster = list_available[indexes[SELECTMODE_SWITCH]].second;
                     current_monster->Kill();
-                    AddNewMonster(newMonster, newIndex, newPosIndex, PLAYER);
+                    CreateMonster(newMonster, newIndex, current_monster->pos_index, PLAYER);
                     selection_mode = SELECTMODE_NONE;
                     UpdateAllMonsters(false);
                 }
             }
             else if (selection_mode == SELECTMODE_TARGET)
             {
-                auto *sprite_group = selection_side == OPPONENT ? opponent_sprites : player_sprites;
+                const auto *sprite_group =
+                        selection_side == PLAYER ? &player_sprites : &opponent_sprites;
                 // when a monster gets defeated, the group may change, but the "pos_index" won't
                 // create a list ordered by "pos_index"
-                std::vector<MonsterSprite *> ordered_pos;
-                for (auto *sprite: sprite_group->sprites)
-                {
-                    ordered_pos.push_back((MonsterSprite *) sprite);
-                }
+                auto ordered_pos = sprite_group->Sprites();
                 std::sort(
                         ordered_pos.begin(), ordered_pos.end(),
-                        [](const MonsterSprite *a, const MonsterSprite *b)
-                        { return a->pos_index < b->pos_index; });
-
-                auto *monster_sprite = ordered_pos[indexes[SELECTMODE_TARGET]];
+                        [](const auto &a, const auto &b)
+                        {
+                            return std::dynamic_pointer_cast<MonsterSprite>(a)->pos_index <
+                                   std::dynamic_pointer_cast<MonsterSprite>(b)->pos_index;
+                        });
+                const auto monster_sprite = std::dynamic_pointer_cast<MonsterSprite>(
+                        ordered_pos[indexes[SELECTMODE_TARGET]]);
                 if (selected_attack)
                 {
                     current_monster->ActivateAttack(monster_sprite, selected_attack);
@@ -262,8 +300,7 @@ void Battle::Input()
                         // catching monster
                         monster_sprite->entity =
                                 PLAYER; // when deleting, set to PLAYER to not delete `Monster *`
-                        game->player_monsters[game->player_monsters.size()] =
-                                *monster_sprite->monster;
+                        (*player_monsters)[player_monsters->size()] = monster_sprite->monster;
                         monster_sprite->DelayedKill(
                                 nullptr, 0, 0,
                                 OPPONENT); // kills the MonsterSprite*, not the Monster*
@@ -272,21 +309,26 @@ void Battle::Input()
                     else
                     {
                         // can't catch monster, show a red X
-                        const RectangleU cross_rect = {
-                                0, 0, (float) ui_frames["cross"].width,
-                                (float) ui_frames["cross"].height};
-                        new TimedSprite(
-                                GetRectCenter(monster_sprite->rect),
-                                {&ui_frames["cross"], cross_rect}, {battle_sprites}, 1.0f);
+                        std::make_shared<TimedSprite>(
+                                monster_sprite->rect.center(), (*ui_icons)["cross"], 1.0f)
+                                ->add(&battle_sprites);
                     }
                 }
             }
             else if (selection_mode == SELECTMODE_ATTACKS)
             {
-                selection_mode = SELECTMODE_TARGET;
-                selected_attack =
-                        current_monster->monster->GetAbilities(false)[indexes[SELECTMODE_ATTACKS]];
-                selection_side = ATTACK_DATA[selected_attack].target;
+                const auto abilities = current_monster->monster->GetAbilities(false);
+                // when monster is out of energy abilities returns empty
+                if (!abilities.empty())
+                {
+                    selection_mode = SELECTMODE_TARGET;
+                    selected_attack = abilities[indexes[SELECTMODE_ATTACKS]];
+                    selection_side = ATTACK_DATA[selected_attack].target;
+                }
+                else
+                {
+                    selection_mode = SELECTMODE_GENERAL;
+                }
             }
             else if (selection_mode == SELECTMODE_GENERAL)
             {
@@ -315,12 +357,13 @@ void Battle::Input()
             }
 
             // reset all indexes after an action
+            // the tutorial uses this, but we deal in limiter or checking vector<> sizes
             // for (auto &[mode, value]: indexes)
             // {
             //     indexes[mode] = 0;
             // }
         }
-        if (IsKeyPressed(KEY_ESCAPE))
+        if (IsKeyPressed(rl::KEY_ESCAPE))
         {
             if (selection_mode >= SELECTMODE_ATTACKS && selection_mode <= SELECTMODE_TARGET)
             {
@@ -330,63 +373,16 @@ void Battle::Input()
     }
 }
 
-void Battle::CheckActive()
-{
-    CheckActiveGroup(player_sprites, PLAYER);
-    CheckActiveGroup(opponent_sprites, OPPONENT);
-}
-
-void Battle::CheckActiveGroup(const SpriteGroup *group, const SelectionSide side)
-{
-    if (group->sprites.empty())
-    {
-        return;
-    }
-    for (const auto *sprite: group->sprites)
-    {
-        // if a monster has initiative >= 100, it is its time to action
-        auto *monster_sprite = (MonsterSprite *) sprite;
-        if (monster_sprite->monster->initiative >= 100)
-        {
-            monster_sprite->monster->defending = false;
-            UpdateAllMonsters(true); // pause all monsters
-            monster_sprite->monster->initiative = 0;
-            monster_sprite->SetHighlight(true);
-            current_monster = ((MonsterSprite *) sprite);
-            if (side == PLAYER)
-            {
-                selection_mode = SELECTMODE_GENERAL;
-                selection_side = PLAYER;
-            }
-            else
-            {
-                timers["opponent_delay"].Activate();
-            }
-        }
-    }
-}
-
-void Battle::UpdateAllMonsters(const bool do_pause) const
-{
-    for (const auto *sprite: player_sprites->sprites)
-    {
-        ((MonsterSprite *) sprite)->monster->paused = do_pause;
-    }
-    for (const auto *sprite: opponent_sprites->sprites)
-    {
-        ((MonsterSprite *) sprite)->monster->paused = do_pause;
-    }
-}
-
-void Battle::ApplyAttack(const MonsterSprite *target_sprite, const Attack attack, float amount)
+void Battle::ApplyAttack(
+        const std::shared_ptr<MonsterSprite> &target_sprite, const Attack attack, float amount)
 {
     // play an animation
-    new AttackSprite(
-            GetRectCenter(target_sprite->rect),
-            attack_animation_frames[ATTACK_DATA[attack].animation], {battle_sprites});
-    PlaySound(game->sounds[NAMES_ATTACK_ANIMATION[ATTACK_DATA[attack].animation]]);
+    std::make_shared<AttackSprite>(
+            target_sprite->rect.center(), (*attack_frames)[ATTACK_DATA[attack].animation])
+            ->add(&battle_sprites);
+    (*sounds)[NAMES_ATTACK_ANIMATION[ATTACK_DATA[attack].animation]]->Play();
 
-    // get correct attack damage amount
+    // get correct attack damage amount (defense, element)
     // double attack if effective
     const auto attack_element = ATTACK_DATA[attack].element;
     const auto target_element = target_sprite->monster->element;
@@ -411,7 +407,7 @@ void Battle::ApplyAttack(const MonsterSprite *target_sprite, const Attack attack
     {
         target_defense -= 0.2;
     }
-    target_defense = Clamp(target_defense, 0, 1);
+    target_defense = rl::Clamp(target_defense, 0, 1);
 
     // update monster health
     target_sprite->monster->health -= amount * target_defense;
@@ -423,40 +419,41 @@ void Battle::ApplyAttack(const MonsterSprite *target_sprite, const Attack attack
 
 void Battle::CheckDeath()
 {
-    CheckDeathGroup(player_sprites, PLAYER);
-    CheckDeathGroup(opponent_sprites, OPPONENT);
+    CheckDeathGroup(&player_sprites, PLAYER);
+    CheckDeathGroup(&opponent_sprites, OPPONENT);
 }
 
-void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
+void Battle::CheckDeathGroup(const rg::sprite::Group *group, const SelectionSide side)
 {
-    for (auto *sprite: group->sprites)
+    for (const auto &sprite: group->Sprites())
     {
-        const auto monster_sprite = (MonsterSprite *) sprite;
+        const auto monster_sprite = std::dynamic_pointer_cast<MonsterSprite>(sprite);
         if (monster_sprite->monster->health <= 0)
         {
-            Monster *newMonster = nullptr;
+            std::shared_ptr<Monster> newMonster = nullptr;
             int newIndex = 0, newPosIndex = 0; // new monster
             if (side == PLAYER)
             {
                 // monsters in the battle
-                std::vector<std::pair<const int, Monster *>> active_monsters;
-                for (const auto player_monster_sprite: player_sprites->sprites)
+                std::vector<std::pair<const int, std::shared_ptr<Monster>>> active_monsters;
+                for (const auto &player_sprite: player_sprites.Sprites())
                 {
+                    const auto player_monster_sprite =
+                            std::dynamic_pointer_cast<MonsterSprite>(player_sprite);
                     active_monsters.emplace_back(
-                            ((MonsterSprite *) player_monster_sprite)->index,
-                            ((MonsterSprite *) player_monster_sprite)->monster);
+                            player_monster_sprite->index, player_monster_sprite->monster);
                 }
 
                 // monsters with health and not in battle
-                std::vector<std::pair<const int, Monster *>> available_monsters;
-                for (auto &[i, monster]: game->player_monsters)
+                std::vector<std::pair<const int, std::shared_ptr<Monster>>> available_monsters;
+                for (auto &[i, monster]: *player_monsters)
                 {
-                    std::pair<const int, Monster *> pair_monster = {i, &monster};
-                    if (monster.health > 0 &&
+                    std::pair<const int, std::shared_ptr<Monster>> pair_monster = {i, monster};
+                    if (monster->health > 0 &&
                         std::find(active_monsters.begin(), active_monsters.end(), pair_monster) ==
                                 active_monsters.end())
                     {
-                        available_monsters.emplace_back(i, &monster);
+                        available_monsters.emplace_back(i, monster);
                         break;
                     }
                 }
@@ -471,7 +468,6 @@ void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
             }
             else
             {
-                current_monster = nullptr;
                 // check if opponent has more monsters
                 if (!opponent_monsters->empty())
                 {
@@ -480,33 +476,44 @@ void Battle::CheckDeathGroup(const SpriteGroup *group, const SelectionSide side)
                     newPosIndex = monster_sprite->pos_index;
                     opponent_monsters->erase(opponent_monsters->begin());
                 }
-                // increase XP
-                const int xp_amount =
-                        monster_sprite->monster->level * 100 / player_sprites->sprites.size();
-                for (auto *player_sprite: player_sprites->sprites)
+                else
                 {
-                    ((MonsterSprite *) player_sprite)->monster->UpdateXP(xp_amount);
+                    indexes[SELECTMODE_TARGET] = 0;
+                }
+                // increase XP
+                auto p_sprites = player_sprites.Sprites();
+                if (!p_sprites.empty())
+                {
+                    const int xp_amount = monster_sprite->monster->level * 100 / p_sprites.size();
+                    for (const auto &player_sprite: p_sprites)
+                    {
+                        std::dynamic_pointer_cast<MonsterSprite>(player_sprite)
+                                ->monster->UpdateXP(xp_amount);
+                    }
                 }
             }
             monster_sprite->DelayedKill(newMonster, newIndex, newPosIndex, side);
+            selection_mode = SELECTMODE_NONE;
         }
     }
 }
 
 void Battle::CheckEndBattle()
 {
-    if (opponent_sprites->sprites.empty() && !battle_over)
+    // opponents have been defeated
+    if (opponent_sprites.Sprites().empty() && !battle_over)
     {
         battle_over = true;
-        for (auto &[i, monster]: game->player_monsters)
+        for (auto &[i, monster]: *player_monsters)
         {
-            monster.initiative = 0;
+            monster->initiative = 0;
         }
-        game->EndBattle(character);
+        endBattle(character);
     }
-    if (player_sprites->sprites.empty())
+    // player has been defeated
+    if (player_sprites.Sprites().empty())
     {
-        game->isRunning = false;
+        rg::Quit();
     }
 }
 
@@ -534,18 +541,18 @@ void Battle::DrawGeneral()
     int index = 0;
     for (auto &[option, battle_choice]: BATTLE_CHOICES["full"])
     {
-        Texture2D texture;
+        rg::Surface_Ptr surf;
         if (index == indexes[SELECTMODE_GENERAL])
         {
-            texture = ui_frames[battle_choice.icon + "_highlight"];
+            surf = (*ui_icons)[battle_choice.icon + "_highlight"];
         }
         else
         {
-            texture = TextureColorGrayscale(&ui_frames[battle_choice.icon]);
+            surf = rg::transform::GrayScale((*ui_icons)[battle_choice.icon]);
         }
-        auto rect = current_monster->rect;
-        RectToCenter(rect, GetRectMidRight(rect));
-        DrawTextureV(texture, Vector2Add(rect.pos, battle_choice.pos), WHITE);
+        const auto rect =
+                surf->GetRect().center(current_monster->rect.midright() + battle_choice.pos);
+        display_surface->Blit(surf, rect);
         ++index;
     }
 }
@@ -569,14 +576,14 @@ void Battle::DrawAttacks()
     }
 
     // bg
-    RectangleU bg_rect = {0, 0, width, height};
-    RectToMidLeft(bg_rect, Vector2Add(GetRectMidRight(current_monster->rect), {20, 0}));
-    DrawRectangleRounded(bg_rect.rectangle, 0.1f, 10, COLORS["white"]);
+    const auto bg_rect = rg::Rect{0, 0, width, height}.midleft(
+            current_monster->rect.midright() + rg::math::Vector2{20, 0});
+    rg::draw::rect(display_surface, COLORS["white"], bg_rect, 0, 5);
 
-    for (int index = 0; index < abilities.size(); ++index)
+    for (int index = 0; index < (int) abilities.size(); ++index)
     {
         const bool selected = index == indexes[SELECTMODE_ATTACKS];
-        Color text_color;
+        rl::Color text_color;
         if (selected)
         {
             auto element = ATTACK_DATA[abilities[index]].element;
@@ -593,33 +600,36 @@ void Battle::DrawAttacks()
         {
             text_color = COLORS["light"];
         }
-        // rect
-        const RectangleU text_rect = {
-                bg_rect.x, bg_rect.y + index * item_height + v_offset, bg_rect.width, item_height};
-        if (CheckCollisionPointRec(GetRectCenter(text_rect), bg_rect.rectangle))
+        auto text_surf =
+                (*fonts)["regular"]->render(ATTACK_DATA[abilities[index]].name.c_str(), text_color);
+        auto text_rect = text_surf->GetRect().center(
+                bg_rect.midtop() +
+                rg::math::Vector2{0, item_height / 2 + index * item_height + v_offset});
+        auto text_bg_rect = rg::Rect{0, 0, width, item_height}.center(text_rect.center());
+
+        // draw
+        if (bg_rect.collidepoint(text_rect.center()))
         {
             if (selected)
             {
-                if (CheckCollisionPointRec(GetRectTopLeft(bg_rect), text_rect.rectangle))
+                if (text_bg_rect.collidepoint(bg_rect.topleft()))
                 {
-                    DrawRectangleRoundedEx(
-                            text_rect, 0.2f, 10, COLORS["dark white"], true, true, false, false);
+                    rg::draw::rect(
+                            display_surface, COLORS["dark white"], text_bg_rect, 0, 5, true, true,
+                            false, false);
                 }
-                else if (CheckCollisionPointRec(
-                                 Vector2Add(GetRectMidBottom(bg_rect), {0, -1}),
-                                 text_rect.rectangle))
+                else if (text_bg_rect.collidepoint(bg_rect.midbottom() + rg::math::Vector2{0, -1}))
                 {
-                    DrawRectangleRoundedEx(
-                            text_rect, 0.2f, 10, COLORS["dark white"], false, false, true, true);
+                    rg::draw::rect(
+                            display_surface, COLORS["dark white"], text_bg_rect, 0, 5, false, false,
+                            true, true);
                 }
                 else
                 {
-                    DrawRectangleRec(text_rect.rectangle, COLORS["dark white"]);
+                    rg::draw::rect(display_surface, COLORS["dark white"], text_bg_rect);
                 }
             }
-            DrawCenteredTextEx(
-                    fonts["regular"], ATTACK_DATA[abilities[index]].name.c_str(), text_rect,
-                    text_color);
+            display_surface->Blit(text_surf, text_rect);
         }
     }
 }
@@ -642,79 +652,85 @@ void Battle::DrawSwitch()
     }
 
     // bg
-    RectangleU bg_rect = {0, 0, width, height};
-    RectToMidLeft(bg_rect, Vector2Add(GetRectMidRight(current_monster->rect), {20, 0}));
-    DrawRectangleRounded(bg_rect.rectangle, 0.1f, 10, COLORS["white"]);
+    const auto bg_rect = rg::Rect{0, 0, width, height}.midleft(
+            current_monster->rect.midright() + rg::math::Vector2{20, 0});
+    rg::draw::rect(display_surface, COLORS["white"], bg_rect, 0, 5);
 
     // monsters
-    std::vector<Monster *> active_monsters;
-    for (const auto monster_sprite: player_sprites->sprites)
+    std::vector<std::pair<int, std::shared_ptr<Monster>>> active_monsters; // monsters in battle
+    active_monsters.reserve(player_sprites.Sprites().size());
+    for (auto &monster: player_sprites.Sprites())
     {
-        active_monsters.push_back(((MonsterSprite *) monster_sprite)->monster);
+        const auto monster_sprite = std::dynamic_pointer_cast<MonsterSprite>(monster);
+        active_monsters.emplace_back(monster_sprite->index, monster_sprite->monster);
     }
+
+    // find player's monsters that are not in battle
     available_monsters.clear();
-    for (auto &[monster_index, monster]: game->player_monsters)
+    for (auto &[index, monster]: *player_monsters)
     {
-        if (monster.health > 0 &&
-            // if not found in active
-            std::find(active_monsters.begin(), active_monsters.end(), &monster) ==
+        auto find_pair = std::make_pair(index, monster);
+        if (monster->health > 0 &&
+            std::find(active_monsters.begin(), active_monsters.end(), find_pair) ==
                     active_monsters.end())
         {
-            available_monsters.push_back(&monster);
+            available_monsters[index] = monster;
         }
     }
-    for (int index = 0; index < available_monsters.size(); ++index)
-    {
-        Monster *monster = available_monsters[index];
-        const bool selected = index == indexes[SELECTMODE_SWITCH];
-        RectangleU item_bg_rect = {0, 0, width, item_height};
-        RectToMidLeft(
-                item_bg_rect,
-                {bg_rect.x, bg_rect.y + item_height / 2 + index * item_height + v_offset});
-        if (CheckCollisionPointRec(GetRectCenter(item_bg_rect), bg_rect.rectangle))
-        {
-            const Texture2D icon_texture = monster_icons[monster->name];
-            RectangleU icon_rect = {0, 0, (float) icon_texture.width, (float) icon_texture.height};
-            RectToMidLeft(
-                    icon_rect, Vector2Add(
-                                       GetRectTopLeft(bg_rect),
-                                       {10, item_height / 2 + index * item_height + v_offset}));
-            const Color text_color = selected ? COLORS["red"] : COLORS["black"];
-            if (selected)
-            {
-                if (CheckCollisionPointRec(GetRectTopLeft(bg_rect), item_bg_rect.rectangle))
-                {
-                    DrawRectangleRoundedEx(
-                            item_bg_rect, 0.4f, 10, COLORS["dark white"], true, true, false, false);
-                }
-                else if (CheckCollisionPointRec(
-                                 Vector2Add(GetRectMidBottom(bg_rect), {0, -1}),
-                                 item_bg_rect.rectangle))
-                {
-                    DrawRectangleRoundedEx(
-                            item_bg_rect, 0.4f, 10, COLORS["dark white"], false, false, true, true);
-                }
-                else
-                {
-                    DrawRectangleRec(item_bg_rect.rectangle, COLORS["dark white"]);
-                }
-            }
-            char text_name_level[MAX_TEXT_BUFFER_LENGTH];
-            TextFormatSafe(text_name_level, "%s (%i)", monster->name.c_str(), monster->level);
-            DrawTextEx(
-                    fonts["regular"], text_name_level, {bg_rect.x + 90, icon_rect.y},
-                    fonts["regular"].baseSize, 1, text_color);
-            DrawTextureV(icon_texture, icon_rect.pos, WHITE);
 
-            RectangleU health_rectangle = {
-                    bg_rect.x + 90, icon_rect.y + fonts["regular"].baseSize + 4, 100, 4};
-            RectangleU energy_rectangle = {
-                    Vector2Add(GetRectBottomLeft(health_rectangle), {0, 2}), {80, 4}};
-            DrawBar(health_rectangle, monster->health, monster->GetStat("max_health"),
+    int index = 0;
+    for (auto &[i, monster]: available_monsters)
+    {
+        const bool selected = index == indexes[SELECTMODE_SWITCH];
+        auto item_bg_rect = rg::Rect{0, 0, width, item_height}.midleft(rg::math::Vector2{
+                bg_rect.left(), bg_rect.top() + item_height / 2 + index * item_height + v_offset});
+        auto icon_surf = (*monster_icons)[monster->name];
+        auto icon_rect = icon_surf->GetRect().midleft(
+                bg_rect.topleft() +
+                rg::math::Vector2{10, item_height / 2 + index * item_height + v_offset});
+        auto text_surf = (*fonts)["regular"]->render(
+                rl::TextFormat("%s (%d)", monster->name.c_str(), monster->level),
+                selected ? COLORS["red"] : COLORS["black"]);
+        auto text_rect = text_surf->GetRect().topleft({bg_rect.left() + 90, icon_rect.top()});
+
+        // selection bg
+        if (selected)
+        {
+            if (item_bg_rect.collidepoint(bg_rect.topleft()))
+            {
+                rg::draw::rect(
+                        display_surface, COLORS["dark white"], item_bg_rect, 0, 5, true, true);
+            }
+            else if (item_bg_rect.collidepoint(bg_rect.midbottom() + rg::math::Vector2{0, -1}))
+            {
+                rg::draw::rect(
+                        display_surface, COLORS["dark white"], item_bg_rect, 0, 5, false, false,
+                        true, true);
+            }
+            else
+            {
+                rg::draw::rect(display_surface, COLORS["dark white"], item_bg_rect);
+            }
+        }
+
+        if (bg_rect.collidepoint(item_bg_rect.center()))
+        {
+            display_surface->Blit(icon_surf, icon_rect);
+            display_surface->Blit(text_surf, text_rect);
+
+            auto health_rect =
+                    rg::Rect{text_rect.bottomleft() + rg::math::Vector2{0, 4}, {100.0f, 4.0f}};
+            auto energy_rect =
+                    rg::Rect{health_rect.bottomleft() + rg::math::Vector2{0, 2}, {80, 4}};
+            rg::draw::bar(
+                    display_surface, health_rect, monster->health, monster->GetStat("max_health"),
                     COLORS["red"], COLORS["black"]);
-            DrawBar(energy_rectangle, monster->energy, monster->GetStat("max_energy"),
+            rg::draw::bar(
+                    display_surface, energy_rect, monster->energy, monster->GetStat("max_energy"),
                     COLORS["blue"], COLORS["black"]);
         }
+
+        ++index;
     }
 }
 
@@ -733,21 +749,32 @@ void Battle::OpponentAttack() const
         return;
     }
     const auto abilities = current_monster->monster->GetAbilities();
-    const auto random_ability_index = GetRandomValue(0, abilities.size());
+    // if monster is out of energy, abilities is empty
+    if (abilities.empty())
+    {
+        return;
+    }
+    const auto random_ability_index = rl::GetRandomValue(0, abilities.size() - 1);
     const auto ability = abilities[random_ability_index];
 
     const auto side = ATTACK_DATA[ability].target;
-    // PLAYER - attack same team (healing/defense) | OPPONENT - attack the other team
-    MonsterSprite *random_target;
+    // side of the attack = PLAYER - attack same team (healing/defense) | OPPONENT - attack the
+    // other team
+    std::vector<rg::sprite::Sprite_Ptr> sprites;
     if (side == PLAYER)
     {
-        const auto random_target_index = GetRandomValue(0, opponent_sprites->sprites.size() - 1);
-        random_target = (MonsterSprite *) opponent_sprites->sprites[random_target_index];
+        sprites = opponent_sprites.Sprites();
     }
     else
     {
-        const auto random_target_index = GetRandomValue(0, player_sprites->sprites.size() - 1);
-        random_target = (MonsterSprite *) player_sprites->sprites[random_target_index];
+        sprites = player_sprites.Sprites();
     }
-    current_monster->ActivateAttack(random_target, ability);
+
+    if (!sprites.empty())
+    {
+        const auto random_target_index = rl::GetRandomValue(0, sprites.size() - 1);
+        const auto random_target =
+                std::dynamic_pointer_cast<MonsterSprite>(sprites[random_target_index]);
+        current_monster->ActivateAttack(random_target, ability);
+    }
 }

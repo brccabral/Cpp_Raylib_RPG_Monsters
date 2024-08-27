@@ -1,20 +1,21 @@
 #pragma once
-#include <map>
-#include <vector>
-#include <string>
-#include <utility>
-#include <raylib.h>
+#include <rygame.hpp>
+
 
 constexpr int WINDOW_WIDTH = 1280;
 constexpr int WINDOW_HEIGHT = 720;
 constexpr int TILE_SIZE = 64;
-constexpr int ANIMATION_SPEED = 6;
-constexpr int BATTLE_OUTLINE_WIDTH = 4;
+constexpr float ANIMATION_SPEED = 6;
 
-// Global Surface to draw into
-inline RenderTexture2D display_surface;
+inline rg::InsertOrderMap<std::string, int> WORLD_LAYERS = {
+        {"water", 0}, //
+        {"bg", 1}, //
+        {"shadow", 2}, //
+        {"main", 3}, //
+        {"top", 4}, //
+};
 
-inline std::map<std::string, Color> COLORS = {
+inline std::map<std::string, rl::Color> COLORS = {
         {"white", {0xf4, 0xfe, 0xfa, 0xff}}, //
         {"pure white", {0xff, 0xff, 0xff, 0xff}}, //
         {"dark", {0x2b, 0x29, 0x2c, 0xff}}, //
@@ -32,15 +33,7 @@ inline std::map<std::string, Color> COLORS = {
         {"dark white", {0xf0, 0xf0, 0xf0, 0xff}}, //
 };
 
-inline std::map<std::string, int> WORLD_LAYERS = {
-        {"water", 0}, //
-        {"bg", 1}, //
-        {"shadow", 2}, //
-        {"main", 3}, //
-        {"top", 4}, //
-};
-
-inline std::map<std::string, std::vector<Vector2>> BATTLE_POSITIONS = {
+inline std::map<std::string, std::vector<rg::math::Vector2>> BATTLE_POSITIONS = {
         {
                 "left",
                 {
@@ -67,74 +60,6 @@ inline std::map<std::string, int> BATTLE_LAYERS = {
         {"overlay", 4}, //
 };
 
-typedef struct BattleChoice
-{
-    Vector2 pos;
-    std::string icon;
-} BattleChoice;
-
-inline std::map<std::string, std::vector<std::pair<std::string, BattleChoice>>> BATTLE_CHOICES{
-        // numbers adjusted from tutorial
-        {
-                "full",
-                {
-                        //
-                        {"fight", {{105, 10}, "sword"}}, //
-                        {"defend", {{115, 50}, "shield"}}, //
-                        {"switch", {{115, 90}, "arrows"}}, //
-                        {"catch", {{105, 130}, "hand"}}, //
-                }, //
-        }, //
-        {
-                "limited",
-                {
-                        //
-                        {"fight", {{105, 30}, "sword"}}, //
-                        {"defend", {{115, 70}, "shield"}}, //
-                        {"switch", {{105, 110}, "arrows"}}, //
-                }, //
-        }, //
-};
-
-#define FONT_SIZE 30
-
-enum SpriteType
-{
-    SIMPLESPRITE = 0,
-    SPRITE,
-    ENTITY,
-    DIALOGSPRITE,
-    MONSTERSPRITE,
-    MONSTERNAMESPRITE,
-    MONSTERLEVELSPRITE,
-    MONSTERSTATSSPRITE,
-    MONSTEROUTLINESPRITE,
-};
-
-enum Axis
-{
-    HORIZONTAL = 0,
-    VERTICAL
-};
-
-enum FacingDirection
-{
-    DOWN = 0,
-    UP,
-    LEFT,
-    RIGHT,
-    DOWN_IDLE,
-    UP_IDLE,
-    LEFT_IDLE,
-    RIGHT_IDLE,
-};
-
-enum TINT_MODE
-{
-    UNTINT = 0,
-    TINT
-};
-
 enum SelectionMode
 {
     SELECTMODE_NONE = 0,
@@ -145,8 +70,43 @@ enum SelectionMode
     SELECTMODE_TARGET,
 };
 
+typedef struct BattleChoice
+{
+    rg::math::Vector2 pos;
+    std::string icon;
+} BattleChoice;
+
+inline std::map<std::string, std::vector<std::pair<std::string, BattleChoice>>> BATTLE_CHOICES{
+        // numbers adjusted from tutorial
+        {
+                "full",
+                {
+                        //
+                        {"fight", {{30, -60}, "sword"}}, //
+                        {"defend", {{40, -20}, "shield"}}, //
+                        {"switch", {{40, 20}, "arrows"}}, //
+                        {"catch", {{30, 60}, "hand"}}, //
+                }, //
+        }, //
+        {
+                "limited",
+                {
+                        //
+                        {"fight", {{30, -40}, "sword"}}, //
+                        {"defend", {{40, 0}, "shield"}}, //
+                        {"switch", {{30, 40}, "arrows"}}, //
+                }, //
+        }, //
+};
+
 enum AnimationState
 {
-    ANIMATION_IDLE = 0,
-    ANIMATION_ATTACK,
+    ANIMATIONSTATE_IDLE = 0,
+    ANIMATIONSTATE_ATTACK,
+};
+
+enum TINT_MODE
+{
+    UNTINT = 0,
+    TINT
 };
