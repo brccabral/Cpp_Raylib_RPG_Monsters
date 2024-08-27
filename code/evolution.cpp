@@ -8,8 +8,6 @@ Evolution::Evolution(
         const std::shared_ptr<rg::font::Font> &font, const std::function<void()> &endEvolution,
         const std::vector<std::shared_ptr<rg::Surface>> &star_animation_surfs)
 {
-    // ! these Scale and Mask hangs the game
-
     auto start2x = rg::transform::Scale2x(monster_frames[start_monster][ANIMATIONSTATE_IDLE]);
     start_monster_surf = std::make_shared<rg::Frames>(start2x, 2, 4);
     auto end2x = rg::transform::Scale2x(monster_frames[end_monster][ANIMATIONSTATE_IDLE]);
@@ -37,9 +35,11 @@ Evolution::Evolution(
             COLORS["black"]);
 
     // star animation
+    // ! these Scale hangs the game, we scale in Game.ImportAssets()
     for (const auto &star_surf: star_animation_surfs)
     {
-        star_surfs.push_back(rg::transform::Scale2x(star_surf));
+        // star_surfs.push_back(rg::transform::Scale2x(star_surf));
+        star_surfs.push_back(star_surf);
     }
 }
 

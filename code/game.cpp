@@ -118,7 +118,11 @@ void Game::ImportAssets()
 
     attack_frames = AttackImporter("resources/graphics/attacks");
 
-    star_animation_surfs = rg::image::ImportFolder("resources/graphics/other/star animation");
+    auto star_surfs = rg::image::ImportFolder("resources/graphics/other/star animation");
+    for (const auto &star_surf: star_surfs)
+    {
+        star_animation_surfs.push_back(rg::transform::Scale2x(star_surf));
+    }
 }
 
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)
