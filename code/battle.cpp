@@ -12,11 +12,12 @@ Battle(std::map<int, std::shared_ptr<Monster>> *player_monsters,
        const std::shared_ptr<rg::Surface> &bg_surf,
        std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts,
        const std::function<void(const std::shared_ptr<Character> &c)> &endBattle,
-       const std::shared_ptr<Character> &character)
+       const std::shared_ptr<Character> &character,
+       std::map<std::string, std::shared_ptr<rg::mixer::Sound>> *sounds)
     : player_monsters(player_monsters), opponent_monsters(opponent_monsters),
       monster_frames(monster_frames), outline_frames(outline_frames), monster_icons(monster_icons),
       ui_icons(ui_icons), bg_surf(bg_surf), fonts(fonts), attack_frames(attack_frames),
-      endBattle(endBattle), character(character)
+      endBattle(endBattle), character(character), sounds(sounds)
 {
     indexes[SELECTMODE_GENERAL] = 0;
     indexes[SELECTMODE_MONSTER] = 0;
@@ -380,6 +381,7 @@ void Battle::ApplyAttack(
     std::make_shared<AttackSprite>(
             target_sprite->rect.center(), (*attack_frames)[ATTACK_DATA[attack].animation])
             ->add(&battle_sprites);
+    (*sounds)[NAMES_ATTACK_ANIMATION[ATTACK_DATA[attack].animation]]->Play();
 
     // get correct attack damage amount (defense, element)
     // double attack if effective

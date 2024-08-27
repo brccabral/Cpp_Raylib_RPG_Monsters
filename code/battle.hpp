@@ -21,7 +21,8 @@ public:
            const std::shared_ptr<rg::Surface> &bg_surf,
            std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts,
            const std::function<void(const std::shared_ptr<Character> &c)> &endBattle,
-           const std::shared_ptr<Character> &character);
+           const std::shared_ptr<Character> &character,
+           std::map<std::string, std::shared_ptr<rg::mixer::Sound>> *sounds);
     void Update(float dt);
 
 private:
@@ -83,4 +84,6 @@ private:
     bool battle_over{};
     const std::function<void(const std::shared_ptr<Character> &character)> endBattle;
     const std::shared_ptr<Character> character;
+
+    std::map<std::string, std::shared_ptr<rg::mixer::Sound>> *sounds;
 };

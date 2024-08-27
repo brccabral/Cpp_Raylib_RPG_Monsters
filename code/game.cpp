@@ -393,7 +393,7 @@ void Game::EndDialog(const std::shared_ptr<Character> &character)
                 &player_monsters, &character->monsters, &monster_frames, &outline_frames,
                 &monster_icons, &ui_icons, &attack_frames,
                 bg_frames[character->character_data->biome], &fonts,
-                [this](const std::shared_ptr<Character> &c) { EndBattle(c); }, character);
+                [this](const std::shared_ptr<Character> &c) { EndBattle(c); }, character, &audio);
         tint_mode = TINT;
     }
     else
@@ -534,7 +534,7 @@ void Game::MonsterEncounter()
                     &player_monsters, &encounter_monsters, &monster_frames, &outline_frames,
                     &monster_icons, &ui_icons, &attack_frames,
                     bg_frames[monster_patch_sprite->biome], &fonts,
-                    [this](const std::shared_ptr<Character> &c) { EndBattle(c); }, nullptr);
+                    [this](const std::shared_ptr<Character> &c) { EndBattle(c); }, nullptr, &audio);
             tint_mode = TINT;
             break; // only need the first sprite
         }
