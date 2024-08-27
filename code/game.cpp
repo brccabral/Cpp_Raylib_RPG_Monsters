@@ -26,6 +26,8 @@ Game::Game()
     ImportAssets();
     Setup("world", "house");
 
+    audio["overworld"]->Play();
+
     monster_index = std::make_shared<MonsterIndex>(
             &player_monsters, fonts, &monster_icons, &ui_icons, &monster_frames);
 
@@ -383,6 +385,9 @@ void Game::EndDialog(const std::shared_ptr<Character> &character)
     }
     else if (!character->character_data->defeated)
     {
+        audio["overworld"]->Stop();
+        audio["battle"]->Play();
+
         if (transition_target)
         {
             transition_target.reset();
@@ -464,6 +469,8 @@ void Game::TintScreen(const double dt)
 
 void Game::EndBattle(const std::shared_ptr<Character> &character)
 {
+    audio["battle"]->Stop();
+
     if (transition_target)
     {
         transition_target.reset();
@@ -530,6 +537,9 @@ void Game::MonsterEncounter()
                         std::make_shared<Monster>(monster_name, level);
             }
 
+            audio["overworld"]->Stop();
+            audio["battle"]->Play();
+
             transition_target->battle = std::make_shared<Battle>(
                     &player_monsters, &encounter_monsters, &monster_frames, &outline_frames,
                     &monster_icons, &ui_icons, &attack_frames,
@@ -555,6 +565,10 @@ void Game::CheckEvolution()
                     evolution.reset();
                     evolution = nullptr;
                 }
+
+                audio["overworld"]->Stop();
+                audio["evolution"]->Play();
+
                 evolution = std::make_shared<Evolution>(
                         monster_frames, monster->name, monster->evolution.first, fonts["bold"],
                         [this] { EndEvolution(); }, star_animation_surfs);
@@ -564,9 +578,16 @@ void Game::CheckEvolution()
             }
         }
     }
+    if (!evolution)
+    {
+        audio["overworld"]->Play();
+    }
 }
 
 void Game::EndEvolution()
 {
+    audio["evolution"]->Stop();
+    audio["overworld"]->Play();
+
     player->Unblock();
 }
