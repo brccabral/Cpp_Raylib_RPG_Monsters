@@ -20,11 +20,11 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
     offset *= -1.0f;
 
     auto sprites = Sprites();
-    std::vector<std::shared_ptr<rg::sprite::Sprite>> bg_sprites;
+    std::vector<rg::sprite::Sprite_Ptr> bg_sprites;
     bg_sprites.reserve(sprites.size());
-    std::vector<std::shared_ptr<rg::sprite::Sprite>> main_sprites;
+    std::vector<rg::sprite::Sprite_Ptr> main_sprites;
     main_sprites.reserve(sprites.size());
-    std::vector<std::shared_ptr<rg::sprite::Sprite>> top_sprites;
+    std::vector<rg::sprite::Sprite_Ptr> top_sprites;
     top_sprites.reserve(sprites.size());
     for (const auto &sprite: sprites)
     {
@@ -46,8 +46,7 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
     // sort main sprites based on `y_sort`
     std::sort(
             main_sprites.begin(), main_sprites.end(),
-            [](const std::shared_ptr<rg::sprite::Sprite> &l,
-               const std::shared_ptr<rg::sprite::Sprite> &r)
+            [](const rg::sprite::Sprite_Ptr &l, const rg::sprite::Sprite_Ptr &r)
             {
                 float yl;
                 float yr;
@@ -138,8 +137,8 @@ void BattleSprites::Draw(
     auto sprites = Sprites();
     std::sort(
             sprites.begin(), sprites.end(),
-            [](const std::shared_ptr<rg::sprite::Sprite> &l,
-               const std::shared_ptr<rg::sprite::Sprite> &r) { return l->z < r->z; });
+            [](const rg::sprite::Sprite_Ptr &l, const rg::sprite::Sprite_Ptr &r)
+            { return l->z < r->z; });
     for (const auto &sprite: sprites)
     {
         if (sprite->z == BATTLE_LAYERS["outline"])

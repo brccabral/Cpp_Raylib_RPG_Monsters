@@ -761,7 +761,7 @@ void Battle::OpponentAttack() const
     const auto side = ATTACK_DATA[ability].target;
     // side of the attack = PLAYER - attack same team (healing/defense) | OPPONENT - attack the
     // other team
-    std::vector<std::shared_ptr<rg::sprite::Sprite>> sprites;
+    std::vector<rg::sprite::Sprite_Ptr> sprites;
     if (side == PLAYER)
     {
         sprites = opponent_sprites.Sprites();
