@@ -4,8 +4,8 @@
 MonsterIndex::MonsterIndex(
         std::map<int, std::shared_ptr<Monster>> *monsters,
         const std::map<std::string, std::shared_ptr<rg::font::Font>> &fonts,
-        std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons,
-        std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
+        std::map<std::string, rg::Surface_Ptr> *monster_icons,
+        std::map<std::string, rg::Surface_Ptr> *ui_icons,
         std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
                 *monster_frames)
     : monsters(monsters), fonts(fonts), monster_icons(monster_icons),

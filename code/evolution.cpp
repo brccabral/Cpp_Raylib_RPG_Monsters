@@ -6,7 +6,7 @@ Evolution::Evolution(
                 &monster_frames,
         const std::string &start_monster, const std::string &end_monster,
         const std::shared_ptr<rg::font::Font> &font, const std::function<void()> &endEvolution,
-        const std::vector<std::shared_ptr<rg::Surface>> &star_animation_surfs)
+        const std::vector<rg::Surface_Ptr> &star_animation_surfs)
 {
     auto start2x = rg::transform::Scale2x(monster_frames[start_monster][ANIMATIONSTATE_IDLE]);
     start_monster_surf = std::make_shared<rg::Frames>(start2x, 2, 4);

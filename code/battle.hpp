@@ -15,10 +15,10 @@ public:
                    *monster_frames,
            std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
                    *outline_frames,
-           std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons,
-           std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons,
+           std::map<std::string, rg::Surface_Ptr> *monster_icons,
+           std::map<std::string, rg::Surface_Ptr> *ui_icons,
            std::map<AttackAnimation, std::shared_ptr<rg::Frames>> *attack_frames,
-           const std::shared_ptr<rg::Surface> &bg_surf,
+           const rg::Surface_Ptr &bg_surf,
            std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts,
            const std::function<void(const std::shared_ptr<Character> &c)> &endBattle,
            const std::shared_ptr<Character> &character,
@@ -54,14 +54,14 @@ private:
     void UpdateTimers();
     void OpponentAttack() const;
 
-    std::shared_ptr<rg::Surface> display_surface = rg::display::GetSurface();
+    rg::Surface_Ptr display_surface = rg::display::GetSurface();
     std::map<int, std::shared_ptr<Monster>> *player_monsters;
     std::map<int, std::shared_ptr<Monster>> *opponent_monsters;
     std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> *monster_frames;
     std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>> *outline_frames;
-    std::map<std::string, std::shared_ptr<rg::Surface>> *monster_icons;
-    std::map<std::string, std::shared_ptr<rg::Surface>> *ui_icons;
-    std::shared_ptr<rg::Surface> bg_surf;
+    std::map<std::string, rg::Surface_Ptr> *monster_icons;
+    std::map<std::string, rg::Surface_Ptr> *ui_icons;
+    rg::Surface_Ptr bg_surf;
     std::map<std::string, std::shared_ptr<rg::font::Font>> *fonts;
 
     BattleSprites battle_sprites{};

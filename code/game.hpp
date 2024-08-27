@@ -37,7 +37,7 @@ private:
     void CheckEvolution();
     void EndEvolution();
 
-    std::shared_ptr<rg::Surface> display_surface = nullptr;
+    rg::Surface_Ptr display_surface = nullptr;
     std::map<std::string, rl::tmx_map *> tmx_maps;
 
     // overworld frames
@@ -58,7 +58,7 @@ private:
     std::shared_ptr<Battle> battle = nullptr;
 
     std::shared_ptr<TransitionTarget> transition_target = nullptr;
-    std::shared_ptr<rg::Surface> tint_surf;
+    rg::Surface_Ptr tint_surf;
     TINT_MODE tint_mode = UNTINT;
     float tint_progress = 0.0f;
     // float tint_direction = -1;
@@ -69,20 +69,20 @@ private:
     // std::map<int, std::shared_ptr<Monster>> dummy_monsters;
     std::shared_ptr<MonsterIndex> monster_index;
     bool index_open{};
-    std::map<std::string, std::shared_ptr<rg::Surface>> monster_icons;
+    std::map<std::string, rg::Surface_Ptr> monster_icons;
     std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
             monster_frames; // Name, Idle/Attack, Frames
     std::map<std::string, std::map<AnimationState, std::shared_ptr<rg::Frames>>>
             outline_frames; // Name, Idle/Attack, Frames
-    std::map<std::string, std::shared_ptr<rg::Surface>> ui_icons;
+    std::map<std::string, rg::Surface_Ptr> ui_icons;
     std::map<AttackAnimation, std::shared_ptr<rg::Frames>> attack_frames;
 
-    std::map<std::string, std::shared_ptr<rg::Surface>> bg_frames;
+    std::map<std::string, rg::Surface_Ptr> bg_frames;
 
     rg::Timer encounter_timer;
 
     std::shared_ptr<Evolution> evolution = nullptr;
-    std::vector<std::shared_ptr<rg::Surface>> star_animation_surfs{};
+    std::vector<rg::Surface_Ptr> star_animation_surfs{};
 
     std::map<std::string, std::shared_ptr<rg::mixer::Sound>> audio;
 };

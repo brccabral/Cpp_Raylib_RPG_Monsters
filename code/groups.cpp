@@ -9,7 +9,7 @@ AllSprites::AllSprites() : Group()
     notice_surf = rg::image::Load("resources/graphics/ui/notice.png");
 }
 
-void AllSprites::Draw(const std::shared_ptr<rg::Surface> &surface)
+void AllSprites::Draw(const rg::Surface_Ptr &surface)
 {
     Group::Draw(surface);
 }

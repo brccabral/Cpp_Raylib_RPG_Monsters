@@ -10,7 +10,7 @@ class Sprite : public rg::sprite::Sprite
 {
 public:
 
-    Sprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf,
+    Sprite(rg::math::Vector2 pos, const rg::Surface_Ptr &surf,
            int z = WORLD_LAYERS["main"]);
     float y_sort;
     rg::Rect hitbox{};
@@ -39,7 +39,7 @@ class MonsterPatchSprite : public Sprite
 public:
 
     MonsterPatchSprite(
-            rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf,
+            rg::math::Vector2 pos, const rg::Surface_Ptr &surf,
             const std::string &biome, const std::string &patch_monsters, int level);
 
     std::string biome;
@@ -51,14 +51,14 @@ class BorderSprite : public Sprite
 {
 public:
 
-    BorderSprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf);
+    BorderSprite(rg::math::Vector2 pos, const rg::Surface_Ptr &surf);
 };
 
 class CollidableSprite : public Sprite
 {
 public:
 
-    CollidableSprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf);
+    CollidableSprite(rg::math::Vector2 pos, const rg::Surface_Ptr &surf);
 };
 
 class DialogSprite : public rg::sprite::Sprite
@@ -219,7 +219,7 @@ class TimedSprite : public Sprite
 {
 public:
 
-    TimedSprite(rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf, float duration);
+    TimedSprite(rg::math::Vector2 pos, const rg::Surface_Ptr &surf, float duration);
     void Update(float deltaTime) override;
 
 private:

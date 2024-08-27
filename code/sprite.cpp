@@ -3,7 +3,7 @@
 #include "settings.hpp"
 
 
-Sprite::Sprite(const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf, const int z)
+Sprite::Sprite(const rg::math::Vector2 pos, const rg::Surface_Ptr &surf, const int z)
 {
     image = surf;
     rect = image->GetRect();
@@ -34,7 +34,7 @@ void AnimatedSprite::Animate(const float dt)
 }
 
 MonsterPatchSprite::MonsterPatchSprite(
-        const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf,
+        const rg::math::Vector2 pos, const rg::Surface_Ptr &surf,
         const std::string &biome, const std::string &patch_monsters, const int level)
     : Sprite(pos, surf, WORLD_LAYERS["main"]), biome(biome), level(level)
 {
@@ -47,12 +47,12 @@ MonsterPatchSprite::MonsterPatchSprite(
     monsters = rg::Split(patch_monsters, ',');
 }
 
-BorderSprite::BorderSprite(const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf)
+BorderSprite::BorderSprite(const rg::math::Vector2 pos, const rg::Surface_Ptr &surf)
     : Sprite(pos, surf)
 {}
 
 CollidableSprite::CollidableSprite(
-        const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf)
+        const rg::math::Vector2 pos, const rg::Surface_Ptr &surf)
     : Sprite(pos, surf)
 {
     hitbox = rect.inflate(0, -rect.height * 0.6f);
@@ -345,7 +345,7 @@ void AttackSprite::Animate(const float dt)
 }
 
 TimedSprite::TimedSprite(
-        const rg::math::Vector2 pos, const std::shared_ptr<rg::Surface> &surf, const float duration)
+        const rg::math::Vector2 pos, const rg::Surface_Ptr &surf, const float duration)
     : Sprite(pos, surf, BATTLE_LAYERS["overlay"])
 {
     rect.center(pos);
