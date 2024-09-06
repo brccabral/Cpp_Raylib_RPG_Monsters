@@ -18,7 +18,7 @@ Evolution::Evolution(
 
     // screen tint
     tint_surf = std::make_shared<rg::Surface>(
-            display_surface->GetRect().width, display_surface->GetRect().height);
+            (int) display_surface->GetRect().width, (int) display_surface->GetRect().height);
     tint_surf->SetAlpha(200);
 
     // white tint

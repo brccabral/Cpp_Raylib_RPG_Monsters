@@ -1,4 +1,5 @@
 #include <utility>
+#include <array>
 #include "sprite.hpp"
 #include "settings.hpp"
 
@@ -13,8 +14,7 @@ Sprite::Sprite(const rg::math::Vector2 pos, const rg::Surface_Ptr &surf, const i
     hitbox = rect;
 }
 
-AnimatedSprite::AnimatedSprite(
-        const rg::math::Vector2 pos, const rg::Frames_Ptr &surf, const int z)
+AnimatedSprite::AnimatedSprite(const rg::math::Vector2 pos, const rg::Frames_Ptr &surf, const int z)
     : Sprite(pos, surf, z), image(surf)
 {}
 
@@ -34,8 +34,8 @@ void AnimatedSprite::Animate(const float dt)
 }
 
 MonsterPatchSprite::MonsterPatchSprite(
-        const rg::math::Vector2 pos, const rg::Surface_Ptr &surf,
-        const std::string &biome, const std::string &patch_monsters, const int level)
+        const rg::math::Vector2 pos, const rg::Surface_Ptr &surf, const std::string &biome,
+        const std::string &patch_monsters, const int level)
     : Sprite(pos, surf, WORLD_LAYERS["main"]), biome(biome), level(level)
 {
     y_sort -= 40;
@@ -51,8 +51,7 @@ BorderSprite::BorderSprite(const rg::math::Vector2 pos, const rg::Surface_Ptr &s
     : Sprite(pos, surf)
 {}
 
-CollidableSprite::CollidableSprite(
-        const rg::math::Vector2 pos, const rg::Surface_Ptr &surf)
+CollidableSprite::CollidableSprite(const rg::math::Vector2 pos, const rg::Surface_Ptr &surf)
     : Sprite(pos, surf)
 {
     hitbox = rect.inflate(0, -rect.height * 0.6f);
@@ -72,7 +71,7 @@ DialogSprite::DialogSprite(
     float height = text_surf->GetRect().height + padding * 2;
 
     // background
-    const auto surf = std::make_shared<rg::Surface>(width, height);
+    const auto surf = std::make_shared<rg::Surface>((int) width, (int) height);
     surf->Fill(rl::BLANK);
     rg::draw::rect(surf, COLORS["pure white"], surf->GetRect(), 0, 4);
     surf->Blit(
@@ -89,8 +88,7 @@ TransitionSprite::TransitionSprite(
 {}
 
 MonsterSprite::MonsterSprite(
-        const rg::math::Vector2 pos,
-        const std::map<AnimationState, rg::Frames_Ptr> &frames,
+        const rg::math::Vector2 pos, const std::map<AnimationState, rg::Frames_Ptr> &frames,
         const std::shared_ptr<Monster> &monster, const int index, const int pos_index,
         const SelectionSide entity,
         const std::function<
@@ -168,7 +166,7 @@ void MonsterSprite::Animate(const float dt)
     }
 
     image = frames[state];
-    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(frame_index);
+    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(int(frame_index));
 
     if (highlight) // blink
     {
@@ -200,7 +198,8 @@ MonsterNameSprite::MonsterNameSprite(
     constexpr int padding = 10;
 
     image = std::make_shared<rg::Surface>(
-            text_surf->GetRect().width + padding * 2, text_surf->GetRect().height + padding * 2);
+            (int) text_surf->GetRect().width + padding * 2,
+            (int) text_surf->GetRect().height + padding * 2);
     image->Fill(COLORS["white"]);
     image->Blit(text_surf, rg::math::Vector2{padding, padding});
     rect = image->GetRect().midtop(pos);
@@ -306,7 +305,7 @@ MonsterOutlineSprite::MonsterOutlineSprite(
     z = BATTLE_LAYERS["outline"];
 
     image = this->frames[this->monster_sprite->state];
-    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(this->monster_sprite->frame_index);
+    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(int(this->monster_sprite->frame_index));
     rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(
             this->monster_sprite->rect.center());
 }
@@ -314,7 +313,7 @@ MonsterOutlineSprite::MonsterOutlineSprite(
 void MonsterOutlineSprite::Update(float deltaTime)
 {
     image = this->frames[this->monster_sprite->state];
-    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(this->monster_sprite->frame_index);
+    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(int(this->monster_sprite->frame_index));
     rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(
             this->monster_sprite->rect.center());
 
@@ -336,7 +335,7 @@ void AttackSprite::Animate(const float dt)
     frame_index += ANIMATION_SPEED * dt;
     if (frame_index < image->frames.size())
     {
-        image->SetAtlas(frame_index);
+        image->SetAtlas(int(frame_index));
     }
     else
     {

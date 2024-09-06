@@ -6,8 +6,7 @@ MonsterIndex::MonsterIndex(
         const std::map<std::string, std::shared_ptr<rg::font::Font>> &fonts,
         std::map<std::string, rg::Surface_Ptr> *monster_icons,
         std::map<std::string, rg::Surface_Ptr> *ui_icons,
-        std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>>
-                *monster_frames)
+        std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>> *monster_frames)
     : monsters(monsters), fonts(fonts), monster_icons(monster_icons),
       monster_frames(monster_frames), ui_icons(ui_icons)
 {
@@ -126,13 +125,13 @@ void MonsterIndex::DisplayList()
     }
 
     // shadow
-    auto shadow_surf = std::make_shared<rg::Surface>(4, main_rect.height);
+    auto shadow_surf = std::make_shared<rg::Surface>(4, int(main_rect.height));
     shadow_surf->SetAlpha(100);
     display_surface->Blit(
             shadow_surf, rg::math::Vector2{main_rect.left() + list_width - 4, main_rect.top()});
 }
 
-void MonsterIndex::DisplayMain(const double dt)
+void MonsterIndex::DisplayMain(const float dt)
 {
     // data
     auto monster = (*monsters)[index];
@@ -152,7 +151,7 @@ void MonsterIndex::DisplayMain(const double dt)
     // monster animation
     frame_index += ANIMATION_SPEED * dt;
     auto monster_frame = (*monster_frames)[monster->name][ANIMATIONSTATE_IDLE];
-    monster_frame->SetAtlas(frame_index);
+    monster_frame->SetAtlas(int(frame_index));
     auto monster_rect = monster_frame->GetRect().center(top_rect.center());
     display_surface->Blit(monster_frame, monster_rect);
 
