@@ -11,6 +11,7 @@ Tutorial https://www.youtube.com/watch?v=fo4e3njyGy0
 - Raylib  
   Main library to manage window, inputs, screen  
   Compile and install raylib https://github.com/raysan5/raylib  
+  On Windows, compile with `cmake *** -DCUSTOMIZE_BUILD=ON -DSUPPORT_WINMM_HIGHRES_TIMER=OFF`  
 - TMX  
   Parse `.tmx` files (**Tiled**)  
   Compile and install TMX https://github.com/baylej/tmx  
