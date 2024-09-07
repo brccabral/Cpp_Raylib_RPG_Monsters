@@ -18,7 +18,7 @@ Evolution::Evolution(
 
     // screen tint
     tint_surf = std::make_shared<rg::Surface>(
-            display_surface->GetRect().width, display_surface->GetRect().height);
+            (int)display_surface->GetRect().width, (int)display_surface->GetRect().height);
     tint_surf->SetAlpha(200);
 
     // white tint
@@ -42,7 +42,7 @@ Evolution::Evolution(
     }
 }
 
-void Evolution::Update(const double dt)
+void Evolution::Update(const float dt)
 {
     display_surface->Blit(tint_surf, rg::math::Vector2{});
     if (!IsActive())
@@ -104,7 +104,7 @@ bool Evolution::IsActive()
 void Evolution::DisplayStars(const float dt)
 {
     frame_index += 20 * dt;
-    if (frame_index < star_surfs.size())
+    if (frame_index < (float) star_surfs.size())
     {
         const auto frame = star_surfs[int(frame_index)];
         const auto rect = frame->GetRect().center({WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});

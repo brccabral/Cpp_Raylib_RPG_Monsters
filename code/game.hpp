@@ -29,7 +29,7 @@ private:
     void CreateDialog(const std::shared_ptr<Character> &character);
     void EndDialog(const std::shared_ptr<Character> &character);
     void TransitionCheck();
-    void TintScreen(double dt);
+    void TintScreen(float dt);
     void EndBattle(const std::shared_ptr<Character> &character);
     // monster encounters
     void CheckMonster();

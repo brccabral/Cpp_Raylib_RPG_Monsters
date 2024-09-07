@@ -103,7 +103,8 @@ public:
     void
     ActivateAttack(const std::shared_ptr<MonsterSprite> &monster_sprite, Attack selected_attack);
     void DelayedKill(
-            const std::shared_ptr<Monster> &monster, int index, int pos_index, SelectionSide side);
+            const std::shared_ptr<Monster> &monster_, int index_, int pos_index_,
+            SelectionSide side);
 
     std::shared_ptr<Monster> monster;
     AnimationState state = ANIMATIONSTATE_IDLE;

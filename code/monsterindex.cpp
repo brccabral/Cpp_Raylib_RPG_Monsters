@@ -125,13 +125,13 @@ void MonsterIndex::DisplayList()
     }
 
     // shadow
-    auto shadow_surf = std::make_shared<rg::Surface>(4, main_rect.height);
+    auto shadow_surf = std::make_shared<rg::Surface>(4, int(main_rect.height));
     shadow_surf->SetAlpha(100);
     display_surface->Blit(
             shadow_surf, rg::math::Vector2{main_rect.left() + list_width - 4, main_rect.top()});
 }
 
-void MonsterIndex::DisplayMain(const double dt)
+void MonsterIndex::DisplayMain(const float dt)
 {
     // data
     auto monster = (*monsters)[index];

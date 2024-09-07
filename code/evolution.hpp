@@ -12,7 +12,7 @@ public:
             const std::string &start_monster, const std::string &end_monster,
             const std::shared_ptr<rg::font::Font> &font, const std::function<void()> &endEvolution,
             const std::vector<rg::Surface_Ptr> &star_animation_surfs);
-    void Update(double dt);
+    void Update(float dt);
     bool IsActive();
 
 private:

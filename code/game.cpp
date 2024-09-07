@@ -97,13 +97,13 @@ void Game::ImportAssets()
     characters_dict = AllCharacterImport("resources/graphics/characters");
 
     fonts["dialog"] =
-            std::make_shared<rg::font::Font>("resources/graphics/fonts/PixeloidSans.ttf", 30);
+            std::make_shared<rg::font::Font>("resources/graphics/fonts/PixeloidSans.ttf", 30.0f);
     fonts["regular"] =
-            std::make_shared<rg::font::Font>("resources/graphics/fonts/PixeloidSans.ttf", 18);
+            std::make_shared<rg::font::Font>("resources/graphics/fonts/PixeloidSans.ttf", 18.0f);
     fonts["small"] =
-            std::make_shared<rg::font::Font>("resources/graphics/fonts/PixeloidSans.ttf", 14);
+            std::make_shared<rg::font::Font>("resources/graphics/fonts/PixeloidSans.ttf", 14.0f);
     fonts["bold"] =
-            std::make_shared<rg::font::Font>("resources/graphics/fonts/dogicapixelbold.otf", 20);
+            std::make_shared<rg::font::Font>("resources/graphics/fonts/dogicapixelbold.otf", 20.0f);
 
     monster_icons = rg::image::ImportFolderDict("resources/graphics/icons");
     ui_icons = rg::image::ImportFolderDict("resources/graphics/ui");
@@ -253,7 +253,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     {
         auto position = rg::tmx::GetTMXObjPosition(collision);
         std::make_shared<BorderSprite>(
-                position, std::make_shared<rg::Surface>(collision->width, collision->height))
+                position, std::make_shared<rg::Surface>((int) collision->width, (int) collision->height))
                 ->add(&collision_sprites);
         collision = collision->next;
     }
@@ -315,7 +315,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             std::make_shared<Character>(
                     position, characters_dict[graphic], direction, &TRAINER_DATA[character_id],
                     player, [this](const std::shared_ptr<Character> &char_)
-                    { CreateDialog(char_); }, &collision_sprites, radius, nurse, audio["notice"])
+                    { CreateDialog(char_); }, &collision_sprites, float(radius), nurse, audio["notice"])
                     ->add({all_sprites.get(), &collision_sprites, &character_sprites});
         }
         entity = entity->next;
@@ -433,7 +433,7 @@ void Game::TransitionCheck()
     }
 }
 
-void Game::TintScreen(const double dt)
+void Game::TintScreen(const float dt)
 {
     if (tint_mode == UNTINT)
     {
@@ -516,7 +516,7 @@ void Game::MonsterEncounter()
         if (sprite->rect.colliderect(player->hitbox))
         {
             // change encounter timer duration for the next encounter
-            encounter_timer.duration = rl::GetRandomValue(8, 25) / 10.0f;
+            encounter_timer.duration = float(rl::GetRandomValue(8, 25)) / 10.0f;
 
             const auto monster_patch_sprite = std::dynamic_pointer_cast<MonsterPatchSprite>(sprite);
 

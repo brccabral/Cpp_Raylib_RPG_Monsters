@@ -1,3 +1,4 @@
+#include <array>
 #include <rygame.hpp>
 #include "monster.hpp"
 
@@ -9,7 +10,7 @@ Monster::Monster(const std::string &name, const int level) : name(name), level(l
     base_stats = MONSTER_DATA[name].stats;
     abilities = MONSTER_DATA[name].abilities;
 
-    level_up = level * 150;
+    level_up = level * 150.0f;
     health = base_stats["max_health"] * level;
     energy = base_stats["max_energy"] * level;
 
@@ -88,7 +89,7 @@ void Monster::UpdateXP(const int amount)
     {
         ++level;
         xp = amount - (level_up - xp);
-        level_up = level * 150;
+        level_up = level * 150.f;
     }
 }
 

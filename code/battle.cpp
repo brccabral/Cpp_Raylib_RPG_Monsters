@@ -234,6 +234,8 @@ void Battle::Input()
                                                      : player_sprites.Sprites().size();
                 break;
             }
+            case SELECTMODE_NONE:
+            case SELECTMODE_MONSTER:
             default:
                 break;
         }
@@ -405,7 +407,7 @@ void Battle::ApplyAttack(
     auto target_defense = 1 - target_sprite->monster->GetStat("defense") / 2000;
     if (target_sprite->monster->defending)
     {
-        target_defense -= 0.2;
+        target_defense -= 0.2f;
     }
     target_defense = rl::Clamp(target_defense, 0, 1);
 
@@ -445,24 +447,24 @@ void Battle::CheckDeathGroup(const rg::sprite::Group *group, const SelectionSide
                 }
 
                 // monsters with health and not in battle
-                std::vector<std::pair<const int, std::shared_ptr<Monster>>> available_monsters;
+                std::vector<std::pair<const int, std::shared_ptr<Monster>>> available_monsters_option;
                 for (auto &[i, monster]: *player_monsters)
                 {
                     std::pair<const int, std::shared_ptr<Monster>> pair_monster = {i, monster};
                     if (monster->health > 0 &&
-                        std::find(active_monsters.begin(), active_monsters.end(), pair_monster) ==
+                        std::find(available_monsters_option.begin(), active_monsters.end(), pair_monster) ==
                                 active_monsters.end())
                     {
-                        available_monsters.emplace_back(i, monster);
+                        available_monsters_option.emplace_back(i, monster);
                         break;
                     }
                 }
 
                 // if there are monsters to add to battle
-                if (!available_monsters.empty())
+                if (!available_monsters_option.empty())
                 {
-                    newMonster = available_monsters[0].second;
-                    newIndex = available_monsters[0].first;
+                    newMonster = available_monsters_option[0].second;
+                    newIndex = available_monsters_option[0].first;
                     newPosIndex = monster_sprite->pos_index;
                 }
             }
@@ -572,7 +574,7 @@ void Battle::DrawAttacks()
     }
     else
     {
-        v_offset = -(indexes[SELECTMODE_ATTACKS] - visible_attacks + 1) * item_height;
+        v_offset = -(indexes[SELECTMODE_ATTACKS] - visible_attacks + 1) * float(item_height);
     }
 
     // bg
@@ -648,7 +650,7 @@ void Battle::DrawSwitch()
     }
     else
     {
-        v_offset = -(indexes[SELECTMODE_SWITCH] - visible_monsters + 1) * item_height;
+        v_offset = -(indexes[SELECTMODE_SWITCH] - visible_monsters + 1) * float(item_height);
     }
 
     // bg

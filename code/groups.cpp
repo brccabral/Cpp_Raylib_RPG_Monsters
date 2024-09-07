@@ -19,14 +19,14 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
     offset = player->rect.center() - rg::math::Vector2{WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f};
     offset *= -1.0f;
 
-    auto sprites = Sprites();
+    auto current_sprites = Sprites();
     std::vector<rg::sprite::Sprite_Ptr> bg_sprites;
-    bg_sprites.reserve(sprites.size());
+    bg_sprites.reserve(current_sprites.size());
     std::vector<rg::sprite::Sprite_Ptr> main_sprites;
-    main_sprites.reserve(sprites.size());
+    main_sprites.reserve(current_sprites.size());
     std::vector<rg::sprite::Sprite_Ptr> top_sprites;
-    top_sprites.reserve(sprites.size());
-    for (const auto &sprite: sprites)
+    top_sprites.reserve(current_sprites.size());
+    for (const auto &sprite: current_sprites)
     {
         const int z = sprite->z;
         if (z < WORLD_LAYERS["main"])
@@ -134,12 +134,12 @@ void BattleSprites::Draw(
         monster_sprite = std::dynamic_pointer_cast<MonsterSprite>(ordered_pos[target_index]);
     }
 
-    auto sprites = Sprites();
+    auto sprites_ = Sprites();
     std::sort(
-            sprites.begin(), sprites.end(),
+            sprites_.begin(), sprites_.end(),
             [](const rg::sprite::Sprite_Ptr &l, const rg::sprite::Sprite_Ptr &r)
             { return l->z < r->z; });
-    for (const auto &sprite: sprites)
+    for (const auto &sprite: sprites_)
     {
         if (sprite->z == BATTLE_LAYERS["outline"])
         {

@@ -1,4 +1,5 @@
 #include <utility>
+#include <array>
 #include "sprite.hpp"
 #include "settings.hpp"
 
@@ -70,7 +71,7 @@ DialogSprite::DialogSprite(
     float height = text_surf->GetRect().height + padding * 2;
 
     // background
-    const auto surf = std::make_shared<rg::Surface>(width, height);
+    const auto surf = std::make_shared<rg::Surface>((int) width, (int) height);
     surf->Fill(rl::BLANK);
     rg::draw::rect(surf, COLORS["pure white"], surf->GetRect(), 0, 4);
     surf->Blit(
@@ -139,14 +140,14 @@ void MonsterSprite::ActivateAttack(
 }
 
 void MonsterSprite::DelayedKill(
-        const std::shared_ptr<Monster> &monster, const int index, const int pos_index,
+        const std::shared_ptr<Monster> &monster_, const int index_, const int pos_index_,
         const SelectionSide side)
 {
     if (!timers["kill"].active)
     {
-        newMonster = monster;
-        newIndex = index;
-        newPosIndex = pos_index;
+        newMonster = monster_;
+        newIndex = index_;
+        newPosIndex = pos_index_;
         newSide = side;
         timers["kill"].Activate();
     }
@@ -165,14 +166,15 @@ void MonsterSprite::Animate(const float dt)
     }
 
     image = frames[state];
-    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(frame_index);
+    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(int(frame_index));
 
     if (highlight) // blink
     {
-        const auto frames = std::dynamic_pointer_cast<rg::Frames>(image);
-        const auto mask_surf = rg::mask::FromSurface(frames).ToFrames(frames->rows, frames->cols);
+        const auto frames_ = std::dynamic_pointer_cast<rg::Frames>(image);
+        const auto mask_surf =
+                rg::mask::FromSurface(frames_).ToFrames(frames_->rows, frames_->cols);
         mask_surf->Fill(rl::BLANK);
-        mask_surf->frames = frames->frames;
+        mask_surf->frames = frames_->frames;
         image = mask_surf;
     }
 }
@@ -197,7 +199,8 @@ MonsterNameSprite::MonsterNameSprite(
     constexpr int padding = 10;
 
     image = std::make_shared<rg::Surface>(
-            text_surf->GetRect().width + padding * 2, text_surf->GetRect().height + padding * 2);
+            (int) text_surf->GetRect().width + padding * 2,
+            (int) text_surf->GetRect().height + padding * 2);
     image->Fill(COLORS["white"]);
     image->Blit(text_surf, rg::math::Vector2{padding, padding});
     rect = image->GetRect().midtop(pos);
@@ -303,7 +306,7 @@ MonsterOutlineSprite::MonsterOutlineSprite(
     z = BATTLE_LAYERS["outline"];
 
     image = this->frames[this->monster_sprite->state];
-    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(this->monster_sprite->frame_index);
+    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(int(this->monster_sprite->frame_index));
     rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(
             this->monster_sprite->rect.center());
 }
@@ -311,7 +314,7 @@ MonsterOutlineSprite::MonsterOutlineSprite(
 void MonsterOutlineSprite::Update(float deltaTime)
 {
     image = this->frames[this->monster_sprite->state];
-    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(this->monster_sprite->frame_index);
+    std::dynamic_pointer_cast<rg::Frames>(image)->SetAtlas(int(this->monster_sprite->frame_index));
     rect = std::dynamic_pointer_cast<rg::Frames>(image)->GetRect().center(
             this->monster_sprite->rect.center());
 
@@ -333,7 +336,7 @@ void AttackSprite::Animate(const float dt)
     frame_index += ANIMATION_SPEED * dt;
     if (frame_index < image->frames.size())
     {
-        image->SetAtlas(frame_index);
+        image->SetAtlas(int(frame_index));
     }
     else
     {
