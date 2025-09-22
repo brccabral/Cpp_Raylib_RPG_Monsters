@@ -77,18 +77,18 @@ void Battle::Setup()
     }
     // remove from `monster_data` opponents monsters that were created as this will serve
     // as container to add new monsters in battle after a defeat
-    for (auto it = opponent_monsters->begin(); it != opponent_monsters->end();)
-    {
-        if (std::find(added_opponents.begin(), added_opponents.end(), it->first) !=
-            added_opponents.end())
-        {
-            it = opponent_monsters->erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }
+    // for (auto it = opponent_monsters->begin(); it != opponent_monsters->end();)
+    // {
+    //     if (std::find(added_opponents.begin(), added_opponents.end(), it->first) !=
+    //         added_opponents.end())
+    //     {
+    //         it = opponent_monsters->erase(it);
+    //     }
+    //     else
+    //     {
+    //         ++it;
+    //     }
+    // }
 }
 
 void Battle::CreateMonster(
