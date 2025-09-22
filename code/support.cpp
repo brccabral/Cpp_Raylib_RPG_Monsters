@@ -62,19 +62,17 @@ std::unordered_map<std::string, rg::Frames>
 CharacterImporter(const int rows, const int cols, const char *file)
 {
     std::unordered_map<std::string, rg::Frames> result{};
-    auto frame_dict = rg::Frames::Load(file, rows, cols);
-    const float width = frame_dict.GetRect().width;
-    const float height = frame_dict.GetRect().height;
+    // we need to save the original load so that the render/texture is not unloaded
+    // as subframes uses the same render/texture
+    result["load"] = rg::Frames::Load(file, rows, cols);
+    const float width = result["load"].GetRect().width;
+    const float height = result["load"].GetRect().height;
     const std::vector<std::string> directions = {"down", "left", "right", "up"};
     for (unsigned int i = 0; i < directions.size(); ++i)
     {
-        // result[directions[i]] =
-        //         frame_dict.SubSurface({0, i * height, width * cols, height}, 1, cols);
-        // std::string idle = directions[i] + "_idle";
-        // result[idle] = frame_dict.SubSurface({0, i * height, width, height}, 1, 1);
-        result[directions[i]] = frame_dict.SubFrames({0, i * height, width * cols, height});
+        result[directions[i]] = result["load"].SubFrames({0, i * height, width * cols, height});
         std::string idle = directions[i] + "_idle";
-        result[idle] = frame_dict.SubFrames({0, i * height, width, height});
+        result[idle] = result["load"].SubFrames({0, i * height, width, height});
     }
     return result;
 }
@@ -112,13 +110,16 @@ MonsterImporter(const int cols, const int rows, const char *path)
     {
         auto filename = dirEntry.path().stem().string();
         auto entryPath = dirEntry.path().string();
-        auto monster_frames = rg::Frames::Load(entryPath.c_str(), rows, cols);
-        const auto tex_width = (float) monster_frames.GetTexture().width;
-        const auto tex_height = (float) monster_frames.GetTexture().height;
+        // we need to save the original load so that the render/texture is not unloaded
+        // as subframes uses the same render/texture
+        result["load"][ANIMATIONSTATE_IDLE] = rg::Frames::Load(entryPath.c_str(), rows, cols);
+        const auto tex_width = (float) result["load"][ANIMATIONSTATE_IDLE].GetTexture().width;
+        const auto tex_height = (float) result["load"][ANIMATIONSTATE_IDLE].GetTexture().height;
         result[filename][ANIMATIONSTATE_IDLE] =
-                monster_frames.SubFrames({0, 0, tex_width, tex_height / 2.0f});
+                result["load"][ANIMATIONSTATE_IDLE].SubFrames({0, 0, tex_width, tex_height / 2.0f});
         result[filename][ANIMATIONSTATE_ATTACK] =
-                monster_frames.SubFrames({0, tex_height / 2.0f, tex_width, tex_height / 2.0f});
+                result["load"][ANIMATIONSTATE_IDLE].SubFrames(
+                        {0, tex_height / 2.0f, tex_width, tex_height / 2.0f});
     }
     return result;
 }

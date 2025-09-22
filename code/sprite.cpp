@@ -72,14 +72,34 @@ DialogSprite::DialogSprite(
     float height = text_surf.GetRect().height + padding * 2;
 
     // background
-    auto surf = rg::Surface((int) width, (int) height);
-    surf.Fill(rl::BLANK);
-    rg::draw::rect(&surf, COLORS["pure white"], surf.GetRect(), 0, 4);
-    surf.Blit(
+    image = new rg::Surface((int) width, (int) height);
+    image->Fill(rl::BLANK);
+    rg::draw::rect(image, COLORS["pure white"], image->GetRect(), 0, 4);
+    image->Blit(
             &text_surf, text_surf.GetRect().center(rg::math::Vector2{width / 2, height / 2}).pos);
 
-    *image = std::move(surf);
     rect = image->GetRect().midbottom(character->rect.midtop() + rg::math::Vector2{0, -10});
+}
+
+DialogSprite::DialogSprite(DialogSprite &&other) noexcept
+    : Sprite(std::move(other))
+{
+    other.image = nullptr;
+}
+
+DialogSprite &DialogSprite::operator=(DialogSprite &&other) noexcept
+{
+    if (this != &other)
+    {
+        Sprite::operator=(std::move(other));
+        other.image = nullptr;
+    }
+    return *this;
+}
+
+DialogSprite::~DialogSprite()
+{
+    delete image;
 }
 
 TransitionSprite::TransitionSprite(
@@ -214,13 +234,34 @@ MonsterNameSprite::MonsterNameSprite(
     const auto text_surf = font->render(monster_sprite->monster->name.c_str(), COLORS["black"]);
     constexpr int padding = 10;
 
-    *image = rg::Surface(
+    image = new rg::Surface(
             (int) text_surf.GetRect().width + padding * 2,
             (int) text_surf.GetRect().height + padding * 2);
     image->Fill(COLORS["white"]);
     image->Blit(&text_surf, rg::math::Vector2{padding, padding});
     rect = image->GetRect().midtop(pos);
     z = BATTLE_LAYERS["name"];
+}
+
+MonsterNameSprite::MonsterNameSprite(MonsterNameSprite &&other) noexcept
+    : Sprite(std::move(other))
+{
+    other.image = nullptr;
+}
+
+MonsterNameSprite &MonsterNameSprite::operator=(MonsterNameSprite &&other) noexcept
+{
+    if (this != &other)
+    {
+        Sprite::operator=(std::move(other));
+        other.image = nullptr;
+    }
+    return *this;
+}
+
+MonsterNameSprite::~MonsterNameSprite()
+{
+    delete image;
 }
 
 void MonsterNameSprite::Update(float deltaTime)
@@ -276,7 +317,7 @@ void MonsterLevelSprite::Update(float deltaTime)
 
 MonsterStatsSprite::MonsterStatsSprite(
         const rg::math::Vector2 pos, MonsterSprite *monster_sprite,
-        rg::math::Vector2 size, const rg::font::Font *font)
+        const rg::math::Vector2 size, const rg::font::Font *font)
     : monster_sprite(monster_sprite), font(font)
 {
     image = new rg::Surface(size);

@@ -68,6 +68,11 @@ public:
     DialogSprite(
             const std::string &message, const Character *character,
             const rg::font::Font *font);
+    DialogSprite(const DialogSprite &other) = delete;
+    DialogSprite &operator=(const DialogSprite &other) = delete;
+    DialogSprite(DialogSprite &&other) noexcept;
+    DialogSprite &operator=(DialogSprite &&other) noexcept;
+    ~DialogSprite() override;
 
 };
 
@@ -153,11 +158,17 @@ public:
     MonsterNameSprite(
             rg::math::Vector2 pos, MonsterSprite *monster_sprite,
             const rg::font::Font *font);
+    MonsterNameSprite(const MonsterNameSprite &other) = delete;
+    MonsterNameSprite &operator=(const MonsterNameSprite &other) = delete;
+    MonsterNameSprite(MonsterNameSprite &&other) noexcept;
+    MonsterNameSprite &operator=(MonsterNameSprite &&other) noexcept;
+    ~MonsterNameSprite() override;
+
     void Update(float deltaTime) override;
 
 private:
 
-    MonsterSprite *monster_sprite;
+    MonsterSprite *monster_sprite{};
 };
 
 class MonsterLevelSprite : public rg::sprite::Sprite
@@ -178,8 +189,8 @@ public:
 
 private:
 
-    MonsterSprite *monster_sprite;
-    const rg::font::Font *font;
+    MonsterSprite *monster_sprite{};
+    const rg::font::Font *font{};
     rg::Rect xp_rect{};
 };
 
@@ -200,8 +211,8 @@ public:
 
 private:
 
-    MonsterSprite *monster_sprite;
-    const rg::font::Font *font;
+    MonsterSprite *monster_sprite{};
+    const rg::font::Font *font{};
 };
 
 class MonsterOutlineSprite : public rg::sprite::Sprite
@@ -214,11 +225,11 @@ public:
             std::unordered_map<AnimationState, rg::Frames> *frames);
     void Update(float deltaTime) override;
 
-    MonsterSprite *monster_sprite;
+    MonsterSprite *monster_sprite{};
 
 private:
 
-    std::unordered_map<AnimationState, rg::Frames> *frames;
+    std::unordered_map<AnimationState, rg::Frames> *frames{};
 };
 
 class AttackSprite : public AnimatedSprite

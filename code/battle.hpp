@@ -63,14 +63,16 @@ private:
     void OpponentAttack() const;
 
     rg::Surface *display_surface = &rg::display::GetSurface();
-    std::unordered_map<int, Monster> *player_monsters;
-    std::unordered_map<int, Monster> *opponent_monsters;
-    std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> *monster_frames;
-    std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> *outline_frames;
-    std::unordered_map<std::string, rg::Surface> *monster_icons;
-    std::unordered_map<std::string, rg::Surface> *ui_icons;
-    const rg::Surface *bg_surf;
-    std::unordered_map<std::string, rg::font::Font> *fonts;
+    std::unordered_map<int, Monster> *player_monsters{};
+    std::unordered_map<int, Monster> *opponent_monsters{};
+    std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> *monster_frames
+            {};
+    std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> *outline_frames
+            {};
+    std::unordered_map<std::string, rg::Surface> *monster_icons{};
+    std::unordered_map<std::string, rg::Surface> *ui_icons{};
+    const rg::Surface *bg_surf{};
+    std::unordered_map<std::string, rg::font::Font> *fonts{};
 
     BattleSprites battle_sprites{};
     rg::sprite::Group player_sprites{};
