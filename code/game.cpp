@@ -109,7 +109,10 @@ void Game::ImportAssets()
     ui_icons = rg::image::ImportFolderDict("resources/graphics/ui");
     for (auto &[ui_name, ui_surf]: ui_icons)
     {
-        ui_icons[ui_name + "_gray"] = rg::transform::GrayScale(&ui_surf);
+        if (ui_name.find("_gray") == std::string::npos)
+        {
+            ui_icons[ui_name + "_gray"] = rg::transform::GrayScale(&ui_surf);
+        }
     }
 
     bg_frames = rg::image::ImportFolderDict("resources/graphics/backgrounds");
