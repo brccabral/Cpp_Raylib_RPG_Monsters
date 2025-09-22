@@ -10,8 +10,9 @@ class Sprite : public rg::sprite::Sprite
 {
 public:
 
-    Sprite(rg::math::Vector2 pos, const rg::Surface_Ptr &surf, int z = WORLD_LAYERS["main"]);
-    float y_sort;
+    Sprite() = default;
+    Sprite(rg::math::Vector2 pos, rg::Surface *surf, int z = WORLD_LAYERS["main"]);
+    float y_sort{};
     rg::Rect hitbox{};
 };
 
@@ -19,12 +20,13 @@ class AnimatedSprite : public Sprite
 {
 public:
 
-    AnimatedSprite(rg::math::Vector2 pos, const rg::Frames_Ptr &surf, int z = WORLD_LAYERS["main"]);
+    AnimatedSprite() = default;
+    AnimatedSprite(rg::math::Vector2 pos, rg::Frames *surf, int z = WORLD_LAYERS["main"]);
 
     void Update(float deltaTime) override;
     virtual void Animate(float dt);
 
-    rg::Frames_Ptr image;
+    rg::Frames *image;
 
 protected:
 
@@ -36,7 +38,7 @@ class MonsterPatchSprite : public Sprite
 public:
 
     MonsterPatchSprite(
-            rg::math::Vector2 pos, const rg::Surface_Ptr &surf, const std::string &biome,
+            rg::math::Vector2 pos, rg::Surface *surf, const std::string &biome,
             const std::string &patch_monsters, int level);
 
     std::string biome;
@@ -48,29 +50,25 @@ class BorderSprite : public Sprite
 {
 public:
 
-    BorderSprite(rg::math::Vector2 pos, const rg::Surface_Ptr &surf);
+    BorderSprite(rg::math::Vector2 pos, rg::Surface *surf);
 };
 
 class CollidableSprite : public Sprite
 {
 public:
 
-    CollidableSprite(rg::math::Vector2 pos, const rg::Surface_Ptr &surf);
+    CollidableSprite(rg::math::Vector2 pos, rg::Surface *surf);
 };
 
 class DialogSprite : public rg::sprite::Sprite
 {
 public:
 
+    DialogSprite() = default;
     DialogSprite(
-            const std::string &message, const std::shared_ptr<Character> &character,
-            const std::shared_ptr<rg::font::Font> &font);
+            const std::string &message, const Character *character,
+            const rg::font::Font *font);
 
-private:
-
-    std::string message;
-    std::shared_ptr<Character> character;
-    std::shared_ptr<rg::font::Font> font;
 };
 
 class TransitionSprite : public Sprite
@@ -80,6 +78,11 @@ public:
     TransitionSprite(
             rg::math::Vector2 pos, rg::math::Vector2 size,
             std::pair<std::string, std::string> target);
+    TransitionSprite(const TransitionSprite &other) = delete;
+    TransitionSprite &operator=(const TransitionSprite &other) = delete;
+    TransitionSprite(TransitionSprite &&other) = default;
+    TransitionSprite &operator=(TransitionSprite &&other) = default;
+    ~TransitionSprite() override;
 
     std::pair<std::string, std::string> target;
 };
@@ -89,85 +92,94 @@ class MonsterSprite : public rg::sprite::Sprite
 {
 public:
 
+    MonsterSprite() = default;
     MonsterSprite(
-            rg::math::Vector2 pos, const std::map<AnimationState, rg::Frames_Ptr> &frames,
-            const std::shared_ptr<Monster> &monster, int index, int pos_index, SelectionSide entity,
+            rg::math::Vector2 pos, std::unordered_map<AnimationState, rg::Frames> *frames,
+            Monster *monster, int index, int pos_index, SelectionSide entity,
             const std::function<
-                    void(const std::shared_ptr<MonsterSprite> &target_sprite, Attack attack,
-                         float amount)> &apply_attack,
-            const std::function<
-                    void(std::shared_ptr<Monster> monster, int index, int pos_index,
-                         SelectionSide entity)> &createMonster);
+                void(
+                        const MonsterSprite *target_sprite, Attack attack,
+                        float amount)> &apply_attack,
+            const std::function<void(
+                    Monster *monster, int index, int pos_index, SelectionSide entity)>
+            &createMonster);
     void Update(float deltaTime) override;
     void SetHighlight(bool value);
     void
-    ActivateAttack(const std::shared_ptr<MonsterSprite> &monster_sprite, Attack selected_attack);
+    ActivateAttack(const MonsterSprite *monster_sprite, Attack selected_attack);
     void DelayedKill(
-            const std::shared_ptr<Monster> &monster_, int index_, int pos_index_,
+            Monster *monster_, int index_, int pos_index_,
             SelectionSide side);
 
-    std::shared_ptr<Monster> monster;
+    Monster *monster{};
     AnimationState state = ANIMATIONSTATE_IDLE;
     float frame_index{};
     int index{};
     int pos_index{};
-    SelectionSide entity;
+    SelectionSide entity{};
 
 private:
 
     void Animate(float dt);
     void Destroy();
 
-    std::map<AnimationState, rg::Frames_Ptr> frames;
+    std::unordered_map<AnimationState, rg::Frames> *frames{};
 
     float animation_speed{};
     bool highlight{};
-    std::map<std::string, rg::Timer> timers;
+    std::unordered_map<std::string, rg::Timer> timers{};
 
-    std::shared_ptr<MonsterSprite> target_sprite = nullptr;
+    const MonsterSprite *target_sprite = nullptr;
     Attack current_attack = ATTACK_NONE;
 
-    const std::function<void(
-            const std::shared_ptr<MonsterSprite> &target_sprite, Attack attack, float amount)>
-            apply_attack;
+    std::function<void(
+            const MonsterSprite *target_sprite, Attack attack, float amount)>
+    apply_attack{};
 
-    std::shared_ptr<Monster> newMonster = nullptr;
+    Monster *newMonster = nullptr;
     int newIndex = 0;
     int newPosIndex = 0;
     SelectionSide newSide{};
-    const std::function<void(
-            std::shared_ptr<Monster> monster, int index, int pos_index, SelectionSide entity)>
-            createMonster;
+    std::function<void(
+            Monster *monster, int index, int pos_index, SelectionSide entity)>
+    createMonster{};
 };
 
 class MonsterNameSprite : public rg::sprite::Sprite
 {
 public:
 
+    MonsterNameSprite() = default;
     MonsterNameSprite(
-            rg::math::Vector2 pos, const std::shared_ptr<MonsterSprite> &monster_sprite,
-            const std::shared_ptr<rg::font::Font> &font);
+            rg::math::Vector2 pos, MonsterSprite *monster_sprite,
+            const rg::font::Font *font);
     void Update(float deltaTime) override;
 
 private:
 
-    std::shared_ptr<MonsterSprite> monster_sprite;
+    MonsterSprite *monster_sprite;
 };
 
 class MonsterLevelSprite : public rg::sprite::Sprite
 {
 public:
 
+    MonsterLevelSprite() = default;
     MonsterLevelSprite(
             SelectionSide entity, rg::math::Vector2 anchor,
-            const std::shared_ptr<MonsterSprite> &monster_sprite,
-            const std::shared_ptr<rg::font::Font> &font);
+            MonsterSprite *monster_sprite,
+            const rg::font::Font *font);
+    MonsterLevelSprite(const MonsterLevelSprite &other) = delete;
+    MonsterLevelSprite &operator=(const MonsterLevelSprite &other) = delete;
+    MonsterLevelSprite(MonsterLevelSprite &&other) = default;
+    MonsterLevelSprite &operator=(MonsterLevelSprite &&other) = default;
+    ~MonsterLevelSprite() override;
     void Update(float deltaTime) override;
 
 private:
 
-    std::shared_ptr<MonsterSprite> monster_sprite;
-    std::shared_ptr<rg::font::Font> font;
+    MonsterSprite *monster_sprite;
+    const rg::font::Font *font;
     rg::Rect xp_rect{};
 };
 
@@ -175,51 +187,59 @@ class MonsterStatsSprite : public rg::sprite::Sprite
 {
 public:
 
+    MonsterStatsSprite() = default;
     MonsterStatsSprite(
-            rg::math::Vector2 pos, const std::shared_ptr<MonsterSprite> &monster_sprite,
-            rg::math::Vector2 size, const std::shared_ptr<rg::font::Font> &font);
+            rg::math::Vector2 pos, MonsterSprite *monster_sprite,
+            rg::math::Vector2 size, const rg::font::Font *font);
+    MonsterStatsSprite(const MonsterStatsSprite &other) = delete;
+    MonsterStatsSprite &operator=(const MonsterStatsSprite &other) = delete;
+    MonsterStatsSprite(MonsterStatsSprite &&other) = default;
+    MonsterStatsSprite &operator=(MonsterStatsSprite &&other) = default;
+    ~MonsterStatsSprite() override;
     void Update(float deltaTime) override;
 
 private:
 
-    std::shared_ptr<MonsterSprite> monster_sprite;
-    std::shared_ptr<rg::font::Font> font;
+    MonsterSprite *monster_sprite;
+    const rg::font::Font *font;
 };
 
 class MonsterOutlineSprite : public rg::sprite::Sprite
 {
 public:
 
+    MonsterOutlineSprite() = default;
     MonsterOutlineSprite(
-            const std::shared_ptr<MonsterSprite> &monster_sprite,
-            const std::map<AnimationState, rg::Frames_Ptr> &frames);
+            MonsterSprite *monster_sprite,
+            std::unordered_map<AnimationState, rg::Frames> *frames);
     void Update(float deltaTime) override;
 
-    std::shared_ptr<MonsterSprite> monster_sprite;
+    MonsterSprite *monster_sprite;
 
 private:
 
-    std::map<AnimationState, rg::Frames_Ptr> frames;
+    std::unordered_map<AnimationState, rg::Frames> *frames;
 };
 
 class AttackSprite : public AnimatedSprite
 {
 public:
 
+    AttackSprite() = default;
     AttackSprite(
-            rg::math::Vector2 position, const rg::Frames_Ptr &frames,
+            rg::math::Vector2 position, rg::Frames *frames,
             int z = BATTLE_LAYERS["overlay"]);
     void Animate(float dt) override;
+    bool active{};
 };
 
 class TimedSprite : public Sprite
 {
 public:
 
-    TimedSprite(rg::math::Vector2 pos, const rg::Surface_Ptr &surf, float duration);
+    TimedSprite() = default;
+    TimedSprite(rg::math::Vector2 pos, rg::Surface *surf, float duration);
     void Update(float deltaTime) override;
-
-private:
 
     rg::Timer death_timer;
 };

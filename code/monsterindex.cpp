@@ -2,16 +2,17 @@
 
 
 MonsterIndex::MonsterIndex(
-        std::map<int, std::shared_ptr<Monster>> *monsters,
-        const std::map<std::string, std::shared_ptr<rg::font::Font>> &fonts,
-        std::map<std::string, rg::Surface_Ptr> *monster_icons,
-        std::map<std::string, rg::Surface_Ptr> *ui_icons,
-        std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>> *monster_frames)
+        std::unordered_map<int, Monster> *monsters,
+        std::unordered_map<std::string, rg::font::Font> *fonts,
+        std::unordered_map<std::string, rg::Surface> *monster_icons,
+        std::unordered_map<std::string, rg::Surface> *ui_icons,
+        std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> *
+        monster_frames)
     : monsters(monsters), fonts(fonts), monster_icons(monster_icons),
       monster_frames(monster_frames), ui_icons(ui_icons)
 {
-    tint_surf = std::make_shared<rg::Surface>(WINDOW_WIDTH, WINDOW_HEIGHT);
-    tint_surf->SetAlpha(200);
+    tint_surf = rg::Surface(WINDOW_WIDTH, WINDOW_HEIGHT);
+    tint_surf.SetAlpha(200);
     main_rect.center(rg::math::Vector2{WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
 
     for (auto &[monster_name, monster_data]: MONSTER_DATA)
@@ -30,7 +31,7 @@ void MonsterIndex::Update(const float dt)
     // input
     Input();
     // tint main game
-    display_surface->Blit(tint_surf, rg::math::Vector2{0, 0});
+    display_surface->Blit(&tint_surf, rg::math::Vector2{0, 0});
     // display the list
     DisplayList();
     // display the main section
@@ -56,10 +57,9 @@ void MonsterIndex::Input()
         if (selected_index != -1)
         {
             // second SPACE is to change the order
-            const auto selected_monster = (*monsters)[selected_index];
-            const auto current_monster = (*monsters)[index];
-            (*monsters)[index] = selected_monster;
-            (*monsters)[selected_index] = current_monster;
+            Monster tmp = std::move((*monsters)[selected_index]);
+            (*monsters)[selected_index] = std::move((*monsters)[index]);
+            (*monsters)[index] = std::move(tmp);
             selected_index = -1;
         }
         else
@@ -85,11 +85,11 @@ void MonsterIndex::DisplayList()
         const float top = main_rect.top() + list_index * item_height + v_offset;
         const rg::Rect item_rect = {main_rect.x, top, list_width, item_height};
 
-        auto text_surf = fonts["regular"]->render(monster->name.c_str(), text_color);
+        auto text_surf = (*fonts)["regular"].render(monster.name.c_str(), text_color);
         auto text_rect =
-                text_surf->GetRect().midleft(item_rect.midleft() + rg::math::Vector2{90, 0});
+                text_surf.GetRect().midleft(item_rect.midleft() + rg::math::Vector2{90, 0});
 
-        auto icon_surf = (*monster_icons)[monster->name];
+        auto *icon_surf = &(*monster_icons)[monster.name];
         auto icon_rect =
                 icon_surf->GetRect().center(item_rect.midleft() + rg::math::Vector2{45, 0});
 
@@ -110,7 +110,7 @@ void MonsterIndex::DisplayList()
             {
                 rg::draw::rect(display_surface, bg_color, item_rect);
             }
-            display_surface->Blit(text_surf, text_rect);
+            display_surface->Blit(&text_surf, text_rect);
             display_surface->Blit(icon_surf, icon_rect);
         }
     }
@@ -125,16 +125,16 @@ void MonsterIndex::DisplayList()
     }
 
     // shadow
-    auto shadow_surf = std::make_shared<rg::Surface>(4, int(main_rect.height));
-    shadow_surf->SetAlpha(100);
+    auto shadow_surf = rg::Surface(4, int(main_rect.height));
+    shadow_surf.SetAlpha(100);
     display_surface->Blit(
-            shadow_surf, rg::math::Vector2{main_rect.left() + list_width - 4, main_rect.top()});
+            &shadow_surf, rg::math::Vector2{main_rect.left() + list_width - 4, main_rect.top()});
 }
 
 void MonsterIndex::DisplayMain(const float dt)
 {
     // data
-    auto monster = (*monsters)[index];
+    auto *monster = &(*monsters)[index];
     const auto element = NAMES_ELEMENT_TYPES[monster->element];
 
     // main bg
@@ -150,22 +150,22 @@ void MonsterIndex::DisplayMain(const float dt)
 
     // monster animation
     frame_index += ANIMATION_SPEED * dt;
-    auto monster_frame = (*monster_frames)[monster->name][ANIMATIONSTATE_IDLE];
+    auto *monster_frame = &(*monster_frames)[monster->name][ANIMATIONSTATE_IDLE];
     monster_frame->SetAtlas(frame_index);
     auto monster_rect = monster_frame->GetRect().center(top_rect.center());
     display_surface->Blit(monster_frame, monster_rect);
 
     // name
-    auto name_surf = fonts["bold"]->render(monster->name.c_str(), COLORS["white"]);
-    auto name_rect = name_surf->GetRect().topleft(top_rect.topleft() + rg::math::Vector2{10, 10});
-    display_surface->Blit(name_surf, name_rect);
+    auto name_surf = (*fonts)["bold"].render(monster->name.c_str(), COLORS["white"]);
+    auto name_rect = name_surf.GetRect().topleft(top_rect.topleft() + rg::math::Vector2{10, 10});
+    display_surface->Blit(&name_surf, name_rect);
 
     // level
     auto level_surf =
-            fonts["regular"]->render(rl::TextFormat("Lvl: %d", monster->level), COLORS["white"]);
+            (*fonts)["regular"].render(rl::TextFormat("Lvl: %d", monster->level), COLORS["white"]);
     auto level_rect =
-            level_surf->GetRect().bottomleft(top_rect.bottomleft() + rg::math::Vector2{10, -16});
-    display_surface->Blit(level_surf, level_rect);
+            level_surf.GetRect().bottomleft(top_rect.bottomleft() + rg::math::Vector2{10, -16});
+    display_surface->Blit(&level_surf, level_rect);
 
     // xp bar
     rg::draw::bar(
@@ -173,10 +173,10 @@ void MonsterIndex::DisplayMain(const float dt)
             COLORS["white"], COLORS["dark"]);
 
     // element
-    auto element_surf = fonts["regular"]->render(element.c_str(), COLORS["white"]);
-    auto element_rect = element_surf->GetRect().bottomright(
+    auto element_surf = (*fonts)["regular"].render(element.c_str(), COLORS["white"]);
+    auto element_rect = element_surf.GetRect().bottomright(
             top_rect.bottomright() + rg::math::Vector2{-10, -10});
-    display_surface->Blit(element_surf, element_rect);
+    display_surface->Blit(&element_surf, element_rect);
 
     // health and energy
     float bar_width = rect.width * 0.45f;
@@ -190,22 +190,22 @@ void MonsterIndex::DisplayMain(const float dt)
     rg::draw::bar(
             display_surface, health_rect, monster->health, monster->GetStat("max_health"),
             COLORS["red"], COLORS["black"], 2);
-    auto hp_text = fonts["regular"]->render(
+    auto hp_text = (*fonts)["regular"].render(
             rl::TextFormat("HP: %.0f/%.0f", monster->health, monster->GetStat("max_health")),
             COLORS["white"]);
-    auto hp_rect = hp_text->GetRect().midleft(health_rect.midleft() + rg::math::Vector2{10, 0});
-    display_surface->Blit(hp_text, hp_rect);
+    auto hp_rect = hp_text.GetRect().midleft(health_rect.midleft() + rg::math::Vector2{10, 0});
+    display_surface->Blit(&hp_text, hp_rect);
 
     auto energy_rect = rg::Rect{0, 0, bar_width, bar_height};
     energy_rect.midtop(rg::math::Vector2{bar_rightside, bar_top});
     rg::draw::bar(
             display_surface, energy_rect, monster->energy, monster->GetStat("max_energy"),
             COLORS["blue"], COLORS["black"], 2);
-    auto ep_text = fonts["regular"]->render(
+    auto ep_text = (*fonts)["regular"].render(
             rl::TextFormat("EP: %.0f/%.0f", monster->energy, monster->GetStat("max_energy")),
             COLORS["white"]);
-    auto ep_rect = ep_text->GetRect().midleft(energy_rect.midleft() + rg::math::Vector2{10, 0});
-    display_surface->Blit(ep_text, ep_rect);
+    auto ep_rect = ep_text.GetRect().midleft(energy_rect.midleft() + rg::math::Vector2{10, 0});
+    display_surface->Blit(&ep_text, ep_rect);
 
     // info
     auto info_height = rect.bottom() - health_rect.bottom();
@@ -213,11 +213,11 @@ void MonsterIndex::DisplayMain(const float dt)
     // stats
     auto stats_rect =
             rg::Rect{health_rect.left(), health_rect.bottom(), health_rect.width, info_height}
-                    .inflate(0, -60)
-                    .move({0, 15});
-    auto stats_text_surf = fonts["regular"]->render("Stats", COLORS["white"]);
-    auto stats_text_rect = stats_text_surf->GetRect().bottomleft(stats_rect.topleft());
-    display_surface->Blit(stats_text_surf, stats_text_rect);
+            .inflate(0, -60)
+            .move({0, 15});
+    auto stats_text_surf = (*fonts)["regular"].render("Stats", COLORS["white"]);
+    auto stats_text_rect = stats_text_surf.GetRect().bottomleft(stats_rect.topleft());
+    display_surface->Blit(&stats_text_surf, stats_text_rect);
 
     auto monster_stats = monster->GetStats();
     float stat_height = stats_rect.height / monster_stats.size();
@@ -229,16 +229,16 @@ void MonsterIndex::DisplayMain(const float dt)
                 stat_height};
 
         // icon
-        auto icon_surf = (*ui_icons)[stat];
+        auto *icon_surf = &(*ui_icons)[stat];
         auto icon_rect =
                 icon_surf->GetRect().midleft(single_stat_rect.midleft() + rg::math::Vector2{5, 0});
         display_surface->Blit(icon_surf, icon_rect);
 
         // text
-        auto text_surf = fonts["regular"]->render(stat.c_str(), COLORS["white"]);
+        auto text_surf = (*fonts)["regular"].render(stat.c_str(), COLORS["white"]);
         auto text_rect =
-                text_surf->GetRect().topleft(icon_rect.topright() + rg::math::Vector2{10, -5});
-        display_surface->Blit(text_surf, text_rect);
+                text_surf.GetRect().topleft(icon_rect.topright() + rg::math::Vector2{10, -5});
+        display_surface->Blit(&text_surf, text_rect);
 
         // bar
         auto bar_rect = rg::Rect{
@@ -253,24 +253,24 @@ void MonsterIndex::DisplayMain(const float dt)
 
     // abilities
     auto ability_rect = stats_rect.copy().left(energy_rect.left());
-    auto ability_text_surf = fonts["regular"]->render("Ability", COLORS["white"]);
-    auto ability_text_rect = ability_text_surf->GetRect().bottomleft(ability_rect.topleft());
-    display_surface->Blit(ability_text_surf, ability_text_rect);
+    auto ability_text_surf = (*fonts)["regular"].render("Ability", COLORS["white"]);
+    auto ability_text_rect = ability_text_surf.GetRect().bottomleft(ability_rect.topleft());
+    display_surface->Blit(&ability_text_surf, ability_text_rect);
 
     auto abilities = monster->GetAbilities();
     for (unsigned int a_index = 0; a_index < abilities.size(); ++a_index)
     {
         auto a_element = ATTACK_DATA[abilities[a_index]].element;
 
-        auto text_surf = fonts["regular"]->render(
+        auto text_surf = (*fonts)["regular"].render(
                 ATTACK_DATA[abilities[a_index]].name.c_str(), COLORS["black"]);
         float x = ability_rect.left() + a_index % 2 * ability_rect.width / 2;
         float y =
-                20.0f + ability_rect.top() + int(a_index / 2) * (text_surf->GetRect().height + 20);
-        auto a_rect = text_surf->GetRect().topleft(rg::math::Vector2{x, y});
+                20.0f + ability_rect.top() + int(a_index / 2) * (text_surf.GetRect().height + 20);
+        auto a_rect = text_surf.GetRect().topleft(rg::math::Vector2{x, y});
         rg::draw::rect(
                 display_surface, COLORS[NAMES_ELEMENT_TYPES[a_element]], a_rect.inflate(10, 10), 0,
                 4);
-        display_surface->Blit(text_surf, a_rect);
+        display_surface->Blit(&text_surf, a_rect);
     }
 }

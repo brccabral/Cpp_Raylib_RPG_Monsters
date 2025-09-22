@@ -9,24 +9,24 @@ AllSprites::AllSprites() : Group()
     notice_surf = rg::image::Load("resources/graphics/ui/notice.png");
 }
 
-void AllSprites::Draw(const rg::Surface_Ptr &surface)
+void AllSprites::Draw(rg::Surface *surface)
 {
     Group::Draw(surface);
 }
 
-void AllSprites::Draw(const std::shared_ptr<Player> &player)
+void AllSprites::Draw(Player *player)
 {
     offset = player->rect.center() - rg::math::Vector2{WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f};
     offset *= -1.0f;
 
-    auto current_sprites = Sprites();
-    std::vector<rg::sprite::Sprite_Ptr> bg_sprites;
+    const auto &current_sprites = Sprites();
+    std::vector<rg::sprite::Sprite *> bg_sprites;
     bg_sprites.reserve(current_sprites.size());
-    std::vector<rg::sprite::Sprite_Ptr> main_sprites;
+    std::vector<rg::sprite::Sprite *> main_sprites;
     main_sprites.reserve(current_sprites.size());
-    std::vector<rg::sprite::Sprite_Ptr> top_sprites;
+    std::vector<rg::sprite::Sprite *> top_sprites;
     top_sprites.reserve(current_sprites.size());
-    for (const auto &sprite: current_sprites)
+    for (auto *sprite: current_sprites)
     {
         const int z = sprite->z;
         if (z < WORLD_LAYERS["main"])
@@ -46,15 +46,15 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
     // sort main sprites based on `y_sort`
     std::sort(
             main_sprites.begin(), main_sprites.end(),
-            [](const rg::sprite::Sprite_Ptr &l, const rg::sprite::Sprite_Ptr &r)
+            [](rg::sprite::Sprite *l, rg::sprite::Sprite *r)
             {
                 float yl;
                 float yr;
-                if (const auto lSprite = std::dynamic_pointer_cast<Sprite>(l))
+                if (const auto lSprite = dynamic_cast<Sprite *>(l))
                 {
                     yl = lSprite->y_sort;
                 }
-                else if (const auto lEntity = std::dynamic_pointer_cast<Entity>(l))
+                else if (const auto lEntity = dynamic_cast<Entity *>(l))
                 {
                     yl = lEntity->y_sort;
                 }
@@ -63,11 +63,11 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
                     throw;
                 }
 
-                if (const auto rSprite = std::dynamic_pointer_cast<Sprite>(r))
+                if (const auto rSprite = dynamic_cast<Sprite *>(r))
                 {
                     yr = rSprite->y_sort;
                 }
-                else if (const auto rEntity = std::dynamic_pointer_cast<Entity>(r))
+                else if (const auto rEntity = dynamic_cast<Entity *>(r))
                 {
                     yr = rEntity->y_sort;
                 }
@@ -86,22 +86,22 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
     for (const auto &sprite: main_sprites)
     {
         // show shadow below entities
-        if (const auto entity = std::dynamic_pointer_cast<Entity>(sprite))
+        if (const auto entity = dynamic_cast<Entity *>(sprite))
         {
             display_surface->Blit(
-                    shadow_surf,
+                    &shadow_surf,
                     sprite->rect.topleft() + offset +
-                            rg::math::Vector2{
-                                    entity->rect.width / 2.0f -
-                                            shadow_surf->GetTexture().width / 2.0f,
-                                    entity->rect.height - shadow_surf->GetTexture().height,
-                            });
+                    rg::math::Vector2{
+                            entity->rect.width / 2.0f -
+                            shadow_surf.GetTexture().width / 2.0f,
+                            entity->rect.height - shadow_surf.GetTexture().height,
+                    });
         }
         display_surface->Blit(sprite->image, sprite->rect.topleft() + offset);
-        if (sprite == player && player->noticed)
+        if (player == sprite && player->noticed)
         {
-            auto rect = notice_surf->GetRect().midbottom(sprite->rect.midtop());
-            display_surface->Blit(notice_surf, rect.topleft() + offset);
+            auto rect = notice_surf.GetRect().midbottom(sprite->rect.midtop());
+            display_surface->Blit(&notice_surf, rect.topleft() + offset);
         }
     }
     for (const auto &sprite: top_sprites)
@@ -111,13 +111,13 @@ void AllSprites::Draw(const std::shared_ptr<Player> &player)
 }
 
 void BattleSprites::Draw(
-        const std::shared_ptr<MonsterSprite> &current_monster_sprite, const SelectionSide side,
+        const MonsterSprite *current_monster_sprite, const SelectionSide side,
         const SelectionMode mode, int target_index, const Group *player_sprites,
         const Group *opponent_sprites)
 {
     // get available positions
     auto *sprite_group = side == OPPONENT ? opponent_sprites : player_sprites;
-    std::shared_ptr<MonsterSprite> monster_sprite = nullptr;
+    MonsterSprite *monster_sprite = nullptr;
     // when a monster gets defeated, the group may change, but the "pos_index" won't
     // create a list ordered by "pos_index"
     auto ordered_pos = sprite_group->Sprites();
@@ -127,23 +127,25 @@ void BattleSprites::Draw(
                 ordered_pos.begin(), ordered_pos.end(),
                 [](const auto &a, const auto &b)
                 {
-                    return std::dynamic_pointer_cast<MonsterSprite>(a)->pos_index <
-                           std::dynamic_pointer_cast<MonsterSprite>(b)->pos_index;
+                    return dynamic_cast<MonsterSprite *>(a)->pos_index <
+                           dynamic_cast<MonsterSprite *>(b)->pos_index;
                 });
         target_index = target_index % ordered_pos.size();
-        monster_sprite = std::dynamic_pointer_cast<MonsterSprite>(ordered_pos[target_index]);
+        monster_sprite = dynamic_cast<MonsterSprite *>(ordered_pos[target_index]);
     }
 
     auto sprites_ = Sprites();
     std::sort(
             sprites_.begin(), sprites_.end(),
-            [](const rg::sprite::Sprite_Ptr &l, const rg::sprite::Sprite_Ptr &r)
-            { return l->z < r->z; });
+            [](const rg::sprite::Sprite *l, const rg::sprite::Sprite *r)
+            {
+                return l->z < r->z;
+            });
     for (const auto &sprite: sprites_)
     {
         if (sprite->z == BATTLE_LAYERS["outline"])
         {
-            const auto outline_sprite = std::dynamic_pointer_cast<MonsterOutlineSprite>(sprite);
+            const auto outline_sprite = dynamic_cast<MonsterOutlineSprite *>(sprite);
             if ((outline_sprite->monster_sprite == current_monster_sprite &&
                  !(mode == SELECTMODE_TARGET && side == PLAYER)) ||
                 (outline_sprite->monster_sprite == monster_sprite && mode == SELECTMODE_TARGET &&

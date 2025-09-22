@@ -18,7 +18,7 @@ public:
     ~Game();
     void run();
 
-    std::shared_ptr<Player> player = nullptr;
+    Player player{};
 
 private:
 
@@ -26,63 +26,73 @@ private:
     void Setup(const std::string &map_name, const std::string &player_start_position);
     void UnloadResources();
     void Input();
-    void CreateDialog(const std::shared_ptr<Character> &character);
-    void EndDialog(const std::shared_ptr<Character> &character);
+    void CreateDialog(Character *character);
+    void EndDialog(Character *character);
     void TransitionCheck();
     void TintScreen(float dt);
-    void EndBattle(const std::shared_ptr<Character> &character);
+    void EndBattle(Character *character);
     // monster encounters
     void CheckMonster();
     void MonsterEncounter();
     void CheckEvolution();
     void EndEvolution();
 
-    rg::Surface_Ptr display_surface = nullptr;
-    std::map<std::string, rl::tmx_map *> tmx_maps;
+    rg::Surface *display_surface{};
+    std::unordered_map<std::string, rl::tmx_map *> tmx_maps{};
+    std::unordered_map<unsigned int, rg::Surface> map_tiles_surfaces_;
 
     // overworld frames
-    rg::Frames_Ptr waterFrames = nullptr;
-    std::map<std::string, std::map<std::string, rg::Frames_Ptr>> cost_dict;
-    std::map<std::string, std::map<std::string, rg::Frames_Ptr>> characters_dict;
+    rg::Frames waterFrames{};
+    std::unordered_map<std::string, std::unordered_map<std::string, rg::Frames>> cost_dict{};
+    std::unordered_map<std::string, std::unordered_map<std::string, rg::Frames>> characters_dict{};
+    std::vector<rg::Surface> surfaces_{};
+    std::vector<Sprite> sprites_{};
+    std::vector<AnimatedSprite> animated_sprites_{};
+    std::vector<CollidableSprite> collidable_sprites_{};
+    std::vector<TransitionSprite> transition_sprites_{};
+    std::vector<BorderSprite> border_sprites_{};
+    std::vector<MonsterPatchSprite> monster_patch_sprites_{};
+    std::vector<Character> characters_{};
 
     // Groups
-    // need shared_ptr due to AllSprites loads images in constructor
-    std::shared_ptr<AllSprites> all_sprites = nullptr;
+    AllSprites all_sprites{};
     rg::sprite::Group collision_sprites{};
     rg::sprite::Group character_sprites{};
     rg::sprite::Group transition_sprites{};
     rg::sprite::Group monster_sprites{};
 
-    std::map<std::string, std::shared_ptr<rg::font::Font>> fonts;
-    std::shared_ptr<DialogTree> dialog_tree = nullptr;
-    std::shared_ptr<Battle> battle = nullptr;
+    std::unordered_map<std::string, rg::font::Font> fonts{};
+    DialogTree dialog_tree{};
+    Battle battle{};
 
-    std::shared_ptr<TransitionTarget> transition_target = nullptr;
-    rg::Surface_Ptr tint_surf;
+    TransitionTarget transition_target{};
+    rg::Surface tint_surf{};
     TINT_MODE tint_mode = UNTINT;
     float tint_progress = 0.0f;
     // float tint_direction = -1;
     float tint_speed = 600.0f;
 
-    std::map<int, std::shared_ptr<Monster>> player_monsters;
-    std::map<int, std::shared_ptr<Monster>> encounter_monsters;
-    // std::map<int, std::shared_ptr<Monster>> dummy_monsters;
-    std::shared_ptr<MonsterIndex> monster_index;
+    std::unordered_map<int, Monster> player_monsters{};
+    std::unordered_map<int, Monster> encounter_monsters{};
+    // std::unordered_map<int, Monster>> dummy_monsters;
+    MonsterIndex monster_index{};
     bool index_open{};
-    std::map<std::string, rg::Surface_Ptr> monster_icons;
-    std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>>
-            monster_frames; // Name, Idle/Attack, Frames
-    std::map<std::string, std::map<AnimationState, rg::Frames_Ptr>>
-            outline_frames; // Name, Idle/Attack, Frames
-    std::map<std::string, rg::Surface_Ptr> ui_icons;
-    std::map<AttackAnimation, rg::Frames_Ptr> attack_frames;
+    std::unordered_map<std::string, rg::Surface> monster_icons{};
+    // Name, Idle/Attack, Frames
+    std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> monster_frames
+            {};
+    // Name, Idle/Attack, Frames
+    std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> outline_frames
+            {};
+    std::unordered_map<std::string, rg::Surface> ui_icons{};
+    std::unordered_map<AttackAnimation, rg::Frames> attack_frames{};
 
-    std::map<std::string, rg::Surface_Ptr> bg_frames;
+    std::unordered_map<std::string, rg::Surface> bg_frames{};
 
-    rg::Timer encounter_timer;
+    rg::Timer encounter_timer{};
 
-    std::shared_ptr<Evolution> evolution = nullptr;
-    std::vector<rg::Surface_Ptr> star_animation_surfs{};
+    Evolution evolution{};
+    std::vector<rg::Surface> star_animation_surfs{};
 
-    std::map<std::string, std::shared_ptr<rg::mixer::Sound>> audio;
+    std::unordered_map<std::string, rg::mixer::Sound> audio{};
 };

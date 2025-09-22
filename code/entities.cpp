@@ -6,12 +6,12 @@
 
 
 Entity::Entity(
-        const rg::math::Vector2 &pos, std::map<std::string, rg::Frames_Ptr> &frames,
+        const rg::math::Vector2 &pos, std::unordered_map<std::string, rg::Frames> *frames,
         const std::string &facing_direction)
     : facing_direction(facing_direction), frames_direction(frames)
 {
-    image = frames[facing_direction];
-    image->atlas_rect = frames[facing_direction]->frames[0];
+    image = &(*frames)[facing_direction];
+    image->atlas_rect = (*frames)[facing_direction].frames[0];
     rect = image->GetRect();
     rect.center(pos);
     z = WORLD_LAYERS["main"];
@@ -65,14 +65,14 @@ void Entity::ChangeFacingDirection(const rg::math::Vector2 target_pos)
 
 void Entity::Animate(const float dt)
 {
-    image = frames_direction[GetState()];
+    image = &(*frames_direction)[GetState()];
 
     frame_index += ANIMATION_SPEED * dt;
-    if (frame_index > std::dynamic_pointer_cast<rg::Frames>(image)->frames.size())
+    if (frame_index > dynamic_cast<rg::Frames *>(image)->frames.size())
     {
         frame_index = 0;
     }
-    image->atlas_rect = std::dynamic_pointer_cast<rg::Frames>(image)->frames[int(frame_index)];
+    image->atlas_rect = dynamic_cast<rg::Frames *>(image)->frames[int(frame_index)];
 }
 
 std::string Entity::GetState()
@@ -98,10 +98,11 @@ std::string Entity::GetState()
 }
 
 Player::Player(
-        const rg::math::Vector2 &pos, std::map<std::string, rg::Frames_Ptr> &frames,
+        const rg::math::Vector2 &pos, std::unordered_map<std::string, rg::Frames> *frames,
         const std::string &facing_direction, rg::sprite::Group *collision_sprites)
     : Entity(pos, frames, facing_direction), collision_sprites(collision_sprites)
-{}
+{
+}
 
 void Player::Input()
 {
@@ -156,11 +157,11 @@ void Player::Collisions(const std::string &axis)
     for (const auto &collision_sprite: collision_sprites->Sprites())
     {
         rg::Rect sprite_hitbox;
-        if (const auto entity = std::dynamic_pointer_cast<Entity>(collision_sprite))
+        if (const auto entity = dynamic_cast<Entity *>(collision_sprite))
         {
             sprite_hitbox = entity->hitbox;
         }
-        else if (const auto sprite = std::dynamic_pointer_cast<::Sprite>(collision_sprite))
+        else if (const auto sprite = dynamic_cast<::Sprite *>(collision_sprite))
         {
             sprite_hitbox = sprite->hitbox;
         }
@@ -195,31 +196,38 @@ void Player::Collisions(const std::string &axis)
 }
 
 Character::Character(
-        const rg::math::Vector2 &pos, std::map<std::string, rg::Frames_Ptr> &frames,
+        const rg::math::Vector2 &pos, std::unordered_map<std::string, rg::Frames> *frames,
         const std::string &facing_direction, CharacterData *char_data,
-        const std::shared_ptr<Player> &player,
-        const std::function<void(const std::shared_ptr<Character> &character)> &create_dialog,
+        Player *player,
+        const std::function<void(Character *character)> &create_dialog,
         rg::sprite::Group *collision_sprites, const float radius, const bool nurse,
-        const std::shared_ptr<rg::mixer::Sound> &notice_sound)
+        rg::mixer::Sound *notice_sound)
     : Entity(pos, frames, facing_direction), character_data(char_data), nurse(nurse),
       player(player), create_dialog(create_dialog), collision_sprites(collision_sprites),
       radius(radius), notice_sound(notice_sound)
 {
-    for (const auto &sprite: collision_sprites->Sprites())
+    for (const auto *sprite: collision_sprites->Sprites())
     {
-        if (sprite.get() != this)
+        if (sprite != this)
         {
             collision_rects.push_back(sprite->rect);
         }
     }
     view_directions = character_data->directions;
-    timers["look around"] = rg::Timer(1.5f, true, true, [this] { RandomViewDirection(); });
-    timers["notice"] = rg::Timer{0.5f, false, false, [this] { StartMove(); }};
+    timers["look around"] = rg::Timer(
+            1.5f, true, true, [this]
+            {
+                RandomViewDirection();
+            });
+    timers["notice"] = rg::Timer{0.5f, false, false, [this]
+    {
+        StartMove();
+    }};
 
     for (unsigned int i = 0; i < character_data->monsters.size(); ++i)
     {
         auto [name, level] = character_data->monsters[i];
-        monsters[i] = std::make_shared<Monster>(name, level);
+        monsters[i] = Monster(name, level);
     }
 }
 
@@ -250,8 +258,7 @@ std::vector<std::string> Character::GetDialog() const
 
 void Character::Raycast()
 {
-    const auto s = std::dynamic_pointer_cast<Character>(shared_from_this());
-    if (!has_moved && !has_noticed && CheckConnections(radius, s, player) && HasLineOfSight())
+    if (!has_moved && !has_noticed && CheckConnections(radius, this, player) && HasLineOfSight())
     {
         player->Block();
         player->ChangeFacingDirection(rect.center());
@@ -298,7 +305,7 @@ void Character::Move(const float dt)
         {
             direction = {};
             has_moved = true;
-            create_dialog(std::dynamic_pointer_cast<Character>(shared_from_this()));
+            create_dialog(this);
             player->noticed = false;
         }
     }

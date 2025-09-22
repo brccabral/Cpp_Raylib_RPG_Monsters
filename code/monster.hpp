@@ -9,6 +9,11 @@ public:
 
     Monster() = default; // need a default constructor for map<>
     Monster(const std::string &name, int level);
+    Monster(const Monster &monster) = delete;
+    Monster &operator=(const Monster &monster) = delete;
+    Monster(Monster &&monster) = default;
+    Monster &operator=(Monster &&monster) = default;
+
     float GetStat(const std::string &stat);
     std::vector<std::pair<std::string, float>> GetStats();
     std::vector<Attack> GetAbilities(bool all = true);
@@ -20,16 +25,16 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, Monster const &m);
 
-    std::string name;
+    std::string name{};
     int level{};
     ElementType element{};
-    std::map<std::string, float> base_stats;
-    std::vector<std::pair<int, Attack>> abilities;
+    std::map<std::string, float> base_stats{};
+    std::vector<std::pair<int, Attack>> abilities{};
 
     // experience
     float xp{};
     float level_up{};
-    std::pair<std::string, int> evolution;
+    std::pair<std::string, int> evolution{};
 
     float health{};
     float energy{};

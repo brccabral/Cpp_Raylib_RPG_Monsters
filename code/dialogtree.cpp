@@ -2,17 +2,18 @@
 
 
 DialogTree::DialogTree(
-        const std::shared_ptr<Character> &character, const std::shared_ptr<Player> &player,
-        AllSprites *all_sprites, const std::shared_ptr<rg::font::Font> &font,
-        const std::function<void(const std::shared_ptr<Character> &char_)> &end_dialog)
-    : character(character), player(player), all_sprites(all_sprites), font(font),
+        Character *character, const Player *player,
+        AllSprites *all_sprites, const rg::font::Font *font,
+        const std::function<void(Character *char_)> &end_dialog)
+    : active(true), character(character), player(player), all_sprites(all_sprites), font(font),
       end_dialog(end_dialog)
 {
     dialog = character->GetDialog();
     dialog_num = dialog.size();
 
-    current_dialog = std::make_shared<DialogSprite>(dialog[dialog_index], character, this->font);
-    current_dialog->add(all_sprites);
+    current_dialog = DialogSprite(dialog[dialog_index], character, font);
+    auto g = rg::sprite::Group();
+    current_dialog.add(&g);
 }
 
 void DialogTree::Update()
@@ -25,13 +26,13 @@ void DialogTree::Input()
 {
     if (IsKeyPressed(rl::KEY_SPACE) && !dialog_timer.active)
     {
-        current_dialog->Kill();
+        current_dialog.Kill();
         dialog_index += 1;
         if (dialog_index < dialog_num)
         {
             current_dialog =
-                    std::make_shared<DialogSprite>(dialog[dialog_index], character, this->font);
-            current_dialog->add(all_sprites);
+                    DialogSprite(dialog[dialog_index], character, font);
+            current_dialog.add(all_sprites);
             dialog_timer.Activate();
         }
         else

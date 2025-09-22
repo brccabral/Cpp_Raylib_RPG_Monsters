@@ -15,10 +15,11 @@ class TransitionTarget
 {
 public:
 
+    TransitionTarget() = default;
     explicit TransitionTarget(TransitionTargetType target_type);
 
     std::string map_name{};
     std::string start_position{};
-    std::shared_ptr<Battle> battle = nullptr;
+    Battle battle{};
     TransitionTargetType target_type{};
 };
