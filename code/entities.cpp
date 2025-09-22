@@ -154,7 +154,7 @@ void Player::Move(const float dt)
 
 void Player::Collisions(const std::string &axis)
 {
-    for (const auto &collision_sprite: collision_sprites->Sprites())
+    for (auto *collision_sprite: collision_sprites->Sprites())
     {
         rg::Rect sprite_hitbox;
         if (const auto entity = dynamic_cast<Entity *>(collision_sprite))

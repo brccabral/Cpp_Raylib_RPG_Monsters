@@ -508,7 +508,7 @@ void Game::CheckMonster()
     {
         return;
     }
-    for (const auto &sprite: monster_sprites.Sprites())
+    for (const auto *sprite: monster_sprites.Sprites())
     {
         if (sprite->rect.colliderect(player.hitbox))
         {
@@ -523,7 +523,7 @@ void Game::MonsterEncounter()
     {
         return;
     }
-    for (const auto &sprite: monster_sprites.Sprites())
+    for (auto *sprite: monster_sprites.Sprites())
     {
         if (sprite->rect.colliderect(player.hitbox))
         {

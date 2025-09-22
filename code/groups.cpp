@@ -141,7 +141,7 @@ void BattleSprites::Draw(
             {
                 return l->z < r->z;
             });
-    for (const auto &sprite: sprites_)
+    for (auto *sprite: sprites_)
     {
         if (sprite->z == BATTLE_LAYERS["outline"])
         {
