@@ -219,12 +219,12 @@ void Battle::CheckActiveGroup(const rg::sprite::Group *group, const SelectionSid
 void Battle::UpdateAllMonsters(const bool do_pause)
 {
     monsters_paused = do_pause;
-    for (const auto &sprite: player_sprites.Sprites())
+    for (auto *sprite: player_sprites.Sprites())
     {
         const auto monster_sprite = dynamic_cast<MonsterSprite *>(sprite);
         monster_sprite->monster->paused = do_pause;
     }
-    for (const auto &sprite: opponent_sprites.Sprites())
+    for (auto *sprite: opponent_sprites.Sprites())
     {
         const auto monster_sprite = dynamic_cast<MonsterSprite *>(sprite);
         monster_sprite->monster->paused = do_pause;
@@ -308,7 +308,7 @@ void Battle::Input()
                         selection_side == PLAYER ? &player_sprites : &opponent_sprites;
                 // when a monster gets defeated, the group may change, but the "pos_index" won't
                 // create a list ordered by "pos_index"
-                auto ordered_pos = sprite_group->Sprites();
+                auto ordered_pos = sprite_group->Sprites(); // force a copy
                 std::sort(
                         ordered_pos.begin(), ordered_pos.end(),
                         [](const auto &a, const auto &b)
@@ -476,7 +476,7 @@ void Battle::CheckDeath()
 
 void Battle::CheckDeathGroup(const rg::sprite::Group *group, const SelectionSide side)
 {
-    for (const auto &sprite: group->Sprites())
+    for (auto *sprite: group->Sprites())
     {
         const auto monster_sprite = dynamic_cast<MonsterSprite *>(sprite);
         if (monster_sprite->monster->health <= 0)
@@ -534,11 +534,10 @@ void Battle::CheckDeathGroup(const rg::sprite::Group *group, const SelectionSide
                     indexes[SELECTMODE_TARGET] = 0;
                 }
                 // increase XP
-                auto p_sprites = player_sprites.Sprites();
-                if (!p_sprites.empty())
+                if (!player_sprites.Sprites().empty())
                 {
-                    const int xp_amount = monster_sprite->monster->level * 100 / p_sprites.size();
-                    for (const auto &player_sprite: p_sprites)
+                    const int xp_amount = monster_sprite->monster->level * 100 / player_sprites.Sprites().size();
+                    for (auto *player_sprite: player_sprites.Sprites())
                     {
                         dynamic_cast<MonsterSprite *>(player_sprite)
                                 ->monster->UpdateXP(xp_amount);
@@ -712,7 +711,7 @@ void Battle::DrawSwitch()
     // monsters
     std::vector<std::pair<int, Monster *>> active_monsters; // monsters in battle
     active_monsters.reserve(player_sprites.Sprites().size());
-    for (auto &monster: player_sprites.Sprites())
+    for (auto *monster: player_sprites.Sprites())
     {
         const auto monster_sprite = dynamic_cast<MonsterSprite *>(monster);
         active_monsters.emplace_back(monster_sprite->index, monster_sprite->monster);
