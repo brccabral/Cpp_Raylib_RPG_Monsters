@@ -10,7 +10,7 @@ public:
 
     MonsterIndex() = default;
     MonsterIndex(
-            std::unordered_map<int, Monster> *monsters,
+            std::map<int, Monster> *monsters,
             std::unordered_map<std::string, rg::font::Font> *fonts,
             std::unordered_map<std::string, rg::Surface> *monster_icons,
             std::unordered_map<std::string, rg::Surface> *ui_icons,
@@ -25,7 +25,7 @@ private:
     void DisplayMain(float dt);
 
     rg::Surface *display_surface = &rg::display::GetSurface();
-    std::unordered_map<int, Monster> *monsters;
+    std::map<int, Monster> *monsters;
     std::unordered_map<std::string, rg::font::Font> *fonts;
     rg::Surface tint_surf;
 

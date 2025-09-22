@@ -56,7 +56,7 @@ private:
     void Move(float dt);
     void Collisions(const std::string &axis);
 
-    rg::sprite::Group *collision_sprites;
+    rg::sprite::Group *collision_sprites{};
 };
 
 class Character : public Entity
@@ -76,7 +76,7 @@ public:
     CharacterData *character_data{};
     bool can_rotate = true;
     bool nurse;
-    std::unordered_map<int, Monster> monsters;
+    std::map<int, Monster> monsters;
 
 private:
 

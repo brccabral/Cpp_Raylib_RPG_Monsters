@@ -73,9 +73,9 @@ private:
     // float tint_direction = -1;
     float tint_speed = 600.0f;
 
-    std::unordered_map<int, Monster> player_monsters{};
-    std::unordered_map<int, Monster> encounter_monsters{};
-    // std::unordered_map<int, Monster>> dummy_monsters;
+    std::map<int, Monster> player_monsters{};
+    std::map<int, Monster> encounter_monsters{};
+    // std::map<int, Monster>> dummy_monsters;
     MonsterIndex monster_index{};
     bool index_open{};
     std::unordered_map<std::string, rg::Surface> monster_icons{};

@@ -2,8 +2,8 @@
 
 
 Battle::Battle(
-        std::unordered_map<int, Monster> *player_monsters,
-        std::unordered_map<int, Monster> *opponent_monsters,
+        std::map<int, Monster> *player_monsters,
+        std::map<int, Monster> *opponent_monsters,
         std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> *
         monster_frames,
         std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> *

@@ -11,8 +11,8 @@ public:
 
     Battle() = default;
     Battle(
-            std::unordered_map<int, Monster> *player_monsters,
-            std::unordered_map<int, Monster> *opponent_monsters,
+            std::map<int, Monster> *player_monsters,
+            std::map<int, Monster> *opponent_monsters,
             std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> *
             monster_frames,
             std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> *
@@ -63,8 +63,8 @@ private:
     void OpponentAttack() const;
 
     rg::Surface *display_surface = &rg::display::GetSurface();
-    std::unordered_map<int, Monster> *player_monsters{};
-    std::unordered_map<int, Monster> *opponent_monsters{};
+    std::map<int, Monster> *player_monsters{};
+    std::map<int, Monster> *opponent_monsters{};
     std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> *monster_frames
             {};
     std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> *outline_frames
@@ -97,7 +97,7 @@ private:
     SelectionSide selection_side{};
     std::unordered_map<SelectionMode, int> indexes{};
 
-    std::unordered_map<int, Monster *> available_monsters{};
+    std::map<int, Monster *> available_monsters{};
     Attack selected_attack = ATTACK_NONE;
     std::unordered_map<AttackAnimation, rg::Frames> *attack_frames{};
     std::unordered_map<std::string, rg::Timer> timers{};
