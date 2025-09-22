@@ -129,6 +129,13 @@ public:
     int pos_index{};
     SelectionSide entity{};
 
+    std::function<void(
+            const MonsterSprite *target_sprite, Attack attack, float amount)>
+    apply_attack{};
+    std::function<void(
+            Monster *monster, int index, int pos_index, SelectionSide entity)>
+    createMonster{};
+
 private:
 
     void Animate(float dt);
@@ -143,17 +150,10 @@ private:
     const MonsterSprite *target_sprite = nullptr;
     Attack current_attack = ATTACK_NONE;
 
-    std::function<void(
-            const MonsterSprite *target_sprite, Attack attack, float amount)>
-    apply_attack{};
-
     Monster *newMonster = nullptr;
     int newIndex = 0;
     int newPosIndex = 0;
     SelectionSide newSide{};
-    std::function<void(
-            Monster *monster, int index, int pos_index, SelectionSide entity)>
-    createMonster{};
 };
 
 class MonsterNameSprite : public rg::sprite::Sprite

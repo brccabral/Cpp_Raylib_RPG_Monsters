@@ -231,6 +231,55 @@ Character::Character(
     }
 }
 
+Character::Character(Character &&other) noexcept
+    : Entity(std::move(other)), character_data(other.character_data),
+      can_rotate(other.can_rotate), nurse(other.nurse), monsters(std::move(other.monsters)),
+      player(other.player), create_dialog(other.create_dialog),
+      collision_rects(other.collision_rects),
+      has_moved(other.has_moved), has_noticed(other.has_noticed), radius(other.radius),
+      view_directions(other.view_directions), timers(other.timers),
+      notice_sound(other.notice_sound)
+{
+    timers["look around"].func = [this]
+    {
+        RandomViewDirection();
+    };
+    timers["notice"].func = [this]
+    {
+        StartMove();
+    };
+}
+
+Character &Character::operator=(Character &&other) noexcept
+{
+    if (this != &other)
+    {
+        character_data = other.character_data;
+        can_rotate = other.can_rotate;
+        nurse = other.nurse;
+        monsters = std::move(other.monsters);
+        player = other.player;
+        create_dialog = other.create_dialog;
+        collision_rects = other.collision_rects;
+        has_moved = other.has_moved;
+        has_noticed = other.has_noticed;
+        radius = other.radius;
+        view_directions = other.view_directions;
+        timers = other.timers;
+        notice_sound = other.notice_sound;
+
+        timers["look around"].func = [this]
+        {
+            RandomViewDirection();
+        };
+        timers["notice"].func = [this]
+        {
+            StartMove();
+        };
+    }
+    return *this;
+}
+
 void Character::Update(const float deltaTime)
 {
     for (auto &[key, timer]: timers)

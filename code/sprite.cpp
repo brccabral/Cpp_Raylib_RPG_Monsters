@@ -145,8 +145,8 @@ MonsterSprite::MonsterSprite(
         const std::function<void(
                 Monster *monster, int index, int pos_index, SelectionSide entity)>
         &createMonster)
-    : monster(monster), index(index), pos_index(pos_index), entity(entity), frames(frames),
-      apply_attack(apply_attack), createMonster(createMonster)
+    : monster(monster), index(index), pos_index(pos_index), entity(entity),
+      apply_attack(apply_attack), createMonster(createMonster), frames(frames)
 {
     image = &(*frames)[state];
     auto *tmp_frames = dynamic_cast<rg::Frames *>(image);
@@ -176,30 +176,20 @@ MonsterSprite::MonsterSprite(MonsterSprite &&other) noexcept
     : Sprite(std::move(other)), monster(other.monster), state(other.state),
       highlight_mask(std::move(other.highlight_mask)), frame_index(other.frame_index),
       index(other.index), pos_index(other.pos_index), entity(other.entity),
-      frames(other.frames), animation_speed(other.animation_speed),
-      highlight(other.highlight), target_sprite(other.target_sprite),
-      current_attack(other.current_attack), apply_attack(other.apply_attack),
-      newMonster(other.newMonster), newIndex(other.newIndex), newPosIndex(other.newPosIndex),
-      newSide(other.newSide), createMonster(other.createMonster)
+      apply_attack(other.apply_attack), createMonster(other.createMonster),
+      frames(other.frames), animation_speed(other.animation_speed), highlight(other.highlight),
+      timers(other.timers), target_sprite(other.target_sprite),
+      current_attack(other.current_attack), newMonster(other.newMonster), newIndex(other.newIndex),
+      newPosIndex(other.newPosIndex), newSide(other.newSide)
 {
-    for (auto &[name, timer]: other.timers)
+    timers["remove_highlight"].func = [this]()
     {
-        timers[name] = timer;
-        if (name == "remove_highlight")
-        {
-            timers[name].func = [this]()
-            {
-                SetHighlight(false);
-            };
-        }
-        else if (name == "kill")
-        {
-            timers[name].func = [this]()
-            {
-                Destroy();
-            };
-        }
-    }
+        SetHighlight(false);
+    };
+    timers["kill"].func = [this]()
+    {
+        Destroy();
+    };
 }
 
 MonsterSprite &MonsterSprite::operator=(MonsterSprite &&other) noexcept
@@ -226,24 +216,14 @@ MonsterSprite &MonsterSprite::operator=(MonsterSprite &&other) noexcept
         newSide = other.newSide;
         createMonster = other.createMonster;
 
-        for (auto &[name, timer]: other.timers)
+        timers["remove_highlight"].func = [this]()
         {
-            timers[name] = timer;
-            if (name == "remove_highlight")
-            {
-                timers[name].func = [this]()
-                {
-                    SetHighlight(false);
-                };
-            }
-            else if (name == "kill")
-            {
-                timers[name].func = [this]()
-                {
-                    Destroy();
-                };
-            }
-        }
+            SetHighlight(false);
+        };
+        timers["kill"].func = [this]()
+        {
+            Destroy();
+        };
     }
     return *this;
 }

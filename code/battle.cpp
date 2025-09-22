@@ -36,6 +36,116 @@ Battle::Battle(
     Setup();
 }
 
+Battle::Battle(Battle &&other) noexcept
+{
+    battle_over = other.battle_over;
+    display_surface = other.display_surface;
+    player_monsters = other.player_monsters;
+    opponent_monsters = other.opponent_monsters;
+    monster_frames = other.monster_frames;
+    outline_frames = other.outline_frames;
+    monster_icons = other.monster_icons;
+    ui_icons = other.ui_icons;
+    bg_surf = other.bg_surf;
+    fonts = other.fonts;
+    battle_sprites = std::move(other.battle_sprites);
+    player_sprites = std::move(other.player_sprites);
+    opponent_sprites = std::move(other.opponent_sprites);
+    battle_monster = std::move(other.battle_monster);
+    timed_sprites_ = std::move(other.timed_sprites_);
+    attack_sprites_ = std::move(other.attack_sprites_);
+    current_monster = other.current_monster;
+    selection_mode = other.selection_mode;
+    selection_side = other.selection_side;
+    indexes = other.indexes;
+    available_monsters = other.available_monsters;
+    selected_attack = other.selected_attack;
+    attack_frames = other.attack_frames;
+    timers = std::move(other.timers);
+    monsters_paused = other.monsters_paused;
+    endBattle = other.endBattle;
+    character = other.character;
+    sounds = other.sounds;
+
+    timers["opponent_delay"].func = [this]
+    {
+        OpponentAttack();
+    };
+
+    for (auto &bm: battle_monster)
+    {
+        bm.monster_sprite.apply_attack = [this](
+                const MonsterSprite *target_sprite, const Attack attack,
+                const float amount)
+                {
+                    ApplyAttack(target_sprite, attack, amount);
+                };
+        bm.monster_sprite.createMonster = [this](
+                Monster *monster_, const int index_, const int pos_index_,
+                const SelectionSide entity_)
+                {
+                    CreateMonster(monster_, index_, pos_index_, entity_);
+                };
+    }
+}
+
+Battle &Battle::operator=(Battle &&other) noexcept
+{
+    if (this != &other)
+    {
+        battle_over = other.battle_over;
+        display_surface = other.display_surface;
+        player_monsters = other.player_monsters;
+        opponent_monsters = other.opponent_monsters;
+        monster_frames = other.monster_frames;
+        outline_frames = other.outline_frames;
+        monster_icons = other.monster_icons;
+        ui_icons = other.ui_icons;
+        bg_surf = other.bg_surf;
+        fonts = other.fonts;
+        battle_sprites = std::move(other.battle_sprites);
+        player_sprites = std::move(other.player_sprites);
+        opponent_sprites = std::move(other.opponent_sprites);
+        battle_monster = std::move(other.battle_monster);
+        timed_sprites_ = std::move(other.timed_sprites_);
+        attack_sprites_ = std::move(other.attack_sprites_);
+        current_monster = other.current_monster;
+        selection_mode = other.selection_mode;
+        selection_side = other.selection_side;
+        indexes = other.indexes;
+        available_monsters = other.available_monsters;
+        selected_attack = other.selected_attack;
+        attack_frames = other.attack_frames;
+        timers = std::move(other.timers);
+        monsters_paused = other.monsters_paused;
+        endBattle = other.endBattle;
+        character = other.character;
+        sounds = other.sounds;
+
+        timers["opponent_delay"].func = [this]
+        {
+            OpponentAttack();
+        };
+
+        for (auto &bm: battle_monster)
+        {
+            bm.monster_sprite.apply_attack = [this](
+                    const MonsterSprite *target_sprite, const Attack attack,
+                    const float amount)
+                    {
+                        ApplyAttack(target_sprite, attack, amount);
+                    };
+            bm.monster_sprite.createMonster = [this](
+                    Monster *monster_, const int index_, const int pos_index_,
+                    const SelectionSide entity_)
+                    {
+                        CreateMonster(monster_, index_, pos_index_, entity_);
+                    };
+        }
+    }
+    return *this;
+}
+
 void Battle::Update(const float dt)
 {
     CheckEndBattle();
@@ -536,7 +646,8 @@ void Battle::CheckDeathGroup(const rg::sprite::Group *group, const SelectionSide
                 // increase XP
                 if (!player_sprites.Sprites().empty())
                 {
-                    const int xp_amount = monster_sprite->monster->level * 100 / player_sprites.Sprites().size();
+                    const int xp_amount =
+                            monster_sprite->monster->level * 100 / player_sprites.Sprites().size();
                     for (auto *player_sprite: player_sprites.Sprites())
                     {
                         dynamic_cast<MonsterSprite *>(player_sprite)

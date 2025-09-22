@@ -70,13 +70,17 @@ public:
             const std::function<void(Character *character)> &create_dialog,
             rg::sprite::Group *collision_sprites, float radius, bool nurse,
             rg::mixer::Sound *notice_sound);
+    Character(const Character &other) = delete;
+    Character &operator=(const Character &other) = delete;
+    Character(Character &&other) noexcept;
+    Character &operator=(Character &&other) noexcept;
     void Update(float deltaTime) override;
     [[nodiscard]] std::vector<std::string> GetDialog() const;
 
     CharacterData *character_data{};
     bool can_rotate = true;
-    bool nurse;
-    std::map<int, Monster> monsters;
+    bool nurse{};
+    std::map<int, Monster> monsters{};
 
 private:
 
@@ -86,16 +90,16 @@ private:
     void Move(float dt);
     void RandomViewDirection();
 
-    Player *player;
-    std::function<void(Character *character)> create_dialog;
-    rg::sprite::Group *collision_sprites;
-    std::vector<rg::Rect> collision_rects;
+    Player *player{};
+    std::function<void(Character *character)> create_dialog{};
+    rg::sprite::Group *collision_sprites{};
+    std::vector<rg::Rect> collision_rects{};
     bool has_moved{};
     bool has_noticed{};
     float radius{};
     std::vector<std::string> view_directions = {"left", "right"};
 
-    std::unordered_map<std::string, rg::Timer> timers;
+    std::unordered_map<std::string, rg::Timer> timers{};
 
-    rg::mixer::Sound *notice_sound;
+    rg::mixer::Sound *notice_sound{};
 };

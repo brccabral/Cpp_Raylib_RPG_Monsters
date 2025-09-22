@@ -27,8 +27,8 @@ public:
             std::unordered_map<std::string, rg::mixer::Sound> *sounds);
     Battle(const Battle &other) = delete;
     Battle &operator=(const Battle &other) = delete;
-    Battle(Battle &&other) = default;
-    Battle &operator=(Battle &&other) = default;
+    Battle(Battle &&other) noexcept;
+    Battle &operator=(Battle &&other) noexcept;
     void Update(float dt);
 
     bool battle_over = true;
