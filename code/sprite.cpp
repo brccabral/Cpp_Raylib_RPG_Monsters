@@ -111,6 +111,25 @@ TransitionSprite::TransitionSprite(
 {
 }
 
+TransitionSprite::TransitionSprite(TransitionSprite &&other) noexcept
+    : Sprite(std::move(other)), target(std::move(other.target))
+{
+    // TransitionSprite creates its own image in constructor
+    other.image = nullptr;
+}
+
+TransitionSprite &TransitionSprite::operator=(TransitionSprite &&other) noexcept
+{
+    if (this != &other)
+    {
+        Sprite::operator=(std::move(other));
+        target = std::move(other.target);
+        // TransitionSprite creates its own image in constructor
+        other.image = nullptr;
+    }
+    return *this;
+}
+
 TransitionSprite::~TransitionSprite()
 {
     delete image;
@@ -248,6 +267,7 @@ MonsterNameSprite::MonsterNameSprite(
 MonsterNameSprite::MonsterNameSprite(MonsterNameSprite &&other) noexcept
     : Sprite(std::move(other)), monster_sprite(other.monster_sprite)
 {
+    // MonsterNameSprite creates its own image in constructor
     other.image = nullptr;
     other.monster_sprite = nullptr;
 }
@@ -258,6 +278,7 @@ MonsterNameSprite &MonsterNameSprite::operator=(MonsterNameSprite &&other) noexc
     {
         Sprite::operator=(std::move(other));
         monster_sprite = other.monster_sprite;
+        // MonsterNameSprite creates its own image in constructor
         other.image = nullptr;
         other.monster_sprite = nullptr;
     }
@@ -296,6 +317,30 @@ MonsterLevelSprite::MonsterLevelSprite(
     z = BATTLE_LAYERS["name"];
 }
 
+MonsterLevelSprite::MonsterLevelSprite(MonsterLevelSprite &&other) noexcept
+    : Sprite(std::move(other)), monster_sprite(other.monster_sprite), font(other.font),
+      xp_rect(other.xp_rect)
+{
+    // MonsterLevelSprite creates its own image in constructor
+    other.image = nullptr;
+}
+
+MonsterLevelSprite &MonsterLevelSprite::operator=(MonsterLevelSprite &&other) noexcept
+{
+    if (this != &other)
+    {
+        Sprite::operator=(std::move(other));
+        monster_sprite = other.monster_sprite;
+        font = other.font;
+        xp_rect = other.xp_rect;
+        // MonsterLevelSprite creates its own image in constructor
+        other.image = nullptr;
+        other.monster_sprite = nullptr;
+        other.font = nullptr;
+    }
+    return *this;
+}
+
 MonsterLevelSprite::~MonsterLevelSprite()
 {
     delete image;
@@ -328,6 +373,29 @@ MonsterStatsSprite::MonsterStatsSprite(
     image = new rg::Surface(size);
     rect = image->GetRect().midbottom(pos);
     z = BATTLE_LAYERS["overlay"];
+}
+
+MonsterStatsSprite::MonsterStatsSprite(MonsterStatsSprite &&other) noexcept
+    : Sprite(std::move(other)), monster_sprite(other.monster_sprite), font(other.font)
+{
+    // MonsterStatsSprite creates its own image in constructor
+    other.image = nullptr;
+    other.monster_sprite = nullptr;
+    other.font = nullptr;
+}
+
+MonsterStatsSprite &MonsterStatsSprite::operator=(MonsterStatsSprite &&other) noexcept
+{
+    if (this != &other)
+    {
+        Sprite::operator=(std::move(other));
+        monster_sprite = other.monster_sprite;
+        font = other.font;
+        other.image = nullptr;
+        other.monster_sprite = nullptr;
+        other.font = nullptr;
+    }
+    return *this;
 }
 
 MonsterStatsSprite::~MonsterStatsSprite()

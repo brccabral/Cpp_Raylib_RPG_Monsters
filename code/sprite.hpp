@@ -85,8 +85,8 @@ public:
             std::pair<std::string, std::string> target);
     TransitionSprite(const TransitionSprite &other) = delete;
     TransitionSprite &operator=(const TransitionSprite &other) = delete;
-    TransitionSprite(TransitionSprite &&other) = default;
-    TransitionSprite &operator=(TransitionSprite &&other) = default;
+    TransitionSprite(TransitionSprite &&other) noexcept;
+    TransitionSprite &operator=(TransitionSprite &&other) noexcept;
     ~TransitionSprite() override;
 
     std::pair<std::string, std::string> target;
@@ -182,8 +182,8 @@ public:
             const rg::font::Font *font);
     MonsterLevelSprite(const MonsterLevelSprite &other) = delete;
     MonsterLevelSprite &operator=(const MonsterLevelSprite &other) = delete;
-    MonsterLevelSprite(MonsterLevelSprite &&other) = default;
-    MonsterLevelSprite &operator=(MonsterLevelSprite &&other) = default;
+    MonsterLevelSprite(MonsterLevelSprite &&other) noexcept;
+    MonsterLevelSprite &operator=(MonsterLevelSprite &&other) noexcept;
     ~MonsterLevelSprite() override;
     void Update(float deltaTime) override;
 
@@ -204,8 +204,8 @@ public:
             rg::math::Vector2 size, const rg::font::Font *font);
     MonsterStatsSprite(const MonsterStatsSprite &other) = delete;
     MonsterStatsSprite &operator=(const MonsterStatsSprite &other) = delete;
-    MonsterStatsSprite(MonsterStatsSprite &&other) = default;
-    MonsterStatsSprite &operator=(MonsterStatsSprite &&other) = default;
+    MonsterStatsSprite(MonsterStatsSprite &&other) noexcept;
+    MonsterStatsSprite &operator=(MonsterStatsSprite &&other) noexcept;
     ~MonsterStatsSprite() override;
     void Update(float deltaTime) override;
 
