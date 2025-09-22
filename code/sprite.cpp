@@ -172,6 +172,82 @@ MonsterSprite::MonsterSprite(
             });
 }
 
+MonsterSprite::MonsterSprite(MonsterSprite &&other) noexcept
+    : Sprite(std::move(other)), monster(other.monster), state(other.state),
+      highlight_mask(std::move(other.highlight_mask)), frame_index(other.frame_index),
+      index(other.index), pos_index(other.pos_index), entity(other.entity),
+      frames(other.frames), animation_speed(other.animation_speed),
+      highlight(other.highlight), target_sprite(other.target_sprite),
+      current_attack(other.current_attack), apply_attack(other.apply_attack),
+      newMonster(other.newMonster), newIndex(other.newIndex), newPosIndex(other.newPosIndex),
+      newSide(other.newSide), createMonster(other.createMonster)
+{
+    for (auto &[name, timer]: other.timers)
+    {
+        timers[name] = timer;
+        if (name == "remove_highlight")
+        {
+            timers[name].func = [this]()
+            {
+                SetHighlight(false);
+            };
+        }
+        else if (name == "kill")
+        {
+            timers[name].func = [this]()
+            {
+                Destroy();
+            };
+        }
+    }
+}
+
+MonsterSprite &MonsterSprite::operator=(MonsterSprite &&other) noexcept
+{
+    if (this != &other)
+    {
+        Sprite::operator=(std::move(other));
+        monster = other.monster;
+        state = other.state;
+        highlight_mask = std::move(other.highlight_mask);
+        frame_index = other.frame_index;
+        index = other.index;
+        pos_index = other.pos_index;
+        entity = other.entity;
+        frames = other.frames;
+        animation_speed = other.animation_speed;
+        highlight = other.highlight;
+        target_sprite = other.target_sprite;
+        current_attack = other.current_attack;
+        apply_attack = other.apply_attack;
+        newMonster = other.newMonster;
+        newIndex = other.newIndex;
+        newPosIndex = other.newPosIndex;
+        newSide = other.newSide;
+        createMonster = other.createMonster;
+
+        for (auto &[name, timer]: other.timers)
+        {
+            timers[name] = timer;
+            if (name == "remove_highlight")
+            {
+                timers[name].func = [this]()
+                {
+                    SetHighlight(false);
+                };
+            }
+            else if (name == "kill")
+            {
+                timers[name].func = [this]()
+                {
+                    Destroy();
+                };
+            }
+        }
+    }
+    return *this;
+}
+
 void MonsterSprite::Update(const float deltaTime)
 {
     for (auto &[key, timer]: timers)

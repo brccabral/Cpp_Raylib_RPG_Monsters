@@ -108,6 +108,11 @@ public:
             const std::function<void(
                     Monster *monster, int index, int pos_index, SelectionSide entity)>
             &createMonster);
+    MonsterSprite(const MonsterSprite &other) = delete;
+    MonsterSprite &operator=(const MonsterSprite &other) = delete;
+    MonsterSprite(MonsterSprite &&other) noexcept;
+    MonsterSprite &operator=(MonsterSprite &&other) noexcept;
+
     void Update(float deltaTime) override;
     void SetHighlight(bool value);
     void
