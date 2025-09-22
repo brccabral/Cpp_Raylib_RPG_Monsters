@@ -84,6 +84,7 @@ DialogSprite::DialogSprite(
 DialogSprite::DialogSprite(DialogSprite &&other) noexcept
     : Sprite(std::move(other))
 {
+    // DialogSprite creates its own image in constructor
     other.image = nullptr;
 }
 
@@ -92,6 +93,7 @@ DialogSprite &DialogSprite::operator=(DialogSprite &&other) noexcept
     if (this != &other)
     {
         Sprite::operator=(std::move(other));
+        // DialogSprite creates its own image in constructor
         other.image = nullptr;
     }
     return *this;
@@ -244,9 +246,10 @@ MonsterNameSprite::MonsterNameSprite(
 }
 
 MonsterNameSprite::MonsterNameSprite(MonsterNameSprite &&other) noexcept
-    : Sprite(std::move(other))
+    : Sprite(std::move(other)), monster_sprite(other.monster_sprite)
 {
     other.image = nullptr;
+    other.monster_sprite = nullptr;
 }
 
 MonsterNameSprite &MonsterNameSprite::operator=(MonsterNameSprite &&other) noexcept
@@ -254,7 +257,9 @@ MonsterNameSprite &MonsterNameSprite::operator=(MonsterNameSprite &&other) noexc
     if (this != &other)
     {
         Sprite::operator=(std::move(other));
+        monster_sprite = other.monster_sprite;
         other.image = nullptr;
+        other.monster_sprite = nullptr;
     }
     return *this;
 }
