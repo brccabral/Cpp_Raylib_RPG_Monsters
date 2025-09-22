@@ -55,7 +55,8 @@ private:
     std::vector<Character> characters_{};
 
     // Groups
-    AllSprites all_sprites{};
+    // must be pointer because it tries to load texture before Game().Init()
+    AllSprites *all_sprites{};
     rg::sprite::Group collision_sprites{};
     rg::sprite::Group character_sprites{};
     rg::sprite::Group transition_sprites{};

@@ -11,6 +11,7 @@ Game::Game()
     rg::Init(rl::LOG_WARNING);
     display_surface = &rg::display::SetMode(WINDOW_WIDTH, WINDOW_HEIGHT);
     rg::display::SetCaption("RPG Monsters");
+    all_sprites = new AllSprites();
 
     int player_index = 0;
     player_monsters[player_index++] = Monster("Charmadillo", 50);
@@ -53,8 +54,8 @@ void Game::run()
         TransitionCheck();
         if (battle.battle_over)
         {
-            all_sprites.Update(dt);
-            all_sprites.Draw(&player);
+            all_sprites->Update(dt);
+            all_sprites->Draw(&player);
         }
         CheckMonster();
 
@@ -130,7 +131,7 @@ void Game::ImportAssets()
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)
 {
     // clear the map
-    all_sprites.empty();
+    all_sprites->empty();
     collision_sprites.empty();
     character_sprites.empty();
     transition_sprites.empty();
@@ -171,23 +172,23 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     for (auto &[position, texture, atlas_rect]: terrain_tiles)
     {
         auto surface = rg::Surface(texture, atlas_rect);
-        Sprite(position, surface, WORLD_LAYERS["bg"])->add(&all_sprites);
+        Sprite(position, surface, WORLD_LAYERS["bg"])->add(all_sprites);
     }
 
     auto terrain_top_tiles = rg::tmx::GetTMXTiles(map, terrain_top_layer);
     for (auto &[position, texture, atlas_rect]: terrain_top_tiles)
     {
         auto surface = rg::Surface(texture, atlas_rect);
-        Sprite(position, surface, WORLD_LAYERS["bg"])->add(&all_sprites);
+        Sprite(position, surface, WORLD_LAYERS["bg"])->add(all_sprites);
     }
 #else
     surfaces_.emplace_back(rg::tmx::GetTMXLayerSurface(map, terrain_layer));
     sprites_.emplace_back(rg::math::Vector2{}, &surfaces_.back(), WORLD_LAYERS["bg"]);
-    sprites_.back().add(&all_sprites);
+    sprites_.back().add(all_sprites);
 
     surfaces_.emplace_back(rg::tmx::GetTMXLayerSurface(map, terrain_top_layer));
     sprites_.emplace_back(rg::math::Vector2{}, &surfaces_.back(), WORLD_LAYERS["bg"]);
-    sprites_.back().add(&all_sprites);
+    sprites_.back().add(all_sprites);
 #endif
 
     // water
@@ -201,7 +202,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             {
                 auto position = area_position + rg::math::Vector2{(float) x, (float) y};
                 animated_sprites_.emplace_back(position, &waterFrames, WORLD_LAYERS["water"]);
-                animated_sprites_.back().add(&all_sprites);
+                animated_sprites_.back().add(all_sprites);
             }
         }
         water = water->next;
@@ -216,7 +217,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
 
         auto position = rg::tmx::GetTMXObjPosition(coast);
         animated_sprites_.emplace_back(position, &cost_dict[terrain][side], WORLD_LAYERS["bg"]);
-        animated_sprites_.back().add(&all_sprites);
+        animated_sprites_.back().add(all_sprites);
 
         coast = coast->next;
     }
@@ -239,12 +240,12 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             if (!strcmp(name.c_str(), "top"))
             {
                 sprites_.emplace_back(position, &map_tiles_surfaces_[gid], WORLD_LAYERS["top"]);
-                sprites_.back().add(&all_sprites);
+                sprites_.back().add(all_sprites);
             }
             else
             {
                 collidable_sprites_.emplace_back(position, &map_tiles_surfaces_[gid]);
-                collidable_sprites_.back().add({&all_sprites, &collision_sprites});
+                collidable_sprites_.back().add({all_sprites, &collision_sprites});
             }
         }
         object = object->next;
@@ -290,7 +291,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             auto position = rg::tmx::GetTMXObjPosition(monster);
             monster_patch_sprites_.emplace_back(
                     position, &map_tiles_surfaces_[gid], biome, monsters, level);
-            monster_patch_sprites_.back().add({&all_sprites, &monster_sprites});
+            monster_patch_sprites_.back().add({all_sprites, &monster_sprites});
         }
         monster = monster->next;
     }
@@ -308,7 +309,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             {
                 player = Player(
                         position, &characters_dict["player"], direction, &collision_sprites);
-                player.add(&all_sprites);
+                player.add(all_sprites);
             }
         }
         entity = entity->next;
@@ -335,7 +336,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
                     {
                         CreateDialog(char_);
                     }, &collision_sprites, float(radius), nurse, &audio["notice"]);
-            characters_.back().add({&all_sprites, &collision_sprites, &character_sprites});
+            characters_.back().add({all_sprites, &collision_sprites, &character_sprites});
         }
         entity = entity->next;
     }
@@ -385,7 +386,7 @@ void Game::CreateDialog(Character *character)
     if (!dialog_tree.active)
     {
         dialog_tree = DialogTree(
-                character, &player, &all_sprites, &fonts["dialog"],
+                character, &player, all_sprites, &fonts["dialog"],
                 [this](Character *char_)
                 {
                     EndDialog(char_);
