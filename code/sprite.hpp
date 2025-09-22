@@ -118,6 +118,7 @@ public:
 
     Monster *monster{};
     AnimationState state = ANIMATIONSTATE_IDLE;
+    rg::Frames highlight_mask{};
     float frame_index{};
     int index{};
     int pos_index{};

@@ -149,7 +149,14 @@ MonsterSprite::MonsterSprite(
       apply_attack(apply_attack), createMonster(createMonster)
 {
     image = &(*frames)[state];
-    dynamic_cast<rg::Frames *>(image)->SetAtlas();
+    auto *tmp_frames = dynamic_cast<rg::Frames *>(image);
+    tmp_frames->SetAtlas();
+
+    highlight_mask = rg::mask::FromSurface(tmp_frames).ToFrames(
+            tmp_frames->m_rows, tmp_frames->m_cols);
+    highlight_mask.Fill(rl::BLANK);
+    highlight_mask.frames = tmp_frames->frames;
+
     rect = dynamic_cast<rg::Frames *>(image)->GetRect().center(pos);
     animation_speed = (float) ANIMATION_SPEED + rg::math::get_random_uniform(-1, 1);
     z = BATTLE_LAYERS["monster"];
@@ -222,17 +229,13 @@ void MonsterSprite::Animate(const float dt)
     }
 
     image = &(*frames)[state];
-    dynamic_cast<rg::Frames *>(image)->SetAtlas(int(frame_index));
 
     if (highlight) // blink
     {
-        const auto *frames_ = dynamic_cast<rg::Frames *>(image);
-        auto mask_surf =
-                rg::mask::FromSurface(frames_).ToFrames(frames_->m_rows, frames_->m_cols);
-        mask_surf.Fill(rl::BLANK);
-        mask_surf.frames = frames_->frames;
-        *(dynamic_cast<rg::Frames *>(image)) = std::move(mask_surf);
+        image = &highlight_mask;
     }
+
+    dynamic_cast<rg::Frames *>(image)->SetAtlas(int(frame_index));
 }
 
 void MonsterSprite::Destroy()
