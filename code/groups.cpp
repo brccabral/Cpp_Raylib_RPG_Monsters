@@ -20,12 +20,17 @@ void AllSprites::Draw(Player *player)
     offset *= -1.0f;
 
     const auto &current_sprites = Sprites();
-    std::vector<rg::sprite::Sprite *> bg_sprites;
+
+    static std::vector<rg::sprite::Sprite *> bg_sprites;
+    bg_sprites.clear();
     bg_sprites.reserve(current_sprites.size());
-    std::vector<rg::sprite::Sprite *> main_sprites;
+    static std::vector<rg::sprite::Sprite *> main_sprites;
+    main_sprites.clear();
     main_sprites.reserve(current_sprites.size());
-    std::vector<rg::sprite::Sprite *> top_sprites;
+    static std::vector<rg::sprite::Sprite *> top_sprites;
+    top_sprites.clear();
     top_sprites.reserve(current_sprites.size());
+
     for (auto *sprite: current_sprites)
     {
         const int z = sprite->z;
@@ -120,7 +125,7 @@ void BattleSprites::Draw(
     MonsterSprite *monster_sprite = nullptr;
     // when a monster gets defeated, the group may change, but the "pos_index" won't
     // create a list ordered by "pos_index"
-    auto ordered_pos = sprite_group->Sprites();
+    auto ordered_pos = sprite_group->Sprites(); // force a copy
     if (!ordered_pos.empty())
     {
         std::sort(
@@ -134,7 +139,7 @@ void BattleSprites::Draw(
         monster_sprite = dynamic_cast<MonsterSprite *>(ordered_pos[target_index]);
     }
 
-    auto sprites_ = Sprites();
+    auto sprites_ = Sprites(); // force a copy
     std::sort(
             sprites_.begin(), sprites_.end(),
             [](const rg::sprite::Sprite *l, const rg::sprite::Sprite *r)
