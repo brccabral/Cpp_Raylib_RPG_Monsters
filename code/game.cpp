@@ -389,7 +389,7 @@ void Game::CreateDialog(Character *character)
     if (!dialog_tree.active)
     {
         dialog_tree = DialogTree(
-                character, &player, all_sprites, &fonts["dialog"],
+                character, all_sprites, &fonts["dialog"],
                 [this](Character *char_)
                 {
                     EndDialog(char_);

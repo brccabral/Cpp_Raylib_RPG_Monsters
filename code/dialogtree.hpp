@@ -10,7 +10,7 @@ public:
 
     DialogTree() = default;
     DialogTree(
-            Character *character, const Player *player,
+            Character *character,
             AllSprites *all_sprites, const rg::font::Font *font,
             const std::function<void(Character *char_)> &end_dialog);
     void Update();
@@ -21,7 +21,6 @@ public:
 private:
 
     Character *character{};
-    const Player *player{};
     AllSprites *all_sprites{};
     const rg::font::Font *font{};
     std::vector<std::string> dialog{};

@@ -2,10 +2,10 @@
 
 
 DialogTree::DialogTree(
-        Character *character, const Player *player,
+        Character *character,
         AllSprites *all_sprites, const rg::font::Font *font,
         const std::function<void(Character *char_)> &end_dialog)
-    : active(true), character(character), player(player), all_sprites(all_sprites), font(font),
+    : active(true), character(character), all_sprites(all_sprites), font(font),
       end_dialog(end_dialog)
 {
     dialog = character->GetDialog();

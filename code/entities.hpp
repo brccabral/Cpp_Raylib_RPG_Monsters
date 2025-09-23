@@ -68,7 +68,7 @@ public:
             const std::string &facing_direction, CharacterData *char_data,
             Player *player,
             const std::function<void(Character *character)> &create_dialog,
-            rg::sprite::Group *collision_sprites, float radius, bool nurse,
+            const rg::sprite::Group *collision_sprites, float radius, bool nurse,
             rg::mixer::Sound *notice_sound);
     Character(const Character &other) = delete;
     Character &operator=(const Character &other) = delete;
@@ -92,7 +92,6 @@ private:
 
     Player *player{};
     std::function<void(Character *character)> create_dialog{};
-    rg::sprite::Group *collision_sprites{};
     std::vector<rg::Rect> collision_rects{};
     bool has_moved{};
     bool has_noticed{};

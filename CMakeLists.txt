@@ -58,3 +58,35 @@ if (INSTALL_GAME)
     install(DIRECTORY ${PROJECT_SOURCE_DIR}/resources
             DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR})
 endif ()
+
+if (EMSCRIPTEN)
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_compile_options(${PROJECT_NAME} PRIVATE -g3)
+        target_link_options(${PROJECT_NAME} PRIVATE
+                            -gsource-map --source-map-base http://127.0.0.1:8081/
+                            -sASSERTIONS=2
+        )
+    endif ()
+    target_link_options(
+        ${PROJECT_NAME}
+        PRIVATE
+        -sALLOW_MEMORY_GROWTH=1
+        -sEXPORTED_RUNTIME_METHODS=[requestFullscreen]
+        -sUSE_GLFW=3
+        -sSTACK_SIZE=131072
+        -sASYNCIFY=1
+        --shell-file
+        "$ENV{EMSCRIPTEN}/src/shell.html")
+    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
+
+    set(resources_dir ${CMAKE_CURRENT_SOURCE_DIR}/resources)
+    if (EXISTS ${resources_dir})
+        # The local resources path needs to be mapped to /resources virtual path
+        string(APPEND resources_dir "@resources")
+        target_link_options(
+            ${PROJECT_NAME}
+            PRIVATE
+            --preload-file
+            "${resources_dir}")
+    endif ()
+endif ()

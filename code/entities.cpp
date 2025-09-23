@@ -200,10 +200,10 @@ Character::Character(
         const std::string &facing_direction, CharacterData *char_data,
         Player *player,
         const std::function<void(Character *character)> &create_dialog,
-        rg::sprite::Group *collision_sprites, const float radius, const bool nurse,
+        const rg::sprite::Group *collision_sprites, const float radius, const bool nurse,
         rg::mixer::Sound *notice_sound)
     : Entity(pos, frames, facing_direction), character_data(char_data), nurse(nurse),
-      player(player), create_dialog(create_dialog), collision_sprites(collision_sprites),
+      player(player), create_dialog(create_dialog),
       radius(radius), notice_sound(notice_sound)
 {
     for (const auto *sprite: collision_sprites->Sprites())
