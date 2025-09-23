@@ -82,10 +82,9 @@ DialogSprite::DialogSprite(
 }
 
 DialogSprite::DialogSprite(DialogSprite &&other) noexcept
-    : Sprite(std::move(other))
+    : DialogSprite()
 {
-    // DialogSprite creates its own image in constructor
-    other.image = nullptr;
+    *this = std::move(other);
 }
 
 DialogSprite &DialogSprite::operator=(DialogSprite &&other) noexcept
@@ -112,10 +111,9 @@ TransitionSprite::TransitionSprite(
 }
 
 TransitionSprite::TransitionSprite(TransitionSprite &&other) noexcept
-    : Sprite(std::move(other)), target(std::move(other.target))
+    : TransitionSprite()
 {
-    // TransitionSprite creates its own image in constructor
-    other.image = nullptr;
+    *this = std::move(other);
 }
 
 TransitionSprite &TransitionSprite::operator=(TransitionSprite &&other) noexcept
@@ -173,23 +171,9 @@ MonsterSprite::MonsterSprite(
 }
 
 MonsterSprite::MonsterSprite(MonsterSprite &&other) noexcept
-    : Sprite(std::move(other)), monster(other.monster), state(other.state),
-      highlight_mask(std::move(other.highlight_mask)), frame_index(other.frame_index),
-      index(other.index), pos_index(other.pos_index), entity(other.entity),
-      apply_attack(other.apply_attack), createMonster(other.createMonster),
-      frames(other.frames), animation_speed(other.animation_speed), highlight(other.highlight),
-      timers(other.timers), target_sprite(other.target_sprite),
-      current_attack(other.current_attack), newMonster(other.newMonster), newIndex(other.newIndex),
-      newPosIndex(other.newPosIndex), newSide(other.newSide)
+    : MonsterSprite()
 {
-    timers["remove_highlight"].func = [this]()
-    {
-        SetHighlight(false);
-    };
-    timers["kill"].func = [this]()
-    {
-        Destroy();
-    };
+    *this = std::move(other);
 }
 
 MonsterSprite &MonsterSprite::operator=(MonsterSprite &&other) noexcept
@@ -324,11 +308,9 @@ MonsterNameSprite::MonsterNameSprite(
 }
 
 MonsterNameSprite::MonsterNameSprite(MonsterNameSprite &&other) noexcept
-    : Sprite(std::move(other)), monster_sprite(other.monster_sprite)
+    : MonsterNameSprite()
 {
-    // MonsterNameSprite creates its own image in constructor
-    other.image = nullptr;
-    other.monster_sprite = nullptr;
+    *this = std::move(other);
 }
 
 MonsterNameSprite &MonsterNameSprite::operator=(MonsterNameSprite &&other) noexcept
@@ -377,13 +359,9 @@ MonsterLevelSprite::MonsterLevelSprite(
 }
 
 MonsterLevelSprite::MonsterLevelSprite(MonsterLevelSprite &&other) noexcept
-    : Sprite(std::move(other)), monster_sprite(other.monster_sprite), font(other.font),
-      xp_rect(other.xp_rect)
+    : MonsterLevelSprite()
 {
-    // MonsterLevelSprite creates its own image in constructor
-    other.image = nullptr;
-    other.monster_sprite = nullptr;
-    other.font = nullptr;
+    *this = std::move(other);
 }
 
 MonsterLevelSprite &MonsterLevelSprite::operator=(MonsterLevelSprite &&other) noexcept
@@ -437,12 +415,9 @@ MonsterStatsSprite::MonsterStatsSprite(
 }
 
 MonsterStatsSprite::MonsterStatsSprite(MonsterStatsSprite &&other) noexcept
-    : Sprite(std::move(other)), monster_sprite(other.monster_sprite), font(other.font)
+    : MonsterStatsSprite()
 {
-    // MonsterStatsSprite creates its own image in constructor
-    other.image = nullptr;
-    other.monster_sprite = nullptr;
-    other.font = nullptr;
+    *this = std::move(other);
 }
 
 MonsterStatsSprite &MonsterStatsSprite::operator=(MonsterStatsSprite &&other) noexcept

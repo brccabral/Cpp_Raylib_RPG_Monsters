@@ -80,6 +80,7 @@ class TransitionSprite : public Sprite
 {
 public:
 
+    TransitionSprite() = default;
     TransitionSprite(
             rg::math::Vector2 pos, rg::math::Vector2 size,
             std::pair<std::string, std::string> target);
@@ -89,7 +90,7 @@ public:
     TransitionSprite &operator=(TransitionSprite &&other) noexcept;
     ~TransitionSprite() override;
 
-    std::pair<std::string, std::string> target;
+    std::pair<std::string, std::string> target{};
 };
 
 // battle sprites
