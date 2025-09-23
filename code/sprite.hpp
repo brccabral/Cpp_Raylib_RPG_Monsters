@@ -257,6 +257,11 @@ public:
 
     TimedSprite() = default;
     TimedSprite(rg::math::Vector2 pos, rg::Surface *surf, float duration);
+    TimedSprite(const TimedSprite &other) = delete;
+    TimedSprite &operator=(const TimedSprite &other) = delete;
+    TimedSprite(TimedSprite &&other) noexcept;
+    TimedSprite &operator=(TimedSprite &&other) noexcept;
+
     void Update(float deltaTime) override;
 
     rg::Timer death_timer;

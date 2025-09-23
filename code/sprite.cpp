@@ -537,6 +537,26 @@ TimedSprite::TimedSprite(
             });
 }
 
+TimedSprite::TimedSprite(TimedSprite &&other) noexcept
+    : TimedSprite()
+{
+    *this = std::move(other);
+}
+
+TimedSprite &TimedSprite::operator=(TimedSprite &&other) noexcept
+{
+    if (this != &other)
+    {
+        Sprite::operator=(std::move(other));
+        death_timer = other.death_timer;
+        death_timer.func = [this]
+        {
+            Kill();
+        };
+    }
+    return *this;
+}
+
 void TimedSprite::Update(float deltaTime)
 {
     death_timer.Update();
