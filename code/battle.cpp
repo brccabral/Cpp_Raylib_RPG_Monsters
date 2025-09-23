@@ -67,6 +67,7 @@ Battle &Battle::operator=(Battle &&other) noexcept
         selection_side = other.selection_side;
         indexes = other.indexes;
         available_monsters = other.available_monsters;
+        opponent_extra_monsters = other.opponent_extra_monsters;
         selected_attack = other.selected_attack;
         attack_frames = other.attack_frames;
         timers = std::move(other.timers);

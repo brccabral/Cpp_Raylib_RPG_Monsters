@@ -214,12 +214,12 @@ MonsterSprite &MonsterSprite::operator=(MonsterSprite &&other) noexcept
 
 void MonsterSprite::Update(const float deltaTime)
 {
+    monster->Update(deltaTime);
     for (auto &[key, timer]: timers)
     {
         timer.Update();
     }
     Animate(deltaTime);
-    monster->Update(deltaTime);
 }
 
 // blink monster with a white mask
@@ -387,6 +387,12 @@ MonsterLevelSprite::~MonsterLevelSprite()
 
 void MonsterLevelSprite::Update(float deltaTime)
 {
+    if (monster_sprite->Groups().empty())
+    {
+        Kill();
+        return;
+    }
+
     image->Fill(COLORS["white"]);
 
     const auto text_surf = font->render(
@@ -397,11 +403,6 @@ void MonsterLevelSprite::Update(float deltaTime)
     rg::draw::bar(
             image, xp_rect, monster_sprite->monster->xp, monster_sprite->monster->level_up,
             COLORS["black"], COLORS["white"]);
-
-    if (monster_sprite->Groups().empty())
-    {
-        Kill();
-    }
 }
 
 MonsterStatsSprite::MonsterStatsSprite(
@@ -441,6 +442,12 @@ MonsterStatsSprite::~MonsterStatsSprite()
 
 void MonsterStatsSprite::Update(float deltaTime)
 {
+    if (monster_sprite->Groups().empty())
+    {
+        Kill();
+        return;
+    }
+
     image->Fill(COLORS["white"]);
 
     const auto info = monster_sprite->monster->GetInfo();
@@ -467,11 +474,6 @@ void MonsterStatsSprite::Update(float deltaTime)
             rg::draw::bar(image, init_rect, value, max_value, color, COLORS["white"]);
         }
     }
-
-    if (monster_sprite->Groups().empty())
-    {
-        Kill();
-    }
 }
 
 MonsterOutlineSprite::MonsterOutlineSprite(
@@ -489,15 +491,16 @@ MonsterOutlineSprite::MonsterOutlineSprite(
 
 void MonsterOutlineSprite::Update(float deltaTime)
 {
+    if (monster_sprite->Groups().empty())
+    {
+        Kill();
+        return;
+    }
+
     image = &(*frames)[monster_sprite->state];
     dynamic_cast<rg::Frames *>(image)->SetAtlas(int(this->monster_sprite->frame_index));
     rect = dynamic_cast<rg::Frames *>(image)->GetRect().center(
             this->monster_sprite->rect.center());
-
-    if (monster_sprite->Groups().empty())
-    {
-        Kill();
-    }
 }
 
 AttackSprite::AttackSprite(
