@@ -6,7 +6,8 @@ Evolution::Evolution(
         monster_frames,
         const std::string &start_monster, const std::string &end_monster,
         const rg::font::Font *font, const std::function<void()> &endEvolution,
-        const std::vector<rg::Surface> &star_animation_surfs)
+        const std::vector<rg::Surface> *star_animation_surfs)
+    : star_surfs(star_animation_surfs)
 {
     auto start2x = rg::transform::Scale2x(&monster_frames[start_monster][ANIMATIONSTATE_IDLE]);
     start_monster_surf = rg::Frames(&start2x, 2, 4);
@@ -33,23 +34,11 @@ Evolution::Evolution(
     end_text_surf = font->render(
             rl::TextFormat("%s evolved into %s", start_monster.c_str(), end_monster.c_str()),
             COLORS["black"]);
-
-    // star animation
-    // ! these Scale hangs the game, we scale in Game.ImportAssets()
-    for (auto &star_surf: star_animation_surfs)
-    {
-        // star_surfs.push_back(rg::transform::Scale2x(star_surf));
-        star_surfs.push_back(&star_surf);
-    }
 }
 
 void Evolution::Update(const float dt)
 {
     display_surface->Blit(&tint_surf, rg::math::Vector2{});
-    if (!IsActive())
-    {
-        timers["start"].Activate();
-    }
     if (timers["start"].active)
     {
         if (tint_amount < 255)
@@ -102,13 +91,18 @@ bool Evolution::IsActive()
     return timers["start"].active || timers["end"].active;
 }
 
+void Evolution::Activate()
+{
+    timers["start"].Activate();
+}
+
 void Evolution::DisplayStars(const float dt)
 {
     frame_index += 20 * dt;
-    if (frame_index < (float) star_surfs.size())
+    if (frame_index < (float) star_surfs->size())
     {
-        const auto frame = star_surfs[int(frame_index)];
-        const auto rect = frame->GetRect().center({WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
-        display_surface->Blit(frame, rect);
+        auto &frame = (*star_surfs)[int(frame_index)];
+        const auto rect = frame.GetRect().center({WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
+        display_surface->Blit(&frame, rect);
     }
 }

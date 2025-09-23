@@ -579,7 +579,8 @@ void Game::CheckEvolution()
                         [this]
                         {
                             EndEvolution();
-                        }, star_animation_surfs);
+                        }, &star_animation_surfs);
+                evolution.Activate();
                 player_monsters[index] =
                         Monster(monster.evolution.first, monster.level);
                 break; // run the first evolution. When it is done we check if there are more
