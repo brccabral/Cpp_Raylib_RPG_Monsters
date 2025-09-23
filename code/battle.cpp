@@ -165,10 +165,13 @@ void Battle::Update(const float dt)
 
 void Battle::Setup()
 {
+    battle_sprites.reserve(6 * 10);
+    player_sprites.reserve(6 * 10);
+    opponent_sprites.reserve(6 * 10);
     monsters_paused = false;
-    battle_monster.resize(6);
-    timed_sprites_.resize(6);
-    attack_sprites_.resize(6);
+    battle_monster.resize(6 * 10);
+    timed_sprites_.resize(6 * 10);
+    attack_sprites_.resize(6 * 10);
     std::vector<int> added_opponents;
     for (auto &[index, monster]: *player_monsters)
     {
@@ -185,20 +188,15 @@ void Battle::Setup()
             added_opponents.push_back(index);
         }
     }
-    // remove from `monster_data` opponents monsters that were created as this will serve
-    // as container to add new monsters in battle after a defeat
-    // for (auto it = opponent_monsters->begin(); it != opponent_monsters->end();)
-    // {
-    //     if (std::find(added_opponents.begin(), added_opponents.end(), it->first) !=
-    //         added_opponents.end())
-    //     {
-    //         it = opponent_monsters->erase(it);
-    //     }
-    //     else
-    //     {
-    //         ++it;
-    //     }
-    // }
+    // save extra monsters
+    for (auto &[index, monster]: *opponent_monsters)
+    {
+        if (std::find(added_opponents.begin(), added_opponents.end(), index) == added_opponents.
+            end())
+        {
+            opponent_extra_monsters[index] = &monster;
+        }
+    }
 }
 
 void Battle::CreateMonster(
@@ -442,10 +440,16 @@ void Battle::Input()
                         0.9f) // TODO 0.9f is for testing, lower it
                     {
                         // catching monster
-                        monster_sprite->entity = PLAYER;
                         // when deleting, set to PLAYER to not delete `Monster *`
-                        (*player_monsters)[player_monsters->size()] = std::move(
-                                *monster_sprite->monster);
+                        monster_sprite->entity = PLAYER;
+                        const auto it = std::find_if(
+                                opponent_monsters->begin(), opponent_monsters->end(),
+                                [monster_sprite](auto const &kv)
+                                {
+                                    return &kv.second == monster_sprite->monster;
+                                });
+                        (*player_monsters)[player_monsters->size()] = std::move(it->second);
+                        opponent_monsters->erase(it);
                         monster_sprite->DelayedKill(
                                 nullptr, 0, 0,
                                 OPPONENT); // kills the MonsterSprite*, not the Monster*
@@ -612,7 +616,7 @@ void Battle::CheckDeathGroup(const rg::sprite::Group *group, const SelectionSide
                     std::pair<const int, Monster *> pair_monster = {i, &monster};
                     if (monster.health > 0 &&
                         std::find(
-                                available_monsters_option.begin(), active_monsters.end(),
+                                active_monsters.begin(), active_monsters.end(),
                                 pair_monster) ==
                         active_monsters.end())
                     {
@@ -632,12 +636,12 @@ void Battle::CheckDeathGroup(const rg::sprite::Group *group, const SelectionSide
             else
             {
                 // check if opponent has more monsters
-                if (!opponent_monsters->empty())
+                if (!opponent_extra_monsters.empty())
                 {
-                    newMonster = &opponent_monsters->begin()->second;
+                    newMonster = opponent_extra_monsters.begin()->second;
                     newIndex = monster_sprite->index;
                     newPosIndex = monster_sprite->pos_index;
-                    opponent_monsters->erase(opponent_monsters->begin());
+                    opponent_extra_monsters.erase(opponent_extra_monsters.begin());
                 }
                 else
                 {

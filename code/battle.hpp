@@ -63,7 +63,9 @@ private:
     void OpponentAttack() const;
 
     rg::Surface *display_surface = &rg::display::GetSurface();
+    // all player's monsters
     std::map<int, Monster> *player_monsters{};
+    // all opponents's monsters
     std::map<int, Monster> *opponent_monsters{};
     std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> *monster_frames
             {};
@@ -75,7 +77,9 @@ private:
     std::unordered_map<std::string, rg::font::Font> *fonts{};
 
     BattleSprites battle_sprites{};
+    // player monsters in battle
     rg::sprite::Group player_sprites{};
+    // opponents monsters in battle
     rg::sprite::Group opponent_sprites{};
 
     struct BattleMonster
@@ -97,7 +101,10 @@ private:
     SelectionSide selection_side{};
     std::unordered_map<SelectionMode, int> indexes{};
 
+    // player extra monsters
     std::map<int, Monster *> available_monsters{};
+    // opponent extra monsters
+    std::map<int, Monster *> opponent_extra_monsters{};
     Attack selected_attack = ATTACK_NONE;
     std::unordered_map<AttackAnimation, rg::Frames> *attack_frames{};
     std::unordered_map<std::string, rg::Timer> timers{};

@@ -382,6 +382,8 @@ MonsterLevelSprite::MonsterLevelSprite(MonsterLevelSprite &&other) noexcept
 {
     // MonsterLevelSprite creates its own image in constructor
     other.image = nullptr;
+    other.monster_sprite = nullptr;
+    other.font = nullptr;
 }
 
 MonsterLevelSprite &MonsterLevelSprite::operator=(MonsterLevelSprite &&other) noexcept

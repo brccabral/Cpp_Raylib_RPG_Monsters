@@ -12,8 +12,7 @@ DialogTree::DialogTree(
     dialog_num = dialog.size();
 
     current_dialog = DialogSprite(dialog[dialog_index], character, font);
-    auto g = rg::sprite::Group();
-    current_dialog.add(&g);
+    current_dialog.add(all_sprites);
 }
 
 void DialogTree::Update()
