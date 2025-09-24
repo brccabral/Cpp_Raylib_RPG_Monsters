@@ -1,6 +1,5 @@
 build*/
 cmake-build-*/
-resources/
 
 .idea/
 .vscode/
