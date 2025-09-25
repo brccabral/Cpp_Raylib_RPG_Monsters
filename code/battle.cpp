@@ -145,8 +145,7 @@ void Battle::Setup()
     // save extra monsters
     for (auto &[index, monster]: *opponent_monsters)
     {
-        if (std::find(added_opponents.begin(), added_opponents.end(), index) == added_opponents.
-            end())
+        if (std::ranges::find(added_opponents, index) == added_opponents.end())
         {
             opponent_extra_monsters[index] = &monster;
         }
@@ -154,7 +153,7 @@ void Battle::Setup()
 }
 
 void Battle::CreateMonster(
-        Monster *monster, int index, int pos_index, SelectionSide entity)
+        Monster *monster, const int index, const int pos_index, const SelectionSide entity)
 {
     auto &frames = (*monster_frames)[monster->name];
     auto &outlines = (*outline_frames)[monster->name];
@@ -371,8 +370,8 @@ void Battle::Input()
                 // when a monster gets defeated, the group may change, but the "pos_index" won't
                 // create a list ordered by "pos_index"
                 auto ordered_pos = sprite_group->Sprites(); // force a copy
-                std::sort(
-                        ordered_pos.begin(), ordered_pos.end(),
+                std::ranges::sort(
+                        ordered_pos,
                         [](const auto &a, const auto &b)
                         {
                             return dynamic_cast<MonsterSprite *>(a)->pos_index <
@@ -396,8 +395,8 @@ void Battle::Input()
                         // catching monster
                         // when deleting, set to PLAYER to not delete `Monster *`
                         monster_sprite->entity = PLAYER;
-                        const auto it = std::find_if(
-                                opponent_monsters->begin(), opponent_monsters->end(),
+                        const auto it = std::ranges::find_if(
+                                *opponent_monsters,
                                 [monster_sprite](auto const &kv)
                                 {
                                     return &kv.second == monster_sprite->monster;
@@ -569,10 +568,8 @@ void Battle::CheckDeathGroup(const rg::sprite::Group *group, const SelectionSide
                 {
                     std::pair<const int, Monster *> pair_monster = {i, &monster};
                     if (monster.health > 0 &&
-                        std::find(
-                                active_monsters.begin(), active_monsters.end(),
-                                pair_monster) ==
-                        active_monsters.end())
+                        std::ranges::find(active_monsters, pair_monster) == active_monsters.end()
+                    )
                     {
                         available_monsters_option.emplace_back(i, &monster);
                         break;
@@ -625,7 +622,7 @@ void Battle::CheckEndBattle()
     if (opponent_sprites.Sprites().empty() && !battle_over)
     {
         battle_over = true;
-        for (auto &[i, monster]: *player_monsters)
+        for (auto &monster: *player_monsters | std::views::values)
         {
             monster.initiative = 0;
         }
@@ -660,19 +657,19 @@ void Battle::DrawUi()
 void Battle::DrawGeneral()
 {
     int index = 0;
-    for (auto &[option, battle_choice]: BATTLE_CHOICES["full"])
+    for (auto &[pos, icon]: BATTLE_CHOICES["full"] | std::views::values)
     {
         rg::Surface *surf;
         if (index == indexes[SELECTMODE_GENERAL])
         {
-            surf = &(*ui_icons)[battle_choice.icon + "_highlight"];
+            surf = &(*ui_icons)[icon + "_highlight"];
         }
         else
         {
-            surf = &(*ui_icons)[battle_choice.icon + "_gray"];
+            surf = &(*ui_icons)[icon + "_gray"];
         }
         const auto rect =
-                surf->GetRect().center(current_monster->rect.midright() + battle_choice.pos);
+                surf->GetRect().center(current_monster->rect.midright() + pos);
         display_surface->Blit(surf, rect);
         ++index;
     }
@@ -792,15 +789,15 @@ void Battle::DrawSwitch()
     {
         auto find_pair = std::make_pair(index, &monster);
         if (monster.health > 0 &&
-            std::find(active_monsters.begin(), active_monsters.end(), find_pair) ==
-            active_monsters.end())
+            std::ranges::find(active_monsters, find_pair) == active_monsters.end()
+        )
         {
             available_monsters[index] = &monster;
         }
     }
 
     int index = 0;
-    for (auto &[i, monster]: available_monsters)
+    for (auto &monster: available_monsters | std::views::values)
     {
         const bool selected = index == indexes[SELECTMODE_SWITCH];
         auto item_bg_rect = rg::Rect{0, 0, width, item_height}.midleft(
@@ -859,7 +856,7 @@ void Battle::DrawSwitch()
 
 void Battle::UpdateTimers()
 {
-    for (auto &[key, timer]: timers)
+    for (auto &timer: timers | std::views::values)
     {
         timer.Update();
     }
