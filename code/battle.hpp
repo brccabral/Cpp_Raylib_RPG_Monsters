@@ -61,6 +61,7 @@ private:
 
     void UpdateTimers();
     void OpponentAttack() const;
+    void SetAttack(const rg::sprite::Group *group, Attack ability) const;
 
     rg::Surface *display_surface = &rg::display::GetSurface();
     // all player's monsters

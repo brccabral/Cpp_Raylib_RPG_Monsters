@@ -883,21 +883,25 @@ void Battle::OpponentAttack() const
     const auto side = ATTACK_DATA[ability].target;
     // side of the attack = PLAYER - attack same team (healing/defense) | OPPONENT - attack the
     // other team
-    const std::vector<rg::sprite::Sprite *> *sprites;
     if (side == PLAYER)
     {
-        sprites = &opponent_sprites.Sprites();
+        SetAttack(&opponent_sprites, ability);
     }
     else
     {
-        sprites = &player_sprites.Sprites();
+        SetAttack(&player_sprites, ability);
     }
+}
 
-    if (!sprites->empty())
+void Battle::SetAttack(const rg::sprite::Group *group, const Attack ability) const
+{
+    const auto sprites = group->Sprites();
+
+    if (!sprites.empty())
     {
-        const auto random_target_index = rl::GetRandomValue(0, sprites->size() - 1);
-        const auto random_target =
-                dynamic_cast<MonsterSprite *>((*sprites)[random_target_index]);
+        const auto random_target_index = rl::GetRandomValue(0, sprites.size() - 1);
+        auto *sprite = sprites[random_target_index];
+        const auto random_target = dynamic_cast<MonsterSprite *>(sprite);
         current_monster->ActivateAttack(random_target, ability);
     }
 }
