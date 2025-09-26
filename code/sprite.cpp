@@ -92,19 +92,18 @@ DialogSprite &DialogSprite::operator=(DialogSprite &&other) noexcept
     if (this != &other)
     {
         Sprite::operator=(std::move(other));
-        // DialogSprite creates its own image in constructor
-        other.image = nullptr;
     }
     return *this;
 }
 
 DialogSprite::~DialogSprite()
 {
+    // DialogSprite creates its own image in constructor
     delete image;
 }
 
 TransitionSprite::TransitionSprite(
-        const rg::math::Vector2 pos, rg::math::Vector2 size,
+        const rg::math::Vector2 pos, const rg::math::Vector2 size,
         std::pair<std::string, std::string> target)
     : Sprite(pos, new rg::Surface(size)), target(std::move(target))
 {
@@ -120,16 +119,15 @@ TransitionSprite &TransitionSprite::operator=(TransitionSprite &&other) noexcept
 {
     if (this != &other)
     {
-        Sprite::operator=(std::move(other));
         target = std::move(other.target);
-        // TransitionSprite creates its own image in constructor
-        other.image = nullptr;
+        Sprite::operator=(std::move(other));
     }
     return *this;
 }
 
 TransitionSprite::~TransitionSprite()
 {
+    // TransitionSprite creates its own image in constructor
     delete image;
 }
 
@@ -180,7 +178,6 @@ MonsterSprite &MonsterSprite::operator=(MonsterSprite &&other) noexcept
 {
     if (this != &other)
     {
-        Sprite::operator=(std::move(other));
         monster = other.monster;
         state = other.state;
         highlight_mask = std::move(other.highlight_mask);
@@ -199,6 +196,7 @@ MonsterSprite &MonsterSprite::operator=(MonsterSprite &&other) noexcept
         newPosIndex = other.newPosIndex;
         newSide = other.newSide;
         createMonster = other.createMonster;
+        Sprite::operator=(std::move(other));
 
         timers["remove_highlight"].func = [this]()
         {
@@ -215,7 +213,7 @@ MonsterSprite &MonsterSprite::operator=(MonsterSprite &&other) noexcept
 void MonsterSprite::Update(const float deltaTime)
 {
     monster->Update(deltaTime);
-    for (auto &[key, timer]: timers)
+    for (auto &timer: timers | std::views::values)
     {
         timer.Update();
     }
@@ -317,17 +315,16 @@ MonsterNameSprite &MonsterNameSprite::operator=(MonsterNameSprite &&other) noexc
 {
     if (this != &other)
     {
-        Sprite::operator=(std::move(other));
         monster_sprite = other.monster_sprite;
-        // MonsterNameSprite creates its own image in constructor
-        other.image = nullptr;
         other.monster_sprite = nullptr;
+        Sprite::operator=(std::move(other));
     }
     return *this;
 }
 
 MonsterNameSprite::~MonsterNameSprite()
 {
+    // MonsterNameSprite creates its own image in constructor
     delete image;
 }
 
@@ -340,7 +337,7 @@ void MonsterNameSprite::Update(float deltaTime)
 }
 
 MonsterLevelSprite::MonsterLevelSprite(
-        SelectionSide entity, const rg::math::Vector2 anchor,
+        const SelectionSide entity, const rg::math::Vector2 anchor,
         MonsterSprite *monster_sprite,
         const rg::font::Font *font)
     : monster_sprite(monster_sprite), font(font)
@@ -368,20 +365,19 @@ MonsterLevelSprite &MonsterLevelSprite::operator=(MonsterLevelSprite &&other) no
 {
     if (this != &other)
     {
-        Sprite::operator=(std::move(other));
         monster_sprite = other.monster_sprite;
         font = other.font;
         xp_rect = other.xp_rect;
-        // MonsterLevelSprite creates its own image in constructor
-        other.image = nullptr;
         other.monster_sprite = nullptr;
         other.font = nullptr;
+        Sprite::operator=(std::move(other));
     }
     return *this;
 }
 
 MonsterLevelSprite::~MonsterLevelSprite()
 {
+    // MonsterLevelSprite creates its own image in constructor
     delete image;
 }
 
@@ -425,18 +421,18 @@ MonsterStatsSprite &MonsterStatsSprite::operator=(MonsterStatsSprite &&other) no
 {
     if (this != &other)
     {
-        Sprite::operator=(std::move(other));
         monster_sprite = other.monster_sprite;
         font = other.font;
-        other.image = nullptr;
         other.monster_sprite = nullptr;
         other.font = nullptr;
+        Sprite::operator=(std::move(other));
     }
     return *this;
 }
 
 MonsterStatsSprite::~MonsterStatsSprite()
 {
+    // MonsterStatsSprite creates its own image in constructor
     delete image;
 }
 
@@ -547,8 +543,9 @@ TimedSprite &TimedSprite::operator=(TimedSprite &&other) noexcept
 {
     if (this != &other)
     {
-        Sprite::operator=(std::move(other));
         death_timer = other.death_timer;
+        Sprite::operator=(std::move(other));
+
         death_timer.func = [this]
         {
             Kill();

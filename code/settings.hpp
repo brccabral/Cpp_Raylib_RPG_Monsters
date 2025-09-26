@@ -7,6 +7,36 @@ constexpr int WINDOW_HEIGHT = 720;
 constexpr int TILE_SIZE = 64;
 constexpr float ANIMATION_SPEED = 6;
 
+enum SelectionMode
+{
+    SELECTMODE_NONE = 0,
+    SELECTMODE_GENERAL,
+    SELECTMODE_MONSTER,
+    SELECTMODE_ATTACKS,
+    SELECTMODE_SWITCH,
+    SELECTMODE_TARGET,
+};
+
+typedef struct BattleChoice
+{
+    rg::math::Vector2 pos;
+    std::string icon;
+} BattleChoice;
+
+enum AnimationState
+{
+    ANIMATIONSTATE_IDLE = 0,
+    ANIMATIONSTATE_ATTACK,
+};
+
+enum TINT_MODE
+{
+    UNTINT = 0,
+    TINT
+};
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
 inline rg::InsertOrderMap<std::string, int> WORLD_LAYERS = {
         {"water", 0}, //
         {"bg", 1}, //
@@ -60,22 +90,6 @@ inline std::map<std::string, int> BATTLE_LAYERS = {
         {"overlay", 4}, //
 };
 
-enum SelectionMode
-{
-    SELECTMODE_NONE = 0,
-    SELECTMODE_GENERAL,
-    SELECTMODE_MONSTER,
-    SELECTMODE_ATTACKS,
-    SELECTMODE_SWITCH,
-    SELECTMODE_TARGET,
-};
-
-typedef struct BattleChoice
-{
-    rg::math::Vector2 pos;
-    std::string icon;
-} BattleChoice;
-
 inline std::map<std::string, std::vector<std::pair<std::string, BattleChoice>>> BATTLE_CHOICES{
         // numbers adjusted from tutorial
         {
@@ -98,15 +112,4 @@ inline std::map<std::string, std::vector<std::pair<std::string, BattleChoice>>> 
                 }, //
         }, //
 };
-
-enum AnimationState
-{
-    ANIMATIONSTATE_IDLE = 0,
-    ANIMATIONSTATE_ATTACK,
-};
-
-enum TINT_MODE
-{
-    UNTINT = 0,
-    TINT
-};
+#pragma clang diagnostic pop

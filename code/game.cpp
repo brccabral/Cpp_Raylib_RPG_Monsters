@@ -347,7 +347,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
 
 void Game::UnloadResources()
 {
-    for (auto &[key, tmx_map]: tmx_maps)
+    for (auto *tmx_map: tmx_maps | std::views::values)
     {
         UnloadTMX(tmx_map);
     }
@@ -402,7 +402,7 @@ void Game::EndDialog(Character *character)
     dialog_tree.active = false;
     if (character->nurse)
     {
-        for (auto &[i, monster]: player_monsters)
+        for (auto &monster: player_monsters | std::views::values)
         {
             monster.health = monster.GetStat("max_health");
             monster.energy = monster.GetStat("max_energy");

@@ -10,7 +10,7 @@ public:
 
     AllSprites();
     void Draw(rg::Surface *surface) override;
-    void Draw(Player *player);
+    void Draw(const Player *player);
 
 private:
 
@@ -19,6 +19,11 @@ private:
 
     rg::Surface shadow_surf;
     rg::Surface notice_surf;
+
+    std::vector<rg::sprite::Sprite *> bg_sprites;
+    std::vector<rg::sprite::Sprite *> main_sprites;
+    std::vector<rg::sprite::Sprite *> top_sprites;
+
 };
 
 class BattleSprites : public rg::sprite::Group
@@ -33,8 +38,8 @@ public:
 
     void Draw(
             const MonsterSprite *current_monster_sprite, SelectionSide side,
-            SelectionMode mode, int target_index, const Group *player_sprites,
-            const Group *opponent_sprites);
+            SelectionMode mode, int target_index, Group *player_sprites,
+            Group *opponent_sprites);
 
 private:
 

@@ -200,7 +200,7 @@ Character::Character(
         const std::string &facing_direction, CharacterData *char_data,
         Player *player,
         const std::function<void(Character *character)> &create_dialog,
-        const rg::sprite::Group *collision_sprites, const float radius, const bool nurse,
+        rg::sprite::Group *collision_sprites, const float radius, const bool nurse,
         rg::mixer::Sound *notice_sound)
     : Entity(pos, frames, facing_direction), character_data(char_data), nurse(nurse),
       player(player), create_dialog(create_dialog),
@@ -269,7 +269,7 @@ Character &Character::operator=(Character &&other) noexcept
 
 void Character::Update(const float deltaTime)
 {
-    for (auto &[key, timer]: timers)
+    for (auto &timer: timers | std::views::values)
     {
         timer.Update();
     }
@@ -310,7 +310,7 @@ bool Character::HasLineOfSight() const
 {
     if (rect.center().distance_to(player->rect.center()) < radius)
     {
-        for (auto collision_rect: collision_rects)
+        for (auto &collision_rect: collision_rects)
         {
             if (collision_rect.clipline(rect.center(), player->rect.center()))
             {

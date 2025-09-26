@@ -80,7 +80,7 @@ void Evolution::Update(const float dt)
     }
     // update timers after display because "end" destroys ~Evolution() and
     // we loose all pointers
-    for (auto &[key, timer]: timers)
+    for (auto &timer: timers | std::views::values)
     {
         timer.Update();
     }

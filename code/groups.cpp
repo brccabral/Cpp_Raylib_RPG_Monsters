@@ -14,20 +14,17 @@ void AllSprites::Draw(rg::Surface *surface)
     Group::Draw(surface);
 }
 
-void AllSprites::Draw(Player *player)
+void AllSprites::Draw(const Player *player)
 {
     offset = player->rect.center() - rg::math::Vector2{WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f};
     offset *= -1.0f;
 
     const auto &current_sprites = Sprites();
 
-    static std::vector<rg::sprite::Sprite *> bg_sprites;
     bg_sprites.clear();
     bg_sprites.reserve(current_sprites.size());
-    static std::vector<rg::sprite::Sprite *> main_sprites;
     main_sprites.clear();
     main_sprites.reserve(current_sprites.size());
-    static std::vector<rg::sprite::Sprite *> top_sprites;
     top_sprites.clear();
     top_sprites.reserve(current_sprites.size());
 
@@ -49,8 +46,8 @@ void AllSprites::Draw(Player *player)
     }
 
     // sort main sprites based on `y_sort`
-    std::sort(
-            main_sprites.begin(), main_sprites.end(),
+    std::ranges::sort(
+            main_sprites,
             [](rg::sprite::Sprite *l, rg::sprite::Sprite *r)
             {
                 float yl;
@@ -84,11 +81,11 @@ void AllSprites::Draw(Player *player)
                 return yl < yr;
             });
 
-    for (const auto &sprite: bg_sprites)
+    for (const auto *sprite: bg_sprites)
     {
         display_surface->Blit(sprite->image, sprite->rect.topleft() + offset);
     }
-    for (const auto &sprite: main_sprites)
+    for (auto *sprite: main_sprites)
     {
         // show shadow below entities
         if (const auto entity = dynamic_cast<Entity *>(sprite))
@@ -117,19 +114,19 @@ void AllSprites::Draw(Player *player)
 
 void BattleSprites::Draw(
         const MonsterSprite *current_monster_sprite, const SelectionSide side,
-        const SelectionMode mode, int target_index, const Group *player_sprites,
-        const Group *opponent_sprites)
+        const SelectionMode mode, int target_index, Group *player_sprites,
+        Group *opponent_sprites)
 {
     // get available positions
     auto *sprite_group = side == OPPONENT ? opponent_sprites : player_sprites;
-    MonsterSprite *monster_sprite = nullptr;
+    const MonsterSprite *monster_sprite = nullptr;
     // when a monster gets defeated, the group may change, but the "pos_index" won't
     // create a list ordered by "pos_index"
     auto ordered_pos = sprite_group->Sprites(); // force a copy
     if (!ordered_pos.empty())
     {
-        std::sort(
-                ordered_pos.begin(), ordered_pos.end(),
+        std::ranges::sort(
+                ordered_pos,
                 [](const auto &a, const auto &b)
                 {
                     return dynamic_cast<MonsterSprite *>(a)->pos_index <
@@ -140,8 +137,8 @@ void BattleSprites::Draw(
     }
 
     auto sprites_ = Sprites(); // force a copy
-    std::sort(
-            sprites_.begin(), sprites_.end(),
+    std::ranges::sort(
+            sprites_,
             [](const rg::sprite::Sprite *l, const rg::sprite::Sprite *r)
             {
                 return l->z < r->z;
@@ -153,7 +150,8 @@ void BattleSprites::Draw(
             const auto outline_sprite = dynamic_cast<MonsterOutlineSprite *>(sprite);
             if ((outline_sprite->monster_sprite == current_monster_sprite &&
                  !(mode == SELECTMODE_TARGET && side == PLAYER)) ||
-                (outline_sprite->monster_sprite == monster_sprite && mode == SELECTMODE_TARGET &&
+                (monster_sprite && outline_sprite->monster_sprite == monster_sprite && mode ==
+                 SELECTMODE_TARGET &&
                  side == monster_sprite->entity))
             {
                 display_surface->Blit(outline_sprite->image, outline_sprite->rect);

@@ -32,8 +32,8 @@ CoastImporter(const char *file, const int rows, const int cols)
             result[terrain][key] = rg::Frames(width * 4, height, 1, 4);
             for (int row = 0; row < rows; row += 3)
             {
-                const auto x = (pos.x + index * 3);
-                const auto y = (pos.y + row);
+                const auto x = pos.x + index * 3;
+                const auto y = pos.y + row;
                 result[terrain][key].Blit(
                         frame, {row / 3.0f * width, 0},
                         {(float) x * width, (float) y * height, (float) width, (float) height});
@@ -96,7 +96,7 @@ bool CheckConnections(
              std::abs(relation.x) < tolerance))
         {
             return true;
-        };
+        }
     }
     return false;
 }

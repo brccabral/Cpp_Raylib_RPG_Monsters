@@ -26,6 +26,67 @@ struct CharacterData
     int radius;
 };
 
+enum Attack
+{
+    ATTACK_NONE = 0,
+    ATTACK_BURN,
+    ATTACK_HEAL,
+    ATTACK_BATTLECRY,
+    ATTACK_SPARK,
+    ATTACK_SCRATCH,
+    ATTACK_SPLASH,
+    ATTACK_FIRE,
+    ATTACK_EXPLOSTION,
+    ATTACK_ANNIHILATE,
+    ATTACK_ICE
+};
+
+enum AttackAnimation
+{
+    ATTACKANIMATION_FIRE = 0,
+    ATTACKANIMATION_GREEN,
+    ATTACKANIMATION_SCRATCH,
+    ATTACKANIMATION_SPLASH,
+    ATTACKANIMATION_EXPLOSION,
+    ATTACKANIMATION_ICE
+};
+
+enum ElementType
+{
+    ELEMENT_FIRE = 0,
+    ELEMENT_PLANT,
+    ELEMENT_WATER,
+    ELEMENT_NORMAL
+};
+
+struct MonsterData
+{
+    std::string name;
+    ElementType element;
+    std::map<std::string, float> stats;
+    std::vector<std::pair<int, Attack>> abilities;
+    std::pair<std::string, int> evolve;
+};
+
+enum SelectionSide
+{
+    PLAYER = 0,
+    OPPONENT
+};
+
+struct AttackData
+{
+    std::string name;
+    // PLAYER - attack same team (healing/defense) | OPPONENT - attack the other team
+    SelectionSide target;
+    float amount;
+    int cost;
+    ElementType element;
+    AttackAnimation animation;
+};
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
 inline CharacterData o1 = {
         {{"Jacana", 14}, {"Cleaf", 15}}, //
         {{"Hey, how are you?", "Oh, so you want to fight?", "FIGHT!"},
@@ -299,39 +360,6 @@ inline std::map<std::string, CharacterData> TRAINER_DATA = {
         {"Nurse", Nurse}, //
 };
 
-enum Attack
-{
-    ATTACK_NONE = 0,
-    ATTACK_BURN,
-    ATTACK_HEAL,
-    ATTACK_BATTLECRY,
-    ATTACK_SPARK,
-    ATTACK_SCRATCH,
-    ATTACK_SPLASH,
-    ATTACK_FIRE,
-    ATTACK_EXPLOSTION,
-    ATTACK_ANNIHILATE,
-    ATTACK_ICE
-};
-
-enum AttackAnimation
-{
-    ATTACKANIMATION_FIRE = 0,
-    ATTACKANIMATION_GREEN,
-    ATTACKANIMATION_SCRATCH,
-    ATTACKANIMATION_SPLASH,
-    ATTACKANIMATION_EXPLOSION,
-    ATTACKANIMATION_ICE
-};
-
-enum ElementType
-{
-    ELEMENT_FIRE = 0,
-    ELEMENT_PLANT,
-    ELEMENT_WATER,
-    ELEMENT_NORMAL
-};
-
 static std::map<ElementType, std::string> NAMES_ELEMENT_TYPES{
         {ELEMENT_FIRE, "fire"},
         {ELEMENT_PLANT, "plant"},
@@ -339,24 +367,15 @@ static std::map<ElementType, std::string> NAMES_ELEMENT_TYPES{
         {ELEMENT_NORMAL, "normal"}};
 
 static std::map<std::string, AttackAnimation> ATTACK_ANIMATION_NAMES = {
-        {"fire", ATTACKANIMATION_FIRE},           {"green", ATTACKANIMATION_GREEN},
-        {"scratch", ATTACKANIMATION_SCRATCH},     {"splash", ATTACKANIMATION_SPLASH},
+        {"fire", ATTACKANIMATION_FIRE}, {"green", ATTACKANIMATION_GREEN},
+        {"scratch", ATTACKANIMATION_SCRATCH}, {"splash", ATTACKANIMATION_SPLASH},
         {"explosion", ATTACKANIMATION_EXPLOSION}, {"ice", ATTACKANIMATION_ICE},
 };
 
 static std::map<AttackAnimation, std::string> NAMES_ATTACK_ANIMATION = {
-        {ATTACKANIMATION_FIRE, "fire"},           {ATTACKANIMATION_GREEN, "green"},
-        {ATTACKANIMATION_SCRATCH, "scratch"},     {ATTACKANIMATION_SPLASH, "splash"},
+        {ATTACKANIMATION_FIRE, "fire"}, {ATTACKANIMATION_GREEN, "green"},
+        {ATTACKANIMATION_SCRATCH, "scratch"}, {ATTACKANIMATION_SPLASH, "splash"},
         {ATTACKANIMATION_EXPLOSION, "explosion"}, {ATTACKANIMATION_ICE, "ice"},
-};
-
-struct MonsterData
-{
-    std::string name;
-    ElementType element;
-    std::map<std::string, float> stats;
-    std::vector<std::pair<int, Attack>> abilities;
-    std::pair<std::string, int> evolve;
 };
 
 inline MonsterData Plumette = {
@@ -645,23 +664,6 @@ inline std::map<std::string, MonsterData> MONSTER_DATA = {
         {"Friolera", Friolera}, //
 };
 
-enum SelectionSide
-{
-    PLAYER = 0,
-    OPPONENT
-};
-
-struct AttackData
-{
-    std::string name;
-    // PLAYER - attack same team (healing/defense) | OPPONENT - attack the other team
-    SelectionSide target;
-    float amount;
-    int cost;
-    ElementType element;
-    AttackAnimation animation;
-};
-
 inline std::map<Attack, AttackData> ATTACK_DATA = {
         {ATTACK_BURN, {"burn", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ATTACKANIMATION_FIRE}}, //
         {ATTACK_HEAL, {"heal", PLAYER, -1.2f, 600, ELEMENT_PLANT, ATTACKANIMATION_GREEN}}, //
@@ -678,3 +680,4 @@ inline std::map<Attack, AttackData> ATTACK_DATA = {
          {"annihilate", OPPONENT, 3.0f, 30, ELEMENT_FIRE, ATTACKANIMATION_EXPLOSION}}, //
         {ATTACK_ICE, {"ice", OPPONENT, 2.0f, 15, ELEMENT_WATER, ATTACKANIMATION_ICE}}, //
 };
+#pragma clang diagnostic pop

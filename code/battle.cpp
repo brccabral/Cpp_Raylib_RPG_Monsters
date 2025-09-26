@@ -249,7 +249,7 @@ void Battle::CheckActive()
     CheckActiveGroup(&opponent_sprites, OPPONENT);
 }
 
-void Battle::CheckActiveGroup(const rg::sprite::Group *group, const SelectionSide side)
+void Battle::CheckActiveGroup(rg::sprite::Group *group, const SelectionSide side)
 {
     if (group->Sprites().empty())
     {
@@ -365,7 +365,7 @@ void Battle::Input()
             }
             else if (selection_mode == SELECTMODE_TARGET)
             {
-                const auto *sprite_group =
+                auto *sprite_group =
                         selection_side == PLAYER ? &player_sprites : &opponent_sprites;
                 // when a monster gets defeated, the group may change, but the "pos_index" won't
                 // create a list ordered by "pos_index"
@@ -541,7 +541,7 @@ void Battle::CheckDeath()
     CheckDeathGroup(&opponent_sprites, OPPONENT);
 }
 
-void Battle::CheckDeathGroup(const rg::sprite::Group *group, const SelectionSide side)
+void Battle::CheckDeathGroup(rg::sprite::Group *group, const SelectionSide side)
 {
     for (auto *sprite: group->Sprites())
     {
@@ -698,7 +698,7 @@ void Battle::DrawAttacks()
             current_monster->rect.midright() + rg::math::Vector2{20, 0});
     rg::draw::rect(display_surface, COLORS["white"], bg_rect, 0, 5);
 
-    for (int index = 0; index < (int) abilities.size(); ++index)
+    for (size_t index = 0; index < abilities.size(); ++index)
     {
         const bool selected = index == indexes[SELECTMODE_ATTACKS];
         rl::Color text_color;
@@ -797,7 +797,7 @@ void Battle::DrawSwitch()
     }
 
     int index = 0;
-    for (auto &monster: available_monsters | std::views::values)
+    for (auto *monster: available_monsters | std::views::values)
     {
         const bool selected = index == indexes[SELECTMODE_SWITCH];
         auto item_bg_rect = rg::Rect{0, 0, width, item_height}.midleft(
@@ -862,7 +862,7 @@ void Battle::UpdateTimers()
     }
 }
 
-void Battle::OpponentAttack() const
+void Battle::OpponentAttack()
 {
     if (!current_monster)
     {
@@ -890,7 +890,7 @@ void Battle::OpponentAttack() const
     }
 }
 
-void Battle::SetAttack(const rg::sprite::Group *group, const Attack ability) const
+void Battle::SetAttack(rg::sprite::Group *group, const Attack ability) const
 {
     const auto sprites = group->Sprites();
 

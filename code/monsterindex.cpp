@@ -15,7 +15,7 @@ MonsterIndex::MonsterIndex(
     tint_surf.SetAlpha(200);
     main_rect.center(rg::math::Vector2{WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
 
-    for (auto &[monster_name, monster_data]: MONSTER_DATA)
+    for (auto &monster_data: MONSTER_DATA | std::views::values)
     {
         for (auto &[stat, value]: monster_data.stats)
         {

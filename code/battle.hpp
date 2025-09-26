@@ -44,13 +44,13 @@ private:
     // it depends on monster speed
     // when the first monster achieves 100, pause the others
     void CheckActive();
-    void CheckActiveGroup(const rg::sprite::Group *group, SelectionSide side);
+    void CheckActiveGroup(rg::sprite::Group *group, SelectionSide side);
     void UpdateAllMonsters(bool do_pause);
     void Input();
     void
     ApplyAttack(const MonsterSprite *target_sprite, Attack attack, float amount);
     void CheckDeath();
-    void CheckDeathGroup(const rg::sprite::Group *group, SelectionSide side);
+    void CheckDeathGroup(rg::sprite::Group *group, SelectionSide side);
     void CheckEndBattle();
 
     // ui
@@ -60,8 +60,8 @@ private:
     void DrawSwitch();
 
     void UpdateTimers();
-    void OpponentAttack() const;
-    void SetAttack(const rg::sprite::Group *group, Attack ability) const;
+    void OpponentAttack();
+    void SetAttack(rg::sprite::Group *group, Attack ability) const;
 
     rg::Surface *display_surface = &rg::display::GetSurface();
     // all player's monsters
