@@ -162,7 +162,7 @@ void Battle::CreateMonster(
 
     if (entity == PLAYER)
     {
-        pos = BATTLE_POSITIONS["left"][pos_index];
+        pos = Settings::GetInstance().BATTLE_POSITIONS["left"][pos_index];
         groups = {&battle_sprites, &player_sprites};
         for (auto &[state, frame]: frames)
         {
@@ -175,7 +175,7 @@ void Battle::CreateMonster(
     }
     else
     {
-        pos = BATTLE_POSITIONS["right"][pos_index];
+        pos = Settings::GetInstance().BATTLE_POSITIONS["right"][pos_index];
         groups = {&battle_sprites, &opponent_sprites};
     }
     for (auto &bm: battle_monster)
@@ -301,7 +301,7 @@ void Battle::Input()
         {
             case SELECTMODE_GENERAL:
             {
-                limiter = BATTLE_CHOICES["full"].size();
+                limiter = Settings::GetInstance().BATTLE_CHOICES["full"].size();
                 break;
             }
             case SELECTMODE_ATTACKS:
@@ -434,7 +434,7 @@ void Battle::Input()
                 {
                     selection_mode = SELECTMODE_TARGET;
                     selected_attack = abilities[indexes[SELECTMODE_ATTACKS]];
-                    selection_side = ATTACK_DATA[selected_attack].target;
+                    selection_side = GameData::GetInstance().ATTACK_DATA[selected_attack].target;
                 }
                 else
                 {
@@ -493,16 +493,18 @@ void Battle::ApplyAttack(
         if (!at.active)
         {
             at = AttackSprite(
-                    target_sprite->rect.center(), &(*attack_frames)[ATTACK_DATA[attack].animation]);
+                    target_sprite->rect.center(),
+                    &(*attack_frames)[GameData::GetInstance().ATTACK_DATA[attack].animation]);
             at.add(&battle_sprites);
-            (*sounds)[NAMES_ATTACK_ANIMATION[ATTACK_DATA[attack].animation]].Play();
+            (*sounds)[GameData::GetInstance().NAMES_ATTACK_ANIMATION[GameData::GetInstance().
+                ATTACK_DATA[attack].animation]].Play();
             break;
         }
     }
 
     // get correct attack damage amount (defense, element)
     // double attack if effective
-    const auto attack_element = ATTACK_DATA[attack].element;
+    const auto attack_element = GameData::GetInstance().ATTACK_DATA[attack].element;
     const auto target_element = target_sprite->monster->element;
     if ((attack_element == ELEMENT_FIRE && target_element == ELEMENT_FIRE) ||
         (attack_element == ELEMENT_WATER && target_element == ELEMENT_FIRE) ||
@@ -657,7 +659,7 @@ void Battle::DrawUi()
 void Battle::DrawGeneral()
 {
     int index = 0;
-    for (auto &[pos, icon]: BATTLE_CHOICES["full"] | std::views::values)
+    for (auto &[pos, icon]: Settings::GetInstance().BATTLE_CHOICES["full"] | std::views::values)
     {
         rg::Surface *surf;
         if (index == indexes[SELECTMODE_GENERAL])
@@ -696,7 +698,7 @@ void Battle::DrawAttacks()
     // bg
     const auto bg_rect = rg::Rect{0, 0, width, height}.midleft(
             current_monster->rect.midright() + rg::math::Vector2{20, 0});
-    rg::draw::rect(display_surface, COLORS["white"], bg_rect, 0, 5);
+    rg::draw::rect(display_surface, Settings::GetInstance().COLORS["white"], bg_rect, 0, 5);
 
     for (size_t index = 0; index < abilities.size(); ++index)
     {
@@ -704,22 +706,25 @@ void Battle::DrawAttacks()
         rl::Color text_color;
         if (selected)
         {
-            auto element = ATTACK_DATA[abilities[index]].element;
+            auto element = GameData::GetInstance().ATTACK_DATA[abilities[index]].element;
             if (element == ELEMENT_NORMAL)
             {
-                text_color = COLORS["black"];
+                text_color = Settings::GetInstance().COLORS["black"];
             }
             else
             {
-                text_color = COLORS[NAMES_ELEMENT_TYPES[element]];
+                text_color = Settings::GetInstance().COLORS[GameData::GetInstance().
+                    NAMES_ELEMENT_TYPES[element]];
             }
         }
         else
         {
-            text_color = COLORS["light"];
+            text_color = Settings::GetInstance().COLORS["light"];
         }
         auto text_surf =
-                (*fonts)["regular"].render(ATTACK_DATA[abilities[index]].name.c_str(), text_color);
+                (*fonts)["regular"].render(
+                        GameData::GetInstance().ATTACK_DATA[abilities[index]].name.c_str(),
+                        text_color);
         auto text_rect = text_surf.GetRect().center(
                 bg_rect.midtop() +
                 rg::math::Vector2{0, item_height / 2 + index * item_height + v_offset});
@@ -733,18 +738,22 @@ void Battle::DrawAttacks()
                 if (text_bg_rect.collidepoint(bg_rect.topleft()))
                 {
                     rg::draw::rect(
-                            display_surface, COLORS["dark white"], text_bg_rect, 0, 5, true, true,
+                            display_surface, Settings::GetInstance().COLORS["dark white"],
+                            text_bg_rect, 0, 5, true, true,
                             false, false);
                 }
                 else if (text_bg_rect.collidepoint(bg_rect.midbottom() + rg::math::Vector2{0, -1}))
                 {
                     rg::draw::rect(
-                            display_surface, COLORS["dark white"], text_bg_rect, 0, 5, false, false,
+                            display_surface, Settings::GetInstance().COLORS["dark white"],
+                            text_bg_rect, 0, 5, false, false,
                             true, true);
                 }
                 else
                 {
-                    rg::draw::rect(display_surface, COLORS["dark white"], text_bg_rect);
+                    rg::draw::rect(
+                            display_surface, Settings::GetInstance().COLORS["dark white"],
+                            text_bg_rect);
                 }
             }
             display_surface->Blit(&text_surf, text_rect);
@@ -772,7 +781,7 @@ void Battle::DrawSwitch()
     // bg
     const auto bg_rect = rg::Rect{0, 0, width, height}.midleft(
             current_monster->rect.midright() + rg::math::Vector2{20, 0});
-    rg::draw::rect(display_surface, COLORS["white"], bg_rect, 0, 5);
+    rg::draw::rect(display_surface, Settings::GetInstance().COLORS["white"], bg_rect, 0, 5);
 
     // monsters
     std::vector<std::pair<int, Monster *>> active_monsters; // monsters in battle
@@ -810,7 +819,9 @@ void Battle::DrawSwitch()
                 rg::math::Vector2{10, item_height / 2 + index * item_height + v_offset});
         auto text_surf = (*fonts)["regular"].render(
                 rl::TextFormat("%s (%d)", monster->name.c_str(), monster->level),
-                selected ? COLORS["red"] : COLORS["black"]);
+                selected
+                    ? Settings::GetInstance().COLORS["red"]
+                    : Settings::GetInstance().COLORS["black"]);
         auto text_rect = text_surf.GetRect().topleft({bg_rect.left() + 90, icon_rect.top()});
 
         // selection bg
@@ -819,17 +830,21 @@ void Battle::DrawSwitch()
             if (item_bg_rect.collidepoint(bg_rect.topleft()))
             {
                 rg::draw::rect(
-                        display_surface, COLORS["dark white"], item_bg_rect, 0, 5, true, true);
+                        display_surface, Settings::GetInstance().COLORS["dark white"], item_bg_rect,
+                        0, 5, true, true);
             }
             else if (item_bg_rect.collidepoint(bg_rect.midbottom() + rg::math::Vector2{0, -1}))
             {
                 rg::draw::rect(
-                        display_surface, COLORS["dark white"], item_bg_rect, 0, 5, false, false,
+                        display_surface, Settings::GetInstance().COLORS["dark white"], item_bg_rect,
+                        0, 5, false, false,
                         true, true);
             }
             else
             {
-                rg::draw::rect(display_surface, COLORS["dark white"], item_bg_rect);
+                rg::draw::rect(
+                        display_surface, Settings::GetInstance().COLORS["dark white"],
+                        item_bg_rect);
             }
         }
 
@@ -844,10 +859,11 @@ void Battle::DrawSwitch()
                     rg::Rect{health_rect.bottomleft() + rg::math::Vector2{0, 2}, {80, 4}};
             rg::draw::bar(
                     display_surface, health_rect, monster->health, monster->GetStat("max_health"),
-                    COLORS["red"], COLORS["black"]);
+                    Settings::GetInstance().COLORS["red"], Settings::GetInstance().COLORS["black"]);
             rg::draw::bar(
                     display_surface, energy_rect, monster->energy, monster->GetStat("max_energy"),
-                    COLORS["blue"], COLORS["black"]);
+                    Settings::GetInstance().COLORS["blue"],
+                    Settings::GetInstance().COLORS["black"]);
         }
 
         ++index;
@@ -877,7 +893,7 @@ void Battle::OpponentAttack()
     const auto random_ability_index = rl::GetRandomValue(0, abilities.size() - 1);
     const auto ability = abilities[random_ability_index];
 
-    const auto side = ATTACK_DATA[ability].target;
+    const auto side = GameData::GetInstance().ATTACK_DATA[ability].target;
     // side of the attack = PLAYER - attack same team (healing/defense) | OPPONENT - attack the
     // other team
     if (side == PLAYER)

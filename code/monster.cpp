@@ -6,15 +6,15 @@
 Monster::Monster(const std::string &name, const int level) : name(name), level(level)
 {
     // stats
-    element = MONSTER_DATA[name].element;
-    base_stats = MONSTER_DATA[name].stats;
-    abilities = MONSTER_DATA[name].abilities;
+    element = GameData::GetInstance().MONSTER_DATA[name].element;
+    base_stats = GameData::GetInstance().MONSTER_DATA[name].stats;
+    abilities = GameData::GetInstance().MONSTER_DATA[name].abilities;
 
     level_up = level * 150.0f;
     health = base_stats["max_health"] * level;
     energy = base_stats["max_energy"] * level;
 
-    evolution = MONSTER_DATA[name].evolve;
+    evolution = GameData::GetInstance().MONSTER_DATA[name].evolve;
 }
 
 float Monster::GetStat(const std::string &stat)
@@ -42,7 +42,7 @@ std::vector<Attack> Monster::GetAbilities(const bool all)
     {
         if (level >= lvl)
         {
-            if (all || ATTACK_DATA[ability].cost <= energy)
+            if (all || GameData::GetInstance().ATTACK_DATA[ability].cost <= energy)
             {
                 result.push_back(ability);
             }
@@ -71,12 +71,12 @@ void Monster::Update(const float dt)
 
 void Monster::ReduceEnergy(const Attack attack)
 {
-    energy -= ATTACK_DATA[attack].cost;
+    energy -= GameData::GetInstance().ATTACK_DATA[attack].cost;
 }
 
 float Monster::GetBaseDamage(const Attack attack)
 {
-    return GetStat("attack") * ATTACK_DATA[attack].amount;
+    return GetStat("attack") * GameData::GetInstance().ATTACK_DATA[attack].amount;
 }
 
 void Monster::UpdateXP(const int amount)

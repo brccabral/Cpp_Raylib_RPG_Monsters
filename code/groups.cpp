@@ -31,15 +31,15 @@ void AllSprites::Draw(const Player *player)
     for (auto *sprite: current_sprites)
     {
         const int z = sprite->z;
-        if (z < WORLD_LAYERS["main"])
+        if (z < Settings::GetInstance().WORLD_LAYERS["main"])
         {
             bg_sprites.push_back(sprite);
         }
-        else if (z == WORLD_LAYERS["main"])
+        else if (z == Settings::GetInstance().WORLD_LAYERS["main"])
         {
             main_sprites.push_back(sprite);
         }
-        else if (z > WORLD_LAYERS["main"])
+        else if (z > Settings::GetInstance().WORLD_LAYERS["main"])
         {
             top_sprites.push_back(sprite);
         }
@@ -145,7 +145,7 @@ void BattleSprites::Draw(
             });
     for (auto *sprite: sprites_)
     {
-        if (sprite->z == BATTLE_LAYERS["outline"])
+        if (sprite->z == Settings::GetInstance().BATTLE_LAYERS["outline"])
         {
             const auto outline_sprite = dynamic_cast<MonsterOutlineSprite *>(sprite);
             if ((outline_sprite->monster_sprite == current_monster_sprite &&

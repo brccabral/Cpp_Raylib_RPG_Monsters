@@ -38,7 +38,12 @@ Game::Game()
 
 Game::~Game()
 {
-    UnloadResources();
+    Settings::Destroy();
+    GameData::Destroy();
+    for (auto *tmx_map: tmx_maps | std::views::values)
+    {
+        UnloadTMX(tmx_map);
+    }
 }
 
 void Game::run()
@@ -175,22 +180,24 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     for (auto &[position, texture, atlas_rect]: terrain_tiles)
     {
         auto surface = rg::Surface(texture, atlas_rect);
-        Sprite(position, surface, WORLD_LAYERS["bg"])->add(all_sprites);
+        Sprite(position, surface, Settings::GetInstance().WORLD_LAYERS["bg"])->add(all_sprites);
     }
 
     auto terrain_top_tiles = rg::tmx::GetTMXTiles(map, terrain_top_layer);
     for (auto &[position, texture, atlas_rect]: terrain_top_tiles)
     {
         auto surface = rg::Surface(texture, atlas_rect);
-        Sprite(position, surface, WORLD_LAYERS["bg"])->add(all_sprites);
+        Sprite(position, surface, Settings::GetInstance().WORLD_LAYERS["bg"])->add(all_sprites);
     }
 #else
     surfaces_.emplace_back(rg::tmx::GetTMXLayerSurface(map, terrain_layer));
-    sprites_.emplace_back(rg::math::Vector2{}, &surfaces_.back(), WORLD_LAYERS["bg"]);
+    sprites_.emplace_back(
+            rg::math::Vector2{}, &surfaces_.back(), Settings::GetInstance().WORLD_LAYERS["bg"]);
     sprites_.back().add(all_sprites);
 
     surfaces_.emplace_back(rg::tmx::GetTMXLayerSurface(map, terrain_top_layer));
-    sprites_.emplace_back(rg::math::Vector2{}, &surfaces_.back(), WORLD_LAYERS["bg"]);
+    sprites_.emplace_back(
+            rg::math::Vector2{}, &surfaces_.back(), Settings::GetInstance().WORLD_LAYERS["bg"]);
     sprites_.back().add(all_sprites);
 #endif
 
@@ -204,7 +211,8 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             for (int x = 0; x < water->width; x += TILE_SIZE)
             {
                 auto position = area_position + rg::math::Vector2{(float) x, (float) y};
-                animated_sprites_.emplace_back(position, &waterFrames, WORLD_LAYERS["water"]);
+                animated_sprites_.emplace_back(
+                        position, &waterFrames, Settings::GetInstance().WORLD_LAYERS["water"]);
                 animated_sprites_.back().add(all_sprites);
             }
         }
@@ -219,7 +227,8 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
         const char *side = rl::tmx_get_property(coast->properties, "side")->value.string;
 
         auto position = rg::tmx::GetTMXObjPosition(coast);
-        animated_sprites_.emplace_back(position, &cost_dict[terrain][side], WORLD_LAYERS["bg"]);
+        animated_sprites_.emplace_back(
+                position, &cost_dict[terrain][side], Settings::GetInstance().WORLD_LAYERS["bg"]);
         animated_sprites_.back().add(all_sprites);
 
         coast = coast->next;
@@ -242,7 +251,9 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
 
             if (!strcmp(name.c_str(), "top"))
             {
-                sprites_.emplace_back(position, &map_tiles_surfaces_[gid], WORLD_LAYERS["top"]);
+                sprites_.emplace_back(
+                        position, &map_tiles_surfaces_[gid],
+                        Settings::GetInstance().WORLD_LAYERS["top"]);
                 sprites_.back().add(all_sprites);
             }
             else
@@ -334,7 +345,7 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             bool nurse = std::strcmp(character_id.c_str(), "Nurse") == 0;
             characters_.emplace_back(
                     position, &characters_dict[graphic], direction,
-                    &TRAINER_DATA[character_id],
+                    &GameData::GetInstance().TRAINER_DATA[character_id],
                     &player, [this](Character *char_)
                     {
                         CreateDialog(char_);
@@ -342,14 +353,6 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             characters_.back().add({all_sprites, &collision_sprites, &character_sprites});
         }
         entity = entity->next;
-    }
-}
-
-void Game::UnloadResources()
-{
-    for (auto *tmx_map: tmx_maps | std::views::values)
-    {
-        UnloadTMX(tmx_map);
     }
 }
 
@@ -600,3 +603,6 @@ void Game::EndEvolution()
 
     player.Unblock();
 }
+
+GameData *GameData::instance = nullptr;
+Settings *Settings::instance = nullptr;

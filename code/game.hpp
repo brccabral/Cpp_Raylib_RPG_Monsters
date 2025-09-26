@@ -24,7 +24,6 @@ private:
 
     void ImportAssets();
     void Setup(const std::string &map_name, const std::string &player_start_position);
-    void UnloadResources();
     void Input();
     void CreateDialog(Character *character);
     void EndDialog(Character *character);

@@ -30,10 +30,12 @@ Evolution::Evolution(
 
     // text
     start_text_surf =
-            font->render(rl::TextFormat("%s is evolving", start_monster.c_str()), COLORS["black"]);
+            font->render(
+                    rl::TextFormat("%s is evolving", start_monster.c_str()),
+                    Settings::GetInstance().COLORS["black"]);
     end_text_surf = font->render(
             rl::TextFormat("%s evolved into %s", start_monster.c_str(), end_monster.c_str()),
-            COLORS["black"]);
+            Settings::GetInstance().COLORS["black"]);
 }
 
 void Evolution::Update(const float dt)
@@ -53,7 +55,9 @@ void Evolution::Update(const float dt)
 
             const auto text_rect =
                     start_text_surf.GetRect().midtop(rect.midbottom() + rg::math::Vector2{0, 20});
-            rg::draw::rect(display_surface, COLORS["white"], text_rect.inflate(20, 20), 0, 5);
+            rg::draw::rect(
+                    display_surface, Settings::GetInstance().COLORS["white"],
+                    text_rect.inflate(20, 20), 0, 5);
             display_surface->Blit(&start_text_surf, text_rect);
         }
         else
@@ -74,7 +78,9 @@ void Evolution::Update(const float dt)
 
         const auto text_rect =
                 end_text_surf.GetRect().midtop(rect.midbottom() + rg::math::Vector2{0, 20});
-        rg::draw::rect(display_surface, COLORS["white"], text_rect.inflate(20, 20), 0, 5);
+        rg::draw::rect(
+                display_surface, Settings::GetInstance().COLORS["white"], text_rect.inflate(20, 20),
+                0, 5);
         display_surface->Blit(&end_text_surf, text_rect);
         DisplayStars(dt);
     }

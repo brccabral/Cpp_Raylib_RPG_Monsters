@@ -195,7 +195,8 @@ std::unordered_map<AttackAnimation, rg::Frames> AttackImporter(const char *path)
     {
         auto filename = dirEntry.path().stem().string();
         auto entryPath = dirEntry.path().string();
-        result[ATTACK_ANIMATION_NAMES[filename]] = rg::Frames::Load(entryPath.c_str(), 1, 4);
+        result[GameData::GetInstance().ATTACK_ANIMATION_NAMES[filename]] = rg::Frames::Load(
+                entryPath.c_str(), 1, 4);
     }
     return result;
 }

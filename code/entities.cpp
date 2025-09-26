@@ -14,7 +14,7 @@ Entity::Entity(
     image->atlas_rect = (*frames)[facing_direction].frames[0];
     rect = image->GetRect();
     rect.center(pos);
-    z = WORLD_LAYERS["main"];
+    z = Settings::GetInstance().WORLD_LAYERS["main"];
     y_sort = rect.centery();
     hitbox = rect.inflate(-rect.width / 2, -60);
 }

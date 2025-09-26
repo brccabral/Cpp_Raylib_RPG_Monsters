@@ -37,13 +37,13 @@ void AnimatedSprite::Animate(const float dt)
 MonsterPatchSprite::MonsterPatchSprite(
         const rg::math::Vector2 pos, rg::Surface *surf, const std::string &biome,
         const std::string &patch_monsters, const int level)
-    : Sprite(pos, surf, WORLD_LAYERS["main"]), biome(biome), level(level)
+    : Sprite(pos, surf, Settings::GetInstance().WORLD_LAYERS["main"]), biome(biome), level(level)
 {
     y_sort -= 40;
     // move sand patches to background drawing layer
     if (!std::strcmp(biome.c_str(), "sand"))
     {
-        z = WORLD_LAYERS["bg"];
+        z = Settings::GetInstance().WORLD_LAYERS["bg"];
     }
     monsters = rg::Split(patch_monsters, ',');
 }
@@ -63,10 +63,10 @@ DialogSprite::DialogSprite(
         const std::string &message, const Character *character,
         const rg::font::Font *font)
 {
-    z = WORLD_LAYERS["top"];
+    z = Settings::GetInstance().WORLD_LAYERS["top"];
 
     // text
-    const auto text_surf = font->render(message.c_str(), COLORS["black"]);
+    const auto text_surf = font->render(message.c_str(), Settings::GetInstance().COLORS["black"]);
     constexpr int padding = 5;
     float width = std::max(30.0f, text_surf.GetRect().width + padding * 2);
     float height = text_surf.GetRect().height + padding * 2;
@@ -74,7 +74,7 @@ DialogSprite::DialogSprite(
     // background
     image = new rg::Surface((int) width, (int) height);
     image->Fill(rl::BLANK);
-    rg::draw::rect(image, COLORS["pure white"], image->GetRect(), 0, 4);
+    rg::draw::rect(image, Settings::GetInstance().COLORS["pure white"], image->GetRect(), 0, 4);
     image->Blit(
             &text_surf, text_surf.GetRect().center(rg::math::Vector2{width / 2, height / 2}).pos);
 
@@ -155,7 +155,7 @@ MonsterSprite::MonsterSprite(
 
     rect = dynamic_cast<rg::Frames *>(image)->GetRect().center(pos);
     animation_speed = (float) ANIMATION_SPEED + rg::math::get_random_uniform(-1, 1);
-    z = BATTLE_LAYERS["monster"];
+    z = Settings::GetInstance().BATTLE_LAYERS["monster"];
     timers["remove_highlight"] = rg::Timer(
             0.5f, false, false, [this]
             {
@@ -293,16 +293,17 @@ MonsterNameSprite::MonsterNameSprite(
         const rg::font::Font *font)
     : monster_sprite(monster_sprite)
 {
-    const auto text_surf = font->render(monster_sprite->monster->name.c_str(), COLORS["black"]);
+    const auto text_surf = font->render(
+            monster_sprite->monster->name.c_str(), Settings::GetInstance().COLORS["black"]);
     constexpr int padding = 10;
 
     image = new rg::Surface(
             (int) text_surf.GetRect().width + padding * 2,
             (int) text_surf.GetRect().height + padding * 2);
-    image->Fill(COLORS["white"]);
+    image->Fill(Settings::GetInstance().COLORS["white"]);
     image->Blit(&text_surf, rg::math::Vector2{padding, padding});
     rect = image->GetRect().midtop(pos);
-    z = BATTLE_LAYERS["name"];
+    z = Settings::GetInstance().BATTLE_LAYERS["name"];
 }
 
 MonsterNameSprite::MonsterNameSprite(MonsterNameSprite &&other) noexcept
@@ -352,7 +353,7 @@ MonsterLevelSprite::MonsterLevelSprite(
         rect = image->GetRect().topright(anchor);
     }
     xp_rect = rg::Rect{0, rect.height - 2, rect.width, 2};
-    z = BATTLE_LAYERS["name"];
+    z = Settings::GetInstance().BATTLE_LAYERS["name"];
 }
 
 MonsterLevelSprite::MonsterLevelSprite(MonsterLevelSprite &&other) noexcept
@@ -389,16 +390,17 @@ void MonsterLevelSprite::Update(float deltaTime)
         return;
     }
 
-    image->Fill(COLORS["white"]);
+    image->Fill(Settings::GetInstance().COLORS["white"]);
 
     const auto text_surf = font->render(
-            rl::TextFormat("Lvl: %d", monster_sprite->monster->level), COLORS["black"]);
+            rl::TextFormat("Lvl: %d", monster_sprite->monster->level),
+            Settings::GetInstance().COLORS["black"]);
     const auto text_rect = text_surf.GetRect().center({rect.width / 2, rect.height / 2});
     image->Blit(&text_surf, text_rect);
 
     rg::draw::bar(
             image, xp_rect, monster_sprite->monster->xp, monster_sprite->monster->level_up,
-            COLORS["black"], COLORS["white"]);
+            Settings::GetInstance().COLORS["black"], Settings::GetInstance().COLORS["white"]);
 }
 
 MonsterStatsSprite::MonsterStatsSprite(
@@ -408,7 +410,7 @@ MonsterStatsSprite::MonsterStatsSprite(
 {
     image = new rg::Surface(size);
     rect = image->GetRect().midbottom(pos);
-    z = BATTLE_LAYERS["overlay"];
+    z = Settings::GetInstance().BATTLE_LAYERS["overlay"];
 }
 
 MonsterStatsSprite::MonsterStatsSprite(MonsterStatsSprite &&other) noexcept
@@ -444,10 +446,12 @@ void MonsterStatsSprite::Update(float deltaTime)
         return;
     }
 
-    image->Fill(COLORS["white"]);
+    image->Fill(Settings::GetInstance().COLORS["white"]);
 
     const auto info = monster_sprite->monster->GetInfo();
-    const std::array<rl::Color, 3> colors = {COLORS["red"], COLORS["blue"], COLORS["gray"]};
+    const std::array<rl::Color, 3> colors = {Settings::GetInstance().COLORS["red"],
+                                             Settings::GetInstance().COLORS["blue"],
+                                             Settings::GetInstance().COLORS["gray"]};
     for (unsigned int index = 0; index < info.size(); ++index)
     {
         const auto [value, max_value] = info[index];
@@ -455,19 +459,25 @@ void MonsterStatsSprite::Update(float deltaTime)
         if (index < 2) // health and energy
         {
             const auto text_surf =
-                    font->render(rl::TextFormat("%.f/%.f", value, max_value), COLORS["black"]);
+                    font->render(
+                            rl::TextFormat("%.f/%.f", value, max_value),
+                            Settings::GetInstance().COLORS["black"]);
             const auto text_rect =
                     text_surf.GetRect().topleft({rect.width * 0.05f, index * rect.height / 2});
             const auto bar_rect = rg::Rect{
                     text_rect.bottomleft() + rg::math::Vector2{0, -2}, {rect.width * 0.9f, 4}};
 
             image->Blit(&text_surf, text_rect);
-            rg::draw::bar(image, bar_rect, value, max_value, color, COLORS["black"], 2);
+            rg::draw::bar(
+                    image, bar_rect, value, max_value, color,
+                    Settings::GetInstance().COLORS["black"], 2);
         }
         else // initiative
         {
             const auto init_rect = rg::Rect{0, rect.height - 2, rect.width, 2.0f};
-            rg::draw::bar(image, init_rect, value, max_value, color, COLORS["white"]);
+            rg::draw::bar(
+                    image, init_rect, value, max_value, color,
+                    Settings::GetInstance().COLORS["white"]);
         }
     }
 }
@@ -477,7 +487,7 @@ MonsterOutlineSprite::MonsterOutlineSprite(
         std::unordered_map<AnimationState, rg::Frames> *frames)
     : monster_sprite(monster_sprite), frames(frames)
 {
-    z = BATTLE_LAYERS["outline"];
+    z = Settings::GetInstance().BATTLE_LAYERS["outline"];
 
     image = &(*frames)[monster_sprite->state];
     dynamic_cast<rg::Frames *>(image)->SetAtlas(int(this->monster_sprite->frame_index));
@@ -523,7 +533,7 @@ void AttackSprite::Animate(const float dt)
 
 TimedSprite::TimedSprite(
         const rg::math::Vector2 pos, rg::Surface *surf, const float duration)
-    : Sprite(pos, surf, BATTLE_LAYERS["overlay"])
+    : Sprite(pos, surf, Settings::GetInstance().BATTLE_LAYERS["overlay"])
 {
     rect.center(pos);
     death_timer = rg::Timer(

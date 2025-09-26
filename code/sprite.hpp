@@ -11,7 +11,9 @@ class Sprite : public rg::sprite::Sprite
 public:
 
     Sprite() = default;
-    Sprite(rg::math::Vector2 pos, rg::Surface *surf, int z = WORLD_LAYERS["main"]);
+    Sprite(
+            rg::math::Vector2 pos, rg::Surface *surf,
+            int z = Settings::GetInstance().WORLD_LAYERS["main"]);
     float y_sort{};
     rg::Rect hitbox{};
 };
@@ -21,7 +23,9 @@ class AnimatedSprite : public Sprite
 public:
 
     AnimatedSprite() = default;
-    AnimatedSprite(rg::math::Vector2 pos, rg::Frames *surf, int z = WORLD_LAYERS["main"]);
+    AnimatedSprite(
+            rg::math::Vector2 pos, rg::Frames *surf,
+            int z = Settings::GetInstance().WORLD_LAYERS["main"]);
 
     void Update(float deltaTime) override;
     virtual void Animate(float dt);
@@ -246,7 +250,7 @@ public:
     AttackSprite() = default;
     AttackSprite(
             rg::math::Vector2 position, rg::Frames *frames,
-            int z = BATTLE_LAYERS["overlay"]);
+            int z = Settings::GetInstance().BATTLE_LAYERS["overlay"]);
     void Animate(float dt) override;
     bool active{};
 };
