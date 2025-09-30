@@ -465,7 +465,7 @@ void MonsterStatsSprite::Update(float deltaTime)
             const auto text_rect =
                     text_surf.GetRect().topleft({rect.width * 0.05f, index * rect.height / 2});
             const auto bar_rect = rg::Rect{
-                    text_rect.bottomleft() + rg::math::Vector2{0, -2}, {rect.width * 0.9f, 4}};
+                    text_rect.bottomleft() + rg::math::Vector2{0, -2}, {rect.width * 0.9f, 4.0f}};
 
             image->Blit(&text_surf, text_rect);
             rg::draw::bar(

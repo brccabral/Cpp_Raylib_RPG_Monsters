@@ -727,7 +727,7 @@ void Battle::DrawAttacks()
                         text_color);
         auto text_rect = text_surf.GetRect().center(
                 bg_rect.midtop() +
-                rg::math::Vector2{0, item_height / 2 + index * item_height + v_offset});
+                rg::math::Vector2{0.0f, item_height / 2.0f + index * item_height + v_offset});
         auto text_bg_rect = rg::Rect{0, 0, width, item_height}.center(text_rect.center());
 
         // draw
@@ -816,7 +816,7 @@ void Battle::DrawSwitch()
         auto *icon_surf = &(*monster_icons)[monster->name];
         auto icon_rect = icon_surf->GetRect().midleft(
                 bg_rect.topleft() +
-                rg::math::Vector2{10, item_height / 2 + index * item_height + v_offset});
+                rg::math::Vector2{10.0f, item_height / 2.0f + index * item_height + v_offset});
         auto text_surf = (*fonts)["regular"].render(
                 rl::TextFormat("%s (%d)", monster->name.c_str(), monster->level),
                 selected

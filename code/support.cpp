@@ -35,7 +35,7 @@ CoastImporter(const char *file, const int rows, const int cols)
                 const auto x = pos.x + index * 3;
                 const auto y = pos.y + row;
                 result[terrain][key].Blit(
-                        frame, {row / 3.0f * width, 0},
+                        frame, {row / 3.0f * width, 0.0f},
                         {(float) x * width, (float) y * height, (float) width, (float) height});
             }
         }
@@ -149,7 +149,7 @@ std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> 
                     {0, 0, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // topleft
             new_surf.Blit(
-                    mask_surf.render.texture, {0, -width},
+                    mask_surf.render.texture, {0.0f, -width},
                     {0, 0, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // topcenter
             new_surf.Blit(
@@ -157,7 +157,7 @@ std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> 
                     {0, 0, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // topright
             new_surf.Blit(
-                    mask_surf.render.texture, {-width, 0},
+                    mask_surf.render.texture, {-width, 0.0f},
                     {0, 0, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // left
             new_surf.Blit(
@@ -165,7 +165,7 @@ std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> 
                     {0, 0, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // center
             new_surf.Blit(
-                    mask_surf.render.texture, {width, 0},
+                    mask_surf.render.texture, {width, 0.0f},
                     {0, 0, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // right
             new_surf.Blit(
@@ -173,7 +173,7 @@ std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> 
                     {0, 0, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // bottomleft
             new_surf.Blit(
-                    mask_surf.render.texture, {0, width},
+                    mask_surf.render.texture, {0.0f, width},
                     {0, 0, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // bottomcenter
             new_surf.Blit(
