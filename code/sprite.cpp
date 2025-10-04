@@ -4,7 +4,7 @@
 #include "settings.hpp"
 
 
-Sprite::Sprite(const rg::math::Vector2 pos, rg::Surface *surf, const int z)
+Sprite::Sprite(const rg::math::Vector2<float> pos, rg::Surface *surf, const int z)
 {
     image = surf;
     rect = image->GetRect();
@@ -14,7 +14,7 @@ Sprite::Sprite(const rg::math::Vector2 pos, rg::Surface *surf, const int z)
     hitbox = rect;
 }
 
-AnimatedSprite::AnimatedSprite(const rg::math::Vector2 pos, rg::Frames *surf, const int z)
+AnimatedSprite::AnimatedSprite(const rg::math::Vector2<float> pos, rg::Frames *surf, const int z)
     : Sprite(pos, surf, z), image(surf)
 {
 }
@@ -35,7 +35,7 @@ void AnimatedSprite::Animate(const float dt)
 }
 
 MonsterPatchSprite::MonsterPatchSprite(
-        const rg::math::Vector2 pos, rg::Surface *surf, const std::string &biome,
+        const rg::math::Vector2<float> pos, rg::Surface *surf, const std::string &biome,
         const std::string &patch_monsters, const int level)
     : Sprite(pos, surf, Settings::GetInstance().WORLD_LAYERS["main"]), biome(biome), level(level)
 {
@@ -48,12 +48,12 @@ MonsterPatchSprite::MonsterPatchSprite(
     monsters = rg::Split(patch_monsters, ',');
 }
 
-BorderSprite::BorderSprite(const rg::math::Vector2 pos, rg::Surface *surf)
+BorderSprite::BorderSprite(const rg::math::Vector2<float> pos, rg::Surface *surf)
     : Sprite(pos, surf)
 {
 }
 
-CollidableSprite::CollidableSprite(const rg::math::Vector2 pos, rg::Surface *surf)
+CollidableSprite::CollidableSprite(const rg::math::Vector2<float> pos, rg::Surface *surf)
     : Sprite(pos, surf)
 {
     hitbox = rect.inflate(0, -rect.height * 0.6f);
@@ -76,9 +76,9 @@ DialogSprite::DialogSprite(
     image->Fill(rl::BLANK);
     rg::draw::rect(image, Settings::GetInstance().COLORS["pure white"], image->GetRect(), 0, 4);
     image->Blit(
-            &text_surf, text_surf.GetRect().center(rg::math::Vector2{width / 2, height / 2}).pos);
+            &text_surf, text_surf.GetRect().center(rg::math::Vector2{width / 2.0f, height / 2.0f}).pos);
 
-    rect = image->GetRect().midbottom(character->rect.midtop() + rg::math::Vector2{0, -10});
+    rect = image->GetRect().midbottom(character->rect.midtop() + rg::math::Vector2{0.0f, -10.0f});
 }
 
 DialogSprite::DialogSprite(DialogSprite &&other) noexcept
@@ -103,7 +103,7 @@ DialogSprite::~DialogSprite()
 }
 
 TransitionSprite::TransitionSprite(
-        const rg::math::Vector2 pos, const rg::math::Vector2 size,
+        const rg::math::Vector2<float> pos, const rg::math::Vector2<float> size,
         std::pair<std::string, std::string> target)
     : Sprite(pos, new rg::Surface(size)), target(std::move(target))
 {
@@ -132,7 +132,7 @@ TransitionSprite::~TransitionSprite()
 }
 
 MonsterSprite::MonsterSprite(
-        const rg::math::Vector2 pos, std::unordered_map<AnimationState, rg::Frames> *frames,
+        const rg::math::Vector2<float> pos, std::unordered_map<AnimationState, rg::Frames> *frames,
         Monster *monster, const int index, const int pos_index, const SelectionSide entity,
         const std::function<
             void(
@@ -289,7 +289,7 @@ void MonsterSprite::Destroy()
 }
 
 MonsterNameSprite::MonsterNameSprite(
-        const rg::math::Vector2 pos, MonsterSprite *monster_sprite,
+        const rg::math::Vector2<float> pos, MonsterSprite *monster_sprite,
         const rg::font::Font *font)
     : monster_sprite(monster_sprite)
 {
@@ -301,7 +301,7 @@ MonsterNameSprite::MonsterNameSprite(
             (int) text_surf.GetRect().width + padding * 2,
             (int) text_surf.GetRect().height + padding * 2);
     image->Fill(Settings::GetInstance().COLORS["white"]);
-    image->Blit(&text_surf, rg::math::Vector2{padding, padding});
+    image->Blit(&text_surf, rg::math::Vector2<float>{padding, padding});
     rect = image->GetRect().midtop(pos);
     z = Settings::GetInstance().BATTLE_LAYERS["name"];
 }
@@ -338,7 +338,7 @@ void MonsterNameSprite::Update(float deltaTime)
 }
 
 MonsterLevelSprite::MonsterLevelSprite(
-        const SelectionSide entity, const rg::math::Vector2 anchor,
+        const SelectionSide entity, const rg::math::Vector2<float> anchor,
         MonsterSprite *monster_sprite,
         const rg::font::Font *font)
     : monster_sprite(monster_sprite), font(font)
@@ -404,8 +404,8 @@ void MonsterLevelSprite::Update(float deltaTime)
 }
 
 MonsterStatsSprite::MonsterStatsSprite(
-        const rg::math::Vector2 pos, MonsterSprite *monster_sprite,
-        const rg::math::Vector2 size, const rg::font::Font *font)
+        const rg::math::Vector2<float> pos, MonsterSprite *monster_sprite,
+        const rg::math::Vector2<float> size, const rg::font::Font *font)
     : monster_sprite(monster_sprite), font(font)
 {
     image = new rg::Surface(size);
@@ -465,7 +465,7 @@ void MonsterStatsSprite::Update(float deltaTime)
             const auto text_rect =
                     text_surf.GetRect().topleft({rect.width * 0.05f, index * rect.height / 2});
             const auto bar_rect = rg::Rect{
-                    text_rect.bottomleft() + rg::math::Vector2{0, -2}, {rect.width * 0.9f, 4.0f}};
+                    text_rect.bottomleft() + rg::math::Vector2<float>{0, -2}, {rect.width * 0.9f, 4.0f}};
 
             image->Blit(&text_surf, text_rect);
             rg::draw::bar(
@@ -510,7 +510,7 @@ void MonsterOutlineSprite::Update(float deltaTime)
 }
 
 AttackSprite::AttackSprite(
-        const rg::math::Vector2 position, rg::Frames *frames, const int z)
+        const rg::math::Vector2<float> position, rg::Frames *frames, const int z)
     : AnimatedSprite(position, frames, z)
 {
     rect.center(position);
@@ -532,7 +532,7 @@ void AttackSprite::Animate(const float dt)
 }
 
 TimedSprite::TimedSprite(
-        const rg::math::Vector2 pos, rg::Surface *surf, const float duration)
+        const rg::math::Vector2<float> pos, rg::Surface *surf, const float duration)
     : Sprite(pos, surf, Settings::GetInstance().BATTLE_LAYERS["overlay"])
 {
     rect.center(pos);

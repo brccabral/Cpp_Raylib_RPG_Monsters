@@ -19,7 +19,7 @@ enum SelectionMode
 
 typedef struct BattleChoice
 {
-    rg::math::Vector2 pos;
+    rg::math::Vector2<float> pos;
     std::string icon;
 } BattleChoice;
 
@@ -79,7 +79,7 @@ public:
             {"dark white", {0xf0, 0xf0, 0xf0, 0xff}}, //
     };
 
-    std::map<std::string, std::vector<rg::math::Vector2>> BATTLE_POSITIONS = {
+    std::map<std::string, std::vector<rg::math::Vector2<float>>> BATTLE_POSITIONS = {
             {
                     "left",
                     {

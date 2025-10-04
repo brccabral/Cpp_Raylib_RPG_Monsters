@@ -93,11 +93,11 @@ void MonsterIndex::DisplayList()
 
         auto text_surf = (*fonts)["regular"].render(monster.name.c_str(), text_color);
         auto text_rect =
-                text_surf.GetRect().midleft(item_rect.midleft() + rg::math::Vector2{90, 0});
+                text_surf.GetRect().midleft(item_rect.midleft() + rg::math::Vector2{90.0f, 0.0f});
 
         auto *icon_surf = &(*monster_icons)[monster.name];
         auto icon_rect =
-                icon_surf->GetRect().center(item_rect.midleft() + rg::math::Vector2{45, 0});
+                icon_surf->GetRect().center(item_rect.midleft() + rg::math::Vector2{45.0f, 0.0f});
 
         if (item_rect.colliderect(main_rect))
         {
@@ -107,7 +107,7 @@ void MonsterIndex::DisplayList()
                 rg::draw::rect(
                         display_surface, bg_color, item_rect, 0, 12, true, false, false, false);
             }
-            else if (item_rect.collidepoint(main_rect.bottomleft() + rg::math::Vector2{1, -1}))
+            else if (item_rect.collidepoint(main_rect.bottomleft() + rg::math::Vector2{1.0f, -1.0f}))
             {
                 rg::draw::rect(
                         display_surface, bg_color, item_rect, 0, 12, false, false, true, false);
@@ -170,7 +170,7 @@ void MonsterIndex::DisplayMain(const float dt)
     // name
     auto name_surf = (*fonts)["bold"].render(
             monster->name.c_str(), Settings::GetInstance().COLORS["white"]);
-    auto name_rect = name_surf.GetRect().topleft(top_rect.topleft() + rg::math::Vector2{10, 10});
+    auto name_rect = name_surf.GetRect().topleft(top_rect.topleft() + rg::math::Vector2{10.0f, 10.0f});
     display_surface->Blit(&name_surf, name_rect);
 
     // level
@@ -179,7 +179,7 @@ void MonsterIndex::DisplayMain(const float dt)
                     rl::TextFormat("Lvl: %d", monster->level),
                     Settings::GetInstance().COLORS["white"]);
     auto level_rect =
-            level_surf.GetRect().bottomleft(top_rect.bottomleft() + rg::math::Vector2{10, -16});
+            level_surf.GetRect().bottomleft(top_rect.bottomleft() + rg::math::Vector2{10.0f, -16.0f});
     display_surface->Blit(&level_surf, level_rect);
 
     // xp bar
@@ -191,7 +191,7 @@ void MonsterIndex::DisplayMain(const float dt)
     auto element_surf = (*fonts)["regular"].render(
             element.c_str(), Settings::GetInstance().COLORS["white"]);
     auto element_rect = element_surf.GetRect().bottomright(
-            top_rect.bottomright() + rg::math::Vector2{-10, -10});
+            top_rect.bottomright() + rg::math::Vector2{-10.0f, -10.0f});
     display_surface->Blit(&element_surf, element_rect);
 
     // health and energy
@@ -209,7 +209,7 @@ void MonsterIndex::DisplayMain(const float dt)
     auto hp_text = (*fonts)["regular"].render(
             rl::TextFormat("HP: %.0f/%.0f", monster->health, monster->GetStat("max_health")),
             Settings::GetInstance().COLORS["white"]);
-    auto hp_rect = hp_text.GetRect().midleft(health_rect.midleft() + rg::math::Vector2{10, 0});
+    auto hp_rect = hp_text.GetRect().midleft(health_rect.midleft() + rg::math::Vector2{10.0f, 0.0f});
     display_surface->Blit(&hp_text, hp_rect);
 
     auto energy_rect = rg::Rect{0, 0, bar_width, bar_height};
@@ -220,7 +220,7 @@ void MonsterIndex::DisplayMain(const float dt)
     auto ep_text = (*fonts)["regular"].render(
             rl::TextFormat("EP: %.0f/%.0f", monster->energy, monster->GetStat("max_energy")),
             Settings::GetInstance().COLORS["white"]);
-    auto ep_rect = ep_text.GetRect().midleft(energy_rect.midleft() + rg::math::Vector2{10, 0});
+    auto ep_rect = ep_text.GetRect().midleft(energy_rect.midleft() + rg::math::Vector2{10.0f, 0.0f});
     display_surface->Blit(&ep_text, ep_rect);
 
     // info
@@ -248,14 +248,14 @@ void MonsterIndex::DisplayMain(const float dt)
         // icon
         auto *icon_surf = &(*ui_icons)[stat];
         auto icon_rect =
-                icon_surf->GetRect().midleft(single_stat_rect.midleft() + rg::math::Vector2{5, 0});
+                icon_surf->GetRect().midleft(single_stat_rect.midleft() + rg::math::Vector2{5.0f, 0.0f});
         display_surface->Blit(icon_surf, icon_rect);
 
         // text
         auto text_surf = (*fonts)["regular"].render(
                 stat.c_str(), Settings::GetInstance().COLORS["white"]);
         auto text_rect =
-                text_surf.GetRect().topleft(icon_rect.topright() + rg::math::Vector2{10, -5});
+                text_surf.GetRect().topleft(icon_rect.topright() + rg::math::Vector2{10.0f, -5.0f});
         display_surface->Blit(&text_surf, text_rect);
 
         // bar

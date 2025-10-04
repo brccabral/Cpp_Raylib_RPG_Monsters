@@ -110,7 +110,7 @@ void Battle::Update(const float dt)
     CheckActive();
 
     // drawing
-    display_surface->Blit(bg_surf, rg::math::Vector2{0, 0});
+    display_surface->Blit(bg_surf, rg::math::Vector2<float>{});
     battle_sprites.Draw(
             current_monster, selection_side, selection_mode, indexes[SELECTMODE_TARGET],
             &player_sprites, &opponent_sprites);
@@ -157,7 +157,7 @@ void Battle::CreateMonster(
 {
     auto &frames = (*monster_frames)[monster->name];
     auto &outlines = (*outline_frames)[monster->name];
-    rg::math::Vector2 pos;
+    rg::math::Vector2<float> pos;
     auto groups = std::vector<rg::sprite::Group *>{};
 
     if (entity == PLAYER)
@@ -204,21 +204,21 @@ void Battle::CreateMonster(
                     &battle_sprites);
 
             // ui
-            rg::math::Vector2 name_pos;
+            rg::math::Vector2<float> name_pos;
 
             if (entity == PLAYER)
             {
-                name_pos = bm.monster_sprite.rect.midleft() + rg::math::Vector2{16, -70};
+                name_pos = bm.monster_sprite.rect.midleft() + rg::math::Vector2{16.0f, -70.0f};
             }
             else
             {
-                name_pos = bm.monster_sprite.rect.midright() + rg::math::Vector2{-40, -70};
+                name_pos = bm.monster_sprite.rect.midright() + rg::math::Vector2{-40.0f, -70.0f};
             }
             bm.monster_name_sprite =
                     MonsterNameSprite(name_pos, &bm.monster_sprite, &(*fonts)["regular"]);
             bm.monster_name_sprite.add(&battle_sprites);
 
-            rg::math::Vector2 anchor;
+            rg::math::Vector2<float> anchor;
             if (entity == PLAYER)
             {
                 anchor = bm.monster_name_sprite.rect.bottomleft();
@@ -233,9 +233,9 @@ void Battle::CreateMonster(
             bm.monster_level_sprite.add(&battle_sprites);
 
             bm.monster_stats_sprite = MonsterStatsSprite(
-                    bm.monster_sprite.rect.midbottom() + rg::math::Vector2{0, 20},
+                    bm.monster_sprite.rect.midbottom() + rg::math::Vector2{0.0f, 20.0f},
                     &bm.monster_sprite,
-                    rg::math::Vector2{150, 48}, &(*fonts)["small"]);
+                    rg::math::Vector2<float>{150, 48}, &(*fonts)["small"]);
             bm.monster_stats_sprite.add(&battle_sprites);
 
             break;
@@ -697,7 +697,7 @@ void Battle::DrawAttacks()
 
     // bg
     const auto bg_rect = rg::Rect{0, 0, width, height}.midleft(
-            current_monster->rect.midright() + rg::math::Vector2{20, 0});
+            current_monster->rect.midright() + rg::math::Vector2{20.0f, 0.0f});
     rg::draw::rect(display_surface, Settings::GetInstance().COLORS["white"], bg_rect, 0, 5);
 
     for (size_t index = 0; index < abilities.size(); ++index)
@@ -742,7 +742,7 @@ void Battle::DrawAttacks()
                             text_bg_rect, 0, 5, true, true,
                             false, false);
                 }
-                else if (text_bg_rect.collidepoint(bg_rect.midbottom() + rg::math::Vector2{0, -1}))
+                else if (text_bg_rect.collidepoint(bg_rect.midbottom() + rg::math::Vector2{0.0f, -1.0f}))
                 {
                     rg::draw::rect(
                             display_surface, Settings::GetInstance().COLORS["dark white"],
@@ -780,7 +780,7 @@ void Battle::DrawSwitch()
 
     // bg
     const auto bg_rect = rg::Rect{0, 0, width, height}.midleft(
-            current_monster->rect.midright() + rg::math::Vector2{20, 0});
+            current_monster->rect.midright() + rg::math::Vector2<float>{20, 0});
     rg::draw::rect(display_surface, Settings::GetInstance().COLORS["white"], bg_rect, 0, 5);
 
     // monsters
@@ -833,7 +833,7 @@ void Battle::DrawSwitch()
                         display_surface, Settings::GetInstance().COLORS["dark white"], item_bg_rect,
                         0, 5, true, true);
             }
-            else if (item_bg_rect.collidepoint(bg_rect.midbottom() + rg::math::Vector2{0, -1}))
+            else if (item_bg_rect.collidepoint(bg_rect.midbottom() + rg::math::Vector2{0.0f, -1.0f}))
             {
                 rg::draw::rect(
                         display_surface, Settings::GetInstance().COLORS["dark white"], item_bg_rect,
@@ -854,9 +854,9 @@ void Battle::DrawSwitch()
             display_surface->Blit(&text_surf, text_rect);
 
             auto health_rect =
-                    rg::Rect{text_rect.bottomleft() + rg::math::Vector2{0, 4}, {100.0f, 4.0f}};
+                    rg::Rect{text_rect.bottomleft() + rg::math::Vector2{0.0f, 4.0f}, {100.0f, 4.0f}};
             auto energy_rect =
-                    rg::Rect{health_rect.bottomleft() + rg::math::Vector2{0, 2}, {80, 4}};
+                    rg::Rect{health_rect.bottomleft() + rg::math::Vector2{0.0f, 2.0f}, {80.0f, 4.0f}};
             rg::draw::bar(
                     display_surface, health_rect, monster->health, monster->GetStat("max_health"),
                     Settings::GetInstance().COLORS["red"], Settings::GetInstance().COLORS["black"]);

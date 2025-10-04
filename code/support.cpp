@@ -9,7 +9,7 @@ CoastImporter(const char *file, const int rows, const int cols)
     // const auto frame = rg::Frames::Load(file, rows, cols);
     const std::vector<std::string> terrains = {"grass", "grass_i", "sand_i", "sand",
                                                "rock", "rock_i", "ice", "ice_i"};
-    std::vector<std::pair<std::string, rg::math::Vector2>> sides = {
+    std::vector<std::pair<std::string, rg::math::Vector2<float>>> sides = {
             {"topleft", {0, 0}}, //
             {"top", {1, 0}}, //
             {"topright", {2, 0}}, //

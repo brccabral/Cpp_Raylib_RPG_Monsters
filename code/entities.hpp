@@ -10,18 +10,18 @@ public:
 
     Entity() = default;
     Entity(
-            const rg::math::Vector2 &pos, std::unordered_map<std::string, rg::Frames> *frames,
+            const rg::math::Vector2<float> &pos, std::unordered_map<std::string, rg::Frames> *frames,
             const std::string &facing_direction);
     void Update(float deltaTime) override;
     void Block();
     void Unblock();
-    void ChangeFacingDirection(rg::math::Vector2 target_pos);
+    void ChangeFacingDirection(rg::math::Vector2<float> target_pos);
 
     float y_sort{};
     rg::Rect hitbox{};
     std::string facing_direction{};
     bool blocked = false; // block player movements
-    rg::math::Vector2 direction{};
+    rg::math::Vector2<float> direction{};
 
 protected:
 
@@ -44,7 +44,7 @@ public:
 
     Player() = default;
     Player(
-            const rg::math::Vector2 &pos, std::unordered_map<std::string, rg::Frames> *frames,
+            const rg::math::Vector2<float> &pos, std::unordered_map<std::string, rg::Frames> *frames,
             const std::string &facing_direction, rg::sprite::Group *collision_sprites);
     void Update(float dt) override;
 
@@ -64,7 +64,7 @@ class Character : public Entity
 public:
 
     Character(
-            const rg::math::Vector2 &pos, std::unordered_map<std::string, rg::Frames> *frames,
+            const rg::math::Vector2<float> &pos, std::unordered_map<std::string, rg::Frames> *frames,
             const std::string &facing_direction, CharacterData *char_data,
             Player *player,
             const std::function<void(Character *character)> &create_dialog,

@@ -40,7 +40,7 @@ Evolution::Evolution(
 
 void Evolution::Update(const float dt)
 {
-    display_surface->Blit(&tint_surf, rg::math::Vector2{});
+    display_surface->Blit(&tint_surf, rg::math::Vector2<float>{});
     if (timers["start"].active)
     {
         if (tint_amount < 255)
@@ -54,7 +54,7 @@ void Evolution::Update(const float dt)
             display_surface->Blit(&start_monster_surf_white, rect);
 
             const auto text_rect =
-                    start_text_surf.GetRect().midtop(rect.midbottom() + rg::math::Vector2{0, 20});
+                    start_text_surf.GetRect().midtop(rect.midbottom() + rg::math::Vector2{0.0f, 20.0f});
             rg::draw::rect(
                     display_surface, Settings::GetInstance().COLORS["white"],
                     text_rect.inflate(20, 20), 0, 5);
@@ -77,7 +77,7 @@ void Evolution::Update(const float dt)
         display_surface->Blit(&end_monster_surf, rect);
 
         const auto text_rect =
-                end_text_surf.GetRect().midtop(rect.midbottom() + rg::math::Vector2{0, 20});
+                end_text_surf.GetRect().midtop(rect.midbottom() + rg::math::Vector2{0.0f, 20.0f});
         rg::draw::rect(
                 display_surface, Settings::GetInstance().COLORS["white"], text_rect.inflate(20, 20),
                 0, 5);

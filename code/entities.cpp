@@ -6,7 +6,7 @@
 
 
 Entity::Entity(
-        const rg::math::Vector2 &pos, std::unordered_map<std::string, rg::Frames> *frames,
+        const rg::math::Vector2<float> &pos, std::unordered_map<std::string, rg::Frames> *frames,
         const std::string &facing_direction)
     : facing_direction(facing_direction), frames_direction(frames)
 {
@@ -36,7 +36,7 @@ void Entity::Unblock()
     blocked = false;
 }
 
-void Entity::ChangeFacingDirection(const rg::math::Vector2 target_pos)
+void Entity::ChangeFacingDirection(const rg::math::Vector2<float> target_pos)
 {
     const auto relation = target_pos - rect.center();
     if (std::abs(relation.y) < 30)
@@ -98,7 +98,7 @@ std::string Entity::GetState()
 }
 
 Player::Player(
-        const rg::math::Vector2 &pos, std::unordered_map<std::string, rg::Frames> *frames,
+        const rg::math::Vector2<float> &pos, std::unordered_map<std::string, rg::Frames> *frames,
         const std::string &facing_direction, rg::sprite::Group *collision_sprites)
     : Entity(pos, frames, facing_direction), collision_sprites(collision_sprites)
 {
@@ -110,7 +110,7 @@ void Player::Input()
     {
         return;
     }
-    rg::math::Vector2 input_vector{};
+    rg::math::Vector2<float> input_vector{};
     if (IsKeyDown(rl::KEY_UP))
     {
         input_vector.y -= 1;
@@ -196,7 +196,7 @@ void Player::Collisions(const std::string &axis)
 }
 
 Character::Character(
-        const rg::math::Vector2 &pos, std::unordered_map<std::string, rg::Frames> *frames,
+        const rg::math::Vector2<float> &pos, std::unordered_map<std::string, rg::Frames> *frames,
         const std::string &facing_direction, CharacterData *char_data,
         Player *player,
         const std::function<void(Character *character)> &create_dialog,

@@ -192,12 +192,12 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
 #else
     surfaces_.emplace_back(rg::tmx::GetTMXLayerSurface(map, terrain_layer));
     sprites_.emplace_back(
-            rg::math::Vector2{}, &surfaces_.back(), Settings::GetInstance().WORLD_LAYERS["bg"]);
+            rg::math::Vector2<float>{}, &surfaces_.back(), Settings::GetInstance().WORLD_LAYERS["bg"]);
     sprites_.back().add(all_sprites);
 
     surfaces_.emplace_back(rg::tmx::GetTMXLayerSurface(map, terrain_top_layer));
     sprites_.emplace_back(
-            rg::math::Vector2{}, &surfaces_.back(), Settings::GetInstance().WORLD_LAYERS["bg"]);
+            rg::math::Vector2<float>{}, &surfaces_.back(), Settings::GetInstance().WORLD_LAYERS["bg"]);
     sprites_.back().add(all_sprites);
 #endif
 
