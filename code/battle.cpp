@@ -696,13 +696,13 @@ void Battle::DrawAttacks()
     }
 
     // bg
-    const auto bg_rect = rg::Rect{0, 0, width, height}.midleft(
+    const auto bg_rect = rg::Rect{0.0f, 0.0f, width, height}.midleft(
             current_monster->rect.midright() + rg::math::Vector2{20.0f, 0.0f});
     rg::draw::rect(display_surface, Settings::GetInstance().COLORS["white"], bg_rect, 0, 5);
 
     for (size_t index = 0; index < abilities.size(); ++index)
     {
-        const bool selected = index == indexes[SELECTMODE_ATTACKS];
+        const bool selected = static_cast<int>(index) == indexes[SELECTMODE_ATTACKS];
         rl::Color text_color;
         if (selected)
         {
@@ -728,7 +728,7 @@ void Battle::DrawAttacks()
         auto text_rect = text_surf.GetRect().center(
                 bg_rect.midtop() +
                 rg::math::Vector2{0.0f, item_height / 2.0f + index * item_height + v_offset});
-        auto text_bg_rect = rg::Rect{0, 0, width, item_height}.center(text_rect.center());
+        auto text_bg_rect = rg::Rect{0.0f, 0.0f, width, item_height}.center(text_rect.center());
 
         // draw
         if (bg_rect.collidepoint(text_rect.center()))
@@ -779,7 +779,7 @@ void Battle::DrawSwitch()
     }
 
     // bg
-    const auto bg_rect = rg::Rect{0, 0, width, height}.midleft(
+    const auto bg_rect = rg::Rect{0.0f, 0.0f, width, height}.midleft(
             current_monster->rect.midright() + rg::math::Vector2<float>{20, 0});
     rg::draw::rect(display_surface, Settings::GetInstance().COLORS["white"], bg_rect, 0, 5);
 
@@ -809,7 +809,7 @@ void Battle::DrawSwitch()
     for (auto *monster: available_monsters | std::views::values)
     {
         const bool selected = index == indexes[SELECTMODE_SWITCH];
-        auto item_bg_rect = rg::Rect{0, 0, width, item_height}.midleft(
+        auto item_bg_rect = rg::Rect{0.0f, 0.0f, width, item_height}.midleft(
                 rg::math::Vector2{
                         bg_rect.left(),
                         bg_rect.top() + item_height / 2 + index * item_height + v_offset});

@@ -68,15 +68,15 @@ DialogSprite::DialogSprite(
     // text
     const auto text_surf = font->render(message.c_str(), Settings::GetInstance().COLORS["black"]);
     constexpr int padding = 5;
-    float width = std::max(30.0f, text_surf.GetRect().width + padding * 2);
-    float height = text_surf.GetRect().height + padding * 2;
+    const float width = std::max(30.0f, text_surf.GetRect().width + padding * 2);
+    const float height = text_surf.GetRect().height + padding * 2;
 
     // background
     image = new rg::Surface((int) width, (int) height);
     image->Fill(rl::BLANK);
     rg::draw::rect(image, Settings::GetInstance().COLORS["pure white"], image->GetRect(), 0, 4);
     image->Blit(
-            &text_surf, text_surf.GetRect().center(rg::math::Vector2{width / 2.0f, height / 2.0f}).pos);
+            &text_surf, text_surf.GetRect().center(rg::math::Vector2{width / 2.0f, height / 2.0f}).pos());
 
     rect = image->GetRect().midbottom(character->rect.midtop() + rg::math::Vector2{0.0f, -10.0f});
 }
@@ -352,7 +352,7 @@ MonsterLevelSprite::MonsterLevelSprite(
     {
         rect = image->GetRect().topright(anchor);
     }
-    xp_rect = rg::Rect{0, rect.height - 2, rect.width, 2};
+    xp_rect = rg::Rect{0.0f, rect.height - 2, rect.width, 2.0f};
     z = Settings::GetInstance().BATTLE_LAYERS["name"];
 }
 
@@ -474,7 +474,7 @@ void MonsterStatsSprite::Update(float deltaTime)
         }
         else // initiative
         {
-            const auto init_rect = rg::Rect{0, rect.height - 2, rect.width, 2.0f};
+            const auto init_rect = rg::Rect{0.0f, rect.height - 2, rect.width, 2.0f};
             rg::draw::bar(
                     image, init_rect, value, max_value, color,
                     Settings::GetInstance().COLORS["white"]);

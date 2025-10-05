@@ -70,9 +70,9 @@ CharacterImporter(const int rows, const int cols, const char *file)
     const std::vector<std::string> directions = {"down", "left", "right", "up"};
     for (unsigned int i = 0; i < directions.size(); ++i)
     {
-        result[directions[i]] = result["load"].SubFrames({0, i * height, width * cols, height});
+        result[directions[i]] = result["load"].SubFrames({0.0f, i * height, width * cols, height});
         std::string idle = directions[i] + "_idle";
-        result[idle] = result["load"].SubFrames({0, i * height, width, height});
+        result[idle] = result["load"].SubFrames({0.0f, i * height, width, height});
     }
     return result;
 }
@@ -116,10 +116,10 @@ MonsterImporter(const int cols, const int rows, const char *path)
         const auto tex_width = (float) result["load"][ANIMATIONSTATE_IDLE].GetTexture().width;
         const auto tex_height = (float) result["load"][ANIMATIONSTATE_IDLE].GetTexture().height;
         result[filename][ANIMATIONSTATE_IDLE] =
-                result["load"][ANIMATIONSTATE_IDLE].SubFrames({0, 0, tex_width, tex_height / 2.0f});
+                result["load"][ANIMATIONSTATE_IDLE].SubFrames({0.0f, 0.0f, tex_width, tex_height / 2.0f});
         result[filename][ANIMATIONSTATE_ATTACK] =
                 result["load"][ANIMATIONSTATE_IDLE].SubFrames(
-                        {0, tex_height / 2.0f, tex_width, tex_height / 2.0f});
+                        {0.0f, tex_height / 2.0f, tex_width, tex_height / 2.0f});
     }
     return result;
 }
@@ -146,39 +146,39 @@ std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> 
 
             new_surf.Blit(
                     mask_surf.render.texture, {-width, -width},
-                    {0, 0, (float) mask_surf.render.texture.width,
+                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // topleft
             new_surf.Blit(
                     mask_surf.render.texture, {0.0f, -width},
-                    {0, 0, (float) mask_surf.render.texture.width,
+                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // topcenter
             new_surf.Blit(
                     mask_surf.render.texture, {width, -width},
-                    {0, 0, (float) mask_surf.render.texture.width,
+                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // topright
             new_surf.Blit(
                     mask_surf.render.texture, {-width, 0.0f},
-                    {0, 0, (float) mask_surf.render.texture.width,
+                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // left
             new_surf.Blit(
                     mask_surf.render.texture, {0, 0},
-                    {0, 0, (float) mask_surf.render.texture.width,
+                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // center
             new_surf.Blit(
                     mask_surf.render.texture, {width, 0.0f},
-                    {0, 0, (float) mask_surf.render.texture.width,
+                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // right
             new_surf.Blit(
                     mask_surf.render.texture, {-width, width},
-                    {0, 0, (float) mask_surf.render.texture.width,
+                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // bottomleft
             new_surf.Blit(
                     mask_surf.render.texture, {0.0f, width},
-                    {0, 0, (float) mask_surf.render.texture.width,
+                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // bottomcenter
             new_surf.Blit(
                     mask_surf.render.texture, {width, width},
-                    {0, 0, (float) mask_surf.render.texture.width,
+                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
                      (float) mask_surf.render.texture.height}); // bottomright
             new_surf.SetAtlas();
 
