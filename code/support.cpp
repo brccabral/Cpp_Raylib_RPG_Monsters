@@ -112,13 +112,18 @@ MonsterImporter(const int cols, const int rows, const char *path)
         auto entryPath = dirEntry.path().string();
         // we need to save the original load so that the render/texture is not unloaded
         // as subframes uses the same render/texture
-        result["load"][ANIMATIONSTATE_IDLE] = rg::Frames::Load(entryPath.c_str(), rows, cols);
-        const auto tex_width = (float) result["load"][ANIMATIONSTATE_IDLE].GetTexture().width;
-        const auto tex_height = (float) result["load"][ANIMATIONSTATE_IDLE].GetTexture().height;
+        result[filename + "_load"][ANIMATIONSTATE_IDLE] = rg::Frames::Load(
+                entryPath.c_str(), rows, cols);
+        const auto tex_width = (float) result[filename + "_load"][ANIMATIONSTATE_IDLE].GetTexture().
+                width;
+        const auto tex_height = (float) result[filename + "_load"][ANIMATIONSTATE_IDLE].GetTexture()
+                .
+                height;
         result[filename][ANIMATIONSTATE_IDLE] =
-                result["load"][ANIMATIONSTATE_IDLE].SubFrames({0.0f, 0.0f, tex_width, tex_height / 2.0f});
+                result[filename + "_load"][ANIMATIONSTATE_IDLE].SubFrames(
+                        {0.0f, 0.0f, tex_width, tex_height / 2.0f});
         result[filename][ANIMATIONSTATE_ATTACK] =
-                result["load"][ANIMATIONSTATE_IDLE].SubFrames(
+                result[filename + "_load"][ANIMATIONSTATE_IDLE].SubFrames(
                         {0.0f, tex_height / 2.0f, tex_width, tex_height / 2.0f});
     }
     return result;
@@ -132,6 +137,10 @@ std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> 
     std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> result;
     for (auto &[name, state_frames]: monster_frames)
     {
+        if (name == "load")
+        {
+            continue;
+        }
         for (auto &[state, frames]: state_frames)
         {
             auto mask_surf =
