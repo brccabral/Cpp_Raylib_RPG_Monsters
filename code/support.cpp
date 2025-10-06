@@ -5,8 +5,7 @@ std::unordered_map<std::string, std::unordered_map<std::string, rg::Frames>>
 CoastImporter(const char *file, const int rows, const int cols)
 {
     std::unordered_map<std::string, std::unordered_map<std::string, rg::Frames>> result;
-    const auto frame = rg::LoadTextureSafe(file);
-    // const auto frame = rg::Frames::Load(file, rows, cols);
+    result["cost"]["all"] = rg::Frames::Load(file, rows, cols);
     const std::vector<std::string> terrains = {"grass", "grass_i", "sand_i", "sand",
                                                "rock", "rock_i", "ice", "ice_i"};
     std::vector<std::pair<std::string, rg::math::Vector2<float>>> sides = {
@@ -20,27 +19,28 @@ CoastImporter(const char *file, const int rows, const int cols)
             {"bottom", {1, 2}}, //
             {"bottomright", {2, 2}}, //
     };
-    const auto width = frame.width / cols;
-    const auto height = frame.height / rows;
-    // const auto width = frame->GetRect().width;
-    // const auto height = frame->GetRect().height;
+    const auto tex_width = (float) result["cost"]["all"].GetTexture().width;
+    const auto tex_height = (float) result["cost"]["all"].GetTexture().height;
+    auto width = tex_width / cols;
+    auto height = tex_height / rows;
     for (unsigned int index = 0; index < terrains.size(); ++index)
     {
         const auto &terrain = terrains[index];
-        for (const auto &[key, pos]: sides)
+        for (const auto &[side, pos]: sides)
         {
-            result[terrain][key] = rg::Frames(width * 4, height, 1, 4);
+            result[terrain][side] = result["cost"]["all"].SubFrames(
+                    {0.0f, 0.0f, tex_width, tex_height});
+            std::vector<rg::Rect> frames{};
+            frames.reserve(4);
             for (int row = 0; row < rows; row += 3)
             {
                 const auto x = pos.x + index * 3;
                 const auto y = pos.y + row;
-                result[terrain][key].Blit(
-                        frame, {row / 3.0f * width, 0.0f},
-                        {(float) x * width, (float) y * height, (float) width, (float) height});
+                frames.emplace_back(x * width, y * height, width, height);
             }
+            result[terrain][side].frames = frames;
         }
     }
-    rg::UnloadTextureSafe(frame);
     return result;
 }
 
@@ -117,8 +117,7 @@ MonsterImporter(const int cols, const int rows, const char *path)
         const auto tex_width = (float) result[filename + "_load"][ANIMATIONSTATE_IDLE].GetTexture().
                 width;
         const auto tex_height = (float) result[filename + "_load"][ANIMATIONSTATE_IDLE].GetTexture()
-                .
-                height;
+                .height;
         result[filename][ANIMATIONSTATE_IDLE] =
                 result[filename + "_load"][ANIMATIONSTATE_IDLE].SubFrames(
                         {0.0f, 0.0f, tex_width, tex_height / 2.0f});

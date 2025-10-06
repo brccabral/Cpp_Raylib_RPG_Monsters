@@ -30,7 +30,7 @@ public:
     void Update(float deltaTime) override;
     virtual void Animate(float dt);
 
-    rg::Frames *image{};
+    rg::Frames *frames{};
 
 protected:
 

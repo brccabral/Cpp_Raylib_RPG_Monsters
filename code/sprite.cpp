@@ -15,7 +15,7 @@ Sprite::Sprite(const rg::math::Vector2<float> pos, rg::Surface *surf, const int 
 }
 
 AnimatedSprite::AnimatedSprite(const rg::math::Vector2<float> pos, rg::Frames *surf, const int z)
-    : Sprite(pos, surf, z), image(surf)
+    : Sprite(pos, surf, z), frames(surf)
 {
 }
 
@@ -27,11 +27,12 @@ void AnimatedSprite::Update(const float deltaTime)
 void AnimatedSprite::Animate(const float dt)
 {
     frame_index += ANIMATION_SPEED * dt;
-    if (frame_index > image->frames.size())
+    if (frame_index > frames->frames.size())
     {
         frame_index = 0;
     }
-    image->SetAtlas(int(frame_index));
+    frames->SetAtlas(int(frame_index));
+    image = frames;
 }
 
 MonsterPatchSprite::MonsterPatchSprite(
@@ -522,15 +523,16 @@ AttackSprite::AttackSprite(
 void AttackSprite::Animate(const float dt)
 {
     frame_index += ANIMATION_SPEED * dt;
-    if (frame_index < image->frames.size())
+    if (frame_index < frames->frames.size())
     {
-        image->SetAtlas(int(frame_index));
+        frames->SetAtlas(int(frame_index));
     }
     else
     {
         active = false;
         Kill();
     }
+    image = frames;
 }
 
 TimedSprite::TimedSprite(
