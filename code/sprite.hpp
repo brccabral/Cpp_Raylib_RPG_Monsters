@@ -78,6 +78,8 @@ public:
     DialogSprite &operator=(DialogSprite &&other) noexcept;
     ~DialogSprite() override;
 
+    rg::Surface text_surf{};
+
 };
 
 class TransitionSprite : public Sprite
@@ -180,6 +182,7 @@ public:
 private:
 
     MonsterSprite *monster_sprite{};
+    rg::Surface text_surf{};
 };
 
 class MonsterLevelSprite : public rg::sprite::Sprite
@@ -203,6 +206,7 @@ private:
     MonsterSprite *monster_sprite{};
     const rg::font::Font *font{};
     rg::Rect xp_rect{};
+    rg::Surface text_surf{};
 };
 
 class MonsterStatsSprite : public rg::sprite::Sprite
@@ -224,6 +228,7 @@ private:
 
     MonsterSprite *monster_sprite{};
     const rg::font::Font *font{};
+    rg::Surface text_surf{};
 };
 
 class MonsterOutlineSprite : public rg::sprite::Sprite

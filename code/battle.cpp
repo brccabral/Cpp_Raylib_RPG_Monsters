@@ -10,7 +10,7 @@ Battle::Battle(
         outline_frames,
         std::unordered_map<std::string, rg::Surface> *monster_icons,
         std::unordered_map<std::string, rg::Surface> *ui_icons,
-        std::unordered_map<AttackAnimation, rg::Frames> *attack_frames, const rg::Surface *bg_surf,
+        std::unordered_map<AttackAnimation, rg::Frames> *attack_frames, rg::Surface *bg_surf,
         std::unordered_map<std::string, rg::font::Font> *fonts,
         const std::function<void(Character *c)> &endBattle,
         Character *character,
@@ -680,7 +680,9 @@ void Battle::DrawGeneral()
 void Battle::DrawAttacks()
 {
     // data
+    abilities_surfaces.clear();
     const auto abilities = current_monster->monster->GetAbilities(false);
+    abilities_surfaces.reserve(abilities.size());
     constexpr float width = 150;
     constexpr float height = 200;
     constexpr int visible_attacks = 4;
@@ -729,6 +731,7 @@ void Battle::DrawAttacks()
                 bg_rect.midtop() +
                 rg::math::Vector2{0.0f, item_height / 2.0f + index * item_height + v_offset});
         auto text_bg_rect = rg::Rect{0.0f, 0.0f, width, item_height}.center(text_rect.center());
+        abilities_surfaces.push_back(std::move(text_surf));
 
         // draw
         if (bg_rect.collidepoint(text_rect.center()))
@@ -742,7 +745,8 @@ void Battle::DrawAttacks()
                             text_bg_rect, 0, 5, true, true,
                             false, false);
                 }
-                else if (text_bg_rect.collidepoint(bg_rect.midbottom() + rg::math::Vector2{0.0f, -1.0f}))
+                else if (text_bg_rect.collidepoint(
+                        bg_rect.midbottom() + rg::math::Vector2{0.0f, -1.0f}))
                 {
                     rg::draw::rect(
                             display_surface, Settings::GetInstance().COLORS["dark white"],
@@ -756,7 +760,7 @@ void Battle::DrawAttacks()
                             text_bg_rect);
                 }
             }
-            display_surface->Blit(&text_surf, text_rect);
+            display_surface->Blit(&abilities_surfaces.back(), text_rect);
         }
     }
 }
@@ -806,6 +810,8 @@ void Battle::DrawSwitch()
     }
 
     int index = 0;
+    switch_monster_surfaces.clear();
+    switch_monster_surfaces.reserve(available_monsters.size());
     for (auto *monster: available_monsters | std::views::values)
     {
         const bool selected = index == indexes[SELECTMODE_SWITCH];
@@ -823,6 +829,7 @@ void Battle::DrawSwitch()
                     ? Settings::GetInstance().COLORS["red"]
                     : Settings::GetInstance().COLORS["black"]);
         auto text_rect = text_surf.GetRect().topleft({bg_rect.left() + 90, icon_rect.top()});
+        switch_monster_surfaces.push_back(std::move(text_surf));
 
         // selection bg
         if (selected)
@@ -833,7 +840,8 @@ void Battle::DrawSwitch()
                         display_surface, Settings::GetInstance().COLORS["dark white"], item_bg_rect,
                         0, 5, true, true);
             }
-            else if (item_bg_rect.collidepoint(bg_rect.midbottom() + rg::math::Vector2{0.0f, -1.0f}))
+            else if (item_bg_rect.collidepoint(
+                    bg_rect.midbottom() + rg::math::Vector2{0.0f, -1.0f}))
             {
                 rg::draw::rect(
                         display_surface, Settings::GetInstance().COLORS["dark white"], item_bg_rect,
@@ -851,12 +859,14 @@ void Battle::DrawSwitch()
         if (bg_rect.collidepoint(item_bg_rect.center()))
         {
             display_surface->Blit(icon_surf, icon_rect);
-            display_surface->Blit(&text_surf, text_rect);
+            display_surface->Blit(&switch_monster_surfaces.back(), text_rect);
 
-            auto health_rect =
-                    rg::Rect{text_rect.bottomleft() + rg::math::Vector2{0.0f, 4.0f}, {100.0f, 4.0f}};
-            auto energy_rect =
-                    rg::Rect{health_rect.bottomleft() + rg::math::Vector2{0.0f, 2.0f}, {80.0f, 4.0f}};
+            const auto health_rect =
+                    rg::Rect{text_rect.bottomleft() + rg::math::Vector2{0.0f, 4.0f},
+                             {100.0f, 4.0f}};
+            const auto energy_rect =
+                    rg::Rect{health_rect.bottomleft() + rg::math::Vector2{0.0f, 2.0f},
+                             {80.0f, 4.0f}};
             rg::draw::bar(
                     display_surface, health_rect, monster->health, monster->GetStat("max_health"),
                     Settings::GetInstance().COLORS["red"], Settings::GetInstance().COLORS["black"]);

@@ -42,4 +42,17 @@ private:
     float frame_index{};
     std::unordered_map<std::string, rg::Surface> *ui_icons{};
     std::unordered_map<std::string, float> max_stats{};
+
+    std::vector<rg::Surface> monster_name_list_surfaces{};
+    rg::Surface stats_text_surf{};
+    rg::Surface text_surf{};
+    rg::Surface ability_text_surf{};
+    std::vector<rg::Surface> abilities_surfaces{};
+    rg::Surface shadow_surf{};
+    rg::Surface name_surf{};
+    rg::Surface level_surf{};
+    rg::Surface element_surf{};
+    rg::Surface hp_text{};
+    rg::Surface ep_text{};
+    std::vector<rg::Surface> monster_stats_sufaces{};
 };

@@ -66,7 +66,7 @@ DialogSprite::DialogSprite(
     z = Settings::GetInstance().WORLD_LAYERS["top"];
 
     // text
-    const auto text_surf = font->render(message.c_str(), Settings::GetInstance().COLORS["black"]);
+    text_surf = font->render(message.c_str(), Settings::GetInstance().COLORS["black"]);
     constexpr int padding = 5;
     const float width = std::max(30.0f, text_surf.GetRect().width + padding * 2);
     const float height = text_surf.GetRect().height + padding * 2;
@@ -76,7 +76,8 @@ DialogSprite::DialogSprite(
     image->Fill(rl::BLANK);
     rg::draw::rect(image, Settings::GetInstance().COLORS["pure white"], image->GetRect(), 0, 4);
     image->Blit(
-            &text_surf, text_surf.GetRect().center(rg::math::Vector2{width / 2.0f, height / 2.0f}).pos());
+            &text_surf,
+            text_surf.GetRect().center(rg::math::Vector2{width / 2.0f, height / 2.0f}).pos());
 
     rect = image->GetRect().midbottom(character->rect.midtop() + rg::math::Vector2{0.0f, -10.0f});
 }
@@ -293,7 +294,7 @@ MonsterNameSprite::MonsterNameSprite(
         const rg::font::Font *font)
     : monster_sprite(monster_sprite)
 {
-    const auto text_surf = font->render(
+    text_surf = font->render(
             monster_sprite->monster->name.c_str(), Settings::GetInstance().COLORS["black"]);
     constexpr int padding = 10;
 
@@ -392,7 +393,7 @@ void MonsterLevelSprite::Update(float deltaTime)
 
     image->Fill(Settings::GetInstance().COLORS["white"]);
 
-    const auto text_surf = font->render(
+    text_surf = font->render(
             rl::TextFormat("Lvl: %d", monster_sprite->monster->level),
             Settings::GetInstance().COLORS["black"]);
     const auto text_rect = text_surf.GetRect().center({rect.width / 2, rect.height / 2});
@@ -458,14 +459,15 @@ void MonsterStatsSprite::Update(float deltaTime)
         const auto color = colors[index];
         if (index < 2) // health and energy
         {
-            const auto text_surf =
+            text_surf =
                     font->render(
                             rl::TextFormat("%.f/%.f", value, max_value),
                             Settings::GetInstance().COLORS["black"]);
             const auto text_rect =
                     text_surf.GetRect().topleft({rect.width * 0.05f, index * rect.height / 2});
             const auto bar_rect = rg::Rect{
-                    text_rect.bottomleft() + rg::math::Vector2<float>{0, -2}, {rect.width * 0.9f, 4.0f}};
+                    text_rect.bottomleft() + rg::math::Vector2<float>{0, -2},
+                    {rect.width * 0.9f, 4.0f}};
 
             image->Blit(&text_surf, text_rect);
             rg::draw::bar(

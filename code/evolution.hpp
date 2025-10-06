@@ -13,7 +13,7 @@ public:
             monster_frames,
             const std::string &start_monster, const std::string &end_monster,
             const rg::font::Font *font, const std::function<void()> &endEvolution,
-            const std::vector<rg::Surface> *star_animation_surfs);
+            std::vector<rg::Surface> *star_animation_surfs);
     void Update(float dt);
     bool IsActive();
     void Activate();
@@ -36,6 +36,6 @@ private:
     rg::Surface start_text_surf{};
     rg::Surface end_text_surf{};
 
-    const std::vector<rg::Surface> *star_surfs{};
+    std::vector<rg::Surface> *star_surfs{};
     float frame_index = 0;
 };

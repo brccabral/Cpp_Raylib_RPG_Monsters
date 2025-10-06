@@ -20,7 +20,7 @@ public:
             std::unordered_map<std::string, rg::Surface> *monster_icons,
             std::unordered_map<std::string, rg::Surface> *ui_icons,
             std::unordered_map<AttackAnimation, rg::Frames> *attack_frames,
-            const rg::Surface *bg_surf,
+            rg::Surface *bg_surf,
             std::unordered_map<std::string, rg::font::Font> *fonts,
             const std::function<void(Character *c)> &endBattle,
             Character *character,
@@ -74,7 +74,7 @@ private:
             {};
     std::unordered_map<std::string, rg::Surface> *monster_icons{};
     std::unordered_map<std::string, rg::Surface> *ui_icons{};
-    const rg::Surface *bg_surf{};
+    rg::Surface *bg_surf{};
     std::unordered_map<std::string, rg::font::Font> *fonts{};
 
     BattleSprites battle_sprites{};
@@ -115,4 +115,6 @@ private:
     Character *character{};
 
     std::unordered_map<std::string, rg::mixer::Sound> *sounds{};
+    std::vector<rg::Surface> abilities_surfaces{};
+    std::vector<rg::Surface> switch_monster_surfaces{};
 };

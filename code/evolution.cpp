@@ -6,7 +6,7 @@ Evolution::Evolution(
         monster_frames,
         const std::string &start_monster, const std::string &end_monster,
         const rg::font::Font *font, const std::function<void()> &endEvolution,
-        const std::vector<rg::Surface> *star_animation_surfs)
+        std::vector<rg::Surface> *star_animation_surfs)
     : star_surfs(star_animation_surfs)
 {
     auto start2x = rg::transform::Scale2x(&monster_frames[start_monster][ANIMATIONSTATE_IDLE]);
@@ -54,7 +54,8 @@ void Evolution::Update(const float dt)
             display_surface->Blit(&start_monster_surf_white, rect);
 
             const auto text_rect =
-                    start_text_surf.GetRect().midtop(rect.midbottom() + rg::math::Vector2{0.0f, 20.0f});
+                    start_text_surf.GetRect().midtop(
+                            rect.midbottom() + rg::math::Vector2{0.0f, 20.0f});
             rg::draw::rect(
                     display_surface, Settings::GetInstance().COLORS["white"],
                     text_rect.inflate(20, 20), 0, 5);
