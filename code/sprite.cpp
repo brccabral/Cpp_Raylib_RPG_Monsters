@@ -156,7 +156,6 @@ MonsterSprite::MonsterSprite(
 
     highlight_mask = rg::mask::FromSurface(tmp_frames).ToFrames(
             tmp_frames->m_rows, tmp_frames->m_cols);
-    highlight_mask.Fill(rl::BLANK);
     highlight_mask.frames = tmp_frames->frames;
 
     rect = dynamic_cast<rg::Frames *>(image)->GetRect().center(pos);
@@ -306,8 +305,6 @@ MonsterNameSprite::MonsterNameSprite(
     image = new rg::Surface(
             (int) text_surf.GetRect().width + padding * 2,
             (int) text_surf.GetRect().height + padding * 2);
-    image->Fill(Settings::GetInstance().COLORS["white"]);
-    image->Blit(&text_surf, rg::math::Vector2<float>{padding, padding});
     rect = image->GetRect().midtop(pos);
     z = Settings::GetInstance().BATTLE_LAYERS["name"];
 }
@@ -322,9 +319,9 @@ MonsterNameSprite &MonsterNameSprite::operator=(MonsterNameSprite &&other) noexc
 {
     if (this != &other)
     {
-        monster_sprite = other.monster_sprite;
-        other.monster_sprite = nullptr;
         Sprite::operator=(std::move(other));
+        monster_sprite = other.monster_sprite;
+        text_surf = std::move(other.text_surf);
     }
     return *this;
 }
@@ -337,6 +334,9 @@ MonsterNameSprite::~MonsterNameSprite()
 
 void MonsterNameSprite::Update(float deltaTime)
 {
+    constexpr int padding = 10;
+    image->Fill(Settings::GetInstance().COLORS["white"]);
+    image->Blit(&text_surf, rg::math::Vector2<float>{padding, padding});
     if (monster_sprite->Groups().empty())
     {
         Kill();
@@ -372,12 +372,11 @@ MonsterLevelSprite &MonsterLevelSprite::operator=(MonsterLevelSprite &&other) no
 {
     if (this != &other)
     {
+        Sprite::operator=(std::move(other));
         monster_sprite = other.monster_sprite;
         font = other.font;
         xp_rect = other.xp_rect;
-        other.monster_sprite = nullptr;
-        other.font = nullptr;
-        Sprite::operator=(std::move(other));
+        text_surf = std::move(other.text_surf);
     }
     return *this;
 }
@@ -429,11 +428,10 @@ MonsterStatsSprite &MonsterStatsSprite::operator=(MonsterStatsSprite &&other) no
 {
     if (this != &other)
     {
+        Sprite::operator=(std::move(other));
         monster_sprite = other.monster_sprite;
         font = other.font;
-        other.monster_sprite = nullptr;
-        other.font = nullptr;
-        Sprite::operator=(std::move(other));
+        text_surf = std::move(other.text_surf);
     }
     return *this;
 }

@@ -104,247 +104,265 @@ public:
     }
 
     CharacterData o1 = {
-            {{"Jacana", 14}, {"Cleaf", 15}}, //
-            {{"Hey, how are you?", "Oh, so you want to fight?", "FIGHT!"},
-             {"You are very strong!", "Let's fight again sometime?"}}, //
-            {"down"},
-            true,
-            false,
-            "forest",
-            0};
+            .monsters = {{"Jacana", 14}, {"Cleaf", 15}}, //
+            .dialog = {.default_ = {"Hey, how are you?", "Oh, so you want to fight?", "FIGHT!"},
+                       .defeated = {"You are very strong!", "Let's fight again sometime?"}}, //
+            .directions = {"down"},
+            .look_around = true,
+            .defeated = false,
+            .biome = "forest",
+            .radius = 0};
 
     CharacterData o2 = {
-            {{"Atrox", 14}, {"Pouch", 15}, {"Draem", 13}, {"Cindrill", 13}}, //
-            {{"I don't like sand", "It's coarse and rough", "oh god, fight"},
-             {"May the force be with you"}}, //
-            {"left", "down"},
-            false,
-            false,
-            "sand",
-            0};
+            .monsters = {{"Atrox", 14}, {"Pouch", 15}, {"Draem", 13}, {"Cindrill", 13}}, //
+            .dialog = {.default_ = {"I don't like sand", "It's coarse and rough", "oh god, fight"},
+                       .defeated = {"May the force be with you"}}, //
+            .directions = {"left", "down"},
+            .look_around = false,
+            .defeated = false,
+            .biome = "sand",
+            .radius = 0};
 
     CharacterData o3 = {
-            {{"Atrox", 14}, {"Pouch", 15}, {"Draem", 13}, {"Cindrill", 13}}, //
-            {{"I love skating!", "FIGHT!"}, {"Good luck with the boss", "It's so cold in here"}}, //
-            {"left", "right", "up", "down"},
-            true,
-            false,
-            "sand",
-            0};
+            .monsters = {{"Atrox", 14}, {"Pouch", 15}, {"Draem", 13}, {"Cindrill", 13}}, //
+            .dialog = {.default_ = {"I love skating!", "FIGHT!"},
+                       .defeated = {"Good luck with the boss", "It's so cold in here"}}, //
+            .directions = {"left", "right", "up", "down"},
+            .look_around = true,
+            .defeated = false,
+            .biome = "sand",
+            .radius = 0};
 
     CharacterData o4 = {
-            {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
-            {{"I love skating!", "FIGHT!"}, {"Good luck with the boss", "It's so cold in here"}}, //
-            {"right"},
-            true,
-            false,
-            "forest",
-            0};
+            .monsters = {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
+            .dialog = {.default_ = {"I love skating!", "FIGHT!"},
+                       .defeated = {"Good luck with the boss", "It's so cold in here"}}, //
+            .directions = {"right"},
+            .look_around = true,
+            .defeated = false,
+            .biome = "forest",
+            .radius = 0};
 
     CharacterData o5 = {
-            {{"Plumette", 20}, {"Ivieron", 22}, {"Atrox", 24}, {"Pouch", 19}}, //
-            {{"So you want to challenge the big ones", "This will be fun!"},
-             {"I hope the lawyers will never spot you", "<3"}}, //
-            {"up", "right"},
-            true,
-            false,
-            "forest",
-            0};
+            .monsters = {{"Plumette", 20}, {"Ivieron", 22}, {"Atrox", 24}, {"Pouch", 19}}, //
+            .dialog = {.default_ = {"So you want to challenge the big ones", "This will be fun!"},
+                       .defeated = {"I hope the lawyers will never spot you", "<3"}}, //
+            .directions = {"up", "right"},
+            .look_around = true,
+            .defeated = false,
+            .biome = "forest",
+            .radius = 0};
 
     CharacterData o6 = {
-            {{"Finsta", 15}, {"Finsta", 15}, {"Finsta", 15}}, //
-            {{"I love skating!", "FIGHT!"}, {"Good luck with the boss", "It's so cold in here"}}, //
-            {"down"},
-            false,
-            false,
-            "sand",
-            0};
+            .monsters = {{"Finsta", 15}, {"Finsta", 15}, {"Finsta", 15}}, //
+            .dialog = {.default_ = {"I love skating!", "FIGHT!"},
+                       .defeated = {"Good luck with the boss", "It's so cold in here"}}, //
+            .directions = {"down"},
+            .look_around = false,
+            .defeated = false,
+            .biome = "sand",
+            .radius = 0};
 
     CharacterData o7 = {
-            {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
-            {{"There are no bugs in the snow!"},
-             {"Maybe I should check a vulcano...", "It's so cold in here"}}, //
-            {"right"},
-            false,
-            false,
-            "ice",
-            0};
+            .monsters = {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
+            .dialog = {.default_ = {"There are no bugs in the snow!"},
+                       .defeated = {"Maybe I should check a vulcano...", "It's so cold in here"}},
+            //
+            .directions = {"right"},
+            .look_around = false,
+            .defeated = false,
+            .biome = "ice",
+            .radius = 0};
 
     CharacterData p1 = {
-            {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
-            {{"I love trees", "and fights"}, {"Good luck with the boss!"}}, //
-            {"right"},
-            false,
-            false,
-            "forest",
-            0};
+            .monsters = {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
+            .dialog = {.default_ = {"I love trees", "and fights"},
+                       .defeated = {"Good luck with the boss!"}}, //
+            .directions = {"right"},
+            .look_around = false,
+            .defeated = false,
+            .biome = "forest",
+            .radius = 0};
 
     CharacterData p2 = {
-            {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
-            {{"I love trees", "and fights"}, {"Good luck with the boss!"}}, //
-            {"right"},
-            false,
-            false,
-            "forest",
-            0};
+            .monsters = {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
+            .dialog = {.default_ = {"I love trees", "and fights"},
+                       .defeated = {"Good luck with the boss!"}}, //
+            .directions = {"right"},
+            .look_around = false,
+            .defeated = false,
+            .biome = "forest",
+            .radius = 0};
 
     CharacterData p3 = {
-            {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
-            {{"I love trees", "and fights"}, {"Good luck with the boss!"}}, //
-            {"right"},
-            false,
-            false,
-            "forest",
-            0};
+            .monsters = {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
+            .dialog = {.default_ = {"I love trees", "and fights"},
+                       .defeated = {"Good luck with the boss!"}}, //
+            .directions = {"right"},
+            .look_around = false,
+            .defeated = false,
+            .biome = "forest",
+            .radius = 0};
 
     CharacterData p4 = {
-            {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
-            {{"I love trees", "and fights"}, {"Good luck with the boss!"}}, //
-            {"right"},
-            false,
-            false,
-            "forest",
-            0};
+            .monsters = {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
+            .dialog = {.default_ = {"I love trees", "and fights"},
+                       .defeated = {"Good luck with the boss!"}}, //
+            .directions = {"right"},
+            .look_around = false,
+            .defeated = false,
+            .biome = "forest",
+            .radius = 0};
 
     CharacterData px = {
-            {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
-            {{"I love trees", "and fights"}, {"Good luck with the boss!"}}, //
-            {"right"},
-            false,
-            false,
-            "forest",
-            0};
+            .monsters = {{"Friolera", 25}, {"Gulfin", 20}, {"Atrox", 24}, {"Finiette", 30}}, //
+            .dialog = {.default_ = {"I love trees", "and fights"},
+                       .defeated = {"Good luck with the boss!"}}, //
+            .directions = {"right"},
+            .look_around = false,
+            .defeated = false,
+            .biome = "forest",
+            .radius = 0};
 
     CharacterData w1 = {
-            {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
-            {{"It's so cold in here", "maybe a fight will warm me up"},
-             {"Good luck with the boss!"}}, //
-            {"left"},
-            true,
-            false,
-            "ice",
-            0};
+            .monsters = {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
+            .dialog = {.default_ = {"It's so cold in here", "maybe a fight will warm me up"},
+                       .defeated = {"Good luck with the boss!"}}, //
+            .directions = {"left"},
+            .look_around = true,
+            .defeated = false,
+            .biome = "ice",
+            .radius = 0};
 
     CharacterData w2 = {
-            {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
-            {{"It's so cold in here", "maybe a fight will warm me up"},
-             {"Good luck with the boss!"}}, //
-            {"right"},
-            true,
-            false,
-            "ice",
-            0};
+            .monsters = {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
+            .dialog = {.default_ = {"It's so cold in here", "maybe a fight will warm me up"},
+                       .defeated = {"Good luck with the boss!"}}, //
+            .directions = {"right"},
+            .look_around = true,
+            .defeated = false,
+            .biome = "ice",
+            .radius = 0};
 
     CharacterData w3 = {
-            {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
-            {{"It's so cold in here", "maybe a fight will warm me up"},
-             {"Good luck with the boss!"}}, //
-            {"right"},
-            true,
-            false,
-            "ice",
-            0};
+            .monsters = {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
+            .dialog = {.default_ = {"It's so cold in here", "maybe a fight will warm me up"},
+                       .defeated = {"Good luck with the boss!"}}, //
+            .directions = {"right"},
+            .look_around = true,
+            .defeated = false,
+            .biome = "ice",
+            .radius = 0};
 
     CharacterData w4 = {
-            {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
-            {{"It's so cold in here", "maybe a fight will warm me up"},
-             {"Good luck with the boss!"}}, //
-            {"left"},
-            true,
-            false,
-            "ice",
-            0};
+            .monsters = {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
+            .dialog = {.default_ = {"It's so cold in here", "maybe a fight will warm me up"},
+                       .defeated = {"Good luck with the boss!"}}, //
+            .directions = {"left"},
+            .look_around = true,
+            .defeated = false,
+            .biome = "ice",
+            .radius = 0};
 
     CharacterData w5 = {
-            {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
-            {{"It's so cold in here", "maybe a fight will warm me up"},
-             {"Good luck with the boss!"}}, //
-            {"right"},
-            true,
-            false,
-            "ice",
-            0};
+            .monsters = {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
+            .dialog = {.default_ = {"It's so cold in here", "maybe a fight will warm me up"},
+                       .defeated = {"Good luck with the boss!"}}, //
+            .directions = {"right"},
+            .look_around = true,
+            .defeated = false,
+            .biome = "ice",
+            .radius = 0};
 
     CharacterData wx = {
-            {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
-            {{"I hope you brought rations", "This will be a long journey"}, {"Congratultion!"}}, //
-            {"down"},
-            false,
-            false,
-            "ice",
-            0};
+            .monsters = {{"Friolera", 25}, {"Gulfin", 20}, {"Draem", 24}, {"Finiette", 30}}, //
+            .dialog = {.default_ = {"I hope you brought rations", "This will be a long journey"},
+                       .defeated = {"Congratultion!"}}, //
+            .directions = {"down"},
+            .look_around = false,
+            .defeated = false,
+            .biome = "ice",
+            .radius = 0};
 
     CharacterData f1 = {
-            {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
-            {{"This place feels kinda warm...", "fight!"}, {"Congratultion!"}}, //
-            {"right"},
-            true,
-            false,
-            "sand",
-            0};
+            .monsters = {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
+            .dialog = {.default_ = {"This place feels kinda warm...", "fight!"},
+                       .defeated = {"Congratultion!"}}, //
+            .directions = {"right"},
+            .look_around = true,
+            .defeated = false,
+            .biome = "sand",
+            .radius = 0};
 
     CharacterData f2 = {
-            {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
-            {{"This place feels kinda warm...", "fight!"}, {"Congratultion!"}}, //
-            {"right", "left"},
-            false,
-            false,
-            "sand",
-            0};
+            .monsters = {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
+            .dialog = {.default_ = {"This place feels kinda warm...", "fight!"},
+                       .defeated = {"Congratultion!"}}, //
+            .directions = {"right", "left"},
+            .look_around = false,
+            .defeated = false,
+            .biome = "sand",
+            .radius = 0};
 
     CharacterData f3 = {
-            {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
-            {{"This place feels kinda warm...", "fight!"}, {"Congratultion!"}}, //
-            {"right", "left"},
-            true,
-            false,
-            "sand",
-            0};
+            .monsters = {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
+            .dialog = {.default_ = {"This place feels kinda warm...", "fight!"},
+                       .defeated = {"Congratultion!"}}, //
+            .directions = {"right", "left"},
+            .look_around = true,
+            .defeated = false,
+            .biome = "sand",
+            .radius = 0};
 
     CharacterData f4 = {
-            {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
-            {{"This place feels kinda warm...", "fight!"}, {"Congratultion!"}}, //
-            {"up", "right"},
-            true,
-            false,
-            "sand",
-            0};
+            .monsters = {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
+            .dialog = {.default_ = {"This place feels kinda warm...", "fight!"},
+                       .defeated = {"Congratultion!"}}, //
+            .directions = {"up", "right"},
+            .look_around = true,
+            .defeated = false,
+            .biome = "sand",
+            .radius = 0};
 
     CharacterData f5 = {
-            {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
-            {{"This place feels kinda warm...", "fight!"}, {"Congratultion!"}}, //
-            {"left"},
-            true,
-            false,
-            "sand",
-            0};
+            .monsters = {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
+            .dialog = {.default_ = {"This place feels kinda warm...", "fight!"},
+                       .defeated = {"Congratultion!"}}, //
+            .directions = {"left"},
+            .look_around = true,
+            .defeated = false,
+            .biome = "sand",
+            .radius = 0};
 
     CharacterData f6 = {
-            {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
-            {{"This place feels kinda warm...", "fight!"}, {"Congratultion!"}}, //
-            {"right"},
-            true,
-            false,
-            "sand",
-            0};
+            .monsters = {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
+            .dialog = {.default_ = {"This place feels kinda warm...", "fight!"},
+                       .defeated = {"Congratultion!"}}, //
+            .directions = {"right"},
+            .look_around = true,
+            .defeated = false,
+            .biome = "sand",
+            .radius = 0};
 
     CharacterData fx = {
-            {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
-            {{"Time to bring the heat", "fight!"}, {"Congratultion!"}}, //
-            {"down"},
-            false,
-            false,
-            "sand",
-            0};
+            .monsters = {{"Cindrill", 15}, {"Jacana", 20}, {"Draem", 24}, {"Atrox", 30}}, //
+            .dialog = {.default_ = {"Time to bring the heat", "fight!"},
+                       .defeated = {"Congratultion!"}}, //
+            .directions = {"down"},
+            .look_around = false,
+            .defeated = false,
+            .biome = "sand",
+            .radius = 0};
 
     CharacterData Nurse = {
-            {}, //
-            {{"Welcome to the hospital", "Your monsters have been healed"}, {}}, //
-            {"down"},
-            false,
-            false,
-            "None",
-            0};
+            .monsters = {}, //
+            .dialog = {.default_ = {"Welcome to the hospital", "Your monsters have been healed"},
+                       .defeated = {}}, //
+            .directions = {"down"},
+            .look_around = false,
+            .defeated = false,
+            .biome = "None",
+            .radius = 0};
 
 
     std::map<std::string, CharacterData> TRAINER_DATA = {
@@ -395,9 +413,9 @@ public:
     };
 
     MonsterData Plumette = {
-            "Plumette",
-            ELEMENT_PLANT,
-            {
+            .name = "Plumette",
+            .element = ELEMENT_PLANT,
+            .stats = {
                     {"max_health", 15.0f}, //
                     {"max_energy", 17.0f}, //
                     {"attack", 4.0f}, //
@@ -405,14 +423,14 @@ public:
                     {"recovery", 1.0f}, //
                     {"speed", 1.0f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_SPARK}},
-            {"Ivieron", 15} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_SPARK}},
+            .evolve = {"Ivieron", 15} //
     };
     MonsterData Ivieron = {
-            "Ivieron",
-            ELEMENT_PLANT,
-            {
+            .name = "Ivieron",
+            .element = ELEMENT_PLANT,
+            .stats = {
                     {"max_health", 18.0f}, //
                     {"max_energy", 20.0f}, //
                     {"attack", 5.0f}, //
@@ -420,14 +438,14 @@ public:
                     {"recovery", 1.2f}, //
                     {"speed", 1.2f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_SPARK}},
-            {"Pluma", 32} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_SPARK}},
+            .evolve = {"Pluma", 32} //
     };
     MonsterData Pluma = {
-            "Pluma",
-            ELEMENT_PLANT,
-            {
+            .name = "Pluma",
+            .element = ELEMENT_PLANT,
+            .stats = {
                     {"max_health", 23.0f}, //
                     {"max_energy", 26.0f}, //
                     {"attack", 6.0f}, //
@@ -435,14 +453,14 @@ public:
                     {"recovery", 1.8f}, //
                     {"speed", 1.8f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_SPARK}},
-            {} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_SPARK}},
+            .evolve = {} //
     };
     MonsterData Sparchu = {
-            "Sparchu",
-            ELEMENT_FIRE,
-            {
+            .name = "Sparchu",
+            .element = ELEMENT_FIRE,
+            .stats = {
                     {"max_health", 15.0f}, //
                     {"max_energy", 7.0f}, //
                     {"attack", 3.0f}, //
@@ -450,16 +468,16 @@ public:
                     {"recovery", 1.1f}, //
                     {"speed", 1.0f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_FIRE}, //
-             {15, ATTACK_BATTLECRY}, //
-             {26, ATTACK_EXPLOSTION}},
-            {"Cindrill", 15} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_FIRE}, //
+                          {15, ATTACK_BATTLECRY}, //
+                          {26, ATTACK_EXPLOSTION}},
+            .evolve = {"Cindrill", 15} //
     };
     MonsterData Cindrill = {
-            "Cindrill",
-            ELEMENT_FIRE,
-            {
+            .name = "Cindrill",
+            .element = ELEMENT_FIRE,
+            .stats = {
                     {"max_health", 18.0f}, //
                     {"max_energy", 10.0f}, //
                     {"attack", 3.5f}, //
@@ -467,16 +485,16 @@ public:
                     {"recovery", 1.2f}, //
                     {"speed", 1.1f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_FIRE}, //
-             {15, ATTACK_BATTLECRY}, //
-             {26, ATTACK_EXPLOSTION}},
-            {"Charmadillo", 33} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_FIRE}, //
+                          {15, ATTACK_BATTLECRY}, //
+                          {26, ATTACK_EXPLOSTION}},
+            .evolve = {"Charmadillo", 33} //
     };
     MonsterData Charmadillo = {
-            "Charmadillo",
-            ELEMENT_FIRE,
-            {
+            .name = "Charmadillo",
+            .element = ELEMENT_FIRE,
+            .stats = {
                     {"max_health", 29.0f}, //
                     {"max_energy", 12.0f}, //
                     {"attack", 4.0f}, //
@@ -484,17 +502,17 @@ public:
                     {"recovery", 1.35f}, //
                     {"speed", 1.1f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_FIRE}, //
-             {15, ATTACK_BATTLECRY}, //
-             {26, ATTACK_EXPLOSTION}, //
-             {45, ATTACK_ANNIHILATE}},
-            {} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_FIRE}, //
+                          {15, ATTACK_BATTLECRY}, //
+                          {26, ATTACK_EXPLOSTION}, //
+                          {45, ATTACK_ANNIHILATE}},
+            .evolve = {} //
     };
     MonsterData Finsta = {
-            "Finsta",
-            ELEMENT_WATER,
-            {
+            .name = "Finsta",
+            .element = ELEMENT_WATER,
+            .stats = {
                     {"max_health", 13.0f}, //
                     {"max_energy", 17.0f}, //
                     {"attack", 2.0f}, //
@@ -502,17 +520,17 @@ public:
                     {"recovery", 1.5f}, //
                     {"speed", 1.8f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_SPARK}, //
-             {15, ATTACK_SPLASH}, //
-             {20, ATTACK_ICE}, //
-             {25, ATTACK_HEAL}},
-            {"Gulfin", 34} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_SPARK}, //
+                          {15, ATTACK_SPLASH}, //
+                          {20, ATTACK_ICE}, //
+                          {25, ATTACK_HEAL}},
+            .evolve = {"Gulfin", 34} //
     };
     MonsterData Gulfin = {
-            "Gulfin",
-            ELEMENT_WATER,
-            {
+            .name = "Gulfin",
+            .element = ELEMENT_WATER,
+            .stats = {
                     {"max_health", 18.0f}, //
                     {"max_energy", 20.0f}, //
                     {"attack", 3.0f}, //
@@ -520,17 +538,17 @@ public:
                     {"recovery", 1.8f}, //
                     {"speed", 2.0f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_SPARK}, //
-             {15, ATTACK_SPLASH}, //
-             {20, ATTACK_ICE}, //
-             {25, ATTACK_HEAL}},
-            {"Finiette", 45} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_SPARK}, //
+                          {15, ATTACK_SPLASH}, //
+                          {20, ATTACK_ICE}, //
+                          {25, ATTACK_HEAL}},
+            .evolve = {"Finiette", 45} //
     };
     MonsterData Finiette = {
-            "Finiette",
-            ELEMENT_WATER,
-            {
+            .name = "Finiette",
+            .element = ELEMENT_WATER,
+            .stats = {
                     {"max_health", 27.0f}, //
                     {"max_energy", 23.0f}, //
                     {"attack", 4.0f}, //
@@ -538,17 +556,17 @@ public:
                     {"recovery", 2.0f}, //
                     {"speed", 2.5f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_SPARK}, //
-             {15, ATTACK_SPLASH}, //
-             {20, ATTACK_ICE}, //
-             {25, ATTACK_HEAL}},
-            {} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_SPARK}, //
+                          {15, ATTACK_SPLASH}, //
+                          {20, ATTACK_ICE}, //
+                          {25, ATTACK_HEAL}},
+            .evolve = {} //
     };
     MonsterData Atrox = {
-            "Atrox",
-            ELEMENT_FIRE,
-            {
+            .name = "Atrox",
+            .element = ELEMENT_FIRE,
+            .stats = {
                     {"max_health", 18.0f}, //
                     {"max_energy", 20.0f}, //
                     {"attack", 3.0f}, //
@@ -556,15 +574,15 @@ public:
                     {"recovery", 1.3f}, //
                     {"speed", 1.9f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_SPARK}, //
-             {30, ATTACK_FIRE}},
-            {} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_SPARK}, //
+                          {30, ATTACK_FIRE}},
+            .evolve = {} //
     };
     MonsterData Pouch = {
-            "Pouch",
-            ELEMENT_PLANT,
-            {
+            .name = "Pouch",
+            .element = ELEMENT_PLANT,
+            .stats = {
                     {"max_health", 23.0f}, //
                     {"max_energy", 25.0f}, //
                     {"attack", 4.0f}, //
@@ -572,15 +590,15 @@ public:
                     {"recovery", 1.0f}, //
                     {"speed", 1.5f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_SPARK}, //
-             {25, ATTACK_HEAL}},
-            {} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_SPARK}, //
+                          {25, ATTACK_HEAL}},
+            .evolve = {} //
     };
     MonsterData Draem = {
-            "Draem",
-            ELEMENT_PLANT,
-            {
+            .name = "Draem",
+            .element = ELEMENT_PLANT,
+            .stats = {
                     {"max_health", 23.0f}, //
                     {"max_energy", 25.0f}, //
                     {"attack", 4.0f}, //
@@ -588,16 +606,16 @@ public:
                     {"recovery", 1.2f}, //
                     {"speed", 1.4f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_HEAL}, //
-             {20, ATTACK_EXPLOSTION}, //
-             {25, ATTACK_SPLASH}},
-            {} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_HEAL}, //
+                          {20, ATTACK_EXPLOSTION}, //
+                          {25, ATTACK_SPLASH}},
+            .evolve = {} //
     };
     MonsterData Larvea = {
-            "Larvea",
-            ELEMENT_PLANT,
-            {
+            .name = "Larvea",
+            .element = ELEMENT_PLANT,
+            .stats = {
                     {"max_health", 15.0f}, //
                     {"max_energy", 17.0f}, //
                     {"attack", 1.0f}, //
@@ -605,14 +623,14 @@ public:
                     {"recovery", 1.0f}, //
                     {"speed", 1.0f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_SPARK}},
-            {"Cleaf", 4} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_SPARK}},
+            .evolve = {"Cleaf", 4} //
     };
     MonsterData Cleaf = {
-            "Cleaf",
-            ELEMENT_PLANT,
-            {
+            .name = "Cleaf",
+            .element = ELEMENT_PLANT,
+            .stats = {
                     {"max_health", 18.0f}, //
                     {"max_energy", 20.0f}, //
                     {"attack", 3.0f}, //
@@ -620,14 +638,14 @@ public:
                     {"recovery", 1.7f}, //
                     {"speed", 1.6f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_HEAL}},
-            {} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_HEAL}},
+            .evolve = {} //
     };
     MonsterData Jacana = {
-            "Jacana",
-            ELEMENT_FIRE,
-            {
+            .name = "Jacana",
+            .element = ELEMENT_FIRE,
+            .stats = {
                     {"max_health", 12.0f}, //
                     {"max_energy", 19.0f}, //
                     {"attack", 3.0f}, //
@@ -635,17 +653,17 @@ public:
                     {"recovery", 2.1f}, //
                     {"speed", 2.6f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_SPARK}, //
-             {15, ATTACK_BURN}, //
-             {20, ATTACK_EXPLOSTION}, //
-             {25, ATTACK_HEAL}},
-            {} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_SPARK}, //
+                          {15, ATTACK_BURN}, //
+                          {20, ATTACK_EXPLOSTION}, //
+                          {25, ATTACK_HEAL}},
+            .evolve = {} //
     };
     MonsterData Friolera = {
-            "Friolera",
-            ELEMENT_WATER,
-            {
+            .name = "Friolera",
+            .element = ELEMENT_WATER,
+            .stats = {
                     {"max_health", 13.0f}, //
                     {"max_energy", 20.0f}, //
                     {"attack", 4.0f}, //
@@ -653,12 +671,12 @@ public:
                     {"recovery", 1.3f}, //
                     {"speed", 2.0f}, //
             },
-            {{0, ATTACK_SCRATCH}, //
-             {5, ATTACK_SPARK}, //
-             {15, ATTACK_SPLASH}, //
-             {20, ATTACK_ICE}, //
-             {25, ATTACK_HEAL}},
-            {} //
+            .abilities = {{0, ATTACK_SCRATCH}, //
+                          {5, ATTACK_SPARK}, //
+                          {15, ATTACK_SPLASH}, //
+                          {20, ATTACK_ICE}, //
+                          {25, ATTACK_HEAL}},
+            .evolve = {} //
     };
 
     std::map<std::string, MonsterData> MONSTER_DATA = {
@@ -681,21 +699,37 @@ public:
     };
 
     std::map<Attack, AttackData> ATTACK_DATA = {
-            {ATTACK_BURN, {"burn", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ATTACKANIMATION_FIRE}}, //
-            {ATTACK_HEAL, {"heal", PLAYER, -1.2f, 600, ELEMENT_PLANT, ATTACKANIMATION_GREEN}}, //
+            {ATTACK_BURN,
+             {.name = "burn", .target = OPPONENT, .amount = 2.0f, .cost = 15,
+              .element = ELEMENT_FIRE, .animation = ATTACKANIMATION_FIRE}}, //
+            {ATTACK_HEAL,
+             {.name = "heal", .target = PLAYER, .amount = -1.2f, .cost = 600,
+              .element = ELEMENT_PLANT, .animation = ATTACKANIMATION_GREEN}}, //
             {ATTACK_BATTLECRY,
-             {"battlecry", PLAYER, -1.4f, 20, ELEMENT_NORMAL, ATTACKANIMATION_GREEN}}, //
-            {ATTACK_SPARK, {"spark", OPPONENT, 1.1f, 20, ELEMENT_FIRE, ATTACKANIMATION_FIRE}}, //
+             {.name = "battlecry", .target = PLAYER, .amount = -1.4f, .cost = 20,
+              .element = ELEMENT_NORMAL, .animation = ATTACKANIMATION_GREEN}}, //
+            {ATTACK_SPARK,
+             {.name = "spark", .target = OPPONENT, .amount = 1.1f, .cost = 20,
+              .element = ELEMENT_FIRE, .animation = ATTACKANIMATION_FIRE}}, //
             {ATTACK_SCRATCH,
-             {"scratch", OPPONENT, 1.2f, 20, ELEMENT_NORMAL, ATTACKANIMATION_SCRATCH}}, //
-            {ATTACK_SPLASH, {"splash", OPPONENT, 2.0f, 15, ELEMENT_WATER, ATTACKANIMATION_SPLASH}},
+             {.name = "scratch", .target = OPPONENT, .amount = 1.2f, .cost = 20,
+              .element = ELEMENT_NORMAL, .animation = ATTACKANIMATION_SCRATCH}}, //
+            {ATTACK_SPLASH,
+             {.name = "splash", .target = OPPONENT, .amount = 2.0f, .cost = 15,
+              .element = ELEMENT_WATER, .animation = ATTACKANIMATION_SPLASH}},
             //
-            {ATTACK_FIRE, {"fire", OPPONENT, 2.0f, 15, ELEMENT_FIRE, ATTACKANIMATION_FIRE}}, //
+            {ATTACK_FIRE,
+             {.name = "fire", .target = OPPONENT, .amount = 2.0f, .cost = 15,
+              .element = ELEMENT_FIRE, .animation = ATTACKANIMATION_FIRE}}, //
             {ATTACK_EXPLOSTION,
-             {"explosion", OPPONENT, 2.0f, 90, ELEMENT_FIRE, ATTACKANIMATION_EXPLOSION}}, //
+             {.name = "explosion", .target = OPPONENT, .amount = 2.0f, .cost = 90,
+              .element = ELEMENT_FIRE, .animation = ATTACKANIMATION_EXPLOSION}}, //
             {ATTACK_ANNIHILATE,
-             {"annihilate", OPPONENT, 3.0f, 30, ELEMENT_FIRE, ATTACKANIMATION_EXPLOSION}}, //
-            {ATTACK_ICE, {"ice", OPPONENT, 2.0f, 15, ELEMENT_WATER, ATTACKANIMATION_ICE}}, //
+             {.name = "annihilate", .target = OPPONENT, .amount = 3.0f, .cost = 30,
+              .element = ELEMENT_FIRE, .animation = ATTACKANIMATION_EXPLOSION}}, //
+            {ATTACK_ICE,
+             {.name = "ice", .target = OPPONENT, .amount = 2.0f, .cost = 15,
+              .element = ELEMENT_WATER, .animation = ATTACKANIMATION_ICE}}, //
     };
 
 private:
