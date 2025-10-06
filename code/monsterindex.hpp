@@ -51,8 +51,11 @@ private:
     rg::Surface shadow_surf{};
     rg::Surface name_surf{};
     rg::Surface level_surf{};
+    std::string level_str{};
     rg::Surface element_surf{};
     rg::Surface hp_text{};
+    std::string hp_str{};
     rg::Surface ep_text{};
+    std::string ep_str{};
     std::vector<rg::Surface> monster_stats_sufaces{};
 };
