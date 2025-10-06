@@ -71,14 +71,10 @@ DialogSprite::DialogSprite(
     constexpr int padding = 5;
     const float width = std::max(30.0f, text_surf.GetRect().width + padding * 2);
     const float height = text_surf.GetRect().height + padding * 2;
+    text_surf.GetRect().center(rg::math::Vector2{width / 2.0f, height / 2.0f});
 
     // background
     image = new rg::Surface((int) width, (int) height);
-    image->Fill(rl::BLANK);
-    rg::draw::rect(image, Settings::GetInstance().COLORS["pure white"], image->GetRect(), 0, 4);
-    image->Blit(
-            &text_surf,
-            text_surf.GetRect().center(rg::math::Vector2{width / 2.0f, height / 2.0f}).pos());
 
     rect = image->GetRect().midbottom(character->rect.midtop() + rg::math::Vector2{0.0f, -10.0f});
 }
@@ -94,6 +90,7 @@ DialogSprite &DialogSprite::operator=(DialogSprite &&other) noexcept
     if (this != &other)
     {
         Sprite::operator=(std::move(other));
+        text_surf = std::move(other.text_surf);
     }
     return *this;
 }
@@ -102,6 +99,13 @@ DialogSprite::~DialogSprite()
 {
     // DialogSprite creates its own image in constructor
     delete image;
+}
+
+void DialogSprite::Update(const float deltaTime)
+{
+    image->Fill(rl::BLANK);
+    rg::draw::rect(image, Settings::GetInstance().COLORS["pure white"], image->GetRect(), 0, 4);
+    image->Blit(&text_surf, text_surf.GetRect().pos());
 }
 
 TransitionSprite::TransitionSprite(

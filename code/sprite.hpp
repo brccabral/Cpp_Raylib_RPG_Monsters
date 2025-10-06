@@ -78,6 +78,8 @@ public:
     DialogSprite &operator=(DialogSprite &&other) noexcept;
     ~DialogSprite() override;
 
+    void Update(float deltaTime) override;
+
     rg::Surface text_surf{};
 
 };
