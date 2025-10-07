@@ -28,8 +28,15 @@ void AllSprites::Draw(const Player *player)
     top_sprites.clear();
     top_sprites.reserve(current_sprites.size());
 
+    auto screen_pos = rg::Rect{0.0f, 0.0f, WINDOW_WIDTH * 1.02f, WINDOW_HEIGHT * 1.02f};
+    screen_pos.center(player->rect.center());
+
     for (auto *sprite: current_sprites)
     {
+        if (!screen_pos.colliderect(sprite->rect))
+        {
+            continue;
+        }
         const int z = sprite->z;
         if (z < Settings::GetInstance().WORLD_LAYERS["main"])
         {
