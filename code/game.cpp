@@ -111,13 +111,11 @@ void Game::ImportAssets()
             rg::font::Font("resources/graphics/fonts/dogicapixelbold.otf", 20.0f);
 
     monster_icons = rg::image::ImportFolderDict("resources/graphics/icons");
-    ui_icons = rg::image::ImportFolderDict("resources/graphics/ui");
-    for (auto &[ui_name, ui_surf]: ui_icons)
+    auto tmp_ui_icons = rg::image::ImportFolderDict("resources/graphics/ui");
+    for (auto &[ui_name, ui_surf]: tmp_ui_icons)
     {
-        if (ui_name.find("_gray") == std::string::npos)
-        {
-            ui_icons[ui_name + "_gray"] = rg::transform::GrayScale(&ui_surf);
-        }
+        ui_icons[ui_name + "_gray"] = rg::transform::GrayScale(&ui_surf);
+        ui_icons[ui_name] = std::move(ui_surf);
     }
 
     bg_frames = rg::image::ImportFolderDict("resources/graphics/backgrounds");
