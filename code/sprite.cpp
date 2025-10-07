@@ -482,17 +482,18 @@ void MonsterStatsSprite::Update(float deltaTime)
         const auto color = colors[index];
         if (index < 2) // health and energy
         {
-            text_surf =
+            text_surf[index] =
                     font->render(
                             rl::TextFormat("%.f/%.f", value, max_value),
                             Settings::GetInstance().COLORS["black"]);
             const auto text_rect =
-                    text_surf.GetRect().topleft({rect.width * 0.05f, index * rect.height / 2});
+                    text_surf[index].GetRect().topleft(
+                            {rect.width * 0.05f, index * rect.height / 2});
             const auto bar_rect = rg::Rect{
                     text_rect.bottomleft() + rg::math::Vector2<float>{0, -2},
                     {rect.width * 0.9f, 4.0f}};
 
-            image->Blit(&text_surf, text_rect);
+            image->Blit(&text_surf[index], text_rect);
             rg::draw::bar(
                     image, bar_rect, value, max_value, color,
                     Settings::GetInstance().COLORS["black"], 2);

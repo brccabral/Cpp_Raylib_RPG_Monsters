@@ -224,7 +224,7 @@ private:
 
     MonsterSprite *monster_sprite{};
     const rg::font::Font *font{};
-    rg::Surface text_surf{};
+    std::array<rg::Surface, 2> text_surf{};
 };
 
 class MonsterOutlineSprite : public rg::sprite::Sprite
