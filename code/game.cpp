@@ -137,6 +137,8 @@ void Game::ImportAssets()
 void Game::Setup(const std::string &map_name, const std::string &player_start_position)
 {
     // clear the map
+    // clear display_surface on setup for map transitions
+    display_surface->Draw();
     all_sprites->empty();
     collision_sprites.empty();
     character_sprites.empty();
