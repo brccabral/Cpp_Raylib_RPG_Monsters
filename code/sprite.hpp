@@ -77,11 +77,6 @@ public:
     DialogSprite(DialogSprite &&other) noexcept;
     DialogSprite &operator=(DialogSprite &&other) noexcept;
     ~DialogSprite() override;
-
-    void Update(float deltaTime) override;
-
-    rg::Surface text_surf{};
-
 };
 
 class TransitionSprite : public Sprite
@@ -184,7 +179,6 @@ public:
 private:
 
     MonsterSprite *monster_sprite{};
-    rg::Surface text_surf{};
 };
 
 class MonsterLevelSprite : public rg::sprite::Sprite

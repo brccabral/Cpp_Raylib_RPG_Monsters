@@ -63,11 +63,12 @@ CollidableSprite::CollidableSprite(const rg::math::Vector2<float> pos, rg::Surfa
 DialogSprite::DialogSprite(
         const std::string &message, const Character *character,
         const rg::font::Font *font)
+    : Sprite()
 {
     z = Settings::GetInstance().WORLD_LAYERS["top"];
 
     // text
-    text_surf = font->render(message.c_str(), Settings::GetInstance().COLORS["black"]);
+    auto text_surf = font->render(message.c_str(), Settings::GetInstance().COLORS["black"]);
     constexpr int padding = 5;
     const float width = std::max(30.0f, text_surf.GetRect().width + padding * 2);
     const float height = text_surf.GetRect().height + padding * 2;
@@ -75,8 +76,11 @@ DialogSprite::DialogSprite(
 
     // background
     image = new rg::Surface((int) width, (int) height);
-
+    image->Fill(rl::BLANK);
+    rg::draw::rect(image, Settings::GetInstance().COLORS["pure white"], image->GetRect(), 0, 4);
+    image->Blit(&text_surf, text_surf.GetRect().pos());
     rect = image->GetRect().midbottom(character->rect.midtop() + rg::math::Vector2{0.0f, -10.0f});
+    image->Draw();
 }
 
 DialogSprite::DialogSprite(DialogSprite &&other) noexcept
@@ -95,7 +99,6 @@ DialogSprite &DialogSprite::operator=(DialogSprite &&other) noexcept
             image = nullptr;
         }
         Sprite::operator=(std::move(other));
-        text_surf = std::move(other.text_surf);
     }
     return *this;
 }
@@ -104,13 +107,6 @@ DialogSprite::~DialogSprite()
 {
     // DialogSprite creates its own image in constructor
     delete image;
-}
-
-void DialogSprite::Update(const float deltaTime)
-{
-    image->Fill(rl::BLANK);
-    rg::draw::rect(image, Settings::GetInstance().COLORS["pure white"], image->GetRect(), 0, 4);
-    image->Blit(&text_surf, text_surf.GetRect().pos());
 }
 
 TransitionSprite::TransitionSprite(
@@ -308,14 +304,17 @@ MonsterNameSprite::MonsterNameSprite(
         const rg::font::Font *font)
     : monster_sprite(monster_sprite)
 {
-    text_surf = font->render(
+    auto text_surf = font->render(
             monster_sprite->monster->name.c_str(), Settings::GetInstance().COLORS["black"]);
     constexpr int padding = 10;
 
     image = new rg::Surface(
             (int) text_surf.GetRect().width + padding * 2,
             (int) text_surf.GetRect().height + padding * 2);
+    image->Fill(Settings::GetInstance().COLORS["white"]);
+    image->Blit(&text_surf, rg::math::Vector2<float>{padding, padding});
     rect = image->GetRect().midtop(pos);
+    image->Draw();
     z = Settings::GetInstance().BATTLE_LAYERS["name"];
 }
 
@@ -336,7 +335,6 @@ MonsterNameSprite &MonsterNameSprite::operator=(MonsterNameSprite &&other) noexc
         }
         Sprite::operator=(std::move(other));
         monster_sprite = other.monster_sprite;
-        text_surf = std::move(other.text_surf);
     }
     return *this;
 }
@@ -349,9 +347,6 @@ MonsterNameSprite::~MonsterNameSprite()
 
 void MonsterNameSprite::Update(float deltaTime)
 {
-    constexpr int padding = 10;
-    image->Fill(Settings::GetInstance().COLORS["white"]);
-    image->Blit(&text_surf, rg::math::Vector2<float>{padding, padding});
     if (monster_sprite->Groups().empty())
     {
         Kill();
