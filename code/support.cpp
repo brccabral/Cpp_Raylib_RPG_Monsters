@@ -152,42 +152,37 @@ std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> 
             new_surf.frames = frames.frames;
             new_surf.SetColorKey(rl::BLACK);
 
+            rg::Rect area = {0.0f, 0.0f, (float) mask_surf.render.texture.width,
+                             (float) mask_surf.render.texture.height};
+
+            // topleft
             new_surf.Blit(
-                    mask_surf.render.texture, {-width, -width},
-                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
-                     (float) mask_surf.render.texture.height}); // topleft
+                    mask_surf.render.texture, {-width, -width}, area);
+            // topcenter
             new_surf.Blit(
-                    mask_surf.render.texture, {0.0f, -width},
-                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
-                     (float) mask_surf.render.texture.height}); // topcenter
+                    mask_surf.render.texture, {0.0f, -width}, area);
+            // topright
             new_surf.Blit(
-                    mask_surf.render.texture, {width, -width},
-                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
-                     (float) mask_surf.render.texture.height}); // topright
+                    mask_surf.render.texture, {width, -width}, area);
+            // left
             new_surf.Blit(
-                    mask_surf.render.texture, {-width, 0.0f},
-                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
-                     (float) mask_surf.render.texture.height}); // left
+                    mask_surf.render.texture, {-width, 0.0f}, area);
+            // center
             new_surf.Blit(
-                    mask_surf.render.texture, {0, 0},
-                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
-                     (float) mask_surf.render.texture.height}); // center
+                    mask_surf.render.texture, {0, 0}, area);
+            // right
             new_surf.Blit(
-                    mask_surf.render.texture, {width, 0.0f},
-                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
-                     (float) mask_surf.render.texture.height}); // right
+                    mask_surf.render.texture, {width, 0.0f}, area);
+            // bottomleft
             new_surf.Blit(
-                    mask_surf.render.texture, {-width, width},
-                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
-                     (float) mask_surf.render.texture.height}); // bottomleft
+                    mask_surf.render.texture, {-width, width}, area);
+            // bottomcenter
             new_surf.Blit(
-                    mask_surf.render.texture, {0.0f, width},
-                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
-                     (float) mask_surf.render.texture.height}); // bottomcenter
+                    mask_surf.render.texture, {0.0f, width}, area);
+            // bottomright
             new_surf.Blit(
-                    mask_surf.render.texture, {width, width},
-                    {0.0f, 0.0f, (float) mask_surf.render.texture.width,
-                     (float) mask_surf.render.texture.height}); // bottomright
+                    mask_surf.render.texture, {width, width}, area);
+            new_surf.Draw();
             new_surf.SetAtlas();
 
             result[name][state] = std::move(new_surf);

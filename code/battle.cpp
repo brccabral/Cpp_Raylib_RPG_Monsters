@@ -200,8 +200,7 @@ void Battle::CreateMonster(
             bm.monster_sprite.monster->paused = monsters_paused;
 
             bm.monster_outline_sprite = MonsterOutlineSprite(&bm.monster_sprite, &outlines);
-            bm.monster_outline_sprite.add(
-                    &battle_sprites);
+            bm.monster_outline_sprite.add(&battle_sprites);
 
             // ui
             rg::math::Vector2<float> name_pos;
