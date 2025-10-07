@@ -89,6 +89,11 @@ DialogSprite &DialogSprite::operator=(DialogSprite &&other) noexcept
 {
     if (this != &other)
     {
+        if (image)
+        {
+            delete image;
+            image = nullptr;
+        }
         Sprite::operator=(std::move(other));
         text_surf = std::move(other.text_surf);
     }
@@ -125,8 +130,13 @@ TransitionSprite &TransitionSprite::operator=(TransitionSprite &&other) noexcept
 {
     if (this != &other)
     {
-        target = std::move(other.target);
+        if (image)
+        {
+            delete image;
+            image = nullptr;
+        }
         Sprite::operator=(std::move(other));
+        target = std::move(other.target);
     }
     return *this;
 }
@@ -319,6 +329,11 @@ MonsterNameSprite &MonsterNameSprite::operator=(MonsterNameSprite &&other) noexc
 {
     if (this != &other)
     {
+        if (image)
+        {
+            delete image;
+            image = nullptr;
+        }
         Sprite::operator=(std::move(other));
         monster_sprite = other.monster_sprite;
         text_surf = std::move(other.text_surf);
@@ -372,6 +387,11 @@ MonsterLevelSprite &MonsterLevelSprite::operator=(MonsterLevelSprite &&other) no
 {
     if (this != &other)
     {
+        if (image)
+        {
+            delete image;
+            image = nullptr;
+        }
         Sprite::operator=(std::move(other));
         monster_sprite = other.monster_sprite;
         font = other.font;
@@ -428,6 +448,11 @@ MonsterStatsSprite &MonsterStatsSprite::operator=(MonsterStatsSprite &&other) no
 {
     if (this != &other)
     {
+        if (image)
+        {
+            delete image;
+            image = nullptr;
+        }
         Sprite::operator=(std::move(other));
         monster_sprite = other.monster_sprite;
         font = other.font;
