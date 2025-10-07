@@ -113,7 +113,7 @@ void AllSprites::Draw(const Player *player)
             display_surface->Blit(&notice_surf, rect.topleft() + offset);
         }
     }
-    for (const auto &sprite: top_sprites)
+    for (const auto *sprite: top_sprites)
     {
         display_surface->Blit(sprite->image, sprite->rect.topleft() + offset);
     }

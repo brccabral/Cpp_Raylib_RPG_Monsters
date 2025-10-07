@@ -175,21 +175,6 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
     const rl::tmx_layer *entities_layer = tmx_find_layer_by_name(map, "Entities");
 
     // terrain
-#if 0
-    auto terrain_tiles = rg::tmx::GetTMXTiles(map, terrain_layer);
-    for (auto &[position, texture, atlas_rect]: terrain_tiles)
-    {
-        auto surface = rg::Surface(texture, atlas_rect);
-        Sprite(position, surface, Settings::GetInstance().WORLD_LAYERS["bg"])->add(all_sprites);
-    }
-
-    auto terrain_top_tiles = rg::tmx::GetTMXTiles(map, terrain_top_layer);
-    for (auto &[position, texture, atlas_rect]: terrain_top_tiles)
-    {
-        auto surface = rg::Surface(texture, atlas_rect);
-        Sprite(position, surface, Settings::GetInstance().WORLD_LAYERS["bg"])->add(all_sprites);
-    }
-#else
     surfaces_.emplace_back(rg::tmx::GetTMXLayerSurface(map, terrain_layer));
     sprites_.emplace_back(
             rg::math::Vector2<float>{}, &surfaces_.back(),
@@ -201,7 +186,6 @@ void Game::Setup(const std::string &map_name, const std::string &player_start_po
             rg::math::Vector2<float>{}, &surfaces_.back(),
             Settings::GetInstance().WORLD_LAYERS["bg"]);
     sprites_.back().add(all_sprites);
-#endif
 
     // water
     auto water = water_layer->content.objgr->head;
