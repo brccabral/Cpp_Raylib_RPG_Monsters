@@ -8,9 +8,10 @@
 
 Game::Game()
 {
-    rg::Init(rl::LOG_WARNING);
     display_surface = &rg::display::SetMode(WINDOW_WIDTH, WINDOW_HEIGHT);
     rg::display::SetCaption("RPG Monsters");
+    // need to init all_sprites after rg::display::SetMode as it calls rl::InitWindow()
+    // and InitWindow starts raylib/OpenGL resources that are needed in Level()
     all_sprites = new AllSprites();
 
     int player_index = 0;
@@ -44,6 +45,7 @@ Game::~Game()
     {
         UnloadTMX(tmx_map);
     }
+    delete all_sprites;
 }
 
 void Game::run()

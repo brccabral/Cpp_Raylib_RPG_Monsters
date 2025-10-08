@@ -54,7 +54,8 @@ private:
     std::vector<Character> characters_{};
 
     // Groups
-    // must be pointer because it tries to load texture before Game().Init()
+    // need to init all_sprites after rg::display::SetMode as it calls rl::InitWindow()
+    // and InitWindow starts raylib/OpenGL resources that are needed in AllSprites()
     AllSprites *all_sprites{};
     rg::sprite::Group collision_sprites{};
     rg::sprite::Group character_sprites{};
