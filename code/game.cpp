@@ -112,22 +112,22 @@ void Game::ImportAssets()
     fonts["bold"] =
             rg::font::Font("resources/graphics/fonts/dogicapixelbold.otf", 20.0f);
 
-    monster_icons = rg::image::ImportFolderDict("resources/graphics/icons");
-    auto tmp_ui_icons = rg::image::ImportFolderDict("resources/graphics/ui");
+    monster_icons = rg::image::LoadFolderDict("resources/graphics/icons");
+    auto tmp_ui_icons = rg::image::LoadFolderDict("resources/graphics/ui");
     for (auto &[ui_name, ui_surf]: tmp_ui_icons)
     {
         ui_icons[ui_name + "_gray"] = rg::transform::GrayScale(&ui_surf);
         ui_icons[ui_name] = std::move(ui_surf);
     }
 
-    bg_frames = rg::image::ImportFolderDict("resources/graphics/backgrounds");
+    bg_frames = rg::image::LoadFolderDict("resources/graphics/backgrounds");
 
     monster_frames = MonsterImporter(4, 2, "resources/graphics/monsters");
     outline_frames = OutlineCreator(monster_frames, 4);
 
     attack_frames = AttackImporter("resources/graphics/attacks");
 
-    const auto star_surfs = rg::image::ImportFolder("resources/graphics/other/star animation");
+    const auto star_surfs = rg::image::LoadFolderList("resources/graphics/other/star animation");
     for (const auto &star_surf: star_surfs)
     {
         star_animation_surfs.push_back(rg::transform::Scale2x(&star_surf));
