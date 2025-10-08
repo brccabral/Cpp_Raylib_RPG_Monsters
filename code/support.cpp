@@ -136,7 +136,7 @@ std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> 
     std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> result;
     for (auto &[name, state_frames]: monster_frames)
     {
-        if (name == "load")
+        if (name.find("load") != std::string::npos)
         {
             continue;
         }
@@ -147,41 +147,33 @@ std::unordered_map<std::string, std::unordered_map<AnimationState, rg::Frames>> 
             mask_surf.SetColorKey(rl::BLACK);
 
             auto new_surf = rg::Frames(
-                    frames.render.texture.width, frames.render.texture.height, frames.m_rows,
+                    frames.GetTexture().width, frames.GetTexture().height, frames.m_rows,
                     frames.m_cols);
-            new_surf.frames = frames.frames;
             new_surf.SetColorKey(rl::BLACK);
+            new_surf.frames = frames.frames;
 
-            rg::Rect area = {0.0f, 0.0f, (float) mask_surf.render.texture.width,
-                             (float) mask_surf.render.texture.height};
+            // we need to blit the whole texture, not just the current frame
+            rg::Rect area = {0.0f, 0.0f, (float) mask_surf.GetTexture().width,
+                             -(float) mask_surf.GetTexture().height};
 
             // topleft
-            new_surf.Blit(
-                    mask_surf.render.texture, {-width, -width}, area);
+            new_surf.Blit(mask_surf.GetTexture(), rg::math::Vector2{-width, -width}, area);
             // topcenter
-            new_surf.Blit(
-                    mask_surf.render.texture, {0.0f, -width}, area);
+            new_surf.Blit(mask_surf.GetTexture(), rg::math::Vector2{0.0f, -width}, area);
             // topright
-            new_surf.Blit(
-                    mask_surf.render.texture, {width, -width}, area);
+            new_surf.Blit(mask_surf.GetTexture(), rg::math::Vector2{width, -width}, area);
             // left
-            new_surf.Blit(
-                    mask_surf.render.texture, {-width, 0.0f}, area);
+            new_surf.Blit(mask_surf.GetTexture(), rg::math::Vector2{-width, 0.0f}, area);
             // center
-            new_surf.Blit(
-                    mask_surf.render.texture, {0, 0}, area);
+            new_surf.Blit(mask_surf.GetTexture(), rg::math::Vector2{0.0f, 0.0f}, area);
             // right
-            new_surf.Blit(
-                    mask_surf.render.texture, {width, 0.0f}, area);
+            new_surf.Blit(mask_surf.GetTexture(), rg::math::Vector2{width, 0.0f}, area);
             // bottomleft
-            new_surf.Blit(
-                    mask_surf.render.texture, {-width, width}, area);
+            new_surf.Blit(mask_surf.GetTexture(), rg::math::Vector2{-width, width}, area);
             // bottomcenter
-            new_surf.Blit(
-                    mask_surf.render.texture, {0.0f, width}, area);
+            new_surf.Blit(mask_surf.GetTexture(), rg::math::Vector2{0.0f, width}, area);
             // bottomright
-            new_surf.Blit(
-                    mask_surf.render.texture, {width, width}, area);
+            new_surf.Blit(mask_surf.GetTexture(), rg::math::Vector2{width, width}, area);
             new_surf.Draw();
             new_surf.SetAtlas();
 
