@@ -36,7 +36,7 @@ CoastImporter(const char *file, const int rows, const int cols)
             {
                 const auto x = pos.x + index * 3;
                 const auto y = pos.y + row;
-                frames.emplace_back(x * width, y * height, width, height);
+                frames.emplace_back(x * width, y * height, width, -height);
             }
             result[terrain][side].frames = frames;
         }
