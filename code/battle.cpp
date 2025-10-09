@@ -505,7 +505,7 @@ void Battle::ApplyAttack(
     // double attack if effective
     const auto attack_element = GameData::GetInstance().ATTACK_DATA[attack].element;
     const auto target_element = target_sprite->monster->element;
-    if ((attack_element == ELEMENT_FIRE && target_element == ELEMENT_FIRE) ||
+    if ((attack_element == ELEMENT_FIRE && target_element == ELEMENT_PLANT) ||
         (attack_element == ELEMENT_WATER && target_element == ELEMENT_FIRE) ||
         (attack_element == ELEMENT_PLANT && target_element == ELEMENT_WATER))
     {
@@ -606,8 +606,7 @@ void Battle::CheckDeathGroup(rg::sprite::Group *group, const SelectionSide side)
                             monster_sprite->monster->level * 100 / player_sprites.Sprites().size();
                     for (auto *player_sprite: player_sprites.Sprites())
                     {
-                        dynamic_cast<MonsterSprite *>(player_sprite)
-                                ->monster->UpdateXP(xp_amount);
+                        dynamic_cast<MonsterSprite *>(player_sprite)->monster->UpdateXP(xp_amount);
                     }
                 }
             }

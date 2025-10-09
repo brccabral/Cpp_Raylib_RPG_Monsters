@@ -87,9 +87,13 @@ void Monster::UpdateXP(const int amount)
     }
     else
     {
+        const auto health_perc = health / GetStat("max_health");
+        const auto energy_perc = energy / GetStat("max_energy");
         ++level;
         xp = amount - (level_up - xp);
         level_up = level * 150.f;
+        health = GetStat("max_health") * health_perc;
+        energy = GetStat("max_energy") * energy_perc;
     }
 }
 
