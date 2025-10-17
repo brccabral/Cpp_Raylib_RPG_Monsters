@@ -72,7 +72,7 @@ if (EMSCRIPTEN)
         -sSTACK_SIZE=131072
         -sASYNCIFY=1
         --shell-file
-        "$ENV{EMSCRIPTEN}/src/shell.html")
+        "$ENV{EMSCRIPTEN}/src/shell_brc.html")
     set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
 
     set(resources_dir ${CMAKE_CURRENT_SOURCE_DIR}/resources)
