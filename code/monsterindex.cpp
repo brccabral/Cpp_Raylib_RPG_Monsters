@@ -240,7 +240,7 @@ void MonsterIndex::DisplayMain(const float dt)
     auto stats_rect =
             rg::Rect{health_rect.left(), health_rect.bottom(), health_rect.width, info_height}
             .inflate(0, -60)
-            .move({0, 15});
+            .move(0, 15);
     stats_text_surf = (*fonts)["regular"].render(
             "Stats", Settings::GetInstance().COLORS["white"]);
     auto stats_text_rect = stats_text_surf.GetRect().bottomleft(stats_rect.topleft());
